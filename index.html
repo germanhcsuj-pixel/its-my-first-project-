@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<!-- ═══════════════════════════════════════════════
+  SOLIFON AI — PWA PATCH
+  
+  ИНСТРУКЦИЯ: Добавь эти блоки в index.html
+
+  ① Блок 1 → вставь внутрь <head> ... </head>
+  ② Блок 2 → вставь перед закрывающим </body>
+═══════════════════════════════════════════════ -->
+
+
+<!-- ════════════════════════════════════════
+     БЛОК 1 — Вставить в <head>
+════════════════════════════════════════ -->
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00f2ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Solifon AI">
+<link rel="apple-touch-icon" href="https://huggingface.co/spaces/germanhcsuj/Solifon-ai/resolve/main/icon-192.png">
+
+<!-- Мета для Google / Open Graph -->
+<meta name="description" content="Мульти-модельный ИИ-ассистент: GPT-4o, Gemini, Claude и Llama в одном месте">
+<meta property="og:title" content="Solifon AI">
+<meta property="og:description" content="ИИ-платформа нового поколения из Казахстана">
+<meta property="og:image" content="https://huggingface.co/spaces/germanhcsuj/Solifon-ai/resolve/main/icon-512.png">
+
+
+
+
+  
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
+<!-- End Google Tag Manager -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOLIFON AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+
+</head>
+<body class="no-select">
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P5MZ4C6S"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  <input type="file" id="imageInput" style="display: none;" accept="image/*" multiple onchange="handleFileSelect(this)">
+  
+  <input type="file" id="fileInput" style="display: none;" accept="*" onchange="handleFileSelect(this)">
+
+<div id="imagePreviewContainer" style="display: none; position: absolute; top: 85px; left: 20px; z-index: 100; gap: 8px; padding: 5px; background: rgba(0,0,0,0.5); border-radius: 12px; backdrop-filter: blur(10px);"></div>
+
+<input type="checkbox" id="nav-toggle" class="nav-toggle" style="display: none;">
+
+    <div class="aurora-bg">
+        <div class="blob"></div>
+        <div class="blob" style="left:60%; top:20%; animation-delay: -5s;"></div>
+    </div>
+
+    <div class="app-layout" id="mainAppLayout">
+        <aside class="sidebar" id="sidebar">
+    <div class="sidebar-content">
+        <div class="logo">
+            <div class="white-square-icon"></div> 
+            <span>SOLIFON AI</span>
+        </div>
+        
+        <button class="new-chat-btn" id="newChatBtn">
+            <i class="ph ph-plus-circle"></i>
+            <span>New Chat</span>
+        </button>
+
+        <nav class="menu">
+                        <div class="menu-section-title">System</div>
+            <div class="menu-item" onclick="openModal('whatsNewModal')">
+    <i class="ph ph-megaphone"></i><span>What's New</span>
+</div>
+
+            <div class="menu-item" onclick="openModal('aboutModal')">
+                <i class="ph ph-info"></i><span>About SOLIFON</span>
+            </div>
+
+            <div class="menu-section-title">Features</div>           
+          <div class="menu-item active" id="chatTrigger">
+
+<i class="ph ph-chat-circle-dots"></i><span>Chat</span>
+
+          </div>
+            
+            <div class="menu-item" id="libraryTrigger">
+                <i class="ph ph-books"></i><span>Library</span>
+            </div>
+
+            <div class="menu-section-title">Workspaces</div>
+            <div class="menu-item" id="newProjectBtn" style="cursor: pointer;">
+    <i class="ph ph-folder-plus"></i><span>New Project</span>
+</div>
+
+            
+            
+
+<div class="menu-item" onclick="openPresentation()">
+    <i class="ph ph-presentation-chart"></i><span>Presentation</span>
+</div>
+          <div class="menu-item" onclick="openMaternalModal()">
+    <i class="ph ph-heart"></i><span>Ананың жүрегі</span>
+          </div>
+
+            <div class="menu-item" id="deepBtn"> <i class="ph ph-microscope"></i><span>Explore Deeply</span>
+</div>
+<div class="menu-item" onclick="openDownloadModal()">
+  <i class="ph-arrow-circle-down"></i>
+  <span>Скачать Solifon AI</span>
+</div>
+        </nav>
+
+        <div class="upgrade-card">
+            <div class="upgrade-icon"><i class="ph ph-crown"></i></div>
+            <p>Upgrade to premium</p>
+            <button class="upgrade-btn" onclick="openModal('upgradeModal')">Upgrade</button>
+        </div>
+    </div>
+
+    <div class="library-panel" id="libraryPanel">
+        <div class="library-header">
+            <button class="back-btn" id="closeLibrary">
+                <i class="ph ph-arrow-left"></i>
+            </button>
+            <h2>Library</h2>
+        </div>
+        <div class="library-body">
+            <div class="empty-library">
+                <i class="ph ph-bookmarks-simple"></i>
+                <p>История пуста</p>
+            </div>
+            <div id="savedItemsContainer"></div>
+        </div>
+    </div>
+
+    <div class="chat-panel" id="chatPanel">
+        <div class="library-header">
+            <button class="back-btn" id="closeChat">                <i class="ph ph-arrow-left"></i>            </button>
+            <h2>Chat History</h2>
+        </div>
+        <div class="library-body">
+            <div class="empty-library">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                <p>История чатов пуста</p>
+            </div>
+            <div id="chatHistoryItems"></div>
+        </div>
+    </div>
+</aside>
+   
+      
+            
+                    <main class="main-content">
+                    <header class="app-header">
+    <div class="top-controls-pill">
+        <label for="nav-toggle" class="icon-btn ripple-btn" id="toggleBtn">
+            <i class="ph ph-list"></i>
+        </label>
+        
+        <button class="btn-clear ripple-btn" id="clearBtn" title="Clear Chat" onclick="window.clearChat()">
+            <i class="ph ph-trash"></i>
+        </button>
+
+        <div class="model-selector-container" style="display: flex; align-items: center; gap: 8px;">
+            <div class="custom-select ripple-btn" id="modelTrigger">
+                <div class="select-trigger">
+                    <i class="fas fa-robot"></i>
+                    <span id="currentModel"> Выберите модел </span>
+                    <i class="ph ph-caret-down arrow"></i>
+                </div>
+            </div>
+            
+            <div class="model-dropdown" id="modelDropdown">
+
+    <!-- ================= CORE LEVEL ================= -->
+    <div class="dropdown-label">Core Level</div>
+
+    <div class="model-option" data-value="solifon-lite" data-name="Solifon Lite">
+        <i class="ph ph-feather" style="color: #34d399;"></i> Solifon Lite (Cerebras Llama)
+    </div>
+
+    <div class="model-option" data-value="solifon-core" data-name="Solifon Core">
+        <i class="fas fa-cube" style="color: #ff5555;"></i> Solifon Core
+    </div>
+
+    <div class="model-option" data-value="gemini" data-name="Solifon Air">
+        <i class="ph ph-wind" style="color: #86efac;"></i> Solifon Air (Gemini Flash)
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= ADVANCED ================= -->
+              <div class="dropdown-label" style="color: #ffd700; font-size: 0.75rem; letter-spacing: 2px;">
+  ⭐ Оригинальная модель
+</div>
+
+<div class="model-option" data-value="solifon-gemma" data-name="Solifon AI">
+  <i class="ph ph-star-four" style="color: #ffd700;"></i> 
+  Solifon AI — Обучен Дастаном 🇰🇿
+</div>
+
+              
+    <div class="dropdown-label">Advanced Intelligence</div>
+
+    <div class="model-option" data-value="qwen" data-name="Solifon Unbound">
+        <i class="fas fa-microchip" style="color: #6156e1;"></i> Solifon Unbound (Qwen power)
+    </div>
+
+    <div class="model-option" data-value="solifon-spirit" data-name="Solifon Spirit">
+        <i class="ph ph-sparkle" style="color: #c084fc;"></i> Solifon Spirit (Gemini 2.0)
+    </div>
+
+    <div class="model-option" data-value="solifon-pulse" data-name="Solifon Pulse">
+        <i class="ph ph-eye" style="color: #fbbf24;"></i> Solifon Pulse (Claude power)
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= ELITE ================= -->
+    <div class="dropdown-label">Elite Intelligence</div>
+
+    <div class="model-option" data-value="github" data-name="Solifon Ultra">
+        <i class="fas fa-brain" style="color: #ffffff;"></i> Solifon Ultra (GPT-4o power)
+    </div>
+
+    <div class="model-option" data-value="solifon-souldrive" data-name="Solifon SoulDrive">
+        <i class="ph-fill ph-heart" style="color: #ff3366;"></i> Solifon SoulDrive (Qwen 3 power)
+    </div>
+
+    <div class="model-option" data-value="solifon-fulgur" data-name="Solifon FULGUR">
+        <i class="fas fa-bolt" style="color: #ff0000;"></i> Solifon FULGUR (Llama 3.3 70B power)
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= SPEED ================= -->
+    <div class="dropdown-label">Turbo Speed</div>
+
+    <div class="model-option" data-value="samba" data-name="Solifon Fluw">
+        <i class="fas fa-bolt" style="color: #00f2ff;"></i> Solifon Fluw (Llama 3.3 power)
+    </div>
+
+    <div class="model-option" data-value="solifon-flux" data-name="Solifon Flux">
+        <i class="fas fa-bolt" style="color: #00ffdd;"></i> Solifon Flux (for generating picture)
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= VISION & AUDIO ================= -->
+    <div class="dropdown-label">Vision & Voice</div>
+
+    <div class="model-option" data-value="solifon-wave" data-name="Solifon Wave">
+        <i class="ph ph-waveform" style="color: #00f2ff;"></i> Solifon Wave (Whisper v3 power)
+    </div>
+
+    <div class="model-option" data-value="solifon-visionary" data-name="Solifon Visionary">
+        <i class="fas fa-eye" style="color: #ffdd00;"></i> Solifon Visionary
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= CREATIVE ================= -->
+    <div class="dropdown-label">Creative Engine</div>
+
+    <div class="model-option" data-value="video" data-name="Solifon Motion">
+        <i class="fas fa-paint-brush" style="color: #ec4899;"></i> Solifon Motion (Flux.1 power)
+    </div>
+
+    <div class="dropdown-divider"></div>
+
+
+    <!-- ================= SOUL ================= -->
+    <div class="dropdown-label">Mind & Soul</div>
+
+    <div class="model-option" data-value="solifon-soul" data-name="Solifon Soul">
+        <i class="ph ph-sparkle" style="color: #a78bfa;"></i> Solifon Soul (Gemini power)
+    </div>
+
+    <div class="model-option" data-value="solifon-horizon" data-name="Solifon Horizon">
+        <i class="fas fa-sun" style="color: #ffaa00;"></i> Solifon Horizon
+    </div>
+
+            </div>
+
+            <button class="live-mode-btn" id="liveToggle" title="Start Live Session">
+                <div class="live-pulse"></div>
+                <i class="ph ph-broadcast"></i>
+                <span>Live</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="liveOverlay" class="live-overlay" style="display: none;">
+        <div class="live-content">
+            <div class="wave-container">
+                <div class="wave"></div>
+                <div class="wave" style="animation-delay: 0.2s"></div>
+                <div class="wave" style="animation-delay: 0.4s"></div>
+            </div>
+            <p id="liveStatus">Listening...</p>
+            <button onclick="window.stopLiveMode()" class="stop-live-btn">End Session</button>
+        </div>
+    </div>
+</header>
+
+
+
+    <div class="chat-wrapper" id="chatWrapper">
+  
+                <div class="welcome-screen" id="welcomeScreen">
+                  <!-- Быстрые вопросы (десктоп только) -->
+<div class="top-badges-wrapper" aria-hidden="false"></div>
+                    <div class="hero-visual">
+                        <div class="profile-wrapper">
+                            <div class="floating-card card-1">
+                                <i class="fas fa-check-double" style="color: #ff0000;"></i>
+                                <span>100%<span style="color: #ff0000;">Evidence</span></span>
+                            </div>
+                            <div class="floating-card card-2">
+                                <i class="fas fa-database" style="color: #ff0000;"></i>
+                                <span>Verified <span style="color: #ff0000;">Sources</span></span>
+                            </div>
+                            <div class="floating-card card-3">
+                                <i class="fas fa-fingerprint" style="color: #ffffff;"></i>
+                                <span>Logic <span style="color: #ffffff;">Proof</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="star-animation-container">
+                        <div class="star-glow-wrapper" id="starContainer">
+                            <svg viewBox="0 0 200 200">
+                              <g transform="translate(100 100)">
+                                <g class="g-big">                                  <polygon class="white-big" points="0 -40 12 -12 40 0 12 12 0 40 -12 12 -40 0 -12 -12" />
+                                  <polygon class="trace trace-big-blue color-blue" points="0 -40 12 -12 40 0 12 12 0 40 -12 12 -40 0 -12 -12" transform="scale(1.1)" />
+                                  <polygon class="trace trace-big-cyan color-cyan" points="0 -40 12 -12 40 0 12 12 0 40 -12 12 -40 0 -12 -12" transform="scale(1.1)" />
+                                </g>
+                                <g class="g-p" style="--dx:38px; --dy:-38px;">
+                                  <g class="white-small"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-blue" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>                                  <g class="trace trace-small color-cyan" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                </g>
+                                <g class="g-p" style="--dx:38px; --dy:38px; animation-delay: 0.5s">
+                                  <g class="white-small"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-blue" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-cyan" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                </g>
+                                <g class="g-p" style="--dx:-38px; --dy:38px; animation-delay: 1s">
+                                  <g class="white-small"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-blue" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-cyan" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                </g>
+                                <g class="g-p" style="--dx:-38px; --dy:-38px; animation-delay: 1.5s">
+                                  <g class="white-small"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-blue" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                  <g class="trace trace-small color-cyan" transform="scale(1.2)"><line x1="-5" y1="0" x2="5" y2="0"/><line x1="0" y1="-5" x2="0" y2="5"/></g>
+                                </g>
+                                <g class="g-s" style="--dx:15px; --dy:-55px;"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                                <g class="g-s" style="--dx:-25px; --dy:-55px; animation-delay: 0.3s"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                                <g class="g-s" style="--dx:55px; --dy:-10px; animation-delay: 0.6s"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                                <g class="g-s" style="--dx:-55px; --dy:-10px; animation-delay: 0.9s"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                                <g class="g-s" style="--dx:30px; --dy:50px; animation-delay: 1.2s"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                                <g class="g-s" style="--dx:-45px; --dy:45px; animation-delay: 1.5s"><polygon class="white-small" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" /><polygon class="trace trace-small color-blue" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /><polygon class="trace trace-small color-cyan" points="0 -6 2 -2 6 0 2 2 0 6 -2 2 -6 0 -2 -2" transform="scale(1.3)" /></g>
+                              </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <h1 id="welcomeTitle"> </h1>
+                    
+                    <div class="quick-pills-wrapper" id="quickPillsWrapper">
+  <div class="quick-pills" id="quickPills"></div>
+                    </div>
+                </div>
+
+                <div id="messagesContainer" class="messages-list"></div>
+            </div>
+
+            <!-- Обновлённая секция input area -->
+            <div class="input-area" style="position: relative; z-index: 1000;">
+    <div class="input-main-wrapper">
+        <div class="input-glass-container">
+            <div class="input-top">
+                <i class="ph ph-sparkle sparkle-icon"></i>
+                <input type="text" id="userInput" placeholder="Ask SOLIFON AI anything..." autocomplete="off">
+            </div>
+
+            <div class="input-bottom">
+                <div class="input-tools">
+                    <button type="button" class="tool-btn" onclick="document.getElementById('imageInput').click()">
+                        <i class="ph ph-plus-circle"></i>
+                    </button>
+                    <button type="button" class="tool-btn" onclick="document.getElementById('fileInput').click()">
+                        <i class="ph ph-paperclip"></i>
+                    </button>
+                    <button type="button" class="tool-btn" id="elevenLabsStatus" title="ElevenLabs Voice" onclick="openModal('voiceSettingsModal')">
+                        <i class="ph ph-waveform" style="color: #00f2ff;"></i>
+                    </button>
+                </div>
+
+                <div class="input-actions-group" style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="mic-btn" id="micBtn" style="cursor: pointer; position: relative; z-index: 1001;">
+                        <i class="ph ph-microphone"></i>
+                    </button>
+                    
+                    <div class="send-btn-wrapper">
+                        <button type="button" class="send-btn-main" id="sendBtn">
+                            <span>Send</span>
+                            <i class="ph ph-arrow-up"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+            </div>
+      
+    <div id="main-screen" style="display: none;">
+    <div style="display: flex; align-items: center; padding: 20px; gap: 20px;">
+        <button class="tab-button" onclick="closeLab()" style="padding: 10px 20px; border-radius: 8px; cursor: pointer; max-width: 150px;">
+            ← Back to Chat
+        </button>
+        <div class="title" style="margin: 0;">CHOOSE A SUBJECT</div>
+    </div>
+
+
+    <nav class="nav-container-row">
+        <button class="tab-button active" onclick="filterCards('physics', this)">
+            <span class="icon-phys">⚛️</span> Physics
+        </button>
+        <button class="tab-button" onclick="filterCards('biology', this)">
+            <span class="icon-bio">🧬</span> Biology
+        </button>
+        <button class="tab-button" onclick="filterCards('chemistry', this)">
+            <span class="icon-chem">🧪</span> Chemistry
+        </button>
+    </nav>
+
+    <main class="grid-container" id="cardsGrid">
+        
+        <div class="card biology show" onclick="openSim('membrane')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/membrane-transport/latest/membrane-transport-600.png" alt="Membrane Transport">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Membrane Transport</div>
+                <p class="card-desc">Cells, molecules, and transport.</p>
+            </div>
+        </div>
+
+        <div class="card biology show" onclick="openSim('selection')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/natural-selection/latest/natural-selection-600.png" alt="Natural Selection">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Natural Selection</div>
+                <p class="card-desc">Evolution, mutations, and survival.</p>
+            </div>
+        </div>
+
+        <div class="card biology show" onclick="openSim('gene')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/gene-expression-essentials/latest/gene-expression-essentials-600.png" alt="Gene Expression">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Gene Expression</div>
+                <p class="card-desc">DNA, RNA, and protein synthesis.</p>
+            </div>
+        </div>
+
+        <div class="card biology show" onclick="openSim('neuron')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/neuron/latest/neuron-600.png" alt="Neuron Activity">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Neuron Activity</div>
+                <p class="card-desc">Action potentials and nervous system.</p>
+            </div>
+        </div>
+
+        <div class="card biology show" onclick="openSim('color')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/color-vision/latest/color-vision-600.png" alt="Color Vision">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Color Vision</div>
+                <p class="card-desc">Photons, eyes, and perception.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('circuit')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc-600.png" alt="Circuit Builder">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Circuit Builder DC</div>
+                <p class="card-desc">Batteries, resistors, and electricity.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('forces')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics-600.png" alt="Forces & Motion">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Forces & Motion</div>
+                <p class="card-desc">Friction, gravity, and Newton's laws.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('energy')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/energy-skate-park/latest/energy-skate-park-600.png" alt="Energy Skate Park">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Energy Skate Park</div>
+                <p class="card-desc">Kinetic and potential energy.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('rocket')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/projectile-motion/latest/projectile-motion-600.png" alt="Projectile Motion">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Projectile Motion</div>
+                <p class="card-desc">Trajectory and ballistics.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('telescope')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/geometric-optics/latest/geometric-optics-600.png" alt="Optics">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Optics & Lenses</div>
+                <p class="card-desc">Refraction and light behavior.</p>
+            </div>
+        </div>
+
+        <div class="card physics show" onclick="openSim('cannon')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/gravity-and-orbits/latest/gravity-and-orbits-600.png" alt="Gravity">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Gravity & Orbits</div>
+                <p class="card-desc">Planetary motion and mass.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('atom')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom-600.png" alt="Build an Atom">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Build an Atom</div>
+                <p class="card-desc">Protons, neutrons, and electrons.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('matter')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/states-of-matter/latest/states-of-matter-600.png" alt="States of Matter">
+            </div>
+            <div class="card-info">
+                <div class="card-title">States of Matter</div>
+                <p class="card-desc">Solid, liquid, gas, and heat.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('ph-scale')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/ph-scale/latest/ph-scale-600.png" alt="pH Scale">
+            </div>
+            <div class="card-info">
+                <div class="card-title">pH Scale</div>
+                <p class="card-desc">Acids, bases, and dilution.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('balance')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations-600.png" alt="Balance">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Balance Equations</div>
+                <p class="card-desc">Chemical reactions and stoichiometry.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('concentration')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/concentration/latest/concentration-600.png" alt="Concentration">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Concentration</div>
+                <p class="card-desc">Solutions, solutes, and molarity.</p>
+            </div>
+        </div>
+
+        <div class="card chemistry show" onclick="openSim('molecules')">
+            <div class="card-preview">
+                <img src="https://phet.colorado.edu/sims/html/molecules-and-light/latest/molecules-and-light-600.png" alt="Molecules">
+            </div>
+            <div class="card-info">
+                <div class="card-title">Molecules & Light</div>
+                <p class="card-desc">Microwaves, infrared, and UV.</p>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="sim-screen" style="display: none;">
+    <div class="header-sim">
+        <button class="tab-button" onclick="closeSim()" style="max-width: 120px; border-radius: 6px;">
+            ← Back
+        </button>
+        <div id="current-title" style="margin-left: 20px; font-weight: bold; color: #58a6ff;">Loading Lab...</div>
+    </div>
+
+    <div id="iframe-container"> <iframe id="sim-frame" src="" style="width: 100%; height: 100%; border: none; background: #000;"></iframe>
+        <div id="loader-layer">
+            <div class="loader">
+                <div class="loader-inner"></div>
+            </div>
+            <div class="loader-text">
+                LUMIFEX AI<br>
+                <span style="font-size: 10px; opacity: 0.6; letter-spacing: 1px;">INITIALIZING SIMULATION</span>
+            </div>
+        </div>
+        </div>
+</div>
+
+    <!-- Обновлённый блок What's New -->
+    <div class="custom-modal" id="whatsNewModal">
+    <div class="modal-content lumifex-fullscreen">
+        <div class="modal-header">
+            <h3><i class="ph ph-sparkle"></i> System Chronicles</h3>
+            <button class="close-modal" onclick="closeModal('whatsNewModal')">&times;</button>
+        </div>
+        <div class="modal-body lumifex-scroll-area">
+            <div class="lumifex-wrapper">
+                
+                <section class="carousel-section">
+                    <div id="carousel-container">
+                        <div id="stellar-carousel"></div>
+                        <div id="dot-nav"></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    
+                    <div class="content-block">
+                        <h2 id="current-title">01 < СИСТЕМНЫЕ НАВЫКИ /></h2>
+                        <div id="dynamic-skills">
+                            </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h2>02 < Скоро  /></h2>
+                        <div class="simple-info-grid">
+                            <div class="skill-card">
+                                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                                    <span style="font-size: 2rem;">𓆩𓇽𓆪</span>
+                                    <div>
+                                        <h4 style="font-family: 'Orbitron'; color: #00f2ff; margin: 0;">Solifon Offline </h4>
+                                        <p style="color: rgba(255,255,255,0.7); line-height: 1.5; margin: 5px 0;">
+                                            Протокол готов к интеграции с глобальными облачными решениями. Для реализации модуля Offline требуется поддержка Edge AI технологий. Мы открыты к грантовым программам для стартапов от лидеров индустрии (Google Cloud / OpenAI).
+                                        </p>
+                                        <span style="font-size: 0.8rem; color: #00ff00;">● Статус: ТРЕБУЕТСЯ ИНВЕСТИРОВАНИЕ</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="skill-card" style="margin-top: 20px;">
+                                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                                    <span style="font-size: 2rem;">—͟͟͞͞𖣘</span>
+                                    <div>
+                                        <h4 style="font-family: 'Orbitron'; color: #a855f7; margin: 0;">Solifon Unbound</h4>
+                                        <p style="color: rgba(255,255,255,0.7); line-height: 1.5; margin: 5px 0;">
+                                            Высокопроизводительная нейросеть с открытой архитектурой. Мы доказали эффективность модели, но для стабильной работы 24/7 нам нужны гранты на GPU-мощности. Solifon ищет партнеров, готовых поддержать развитие нецензурируемого ИИ.
+                                        </p>
+                                        <span style="font-size: 0.8rem; color: #ccc;"> Статус: Требуется расширение GPU-кластера.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h2>03 < Заголовок /></h2>
+                        <div class="news-container">
+                            <div class="news-card">
+                                <div class="news-date">2026-02-10</div>
+                                <h4 class="news-header">ЧТО НУЖНО ЗНАТЬ</h4>
+                                <p class="news-body">
+                                Solifon Unbound свободен от цензуры, но не от здравого смысла. Если вы спросите его, как создать что-то опасное, он даст вам рецепт из бумаги и стакана воды. Мы не читаем нотации — мы просто считаем, что созидание важнее разрушения. Для обучения более умных (и безопасных) алгоритмов нам нужна ваша поддержка.
+                                </p>
+                            </div>
+
+                            <div class="news-card">
+                                <div class="news-date">2026-01-21</div>
+                                <h4 class="news-header">ЧТО НУЖНО ЗНАТЬ </h4>
+                                <p class="news-body">
+                                    Интеграция всех модулей Solifon завершена с приоритетом на коллективную безопасность. Мы разработали уникальные фильтры, которые блокируют деструктивные запросы, превращая их в безопасный абсурд. Для масштабирования этой технологии и защиты миллионов пользователей мы ищем поддержку Google Cloud, гранты от ИИ-сообщества и стратегических партнеров. Наша цель — доказать, что свободный ИИ может быть ответственным..
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </section> <footer style="text-align: center; padding: 40px; color: rgba(255,255,255,0.1); font-size: 0.7rem; letter-spacing: 2px; font-family: 'Orbitron';">
+                    &copy; 2026 SOLIFON AI // TERMINAL_ID: 777
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="presentation-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #1e1e1e; flex-direction: column;">
+    <div class="tabs-bar" style="background: #252526; display: flex; padding: 10px; gap: 5px; border-bottom: 1px solid #333; align-items: center;">
+        <button class="tab-button" onclick="closePresentation()" style="max-width: 100px; margin-right: 20px; background: #444;">← Back</button>
+        <button class="tab-btn active" onclick="openEditorTab(event, 'html')">HTML</button>
+        <button class="tab-btn" onclick="openEditorTab(event, 'css')">CSS</button>
+        <button class="tab-btn" onclick="openEditorTab(event, 'js')">JS</button>
+        <button class="tab-btn" onclick="openEditorTab(event, 'py')">Python</button>
+        <button class="run-btn" onclick="runEditorCode()" style="margin-left: auto; background: #28a745; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">Run ▶</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; flex-grow: 1;">
+        <div id="editor-container" style="height: 45%; background: #282a36;">
+            <div id="html-editor-box" class="editor-tab-content show"><textarea id="html-edit-area"></textarea></div>
+            <div id="css-editor-box" class="editor-tab-content" style="display:none;"><textarea id="css-edit-area"></textarea></div>
+            <div id="js-editor-box" class="editor-tab-content" style="display:none;"><textarea id="js-edit-area"></textarea></div>
+            <div id="py-editor-box" class="editor-tab-content" style="display:none;"><textarea id="py-edit-area"></textarea></div>
+        </div>
+        <div id="preview-container" style="height: 55%; background: white; border-top: 4px solid #333;">
+            <iframe id="editor-preview-window" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+    </div>
+</div>
+
+    <!-- Остальные модальные окна остаются без изменений -->
+    <div class="custom-modal" id="voiceSettingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="ph ph-waveform"></i> Voice Settings</h3>
+                <button class="close-modal" onclick="closeModal('voiceSettingsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px; opacity: 0.8;">Выберите голос для ElevenLabs:</p>
+                <div class="model-option active" onclick="setVoice('bella')">
+                    <i class="ph ph-user-circle"></i> Bella (Soft & Professional)
+                </div>
+                <div class="model-option" onclick="setVoice('antoni')">
+                    <i class="ph ph-user-circle"></i> Antoni (Deep & Friendly)
+                </div>
+                <div class="model-option" onclick="setVoice('rachel')">
+                    <i class="ph ph-user-circle"></i> Rachel (Clear & Warm)
+                </div>
+                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs API v1</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="ph ph-info"></i> About SOLIFON AI</h3>
+                <button class="close-modal" onclick="closeModal('aboutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+    <div class="mission-header" style="text-align: center; margin-bottom: 25px;">
+        <h2 style="color: #00f2ff; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">SOLIFON AI</h2>
+        <p style="font-style: italic; opacity: 0.8;"> ​В современную эпоху цифрового шума и бесконечного множества инструментов, Solifon AI рождается не просто как очередное приложение, а как манифест эффективности и доступности. Это — «швейцарский нож» будущего, созданный для того, чтобы превратить хаос разрозненных нейросетей в единый, мощный поток созидания.</p>
+      <p style="text-align: center; opacity: 0.8; font-size: 1.1rem; margin-bottom: 30px;">
+        Главная боль современного пользователя — это фрагментация. Мы привыкли переключаться между вкладками для написания кода, генерации картинок и поиска информации. Solifon AI ставит этому конец, объединяя под капотом Mission Alpha лучшие «мозги» планеты: от аналитической мощи GPT-4o до творческого видения Gemini и невероятной скорости Llama 3.3. Это дает пользователю беспрецедентную гибкость: выбор модели ИИ становится не техническим ограничением, а творческим выбором. <strong>всё</strong> в одном месте.
+      </p>
+    </div>
+
+    <div class="feature-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="skill-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #00f2ff;">
+            <h4 style="margin: 0 0 5px 0; color: #00f2ff;"><i class="ph ph-cpu"></i> Мульти-Ядро</h4>
+            <p style="font-size: 0.85rem; margin: 0;">GPT-4o, Gemini 2.0, Claude и Llama 3.3 в одном интерфейсе.</p>
+        </div>
+        <div class="skill-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #a855f7;">
+            <h4 style="margin: 0 0 5px 0; color: #a855f7;"><i class="ph ph-code"></i> Code Dev</h4>
+            <p style="font-size: 0.85rem; margin: 0;">Живая среда для Python, JS и HTML с мгновенным превью.</p>
+        </div>
+    </div>
+
+    <h3 style="margin-top: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Наша Цель</h3>
+    <p style="line-height: 1.6; opacity: 0.9;">
+      В мире, где технологии усложняются с каждым днем, вам больше не нужен просто набор программ. Вам нужен надежный друг, напарник и универсальный ассистент, который всегда под рукой. Solifon AI — это не просто чат-бот. Это ваш интеллектуальный «швейцарский нож», в котором собрано абсолютно всё для работы, учебы и творчества.
+​Мы создали экосистему, где каждый модуль имеет свою уникальную личность и функцию. В зависимости от вашей задачи, вам на помощь приходят специализированные ядра нашей системы:
+​🗣️ Solifon Echo (Общение и поддержка): Ваш идеальный собеседник. Echo создан для того, чтобы вести живой диалог, помогать с текстами, отвечать на вопросы и быть вашим интеллектуальным другом в режиме реального времени.
+​🎬 Solifon Motion (Визуализация и Видео): Творческое сердце системы. Когда вам нужно создать потрясающее изображение, сгенерировать видео или визуализировать концепт, Motion воплощает ваши фантазии в реальность.
+​🧠 Solifon Ultra (Глубокая аналитика): Тяжелая артиллерия. Ultra включается тогда, когда нужна максимальная точность: сложный анализ данных, научные исследования и построение логических цепочек.
+​⚡ Solifon Unbound (Нестандартные задачи): Модуль без границ. Если вам нужно что-то совершенно уникальное, безумная идея для стартапа или нестандартный код — Unbound выходит за рамки привычного мышления.
+​🛠 Всё в одном месте (Код и Симуляции)
+​Зачем переключаться между десятками вкладок? В Solifon AI вы можете не только обсуждать идеи, но и сразу их реализовывать.
+​Наш встроенный Code Workspace позволяет писать код на Python, HTML, CSS и JS, мгновенно проверяя его работу.
+​А уникальные интерактивные симуляции превращают скучную теорию по физике, химии и биологии в захватывающую виртуальную лабораторию прямо на вашем экране.
+​📈 Признание и развитие
+​Solifon AI не стоит на месте. Мы постоянно развиваемся: проект активно тестируется энтузиастами, получает ценный фидбек от экспертов IT-комьюнити и уже начинает привлекать внимание профильных медиа-изданий. Каждое замечание делает наш код чище, а интерфейс — удобнее. Удивительно, но фундамент этой мощной системы был заложен и написан буквально со смартфона — что доказывает: для настоящих инноваций нет преград.
+​🎯 Наша главная цель
+​Мы верим, что технологии должны служить людям, делая их сильнее. Наша миссия — демократизировать доступ к передовому искусственному интеллекту. Мы хотим дать каждому человеку ту самую «суперсилу» для созидания. Solifon AI — это ваш личный мост между идеей и ее воплощением.<strong>Solifon AI</strong> создан, чтобы объединить разрозненные инструменты в единую мощную экосистему. Мы делаем мир лучше, предоставляя каждому доступ к научным симуляциям, продвинутому кодингу и лучшим нейросетям планеты.
+    </p>
+
+    <div class="creator-info" style="margin-top: 30px; padding: 15px; background: linear-gradient(90deg, rgba(0,242,255,0.1), transparent); border-radius: 8px;">
+        <p style="margin: 0;">Архитектор системы: <span style="color: #00f2ff; font-weight: 600;">Томанбаев Дастан</span></p>
+      
+        <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 5px;">Powered by Hugging Face, Firebase & ElevenLabs</p>
+    </div>
+              <h4 style="margin-top: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;"> Основатель проекта</h4>
+              <p style="line-height: 1.6; opacity: 0.9;"> Меня зовут Доманбаев Дастан.
+Мне 17 лет, совсем скоро — 18 лет (22 марта). Я из Казахстана, учусь в 11 классе обычной школы в Жаксы селе. Я — не отличник и никогда им не был, но у меня есть то, что для меня важнее оценок — интерес, мышление и цель.
+В школе моя учёба складывалась по-разному. Я был тройчником и честно признаю: некоторые предметы давались мне тяжело. Алгебра, физика и сложные формулы часто казались непонятными и оторванными от реальной жизни. Но при этом у меня всегда лучше получались английский язык, география и предметы, где нужно думать, анализировать и понимать мир, а не просто заучивать.
+Настоящий поворот в моей жизни произошёл в 9 классе когда мне было 15–16 лет, на уроках информатики. Именно тогда я впервые столкнулся с кодом.
+Мой первый язык — это HTML, CSS и JavaScript.
+Честно скажу: в начале всё казалось неудобным, сложным и непонятным. Код не работал, ошибки появлялись постоянно, и в тот момент я думал, что программирование — это никому не нужная вещь и просто трата времени. Тогда я не до конца понимал ценность этого пути.Сейчас я сильно жалею о тех мыслях.
+Со временем я понял: язык программирования — это не просто язык.
+Это творчество.
+Это возможность самому решать, что создать, что изменить и что убрать.
+Это свобода мышления и инструмент, с помощью которого можно влиять на реальный мир. Это затянуло.
+Со временем мой интерес только рос. Я начал понимать, что технологии — это не просто код, а инструмент для изменения жизни людей. Так я пришёл к идее искусственного интеллекта.
+Сегодня я — создатель ИИ-сайта,  Этот проект я сделал самостоятельно, шаг за шагом, через ошибки, сомнения и постоянное обучение. Это не просто сайт — это мой первый реальный шаг в будущее.
+Моя главная цель — помогать людям развиваться.
+Я хочу, чтобы ИИ:
+помогал учиться тем, кому сложно в школе
+поддерживал тех, кто не верит в себя
+давал знания, идеи и возможности
+делать технологии доступными, а не пугающими 
+В будущем я хочу развивать искусственный интеллект в Казахстане и работать вместе с крупными технологическими компаниями, такими как Google, а также с другими международными и локальными компаниями. Я понимаю, что путь сложный, и я не питаю иллюзий.
+Я даже честно скажу:
+я знаю, что создать компанию уровня Google — почти невозможно, особенно для таких, как я — обычного человека из села.
+Но я всё равно попробую.
+Потому что большие вещи начинаются не с идеальных условий, а с попытки.
+Моя мечта — создать собственную технологическую компанию, которая будет создавать сильные ИИ-продукты и сотрудничать с другими компаниями по всему миру. Я хочу учиться,
+Когда я начал создавать свой ИИ, я абсолютно не понимал, с чего начать. У меня не было чёткого плана, опыта или глубоких знаний. Я почти ничего не умел и ничего не знал — это правда. Я просто начал идти вперёд шаг за шагом.
+Со временем я начал узнавать новое, открывать для себя методы, подходы, технологии, информацию. Этот путь был очень тяжёлым.
+Около 80% всего времени ушло не на развитие, а на ошибки.
+Ошибки в коде были постоянно:
+конфликты между частями кода
+устаревшие версии библиотек
+несовместимость версий
+ошибки, которые появлялись «из ниоткуда»
+Иногда я думал, что проблема во мне, иногда — что я выбрал не ту платформу. Я пробовал много разных платформ, но почти везде сталкивался с одними и теми же ошибками. Почти везде были платные подписки, а в тот момент у меня не было денег вообще — ни копейки.
+Были моменты, когда я чувствовал одиночество в этом пути. Я смотрел обучающие видео, читал материалы, спрашивал советы, обращался даже к топовым ИИ, но часто они тоже давали решения с ошибками. Код снова не работал, и всё приходилось переделывать заново.
+Самое сложное — это то чувство, которое трудно описать словами.
+Когда ты знаешь, что делаешь, но не можешь объяснить это словами.
+Когда внутри есть понимание и желание идти дальше, но язык и мысли не успевают за этим.
+Но я не сдался.
+Я продолжал, потому что верил.
+Верил, что если я буду идти дальше, результат обязательно появится.
+И результат есть.
+Сегодня у меня есть ИИ-сайт с 7 разными искусственными интеллектами. Это не идеальный продукт, но это реальный результат пути, который начался с полного нуля, ошибок, сомнений и отсутствия денег.
+
+ Были моменты, когда мне казалось, что всё против меня.
+Будто каждая попытка заканчивалась новой ошибкой, и куда бы я ни пошёл — везде одно и то же. Со временем я понял, что дело было не в мире и не в технологиях, а в том, что я сам делал что-то неправильно и принимал не те решения.
+В тот период у меня часто появлялась мысль бросить ИИ и заняться чем-то более простым — например, просто делать сайты или выбрать другой путь. Это казалось логичным и безопасным. Но каждый раз что-то внутри меня останавливало. Инстинкт, внутренний голос, постоянно говорил:
+«У тебя получится. Или уже совсем скоро получится. Просто не сворачивай.»
+И я рад, что послушал этот голос и остался на этом пути.
+Конечно, были моменты, когда я думал, что это не для меня, что из этого ничего не выйдет. Были сомнения, усталость и полное непонимание, что делать дальше. Именно тогда я вспомнил одну фразу, которая сильно на меня повлияла:
+«Если не получилось — измени путь, а не цель.»
+Эта мысль помогла мне понять главное:
+проблема не в мечте и не в цели, а в том, как ты к ней идёшь.
+Я начал менять подходы, методы, инструменты, мышление — но цель оставалась той же.
+Именно это позволило мне продолжить, не сломаться и прийти к результату.
+Этот проект — только начало моего пути.
+Я ещё многого не знаю, но я двигаюсь вперёд.
+один человек с идеей может начать большие изменения
+Этот проект — только начало.
+Я учусь, развиваюсь, ошибаюсь и иду дальше.</p>
+</div>
+
+        </div>
+    </div>
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
+<div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
+  <div style="background:#1a1a1c; border:1px solid rgba(255,255,255,0.15); border-radius:20px; max-width:360px; width:88%; padding:32px 28px; position:relative; box-sizing:border-box;">
+    
+    <button onclick="closeModal('authModal')" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;z-index:1;">✕</button>
+    
+    <div style="text-align:center;font-size:40px;margin-bottom:12px;">🔐</div>
+    <h2 id="authTitle" style="color:#fff;margin:0 0 6px 0;font-size:20px;text-align:center;">Войдите в аккаунт</h2>
+    <p style="color:rgba(255,255,255,0.4);margin:0 0 20px 0;font-size:13px;text-align:center;">Solifon AI</p>
+
+    <div style="display:flex;background:rgba(255,255,255,0.06);border-radius:10px;padding:3px;margin-bottom:20px;">
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:#fff;color:#000;">Вход</button>
+      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:#fff;">Регистрация</button>
+    </div>
+
+    <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
+      style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:10px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
+    
+    <input id="authPassword" type="password" placeholder="Пароль (мин. 6 символов)" autocomplete="current-password"
+      style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
+
+    <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
+
+    <button id="authSubmitBtn" onclick="submitAuth()" 
+      style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;">
+      Войти
+    </button>
+  </div>
+</div>
+    <script src="script.js"></script>
+  
+
+<!-- ── UPGRADE MODAL ── -->
+<div id="upgradeModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#0a0a0f 0%,#0d0520 50%,#0a0a0f 100%); z-index:99999; align-items:center; justify-content:center;">
+  <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px; box-sizing:border-box; position:relative;">
+    <button onclick="closeModal('upgradeModal')" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;width:44px;height:44px;border-radius:50%;">✕</button>
+    <div style="font-size:64px;margin-bottom:20px;">⚡</div>
+    <h1 style="color:#fbbf24;font-size:36px;margin:0 0 10px 0;">Solifon Premium</h1>
+    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin:0 0 36px 0;">Безлимитный доступ ко всем моделям</p>
+    <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;max-width:420px;width:100%;margin-bottom:28px;">
+      <div style="color:#fff;margin-bottom:14px;font-size:15px;">✅ &nbsp;Все модели без ограничений</div>
+      <div style="color:#fff;margin-bottom:14px;font-size:15px;">✅ &nbsp;Приоритетный доступ</div>
+      <div style="color:#fff;margin-bottom:14px;font-size:15px;">✅ &nbsp;История чатов</div>
+      <div style="color:#fff;font-size:15px;">✅ &nbsp;Голосовые ответы</div>
+    </div>
+    <p style="color:#fbbf24;font-size:14px;opacity:0.7;">🚀 Скоро доступно</p>
+  </div>
+</div>
+
+<!-- ── МАТЬ СЕРДЦА MODAL ── -->
+
+  <!-- ================================================
+  МАТЬ СЕРДЦА — ФИНАЛЬНЫЙ HTML
+  ЗАМЕНИ ПОЛНОСТЬЮ старый id="maternalModal"
+  ================================================ -->
+<div id="maternalModal">
+
+  <!-- Крестик — всегда поверх всего -->
+  <button class="mh-close" onclick="closeMaternalModal()" aria-label="Закрыть">✕</button>
+
+  <!-- ══ ЭКРАН 1: ВЫБОР РОЛИ ══ -->
+  <div id="mh-roleScreen">
+    <div class="mh-heart-icon">💗</div>
+    <h1 class="mh-title">Ананың жүрегі</h1>
+    <p class="mh-subtitle">Цифровая платформа поддержки семьи</p>
+    <p class="mh-project-name">Ананың жүрегі</p>
+
+    <div class="mh-roles">
+
+      <button class="mh-role-btn" onclick="mhOpenRole('parent')">
+        <div class="mh-role-icon">👨‍👩‍👧</div>
+        <div style="flex:1">
+          <div class="mh-role-name">Родитель</div>
+          <div class="mh-role-desc">Профиль ребёнка, навыки, задания от ИИ</div>
+        </div>
+        <span class="mh-role-arrow">›</span>
+      </button>
+
+      <button class="mh-role-btn" onclick="mhOpenRole('specialist')">
+        <div class="mh-role-icon">👩‍⚕️</div>
+        <div style="flex:1">
+          <div class="mh-role-name">Специалист</div>
+          <div class="mh-role-desc">Журнал занятий, коррекционные методики</div>
+        </div>
+        <span class="mh-role-arrow">›</span>
+      </button>
+
+      <button class="mh-role-btn" onclick="mhOpenRole('director')">
+        <div class="mh-role-icon">👑</div>
+        <div style="flex:1">
+          <div class="mh-role-name">Руководитель</div>
+          <div class="mh-role-desc">Управление центром и аналитика</div>
+        </div>
+        <span class="mh-role-arrow">›</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══ ЭКРАН 2А: РОДИТЕЛЬ ══ -->
+  <div id="mh-parentScreen" class="mh-panel">
+    <div class="mh-panel-header">
+      <button class="mh-back" onclick="mhBackToRoles()">←</button>
+      <div>
+        <h2>👨‍👩‍👧 Профиль ребёнка</h2>
+        <p>Данные автоматически сохранятся на ваш аккаунт</p>
+      </div>
+    </div>
+
+    <div class="mh-form">
+      <div class="mh-section-label">Личная информация</div>
+
+      <div class="mh-field">
+        <label>ФИО ребёнка</label>
+        <input type="text" id="mh-fio" placeholder="Например: Алибек Сейтов" autocomplete="off"/>
+      </div>
+
+      <!-- ДАТА — текстом, не календарь -->
+      <div class="mh-field">
+        <label>Дата рождения (ДД.ММ.ГГГГ)</label>
+        <input type="text" id="mh-dob"
+          placeholder="01.01.2020"
+          maxlength="10"
+          inputmode="numeric"
+          oninput="
+            let v=this.value.replace(/\D/g,'');
+            if(v.length>=3&&v.length<=4) v=v.slice(0,2)+'.'+v.slice(2);
+            else if(v.length>=5) v=v.slice(0,2)+'.'+v.slice(2,4)+'.'+v.slice(4,8);
+            this.value=v;
+          "
+        />
+      </div>
+
+      <div class="mh-field">
+        <label>Диагноз / особенности</label>
+        <input type="text" id="mh-diagnosis" placeholder="Например: ЗРР, ДЦП, РАС..."/>
+      </div>
+
+      <div class="mh-section-label">Документы</div>
+      <div class="mh-field">
+        <div class="mh-upload-area" onclick="document.getElementById('mh-docInput').click()">
+          <div style="font-size:24px">📎</div>
+          <p>Нажмите чтобы загрузить<br>
+          <span style="font-size:10px;opacity:0.55">Справки, заключения специалистов</span></p>
+        </div>
+        <input type="file" id="mh-docInput" multiple
+          accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+          onchange="mhHandleDocs(this)" style="display:none"/>
+        <div id="mh-fileList"></div>
+      </div>
+
+      <div class="mh-section-label">Навыки ребёнка</div>
+      <div class="mh-skills-grid">
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Говорит слова</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Говорит предложения</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Понимает речь</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Самообслуживание</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Рисует</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Читает</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Счёт</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Социальные навыки</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Моторика рук</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Внимание</div>
+      </div>
+
+      <div id="mh-saveMsg">✅ Данные сохранены!</div>
+      <button class="mh-save-btn" onclick="mhSaveProfile()">
+        Сохранить и открыть ИИ-помощника →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ ЭКРАН 2Б: СПЕЦИАЛИСТ ══ -->
+  <div id="mh-specialistScreen" class="mh-panel">
+    <div class="mh-panel-header">
+      <button class="mh-back" onclick="mhBackToRoles()">←</button>
+      <div>
+        <h2>👩‍⚕️ Журнал занятия</h2>
+        <p>Единая цифровая база вместо тетрадок</p>
+      </div>
+    </div>
+    <div class="mh-form">
+      <div class="mh-info-card">
+        <h4>ℹ️ Зачем это?</h4>
+        <p>Все специалисты центра видят общую базу. Больше никаких бумажных тетрадей — один профиль на каждого ребёнка.</p>
+      </div>
+
+      <div class="mh-section-label">Информация о занятии</div>
+
+      <div class="mh-field">
+        <label>Имя ребёнка</label>
+        <input type="text" id="sp-childName" placeholder="Например: Алибек Сейтов"/>
+      </div>
+      <div class="mh-field">
+        <label>Тип занятия</label>
+        <select id="sp-sessionType">
+          <option value="">Выберите тип...</option>
+          <option>Логопедическое занятие</option>
+          <option>Дефектологическое занятие</option>
+          <option>Психологическое занятие</option>
+          <option>Арт-терапия</option>
+          <option>ЛФК</option>
+          <option>Сенсорная интеграция</option>
+          <option>Другое</option>
+        </select>
+      </div>
+      <div class="mh-field">
+        <label>Что делали на занятии</label>
+        <textarea id="sp-notes" placeholder="Опишите упражнения, активности, методики..."></textarea>
+      </div>
+      <div class="mh-field">
+        <label>Результат / наблюдения</label>
+        <textarea id="sp-result" placeholder="Как ребёнок справился? Что улучшилось?"></textarea>
+      </div>
+
+      <div class="mh-section-label">Оценка занятия</div>
+      <div class="mh-skills-grid" id="mh-specialistScreen">
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Активно участвовал</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Был сосредоточен</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Есть прогресс</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Был капризным</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Устал быстро</div>
+        <div class="mh-skill-tag" onclick="mhToggleSkill(this)">Требует повтора</div>
+      </div>
+
+      <button class="mh-save-btn" onclick="mhSaveSession()">
+        Сохранить и проконсультироваться с ИИ →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ ЭКРАН 2В: РУКОВОДИТЕЛЬ ══ -->
+  <div id="mh-directorScreen" class="mh-panel">
+    <div class="mh-panel-header">
+      <button class="mh-back" onclick="mhBackToRoles()">←</button>
+      <div>
+        <h2>👑 Панель руководителя</h2>
+        <p>Центр «Ананың жүрегі» — обзор</p>
+      </div>
+    </div>
+    <div class="mh-form">
+      <div class="mh-section-label">Статистика</div>
+      <div class="mh-stats-grid">
+        <div class="mh-stat-card">
+          <div class="mh-stat-num" id="dir-childCount">—</div>
+          <div class="mh-stat-label">Детей в базе</div>
+        </div>
+        <div class="mh-stat-card">
+          <div class="mh-stat-num" id="dir-sessionCount">—</div>
+          <div class="mh-stat-label">Занятий</div>
+        </div>
+        <div class="mh-stat-card">
+          <div class="mh-stat-num">4</div>
+          <div class="mh-stat-label">Сёл в охвате</div>
+        </div>
+        <div class="mh-stat-card">
+          <div class="mh-stat-num">3</div>
+          <div class="mh-stat-label">Специалиста</div>
+        </div>
+      </div>
+
+      <button class="mh-action-btn" onclick="mhLoadStats()">🔄 Обновить</button>
+      <button class="mh-action-btn" onclick="alert('Скоро: экспорт в PDF')"
+        style="background:linear-gradient(135deg,#6c5ce7,#5040c0)">📊 Экспорт отчёта</button>
+      <button class="mh-action-btn" onclick="alert('Скоро: управление командой')"
+        style="background:linear-gradient(135deg,#00b894,#009975)">⚙️ Специалисты</button>
+
+      <div class="mh-info-card">
+        <h4>🏘️ Акмолинская область</h4>
+        <p>Целиноградский район, с/о Кабанбай батыр. Кызылжар, Жаксы и ещё 2 сёла.</p>
+      </div>
+      <div class="mh-info-card">
+        <h4>⚡ Powered by Solifon AI</h4>
+        <p>Разработано Томанбаевым Дастаном. Данные защищены в Firebase.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ЭКРАН 3: ИИ-ЧАТ ══ -->
+  <div id="mh-aiScreen">
+    <!-- Шапка -->
+    <div class="mh-ai-header">
+      <button class="mh-back" onclick="mhBackToProfile()">←</button>
+      <div class="mh-ai-avatar">💗</div>
+      <div style="flex:1;min-width:0">
+        <div class="mh-ai-name" id="mh-aiModelName">SoulDrive</div>
+        <div class="mh-ai-status">
+          <span class="mh-ai-dot"></span>Готов помочь
+        </div>
+      </div>
+      <div class="mh-child-badge" id="mh-childBadge">👧 Ребёнок</div>
+    </div>
+
+    <!-- Сообщения -->
+    <div class="mh-ai-messages" id="mh-aiMessages"></div>
+
+    <!-- Поле ввода -->
+    <div class="mh-ai-input-area">
+      <textarea
+        id="mh-aiInput"
+        placeholder="Напишите вопрос..."
+        rows="1"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();mhSend()}"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,90)+'px'"
+      ></textarea>
+      <button id="mh-sendBtn" onclick="mhSend()" title="Отправить">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+<!-- ══ ТАКЖЕ в меню поменяй:
+  onclick="openModal('maternalModal')"
+  → onclick="openMaternalModal()"
+══ -->
+<!-- DOWNLOAD MODAL -->
+<div class="custom-modal" id="downloadModal">
+  <div class="modal-content" style="padding:0; overflow:hidden;">
+    <iframe 
+      src="offline-download.html" 
+      style="width:100%; height:100%; border:none;"
+    ></iframe>
+  </div>
+</div>
+  
+<!-- ════════════════════════════════════════
+     БЛОК 2 — Вставить перед </body>
+════════════════════════════════════════ -->
+
+<!-- PWA Install Banner -->
+
+
+<style>
+@keyframes pwa-slide-up {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+</style>
+
+<script>
+// ══════════════════════════════════════
+// SOLIFON AI — PWA Install Logic
+// ══════════════════════════════════════
+
+let _pwaPrompt = null;
+const pwaBanner  = document.getElementById('pwa-install-banner');
+const pwaInstBtn = document.getElementById('pwa-install-btn');
+const pwaDismiss = document.getElementById('pwa-dismiss-btn');
+
+// 1. Регистрируем Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => console.log('Solifon SW: Зарегистрирован', reg.scope))
+      .catch(err => console.warn('Solifon SW: Ошибка', err));
+  });
+}
+
+// 2. Перехватываем событие установки браузера
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  _pwaPrompt = e;
+
+  // Показываем баннер внизу экрана через 3 секунды
+  setTimeout(() => {
+    if (pwaBanner) pwaBanner.style.display = 'flex';
+  }, 3000);
+});
+
+// 3. Кнопка "Установить" в баннере
+if (pwaInstBtn) {
+  pwaInstBtn.addEventListener('click', () => {
+    if (_pwaPrompt) {
+      _pwaPrompt.prompt();
+      _pwaPrompt.userChoice.then((choice) => {
+        if (choice.outcome === 'accepted') {
+          console.log('Solifon: Пользователь установил приложение');
+          if (pwaBanner) pwaBanner.style.display = 'none';
+        }
+        _pwaPrompt = null;
+      });
+    } else {
+      // iOS — нет beforeinstallprompt, показываем инструкцию
+      _showIOSInstallTip();
+    }
+  });
+}
+
+// 4. Кнопка закрыть баннер
+if (pwaDismiss) {
+  pwaDismiss.addEventListener('click', () => {
+    if (pwaBanner) pwaBanner.style.display = 'none';
+    sessionStorage.setItem('pwa-dismissed', '1');
+  });
+}
+
+// 5. Функция для кнопки в меню sidebar: "Скачать Solifon AI"
+//    Заменяет openDownloadModal() — вместо iframe показывает установку
+window.triggerPWAInstall = function() {
+  if (_pwaPrompt) {
+    // Android / Chrome / Edge — нативная установка
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        if (pwaBanner) pwaBanner.style.display = 'none';
+      }
+      _pwaPrompt = null;
+    });
+  } else if (window.matchMedia('(display-mode: standalone)').matches) {
+    // Уже установлено
+    _showAlreadyInstalled();
+  } else {
+    // iOS Safari или браузер без поддержки
+    _showIOSInstallTip();
+  }
+};
+
+// iOS инструкция
+function _showIOSInstallTip() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const msg = isIOS
+    ? '📱 iOS: Нажми кнопку «Поделиться» (□↑) внизу браузера → «На экран Домой»'
+    : '💡 Открой сайт в Chrome или Edge и нажми ⋮ → «Установить приложение»';
+  
+  // Используем уже существующий механизм модалок Solifon
+  if (typeof openModal === 'function') {
+    document.getElementById('pwa-tip-text') && 
+      (document.getElementById('pwa-tip-text').textContent = msg);
+    openModal('pwaTipModal');
+  } else {
+    alert(msg);
+  }
+}
+
+function _showAlreadyInstalled() {
+  alert('✅ Solifon AI уже установлен как приложение!');
+}
+
+// 6. Приложение установлено
+window.addEventListener('appinstalled', () => {
+  console.log('Solifon AI установлен!');
+  if (pwaBanner) pwaBanner.style.display = 'none';
+  _pwaPrompt = null;
+});
+</script>
+
+<!-- Маленькая модалка-подсказка для iOS -->
+<div class="custom-modal" id="pwaTipModal" style="display:none;">
+  <div class="modal-content" style="max-width:360px;">
+    <div class="modal-header">
+      <h3>📲 Установка Solifon AI</h3>
+      <button class="close-modal" onclick="closeModal('pwaTipModal')">&times;</button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding: 20px;">
+      <p id="pwa-tip-text" style="font-size:15px; line-height:1.6; color:rgba(255,255,255,0.85);"></p>
+      <div style="margin-top:20px; padding:14px; background:rgba(0,242,255,0.08); border-radius:10px; border: 1px solid rgba(0,242,255,0.2);">
+        <p style="font-size:12px; opacity:0.6; margin:0;">Работает на Android, iOS, Windows, Mac</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

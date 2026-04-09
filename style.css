@@ -1,0 +1,3554 @@
+:root {
+    --bg: #0d0d0e; 
+    --sidebar-bg: #0f0f11;
+    --blue-glow: #0044ff; 
+    --cyan-glow: #00d4ff; /* Светло-серый/серебристый */
+    --border: rgba(255, 255, 255, 0.08);
+    --glass: rgba(255, 255, 255, 0.03);
+    --sidebar-w: 280px;
+}
+
+/* === БАЗОВЫЕ ИСПРАВЛЕНИЯ === */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; 
+}
+
+body { 
+    background: var(--bg); 
+    color: #fff; 
+    /* Используем dvh для исключения белых полос и прыжков высоты */
+    height: 100dvh; 
+    width: 100%;
+    overflow: hidden; 
+    position: fixed; /* Фикс для iOS, чтобы не дергался экран */
+}
+
+.app-layout { 
+    display: flex; 
+    width: 100%; 
+    height: 100dvh; 
+    position: relative; 
+}
+
+/* === ЛОГОТИП === */
+.white-square-icon {
+    width: 16px; height: 16px; background: #fff; border-radius: 4px;
+    box-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.3);
+}
+
+.sidebar { 
+    position: fixed; 
+    top: 0; 
+    left: -280px; /* Исходное положение за экраном */
+    height: 100dvh; /* Динамическая высота для мобильных */
+    width: var(--sidebar-w);
+    background: var(--sidebar-bg);
+    z-index: 1000;
+    
+    /* === ГЛАВНОЕ: ЛОГИКА ЛИФТА === */
+    overflow-y: auto; /* Разрешаем скролл внутри */
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    
+    /* Плавность */
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    -webkit-overflow-scrolling: touch; /* Мягкий скролл на iPhone */
+}
+
+
+.sidebar-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+    z-index: 1;
+}
+
+.library-panel {
+    position: absolute;
+    top: 0;
+    left: 100%; 
+    width: 100%;
+    height: 100%;
+    background: var(--sidebar-bg);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+}
+
+.sidebar.library-active .library-panel { transform: translateX(-100%); }
+/* 1. Убираем общее скрытие контента */
+.sidebar.library-active .sidebar-content,
+.sidebar.chat-active .sidebar-content {
+    opacity: 1; /* Контейнер всегда видим */
+    transform: none;
+}
+
+/* 2. Скрываем только внутренности, кроме логотипа */
+.sidebar.chat-active .new-chat-btn,
+.sidebar.chat-active .menu,
+.sidebar.chat-active .upgrade-card,
+.sidebar.library-active .new-chat-btn,
+.sidebar.library-active .menu,
+.sidebar.library-active .upgrade-card {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-15px);
+    transition: 0.3s ease;
+}
+
+/* 3. Фиксируем логотип сверху */
+.sidebar .logo {
+    position: relative;
+    z-index: 1001; /* Выше чем панели */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 4. Панели должны быть под логотипом, но над меню */
+.library-panel, .chat-panel {
+    z-index: 1000; 
+    /* остальной твой код для панелей... */
+}
+
+
+.nav-toggle:checked ~ .app-layout .sidebar { transform: translateX(var(--sidebar-w)); }
+.nav-toggle:checked ~ .app-layout .main-content { transform: translateX(var(--sidebar-w)); }
+
+.logo { display: flex; align-items: center; gap: 12px; margin-bottom: 35px; font-weight: 600; font-size: 1.1rem; }
+
+.new-chat-btn { 
+    width: 100%; padding: 14px; background: var(--glass); border: 1px solid var(--border); 
+    color: #fff; border-radius: 12px; margin-bottom: 25px; display: flex; 
+    align-items: center; gap: 10px; cursor: pointer; transition: 0.2s;
+}
+.new-chat-btn:hover { background: rgba(255,255,255,0.1); }
+
+.menu-section-title { font-size: 0.75rem; color: #555; margin: 20px 0 10px 12px; font-weight: 500; }
+
+.menu { display: flex; flex-direction: column; gap: 2px; }
+
+.menu-item { 
+    padding: 12px; border-radius: 10px; color: #888; display: flex; 
+    align-items: center; gap: 12px; margin-bottom: 5px; cursor: pointer; transition: 0.2s;
+}
+.menu-item:hover { background: var(--glass); color: #fff; }
+.menu-item.active { background: var(--glass); color: #fff; border: 1px solid rgba(255,255,255,0.05); }
+
+.library-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+
+.back-btn { background: var(--glass); border: none; color: #fff; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+.library-body { flex: 1; overflow-y: auto; }
+
+.empty-library { text-align: center; margin-top: 50px; color: #555; }
+.empty-library i { font-size: 3rem; margin-bottom: 15px; display: block; }
+
+.upgrade-card { margin-top: auto; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px; text-align: center; }
+.upgrade-card p { font-size: 0.85rem; margin: 10px 0; color: #aaa; }
+.upgrade-icon { width: 32px; height: 32px; background: var(--glass); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #ffd700; }
+.upgrade-btn { width: 100%; padding: 8px; border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #fff; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.3s; }
+.upgrade-btn:hover { background: #fff; color: #000; }
+
+/* === ОСНОВНОЙ КОНТЕНТ === */
+.main-content { flex: 1; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; min-height: 0; overflow: hidden; }
+.app-header { height: 80px; display: flex; align-items: center; padding: 0 20px; z-index: 10; }
+.top-controls-pill { display: flex; align-items: center; gap: 8px; background: rgba(18, 18, 20, 0.7); backdrop-filter: blur(20px); border: 1px solid var(--border); padding: 6px; border-radius: 18px; }
+
+.icon-btn, .btn-clear { background: transparent; border: none; color: #aaa; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; transition: 0.2s; }
+.icon-btn:hover, .btn-clear:hover { background: var(--glass); color: #fff; }
+
+.model-selector-container { position: relative; }
+.custom-select { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 0 15px; height: 42px; min-width: 160px; display: flex; align-items: center; cursor: pointer; }
+.select-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.85rem; gap: 8px; font-weight: 500; }
+
+/* === ЧАТ И ЗВЕЗДА === */
+.chat-wrapper { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; position: relative; min-height: 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.welcome-screen { margin: auto; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+.star-animation-container { width: 400px; height: 400px; margin-bottom: 30px; }
+.star-animation-container svg { width: 100%; height: 100%; }
+
+.welcome-screen h1 { font-size: 2.5rem; font-weight: 500; letter-spacing: 3px; color: #fff; }
+
+#messagesContainer { display: flex !important; flex-direction: column !important; width: 100% !important; gap: 12px !important; padding: 20px; }
+
+.user-message { align-self: flex-end !important; background: rgba(255, 255, 255, 0.1) !important; border: 1px solid var(--border); padding: 12px 16px; border-radius: 15px 15px 2px 15px !important; margin-left: 20% !important; animation: fadeIn 0.3s ease-out; }
+.ai-message { align-self: flex-start !important; background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--border); padding: 12px 16px; border-radius: 15px 15px 15px 2px !important; margin-right: 20% !important; animation: fadeIn 0.3s ease-out; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === ПОЛЕ ВВОДА === */
+.input-area { width: 100%; max-width: 850px; margin: 0 auto; padding: 20px; }
+.input-main-wrapper { position: relative; padding: 1.5px; border-radius: 26px; overflow: hidden; background: #111; }
+
+/* РАМКА ВВОДА: ПЕРЕКЛЮЧЕНИЕ ЦВЕТА */
+.input-main-wrapper::before { 
+    content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; 
+    background: conic-gradient(var(--blue-glow), var(--cyan-glow), transparent 60%); 
+    animation: rotate 6s linear infinite; 
+}
+.deep-mode .input-main-wrapper::before {
+    background: conic-gradient(#ff0000, #000000, transparent 60%) !important;
+}
+
+.input-glass-container { position: relative; z-index: 2; background: #0c0c0e; border-radius: 25px; padding: 16px; }
+
+.input-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.input-top input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 1rem; }
+.sparkle-icon { color: var(--cyan-glow); font-size: 1.2rem; }
+
+.input-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
+
+.input-tools { display: flex; gap: 12px; }
+.tool-btn { display: flex; align-items: center; gap: 5px; background: rgba(255, 255, 255, 0.05); border: none; padding: 6px 10px; border-radius: 8px; color: #a0a0a0; font-size: 12px; cursor: pointer; transition: 0.3s; }
+.tool-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+.input-actions-right { display: flex; align-items: center; gap: 14px !important; }
+
+/* Диктофон */
+.mic-wrapper { position: relative; width: 50px !important; height: 50px !important; border-radius: 50%; overflow: hidden; padding: 1.2px; }
+.mic-wrapper::before { 
+    content: ''; position: absolute; width: 200%; height: 200%; top: -50%; left: -50%; 
+    background: conic-gradient(var(--blue-glow), var(--cyan-glow), transparent 60%); 
+    animation: rotate 4s linear infinite; 
+}
+.deep-mode .mic-wrapper::before {
+    background: conic-gradient(#ff0000, #000000, transparent 60%) !important;
+}
+
+.mic-btn { position: relative; z-index: 2; background: #161618; border: none; color: #fff; width: 100% !important; height: 100% !important; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+.mic-btn i { font-size: 1.5rem !important; }
+
+.mic-btn.recording { color: #ff4b4b !important; background: rgba(255, 75, 75, 0.1) !important; box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: pulse-red 1.5s infinite; }
+
+/* === КНОПКА ОТПРАВКИ (SEND) - ДЛИННАЯ 200px === */
+.send-btn-wrapper { 
+    position: relative; 
+    width: 200px; 
+    height: 48px; 
+    border-radius: 18px; 
+    overflow: hidden; 
+    padding: 3px; 
+    background: #0044ff; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: 0.3s ease;
+}
+
+.send-btn-wrapper::before { 
+    content: ''; position: absolute; width: 250%; height: 250%; 
+    background: conic-gradient(#0044ff, #00d4ff, transparent 30%, #0044ff, #00d4ff, transparent 70%); 
+    animation: rotate 2.5s linear infinite; 
+}
+
+.send-btn-main { 
+    position: relative; z-index: 2; width: 100%; height: 100%; border: none; border-radius: 15px; 
+    color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; 
+    font-weight: 700; cursor: pointer; background: linear-gradient(180deg, #1e1e20 0%, #0c0c0e 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.1); transition: 0.2s;
+    text-transform: uppercase; letter-spacing: 1px;
+}
+
+.send-btn-main:active { transform: scale(0.96); }
+
+/* КНОПКА В КРАСНОМ РЕЖИМЕ */
+.app-layout.deep-mode .send-btn-wrapper { background: #FF0000 !important; }
+.app-layout.deep-mode .send-btn-wrapper::before {
+    background: conic-gradient(#ff0000, #330000, transparent 30%, #ff0000, #330000, transparent 70%) !important;
+}
+.app-layout.deep-mode .send-btn-main { 
+    background:linear-gradient(135deg,#0a0a0f,#0d0520) !important
+}
+
+/* === АНИМАЦИИ ЗВЕЗДЫ (+2px ТОЛЩИНЫ) === */
+.white-big { fill: none; stroke: #fff; stroke-width: 9.5px; stroke-linejoin: round; } 
+.white-small { fill: none; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; } 
+
+.trace {
+    fill: none; stroke-linecap: round;
+    animation: run-stars 4.5s linear infinite;
+    transition: 0.4s ease;
+}
+
+.trace-big-blue { stroke-width: 5.5px; } 
+.trace-big-cyan { stroke-width: 7.5px; }
+.trace-small { stroke-width: 4.2px; }
+
+.color-blue { stroke: #0033FF; filter: drop-shadow(0 0 2px #0033FF); stroke-dasharray: 67 133; } 
+.color-cyan { stroke: #00FFFF; filter: drop-shadow(0 0 2px #00FFFF); animation-delay: -2.25s; stroke-dasharray: 45 155; }
+
+/* ЗВЕЗДА В DEEP MODE */
+.deep-mode .color-blue { stroke: #FF0000 !important; filter: drop-shadow(0 0 8px #FF0000) !important; } 
+.deep-mode .color-cyan { stroke: #000000 !important; filter: drop-shadow(0 0 2px rgba(255,255,255,0.4)) !important; }
+.deep-mode h1 { color: #FF0000 !important; }
+
+.deep-mode .input-glass-container { border: 1px solid rgba(255, 0, 0, 0.4); }
+.deep-mode .sparkle-icon { color: #FF0000 !important; }
+.deep-mode #userInput { color: #FF0000 !important; }
+.deep-mode .tool-btn i, .deep-mode .mic-btn i { color: #FF0000 !important; }
+
+/* === КАРТОЧКИ DEEP MODE (ИСПРАВЛЕННЫЙ КРАСНЫЙ) === */
+.hero-visual { display: none; position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 10; }
+.deep-mode .hero-visual { display: block; animation: fadeInCards 1s ease; }
+
+.profile-wrapper { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; }
+.floating-card {
+    position: absolute; padding: 10px 16px; border-radius: 20px; 
+    background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8); white-space: nowrap;
+    border: 1.5px solid #ff0000 !important; /* У всех красная рамка */
+    color: #ff0000 !important; /* У всех красный текст */
+}
+
+.card-1 { top: -40px; left: -80px; animation: floatCard 3s infinite ease-in-out; }
+.card-2 { top: 60px; right: -120px; animation: floatCard 4s infinite ease-in-out; }
+.card-3 { bottom: -20px; left: 0px; animation: floatCard 3.5s infinite ease-in-out; }
+
+/* === ВСЕ АНИМАЦИИ === */
+@keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes fadeInCards { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+@keyframes run-stars { from { stroke-dashoffset: 400; } to { stroke-dashoffset: 0; } }
+@keyframes float-stars {
+    0%, 100% { transform: translate(var(--dx, 0), var(--dy, 0)); }
+    50% { transform: translate(var(--dx, 0), calc(var(--dy, 0) - 10px)); }
+}
+.g-big { --dx: 0px; --dy: 0px; animation: float-stars 5s ease-in-out infinite; }
+.g-p { animation: float-stars 4s ease-in-out infinite; }
+.g-s { animation: float-stars 3.5s ease-in-out infinite; }
+
+/* МОБИЛЬНАЯ АДАПТАЦИЯ */
+@media (max-width: 480px) {
+    .send-btn-wrapper { width: 150px; height: 44px; }
+}
+/* Финальный штрих для стиля */
+.white-text {
+    color: #ffffff !important;
+    font-weight: 800; /* Можно сделать чуть жирнее для акцента */
+}
+.app-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000; /* Глубокий черный фон */
+    z-index: 10;
+    padding: 20px;
+    animation: fadeIn 0.3s ease; /* Плавное появление */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+/* Создаем стиль для панели чата (копия библиотеки) */
+.chat-panel {
+    position: absolute;
+    top: 0;
+    left: 100%; 
+    width: 100%;
+    height: 100%;
+    background: var(--sidebar-bg);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 2;
+}
+
+/* Эффект выезда при активации класса */
+.sidebar.chat-active .chat-panel { 
+    transform: translateX(-100%); 
+}
+/* ИСПРАВЛЕНИЕ: Скрываем элементы меню, но НЕ трогаем логотип */
+.sidebar.chat-active .new-chat-btn,
+.sidebar.chat-active .menu,
+.sidebar.chat-active .upgrade-card,
+.sidebar.library-active .new-chat-btn,
+.sidebar.library-active .menu,
+.sidebar.library-active .upgrade-card {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-15px);
+    transition: 0.3s ease;
+}
+
+/* Фикс логотипа, чтобы он не исчезал */
+.sidebar .logo {
+    position: relative;
+    z-index: 1010; 
+    background: var(--sidebar-bg);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Фикс панелей */
+.chat-panel, .library-panel {
+    position: absolute;
+    top: 70px; /* Оставляем место под логотип */
+    left: 100%; 
+    width: 100%;
+    height: calc(100% - 70px);
+    background: var(--sidebar-bg);
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1005;
+}
+
+.sidebar.chat-active .chat-panel { transform: translateX(-100%); }
+.sidebar.library-active .library-panel { transform: translateX(-100%); }
+
+/* Плавное скрытие основного меню */
+.sidebar.chat-active .menu, 
+.sidebar.chat-active .new-chat-btn,
+.sidebar.library-active .menu {
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+ /* Сохраняем пробелы и переносы строк от нейросети */
+.message .text {
+    white-space: pre-wrap !important; 
+    word-wrap: break-word !important;
+    display: inline-block;
+    width: 100%;
+}
+
+/* Добавим небольшой отступ, чтобы текст не прилипал к краям пузыря */
+.ai-message .text, .user-message .text {
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+}
+/* === ПОЛНОЭКРАННЫЕ МОДАЛЬНЫЕ ОКНА === */
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg); /* Используем твой основной темный фон */
+    display: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(20px); /* Эффект вылета снизу */
+}
+
+.custom-modal.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.modal-content {
+    width: 100%;
+    height: 100%;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px; /* Ограничиваем ширину контента для красоты на ПК */
+    margin: 0 auto;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+    font-size: 1.8rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Кнопка закрытия как в стиле Lumifex */
+.close-modal {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: #fff;
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: 0.3s;
+}
+
+.close-modal:hover {
+    background: rgba(255,255,255,0.1);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc;
+}
+/* === ПОЛНЫЙ ФИКС ГЕОМЕТРИИ МИКРОФОНА === */
+.mic-wrapper { 
+    position: relative; 
+    width: 48px !important;       /* Жестко заданная ширина */
+    height: 48px !important;      /* Жестко заданная высота */
+    min-width: 48px !important;   /* Запрет на сжатие во Flexbox */
+    max-width: 48px !important;   /* Запрет на растяжение */
+    border-radius: 50% !important; 
+    overflow: hidden; 
+    padding: 1.5px; 
+    flex-shrink: 0 !important;    /* Ключевое: запрещает элементу деформироваться */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mic-btn { 
+    position: relative; 
+    z-index: 2; 
+    background: #161618; 
+    border: none; 
+    color: #fff; 
+    width: 100% !important; 
+    height: 100% !important; 
+    border-radius: 50% !important; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    padding: 0 !important;        /* Убираем внутренние отступы */
+}
+
+.mic-btn i { 
+    font-size: 1.3rem !important; 
+    display: block;
+    line-height: 1;
+}
+
+/* Фикс родительского контейнера, чтобы кнопка SEND не "давила" на микрофон */
+.input-actions-right { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px;
+    flex-wrap: nowrap;           /* Запрет переноса */
+}
+
+
+/* Состояние записи */
+.mic-btn.recording {
+    background: rgba(255, 0, 0, 0.2) !important;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    animation: pulse-red 1.5s infinite;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Разделитель в меню */
+.dropdown-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 8px;
+}
+/* Стили для модального окна настроек голоса */
+#voiceSettingsModal .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#voiceSettingsModal .model-option {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#voiceSettingsModal .model-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    border-color: rgba(0, 242, 255, 0.3);
+}
+
+/* Эффект активного (выбранного) голоса */
+#voiceSettingsModal .model-option.active {
+    background: rgba(0, 242, 255, 0.1);
+    border-color: #00f2ff;
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+#voiceSettingsModal .model-option.active i {
+    color: #00f2ff;
+    text-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+}
+
+#voiceSettingsModal .model-option i {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+/* Плавное появление модалки */
+.custom-modal {
+    display: none; /* Скрыто по умолчанию */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.custom-modal.active {
+    opacity: 1;
+}
+
+
+/* Делаем модалку What's New полноэкранной */
+#whatsNewModal.custom-modal {
+    background: radial-gradient(circle at center, #0f0f11 0%, #08080c 100%);
+}
+
+#whatsNewModal .modal-content.lumifex-fullscreen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    margin: 0;
+    padding: 40px;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+#whatsNewModal .modal-body.lumifex-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--cyan-glow) transparent;
+}
+
+/* Стили для 3D карусели внутри модалки */
+.lumifex-wrapper .carousel-section {
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 2000px;
+    margin-bottom: 30px;
+}
+/* =========================================
+   1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ (BODY & FONTS)
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-accent: #aee1f9; /* Голубой неон */
+    --purple-accent: #00d2ff; /* Фиолетовый неон */
+    --font-main: 'Orbitron', sans-serif;
+    --font-secondary: 'Inter', sans-serif;
+    --slide-width: 300px;
+    --slide-height: 480px;
+    --bg-dark: #08080c;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-dark);
+    color: #ffffff;
+    font-family: var(--font-secondary);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+/* Скроллбар в стиле киберпанк */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--glass-accent);
+    border-radius: 10px;
+}
+
+/* =========================================
+   2. КАРУСЕЛЬ (3D ENGINE)
+   ========================================= */
+.carousel-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #08080c;
+    z-index: 2;
+}
+
+#carousel-container {
+    width: 100%;
+    height: 100vh;
+    perspective: 2000px; /* Глубина 3D */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+#stellar-carousel {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    transform-style: preserve-3d;
+    cursor: grab;
+    transition: transform 0.1s ease-out; /* Для плавного следования за мышкой */
+}
+
+#stellar-carousel:active {
+    cursor: grabbing;
+}
+
+.carousel-slide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: calc(var(--slide-width) / -2);
+    margin-top: calc(var(--slide-height) / -2);
+    width: var(--slide-width);
+    height: var(--slide-height);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 25px;
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-sizing: border-box;
+    user-select: none;
+}
+
+/* Активное состояние центральной карточки */
+.carousel-slide.active {
+    border-color: var(--glass-accent);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 50px rgba(174, 225, 249, 0.2), inset 0 0 20px rgba(174, 225, 249, 0.1);
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+/* Элементы внутри карточки */
+.top-label {
+    position: absolute;
+    top: -70px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    color: var(--glass-accent);
+    text-shadow: 0 0 15px var(--glass-accent);
+    opacity: 0;
+    transition: 0.5s ease;
+    pointer-events: none;
+}
+
+.carousel-slide.active .top-label {
+    opacity: 1;
+    transform: translateY(-10px);
+}
+
+.slide-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+}
+
+.slide-title {
+    font-family: var(--font-main);
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+    color: #ffffff;
+}
+
+.slide-stats-container {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0.2;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-slide.active .slide-stats-container {
+    opacity: 1;
+}
+
+.stat-item {
+    font-size: 0.85rem;
+    border-left: 2px solid var(--glass-accent);
+    padding-left: 12px;
+    color: #cccccc;
+    font-family: var(--font-secondary);
+}
+
+/* =========================================
+   3. ИНФО-СЛОЙ (ABOUT, SKILLS, EXPERIENCE)
+   ========================================= */
+.info-section {
+    position: relative;
+    z-index: 10;
+    background: var(--bg-dark);
+    padding: 100px 8%;
+    box-shadow: 0 -50px 100px var(--bg-dark);
+}
+
+.content-block {
+    max-width: 1100px;
+    margin: 0 auto 100px auto;
+}
+
+.content-block h2 {
+    font-family: var(--font-main);
+    font-size: 2.2rem;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #ffffff;
+}
+
+.content-block h2::after {
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--glass-accent), transparent);
+}
+
+/* Текстовый блок системных навыков */
+.simple-text-block {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(174, 225, 249, 0.2);
+    padding: 45px;
+    border-radius: 24px;
+    max-width: 850px;
+    margin: 0 auto;
+    backdrop-filter: blur(15px);
+    transition: 0.3s ease;
+}
+
+.info-title {
+    font-family: var(--font-main);
+    color: var(--glass-accent);
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.info-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 300;
+}
+
+.info-footer {
+    margin-top: 35px;
+    font-size: 0.85rem;
+    color: var(--purple-accent);
+    font-family: var(--font-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.8;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background: #00ff00;
+    border-radius: 50%;
+    box-shadow: 0 0 12px #00ff00;
+    display: inline-block;
+}
+
+/* Полоски прогресса навыков */
+.skill-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 35px;
+    margin-top: 30px;
+}
+
+.skill-item {
+    margin-bottom: 25px;
+}
+
+.skill-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.skill-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.skill-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #67e8f9, #00d2ff);
+    box-shadow: 0 0 15px rgba(103, 232, 249, 0.4);
+    border-radius: 15px;
+    width: 0%; /* Анимируется через JS */
+    transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* =========================================
+   4. НАВИГАЦИЯ И АНИМАЦИИ
+   ========================================= */
+#dot-nav {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    gap: 18px;
+    z-index: 5;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.dot.active {
+    background: var(--glass-accent);
+    transform: scale(1.6);
+    box-shadow: 0 0 15px var(--glass-accent);
+    border-color: transparent;
+}
+
+/* Анимация появления контента */
+.animated-in {
+    animation: slideFadeUp 0.8s ease forwards;
+}
+
+@keyframes slideFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    :root {
+        --slide-width: 260px;
+        --slide-height: 400px;
+    }
+    
+    .content-block h2 {
+        font-size: 1.6rem;
+    }
+    
+    .simple-text-block {
+        padding: 25px;
+    }
+    
+    .info-text {
+        font-size: 0.95rem;
+    }
+}
+/* Блок новостей 03 */
+.news-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.news-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--purple-accent); /* Фиолетовая линия слева как акцент */
+    padding: 25px 35px;
+    border-radius: 0 20px 20px 0;
+    transition: 0.3s ease;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.news-card:hover {
+    background: rgba(192, 132, 252, 0.05); /* Легкий фиолетовый отсвет при наведении */
+    transform: translateX(10px);
+}
+
+.news-date {
+    font-family: var(--font-main);
+    font-size: 0.75rem;
+    color: var(--glass-accent);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.news-header {
+    font-family: var(--font-main);
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.news-body {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+}
+
+/* =========================================
+   ЛОГИКА: ТОЛЬКО ДЛЯ КОМПЬЮТЕРОВ
+   ========================================= */
+
+/* 1. По умолчанию скрываем карусель (для мобилок) */
+.desktop-only {
+    display: none !important;
+}
+
+/* 2. По умолчанию показываем заглушку */
+.mobile-stub {
+    display: flex;
+    height: 60vh;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    color: var(--glass-accent);
+    padding: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.stub-content span { font-size: 3rem; display: block; margin-bottom: 20px; }
+
+/* 3. Если экран больше 1024px (Компьютер) */
+@media (min-width: 1024px) {
+    .desktop-only {
+        display: block !important; /* Показываем карусель */
+    }
+    .mobile-stub {
+        display: none !important; /* Скрываем заглушку */
+    }
+}
+
+body, .app-layout { 
+    /* это частьотвечаеть за 100hv , которая учитывает адресную строку и клавиатуру */
+    height: 100vh; 
+    height: 100dvh; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-wrapper {
+    /* Позволяем чату занимать всё свободное место и прокручиваться */
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
+}
+
+/* это черно серий лифт  Настраиваем сам ползунок (лифт) */
+.sidebar::-webkit-scrollbar {
+    width: 4px; /* Ширина лифта */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #444444; /* СТРОКА ИЗМЕНЕНИЯ: ставим серый цвет вместо синего */
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent; /* Дорожка лифта будет невидимой */
+}
+
+/* Для Firefox */
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #444444 transparent;
+}
+/* Кнопка Live */
+.live-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 242, 255, 0.3);
+    color: #00f2ff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.live-mode-btn.active-live {
+    background: rgba(0, 242, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    border-color: #00f2ff;
+}
+
+.live-pulse {
+    width: 8px;
+    height: 8px;
+    background: #00f2ff;
+    border-radius: 50%;
+    display: none;
+}
+
+.active-live .live-pulse {
+    display: block;
+    animation: live-blink 1.5s infinite;
+}
+
+@keyframes live-blink {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.live-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: opacity 0.3s ease;
+    pointer-events: auto !important; /* ← ДОБАВЬ ЭТУ СТРОКУ */
+}
+
+.stop-live-btn {
+    margin-top: 40px;
+    padding: 12px 30px;
+    border-radius: 30px;
+    border: none;
+    background: #ff4d4d;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    pointer-events: auto !important; /* ← И ЭТУ */
+    position: relative;
+    z-index: 100000; /* ← И ЭТУ */
+}
+
+.wave-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 60px;
+    margin-bottom: 30px;
+}
+
+.wave {
+    width: 6px;
+    height: 20px;
+    background: #00f2ff;
+    border-radius: 3px;
+    animation: wave-anim 1.2s infinite ease-in-out;
+}
+
+.wave:nth-child(2) { animation-delay: 0.2s; }
+.wave:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes wave-anim {
+    0%, 100% { height: 20px; }
+    50% { height: 60px; }
+}
+
+
+/* ==========================================================
+   LUMIFEX AI - OFFICIAL STYLESHEET
+   Сохранено: Все оригинальные стили + Фикс для картинок
+   ========================================================== */
+
+/* ОБЩИЕ СТИЛИ */
+body {
+    margin: 0;
+    background-color: #0d1117;
+    color: #f0f6fc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    min-height: 100vh;
+}
+
+.title {
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* НАВИГАЦИЯ (Вкладки) */
+.nav-container-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 30px;
+}
+
+.tab-button {
+    flex: 1;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 12px 5px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: 0.3s;
+}
+
+.tab-button.active {
+    border-color: #58a6ff;
+    background: #21262d;
+    box-shadow: 0 0 10px rgba(88, 166, 255, 0.2);
+}
+
+.icon-phys { color: #bc8cff; }
+.icon-bio { color: #7ee787; }
+.icon-chem { color: #3fb950; }
+
+/* СЕТКА КАРТОЧЕК */
+.grid-container {
+    display: grid;
+    /* На мобилках 1 колонка, на планшетах/ПК автоматически добавится больше */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: 15px;
+    width: 100%;
+    max-width: 1000px; /* Увеличил, чтобы на ПК влезало больше в ряд */
+}
+
+.card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    display: none; 
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.3s;
+}
+
+.card:hover {
+    border-color: #58a6ff;
+}
+
+.card:active {
+    transform: scale(0.98);
+}
+
+.show { 
+    display: block; 
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ФОТО В КАРТОЧКАХ */
+.card-preview {
+    width: 100%;
+    height: 160px; /* Высота превью */
+    overflow: hidden;
+    background: #1a1a1a;
+    border-bottom: 1px solid #30363d;
+}
+
+.card-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Картинка заполняет блок без искажений */
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-preview img {
+    transform: scale(1.1); /* Эффект зума при наведении */
+}
+
+.card-info { padding: 12px; }
+.card-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; color: #f0f6fc; }
+.card-desc { font-size: 0.8rem; color: #8b949e; line-height: 1.4; }
+
+/* ЭКРАН СИМУЛЯЦИИ */
+#sim-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #0d1117;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+}
+
+.header-sim {
+    height: 60px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    flex-shrink: 0;
+}
+
+#iframe-container {
+    flex-grow: 1;
+    width: 100%;
+    background: #000;
+    position: relative;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* --- СТИЛЬНЫЙ ЛОАДЕР (LUMIFEX REACTOR) --- */
+#loader-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0d1117;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.5s ease;
+}
+
+.loader {
+    width: 100px;
+    height: 100px;
+    border: 3px solid transparent;
+    border-top-color: #58a6ff;
+    border-bottom-color: #58a6ff;
+    border-radius: 50%;
+    position: relative;
+    animation: spin 2s linear infinite;
+}
+
+.loader:before {
+    content: "";
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    right: 7px;
+    bottom: 7px;
+    border: 3px solid transparent;
+    border-top-color: #0056b3;
+    border-bottom-color: #0056b3;
+    border-radius: 50%;
+    animation: spin 3s linear infinite;
+}
+
+.loader-inner {
+    position: absolute;
+    top: 17px;
+    left: 17px;
+    right: 17px;
+    bottom: 17px;
+    border: 3px solid transparent;
+    border-top-color: #58a6ff;
+    border-bottom-color: #58a6ff;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+}
+
+.loader-text {
+    margin-top: 25px;
+    color: #58a6ff;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ЗАГЛУШКА НИЖНЕЙ ПАНЕЛИ PHET */
+#iframe-container::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px; 
+    background: #000;
+    z-index: 9998; /* Поставил чуть меньше лоадера */
+    pointer-events: none;
+}
+
+/* === ФИКСЫ ПОЗИЦИОНИРОВАНИЯ И ГЛУБИНЫ === */
+
+/* Улучшаем читаемость текста в AI ответах (Markdown-friendly) */
+.ai-message .text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Стилизация кода в сообщениях (если ИИ пришлет код) */
+.message code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    border: 1px solid var(--border);
+}
+
+/* Эффект наведения на карточки лаборатории (Physics/Bio/Chem) */
+.card {
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--cyan-glow);
+}
+
+.card:hover::after {
+    box-shadow: 0 10px 30px rgba(0, 212, 255, 0.15);
+}
+
+/* Фикс для мобильной клавиатуры: чтобы ввод не перекрывал чат */
+@media (max-height: 500px) {
+    .star-animation-container {
+        display: none; /* Скрываем звезду на маленьких экранах при открытой клавиатуре */
+    }
+    .welcome-screen h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Слой для блокировки кликов во время записи голоса */
+.mic-btn.recording::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 0, 0, 0.03);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Убираем глобальный body и переносим его свойства строго в контейнер презентации */
+#presentation-screen {
+    font-family: 'Segoe UI', sans-serif; 
+    color: white; 
+    /* background, position, width и height у тебя уже прописаны инлайн в HTML, 
+       но если захочешь убрать их из HTML, можешь добавить их сюда */
+}
+
+/* Привязываем все элементы строго к #presentation-screen */
+#presentation-screen .tabs-bar { 
+    background: #252526; 
+    display: flex; 
+    padding: 5px; 
+    gap: 5px; 
+    border-bottom: 1px solid #333; 
+}
+
+#presentation-screen .tab-btn { 
+    background: #2d2d2d; 
+    color: #999; 
+    border: none; 
+    padding: 8px 15px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    transition: 0.3s;
+}
+
+#presentation-screen .tab-btn.active { 
+    background: #007acc; 
+    color: white; 
+}
+
+#presentation-screen .tab-btn:hover { 
+    background: #3e3e3e; 
+}
+
+#presentation-screen .run-btn { 
+    margin-left: auto; 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    padding: 8px 20px; 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+
+/* В HTML у тебя используется id="editor-container", обращаемся к нему */
+#presentation-screen #editor-container { 
+    position: relative; 
+}
+
+/* В HTML у тебя используется класс .editor-tab-content */
+#presentation-screen .editor-tab-content { 
+    display: none; 
+    height: 100%; 
+    width: 100%; 
+}
+
+#presentation-screen .editor-tab-content.show { 
+    display: block; 
+}
+
+/* Обращаемся к iframe только внутри презентации */
+#presentation-screen iframe { 
+    width: 100%; 
+    height: 100%; 
+    border: none; 
+    background: #ffffff; /* Белый фон для превью кода */
+}
+
+/* Настройка самого редактора CodeMirror */
+#presentation-screen .CodeMirror { 
+    height: 100% !important; 
+    font-size: 14px; 
+}
+
+/* Показываем панель чатов, когда у сайдбара есть класс chat-active */
+.sidebar.chat-active .chat-panel {
+    display: block; /* Или используй transform, если у тебя там анимации выезда */
+    z-index: 10;
+}
+
+/* === ПОЛНЫЙ ФИКС СИНЕЙ ЛИНИИ И РАМОК ДЛЯ МОБИЛОК === */
+
+/* 1. Отключаем системное подсвечивание клика */
+* {
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+/* 2. Убираем рамку фокуса для всех интерактивных элементов */
+a, button, input, textarea, select, div, span {
+    outline: none !important;
+    outline: 0 !important;
+    -webkit-appearance: none; /* Убирает стандартные стили кнопок iOS */
+}
+
+/* 3. Специфический фикс для Chrome и Safari (Focus-visible) */
+*:focus-visible {
+    outline: none !important;
+}
+
+/* 4. Если линия появляется под шапкой или в инпуте (из-за теней) */
+input:focus, .input-main-wrapper:focus-within {
+    box-shadow: none !important;
+}
+
+
+.app-layout {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+/* Поднимаем всю панель ввода выше всего остального */
+.input-area {
+    position: relative;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+}
+
+/* Гарантируем кликабельность конкретных кнопок */
+#micBtn, #liveToggle, #sendBtn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    z-index: 10000 !important;
+}
+
+/* Если приветственный экран блокирует клики в нижней части */
+.welcome-screen {
+    pointer-events: none; /* Пропускает клики сквозь себя */
+}
+
+.welcome-screen * {
+    pointer-events: auto; /* Но элементы внутри него (если есть кнопки) снова кликабельны */
+}
+
+/* 1. Гарантируем, что обертка чата не блокируется фоном */
+.chat-wrapper {
+    position: relative;
+    z-index: 1; /* Оставляем низким, чтобы модалки были выше */
+    pointer-events: auto;
+}
+
+/* 2. Исправляем анимацию звезд и приветствие */
+.star-animation-container {
+    pointer-events: none; /* Звезда не должна мешать кликам по тексту или кнопкам */
+}
+
+/* 3. Фикс для мобильных: убираем лишние отступы, которые могут "съедать" клики */
+.app-layout {
+    overflow: hidden;
+    touch-action: manipulation; /* Убирает задержку клика на iOS */
+}
+
+/* 4. Явно прописываем, что модальные окна в скрытом состоянии не занимают места */
+.custom-modal:not(.active) {
+    visibility: hidden;
+    pointer-events: none;
+    display: none; /* Убедитесь, что JS меняет именно это */
+}
+
+/* 5. Если есть "фантомная" синяя линия или слой сверху */
+.app-header {
+    pointer-events: none; /* Пропускаем клики сквозь пустые места шапки */
+}
+.top-controls-pill, .icon-btn, .model-selector-container {
+    pointer-events: auto; /* Возвращаем кликабельность элементам управления */
+}
+/* Мобильный фикс: убираем тонкие синие/голубые линии и упрощаем визуал */
+@media (max-width: 480px) {
+  /* Скрыть декоративные градиенты/слои, которые выглядят как горизонтальная линия */
+  .star-animation-container,
+  .star-animation-container svg,
+  .trace,
+  .color-blue,
+  .color-cyan,
+  .send-btn-wrapper::before,
+  .input-main-wrapper::before {
+    display: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* Уменьшаем размеры звезды/визуалов, если нужно показать их */
+  .star-animation-container { width: 220px; height: 220px; margin-bottom: 18px; }
+
+  /* Поле ввода — растянуть по ширине, убрать лишние отступы */
+  .input-area { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
+  .input-main-wrapper { border-radius: 20px; padding: 0.5px; }
+
+  /* Кнопка SEND — компактнее и всегда видна */
+  .send-btn-wrapper { width: 140px !important; height: 44px !important; padding: 2px !important; }
+  .send-btn-main { font-size: 0.85rem; letter-spacing: 0.6px; }
+
+  /* Убираем большие отступы вокруг приветственного экрана */
+  .welcome-screen { margin: 12px 0; padding: 0 8px; }
+
+  /* Гарантируем, что звезда не мешает кликам по нижним элементам */
+  .star-animation-container { pointer-events: none !important; }
+
+  /* Обеспечиваем, что чат и поле ввода остаются над визуалами */
+  .input-area, .input-main-wrapper, #messagesContainer {
+    position: relative;
+    z-index: 9999 !important;
+  }
+}
+
+/* ===== Quick Questions (desktop only) ===== */
+.top-badges-wrapper {
+  position: absolute;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 1015;
+  pointer-events: none;
+  transition: transform 0.45s cubic-bezier(.2,.9,.2,1), opacity 0.35s;
+  opacity: 1;
+}
+
+.top-badges-wrapper .badge-card {
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #e6f7ff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.top-badges-wrapper .badge-card.primary {
+  background: linear-gradient(90deg, rgba(0,68,255,0.12), rgba(0,212,255,0.06));
+  border-color: rgba(0,212,255,0.12);
+}
+
+.top-badges-wrapper .badge-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+}
+
+.top-badges-wrapper.slide-down { transform: translateX(-50%) translateY(18px); opacity: 0.95; }
+.top-badges-wrapper.slide-up { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+.input-highlight {
+  box-shadow: 0 0 0 4px rgba(0,212,255,0.12) !important;
+  transition: box-shadow 0.45s ease;
+}
+
+/* Скрыть на планшетах/мобиле */
+@media (max-width: 1024px) {
+  .top-badges-wrapper { display: none !important; }
+}
+
+.quick-pill-btn {
+  background: rgba(20, 5, 5, 0.7);
+  border: 1px solid rgba(220, 50, 50, 0.4);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 10px 18px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+  text-align: left;
+  max-width: 280px;
+  line-height: 1.4;
+  box-shadow: 0 0 10px rgba(255, 40, 40, 0.1);
+}
+
+.quick-pill-btn:hover {
+  background: rgba(180, 30, 30, 0.35);
+  border-color: rgba(255, 60, 60, 0.8);
+  color: #fff;
+  box-shadow: 0 0 18px rgba(255, 40, 40, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   QUICK CARDS — вопросы на welcome экране
+   ============================================================ */
+
+.quick-pills-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.quick-pills {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 720px;
+}
+
+/* --- Карточка --- */
+.quick-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* Синий/голубой стиль по умолчанию */
+  background: rgba(0, 10, 40, 0.75);
+  border: 1px solid rgba(0, 180, 255, 0.45);
+  box-shadow:
+    0 0 14px rgba(0, 180, 255, 0.2),
+    inset 0 0 20px rgba(0, 100, 255, 0.06);
+  backdrop-filter: blur(14px);
+  animation: pill-float 3.5s ease-in-out infinite;
+}
+
+/* Иконки — синие */
+.quick-card i {
+  font-size: 16px;
+  color: var(--cyan-glow);
+  transition: color 0.4s ease;
+}
+
+/* Свечение внутри карточки */
+.quick-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -30%;
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.25), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: background 0.5s ease;
+}
+
+/* Разные задержки анимации для каждой */
+.quick-card-1 { animation-delay: 0s; }
+.quick-card-2 { animation-delay: 0.6s; }
+.quick-card-3 { animation-delay: 1.2s; }
+.quick-card-4 { animation-delay: 1.8s; }
+
+@keyframes pill-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
+.quick-card:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 0 28px rgba(0, 200, 255, 0.45),
+    inset 0 0 20px rgba(0, 150, 255, 0.12);
+  border-color: rgba(0, 220, 255, 0.8);
+}
+
+/* --- DEEP MODE: синий → красный/чёрный --- */
+.app-layout.deep-mode .quick-card {
+  background: rgba(20, 0, 0, 0.8);
+  border-color: rgba(220, 40, 40, 0.5);
+  box-shadow:
+    0 0 14px rgba(255, 40, 40, 0.2),
+    inset 0 0 20px rgba(150, 0, 0, 0.08);
+  animation: pill-float-red 3.5s ease-in-out infinite;
+}
+
+.app-layout.deep-mode .quick-card i {
+  color: #ff4444;
+}
+
+.app-layout.deep-mode .quick-card::before {
+  background: radial-gradient(circle, rgba(255, 60, 60, 0.2), transparent 70%);
+}
+
+.app-layout.deep-mode .quick-card:hover {
+  box-shadow:
+    0 0 28px rgba(255, 50, 50, 0.5),
+    inset 0 0 20px rgba(200, 0, 0, 0.15);
+  border-color: rgba(255, 60, 60, 0.9);
+}
+
+@keyframes pill-float-red {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+
+@media (min-width: 769px) {
+  .welcome-screen {
+    position: relative;
+    width: 100%;
+    min-height: 75vh;
+  }
+
+  .quick-pills-wrapper {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .quick-pills {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .quick-card {
+    position: absolute;
+    width: 210px;
+    pointer-events: all;
+    white-space: normal;
+    text-align: left;
+    border-radius: 16px;
+  }
+
+  /* Левая сторона */
+  .quick-card-1 { top: 22%; left: 2%; }
+  .quick-card-3 { bottom: 27%; left: 11%; }
+
+  /* Правая сторона */
+  .quick-card-2 { top: calc(22% + 30px); right: 6%; }
+  .quick-card-4 { bottom: calc(22% - 9px); right: calc(6% + 7px); }
+}
+
+/* === МОБИЛЬНЫЙ: зигзаг слева-справа === */
+@media (max-width: 768px) {
+  .quick-pills-wrapper {
+    width: 100%;
+    padding: 10px 16px;
+    position: relative;
+  }
+
+  .quick-pills {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    align-items: flex-start;
+  }
+
+  .quick-card {
+    width: 70%;
+    border-radius: 18px;
+    white-space: normal;
+    min-width: unset;
+    max-width: unset;
+    font-size: 13px;
+    padding: 13px 16px;
+    position: relative;
+  }
+
+  /* Нечётные — слева */
+  .quick-card-1,
+  .quick-card-3 {
+    align-self: flex-start;
+    margin-left: 0;
+  }
+
+  /* Чётные — справа */
+  .quick-card-2,
+  .quick-card-4 {
+    align-self: flex-end;
+    margin-right: 0;
+  }
+
+  /* Анимация — как на десктопе */
+  .quick-card-1 { animation: pill-float 3.2s ease-in-out infinite 0s; }
+  .quick-card-2 { animation: pill-float 3.2s ease-in-out infinite 0.6s; }
+  .quick-card-3 { animation: pill-float 3.2s ease-in-out infinite 1.2s; }
+  .quick-card-4 { animation: pill-float 3.2s ease-in-out infinite 1.8s; }
+
+  .app-layout.deep-mode .quick-card-1,
+  .app-layout.deep-mode .quick-card-2,
+  .app-layout.deep-mode .quick-card-3,
+  .app-layout.deep-mode .quick-card-4 {
+    animation-name: pill-float-red;
+  }
+
+  /* Скрываем floating-cards (100% Evidence и др.) */
+  .floating-card,
+  .hero-visual,
+  .profile-wrapper {
+    display: none !important;
+  }
+}
+
+  .model-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1999;
+    backdrop-filter: blur(2px);
+}
+.model-overlay.active {
+    display: block;
+}
+
+/* Модалки на мобильных */
+@media (max-width: 768px) {
+    .modal-content, 
+    [id$="Modal"] > div,
+    .modal > div {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        max-height: 85vh !important;
+        overflow-y: auto !important;
+        border-radius: 20px !important;
+        padding: 20px !important;
+        margin: auto !important;
+    }
+
+    /* Симуляции (lab/main-screen) */
+    #main-screen {
+        padding: 10px !important;
+    }
+    .grid-container {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+    .card {
+        min-height: 140px !important;
+    }
+    .nav-container-row {
+        overflow-x: auto !important;
+        flex-wrap: nowrap !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        gap: 8px !important;
+        padding: 8px 0 !important;
+    }
+    .nav-container-row::-webkit-scrollbar { display: none !important; }
+}
+
+/* Скроллбар — серый */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+    background: rgba(255,255,255,0.15); 
+    border-radius: 4px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: rgba(255,255,255,0.3); 
+}
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
+
+
+  /* ===== 2. LAB / NEW PROJECT — ЛИФТ СКРОЛЛ + СЕРЫЙ ===== */
+  #main-screen {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .nav-container-row {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px;
+    scroll-snap-type: x mandatory;
+  }
+  .nav-container-row::-webkit-scrollbar { display: none !important; }
+
+  .tab-button {
+    background: #2a2a2e !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #aaa !important;
+    border-radius: 12px !important;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .tab-button.active {
+    background: #3a3a3e !important;
+    color: #fff !important;
+    border-color: rgba(255,255,255,0.25) !important;
+  }
+
+  .grid-container {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    padding: 0 16px 100px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .card {
+    background: #1e1e20 !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .card:active { transform: scale(0.97); }
+
+  .card-info {
+    padding: 10px !important;
+    background: #1e1e20 !important;
+  }
+  .card-title {
+    font-size: 0.85rem !important;
+    color: #fff !important;
+    font-weight: 600;
+  }
+  .card-desc {
+    font-size: 0.72rem !important;
+    color: #777 !important;
+    margin-top: 4px !important;
+  }
+  .card-preview img {
+    width: 100% !important;
+    height: 100px !important;
+    object-fit: cover !important;
+  }
+
+  /* ===== 3. WHAT'S NEW / SYSTEM CHRONICLES — МОБАЙЛ ===== */
+  .custom-modal .modal-content {
+    padding: 20px 16px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 10;
+    padding: 16px 0 !important;
+    margin-bottom: 20px !important;
+  }
+
+  .modal-header h3 {
+    font-size: 1.2rem !important;
+  }
+
+  /* Карточки навыков в Lumifex */
+  .lumifex-card, [class*="lumifex"], .skill-card {
+    margin-bottom: 16px !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+
+  /* ===== 4. PRESENTATION / CODE EDITOR ===== */
+  #presentationScreen, .presentation-screen, .code-editor-screen {
+    background: #0d0d0e !important;
+  }
+
+  /* Убираем белый фон у CodeMirror */
+  .CodeMirror {
+    background: #12121500 !important;
+    color: #e0e0e0 !important;
+    height: auto !important;
+    min-height: 200px;
+    font-size: 14px !important;
+  }
+  .CodeMirror-scroll {
+    background: transparent !important;
+  }
+  .CodeMirror-gutters {
+    background: #1a1a1c !important;
+    border-right: 1px solid rgba(255,255,255,0.05) !important;
+  }
+  .CodeMirror-linenumber {
+    color: #555 !important;
+  }
+
+  /* Табы (HTML / CSS / JS / Python) */
+  .editor-tabs, .tab-bar {
+    background: #1a1a1c !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+  .editor-tab, .tab-bar button {
+    background: transparent !important;
+    color: #666 !important;
+    border: none !important;
+    padding: 10px 16px !important;
+    font-size: 0.9rem !important;
+    white-space: nowrap;
+  }
+  .editor-tab.active, .tab-bar button.active {
+    color: #00f2ff !important;
+    border-bottom: 2px solid #00f2ff !important;
+  }
+
+  /* Кнопка Run */
+  .run-btn, button[onclick*="run"], #runBtn {
+    background: #22c55e !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+    font-weight: 700 !important;
+  }
+
+  /* Preview iframe */
+  iframe, .preview-frame {
+    background: #0d0d0e !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+  }
+}
+
+/* ===== MODEL DROPDOWN — ЧИСТЫЙ КОД ===== */
+.model-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    width: 270px;
+    max-height: 55vh;
+    overflow-y: auto;
+    background: #161618;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 8px;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 3000;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    -webkit-overflow-scrolling: touch;
+}
+.model-dropdown.active {
+    display: flex;
+}
+.model-option {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.model-option:hover { background: rgba(255,255,255,0.06); color: #00d4ff; }
+.model-option.active { background: rgba(0,212,255,0.08); color: #00d4ff; }
+.dropdown-label {
+    font-size: 0.7rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 12px 4px;
+}
+.dropdown-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 4px 8px;
+}
+
+/* Оверлей — ТОЛЬКО для мобильного */
+.model-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 2999;
+    backdrop-filter: blur(2px);
+}
+.model-overlay.active { display: block; }
+
+/* МОБИЛЬНЫЙ — шторка снизу */
+@media (max-width: 768px) {
+    .model-dropdown {
+        position: fixed !important;
+        top: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        max-height: 72vh !important;
+        border-radius: 22px 22px 0 0 !important;
+        border: none !important;
+        border-top: 1px solid rgba(255,255,255,0.08) !important;
+        padding: 0 16px 30px !important;
+        display: flex !important;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        visibility: hidden;
+        z-index: 3000 !important;
+    }
+
+    .model-dropdown::before {
+        content: '';
+        display: block;
+        width: 38px;
+        height: 4px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 4px;
+        margin: 14px auto 12px;
+        flex-shrink: 0;
+    }
+
+    .model-dropdown.active {
+        display: flex !important;
+        transform: translateY(0) !important;
+        visibility: visible !important;
+    }
+
+    .model-option {
+        padding: 14px 14px !important;
+        font-size: 1rem !important;
+        min-height: 52px;
+        border-radius: 12px !important;
+    }
+
+    .dropdown-label {
+        padding: 12px 14px 4px !important;
+        font-size: 0.68rem !important;
+    }
+}
+
+/* ============================
+   MODEL DROPDOWN — ФИНАЛЬНЫЙ
+   ============================ */
+
+.model-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 270px;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #161618;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 8px;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 99999;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    -webkit-overflow-scrolling: touch;
+    display: none;
+}
+
+.model-dropdown.active {
+    display: flex !important;
+}
+
+.model-option {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ccc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.model-option:hover,
+.model-option.active {
+    background: rgba(0,212,255,0.08);
+    color: #00d4ff;
+}
+
+.dropdown-label {
+    font-size: 0.68rem;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 12px 4px;
+    flex-shrink: 0;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+    margin: 4px 8px;
+    flex-shrink: 0;
+}
+
+/* Оверлей */
+..model-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 9998;
+}
+.model-overlay.active { display: block; }
+
+
+/* ============================
+   МОБИЛЬНЫЙ — шторка снизу
+   ============================ */
+@media (max-width: 768px) {
+    .model-dropdown {
+        position: fixed !important;
+        top: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        max-height: 75vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        border: none !important;
+        border-top: 1px solid rgba(255,255,255,0.08) !important;
+        padding: 0 12px 40px 12px !important;
+        z-index: 99999 !important;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        display: flex !important;
+        visibility: hidden;
+    }
+
+    .model-dropdown.active {
+        transform: translateY(0) !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    .model-dropdown::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: rgba(255,255,255,0.15);
+        border-radius: 4px;
+        margin: 14px auto 10px;
+        flex-shrink: 0;
+    }
+
+    .model-option {
+        padding: 15px 14px !important;
+        font-size: 1rem !important;
+        min-height: 52px;
+        white-space: normal;
+    }
+
+    .dropdown-label {
+        padding: 12px 14px 4px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    #main-screen {
+        padding: 30px 40px;
+    }
+    #main-screen .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    #main-screen .card {
+        border-radius: 16px;
+    }
+    #main-screen .nav-container-row {
+        justify-content: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+}
+
+#upgradeModal,
+#maternalModal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    background: rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: none !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+#authModal.active,
+#upgradeModal.active,
+#maternalModal.active {
+    display: flex !important;
+}
+
+/* Deep mode — карточки кликабельны */
+.deep-mode .card,
+.deep-mode .quick-card {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative;
+    z-index: 10;
+}
+
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Кнопки внутри модалок должны нажиматься */
+.custom-modal button,
+.custom-modal a,
+#authModal button,
+#authModal * {
+    pointer-events: auto !important;
+    user-select: auto !important;
+    -webkit-user-select: auto !important;
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+}
+
+/* ===== AUTH MODAL MOBILE FIX ===== */
+.no-select {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#authModal {
+    pointer-events: auto !important;
+    z-index: 99999 !important;
+}
+
+#authModal > div {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 100000 !important;
+}
+
+#googleSignInBtn {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 100001 !important;
+    -webkit-tap-highlight-color: rgba(0,0,0,0.2) !important;
+    display: flex !important;
+}
+
+.model-overlay {
+    pointer-events: none !important;
+}
+
+#authModal input {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    pointer-events: auto !important;
+}
+
+/* New Project — десктоп версия */
+@media (min-width: 768px) {
+  #newProjectBtn {
+    background: linear-gradient(135deg, rgba(0,242,255,0.08), rgba(0,100,255,0.08));
+    border: 1px solid rgba(0,242,255,0.2);
+    border-radius: 12px;
+    padding: 14px 12px;
+    transition: 0.3s;
+  }
+  #newProjectBtn:hover {
+    background: linear-gradient(135deg, rgba(0,242,255,0.15), rgba(0,100,255,0.15));
+    border-color: rgba(0,242,255,0.5);
+    transform: translateY(-1px);
+  }
+  #newProjectBtn i { color: #00f2ff !important; }
+  #newProjectBtn span { color: #fff; font-weight: 500; }
+}
+
+/* ===== PRESENTATION - RESPONSIVE ===== */
+#presentation-screen .tabs-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+/* Мобильные: редактор и превью по 50% */
+@media (max-width: 767px) {
+    #presentation-screen {
+        flex-direction: column;
+    }
+    #editor-container {
+        height: 45% !important;
+    }
+    #preview-container {
+        height: 55% !important;
+    }
+    .tab-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Десктоп: редактор слева, превью справа */
+@media (min-width: 768px) {
+    #presentation-screen > div:last-child {
+        flex-direction: row !important;
+    }
+    #editor-container {
+        width: 45% !important;
+        height: 100% !important;
+    }
+    #preview-container {
+        width: 55% !important;
+        height: 100% !important;
+        border-top: none !important;
+        border-left: 4px solid #333 !important;
+    }
+    .tab-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    #presentation-screen .run-btn {
+        padding: 10px 28px;
+        font-size: 15px;
+    }
+}
+/* ===== SIMULATIONS DESKTOP ===== */
+@media (min-width: 768px) {
+    #main-screen {
+        padding: 0 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    #main-screen .title {
+        font-size: 2rem;
+        letter-spacing: 4px;
+        background: linear-gradient(90deg, #00f2ff, #0066ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    #main-screen .nav-container-row {
+        display: flex;
+        gap: 12px;
+        padding: 20px 0;
+    }
+    
+    #main-screen .tab-button {
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        border: 1px solid rgba(0,242,255,0.2);
+        background: rgba(0,242,255,0.05);
+        color: #fff;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    #main-screen .tab-button:hover,
+    #main-screen .tab-button.active {
+        background: linear-gradient(135deg, rgba(0,242,255,0.15), rgba(0,102,255,0.15));
+        border-color: rgba(0,242,255,0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,242,255,0.15);
+    }
+    
+    #cardsGrid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 20px !important;
+        padding: 20px 0 40px !important;
+    }
+    
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255,255,255,0.03);
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    
+    .card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0,242,255,0.3);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+    
+    .card-preview img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+    
+    .card-info {
+        padding: 14px;
+    }
+    
+    .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+    
+    .card-desc {
+        font-size: 12px;
+        color: rgba(255,255,255,0.4);
+        margin: 0;
+    }
+  #upgradeModal {
+    background: linear-gradient(135deg, #0a0a0f, #0d0520) !important;
+}
+#maternalModal {
+    background: #ffffff !important;
+}
+
+  #imagePreviewContainer {
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 2px;
+}
+
+#imagePreviewContainer > div {
+    position: relative;
+    display: inline-block;
+}
+
+#imagePreviewContainer img {
+    width: 56px !important;
+    height: 56px !important;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(0,242,255,0.3);
+}
+
+  /* ================================================
+   МАТЬ СЕРДЦА — ФИНАЛЬНЫЙ CSS
+   Замени ВЕСЬ старый блок мать сердца в style.css
+   ================================================ */
+
+/* ── МОДАЛ — полный экран на мобиле ── */
+#maternalModal {
+  display: none;
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  right: 0 !important; bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  background: #fff8f8;
+  z-index: 999999 !important; /* выше сайдбара */
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+/* ── Кнопка закрыть — фикс позиции ── */
+.mh-close {
+  position: fixed;
+  top: 14px; right: 14px;
+  background: rgba(232,50,90,0.13);
+  border: 1.5px solid rgba(232,50,90,0.3);
+  color: #e8325a;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9999999 !important; /* выше всего */
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 700;
+  transition: background 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  pointer-events: all !important;
+  line-height: 1;
+}
+.mh-close:hover, .mh-close:active { background: #e8325a; color: #fff; }
+
+/* ── ЭКРАН 1: РОЛИ ── */
+#mh-roleScreen {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 20px 20px; /* top padding под крестик */
+  position: relative; z-index: 1;
+  overflow-y: auto;
+  background: #fff8f8;
+}
+.mh-heart-icon {
+  font-size: 58px; margin-bottom: 12px;
+  animation: mh-heartbeat 2s ease-in-out infinite;
+  display: block;
+}
+@keyframes mh-heartbeat {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+.mh-title {
+  font-family: 'Georgia', serif;
+  font-size: 34px; font-weight: 300;
+  color: #e8325a; letter-spacing: 1px;
+  margin-bottom: 4px; text-align: center;
+}
+.mh-subtitle {
+  font-size: 13px; color: #9b7a84;
+  margin-bottom: 3px; text-align: center;
+}
+.mh-project-name {
+  font-size: 10px; color: #e8325a; opacity: 0.65;
+  margin-bottom: 28px; text-align: center;
+  letter-spacing: 3px; text-transform: uppercase;
+}
+.mh-roles {
+  display: flex; flex-direction: column; gap: 11px;
+  width: 100%; max-width: 440px;
+}
+.mh-role-btn {
+  width: 100%;
+  padding: 16px 18px;
+  background: #fff;
+  border: 1.5px solid rgba(232,50,90,0.2);
+  border-radius: 15px; cursor: pointer;
+  display: flex; align-items: center; gap: 14px;
+  transition: border-color 0.12s, background 0.12s;
+  box-shadow: 0 2px 10px rgba(232,50,90,0.05);
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.mh-role-btn:hover { background: #fff0f3; border-color: #e8325a; }
+.mh-role-btn:active { background: #ffe0e6; transform: scale(0.99); }
+.mh-role-icon {
+  width: 46px; height: 46px; border-radius: 13px;
+  background: rgba(232,50,90,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.mh-role-name { font-size: 16px; font-weight: 600; color: #2d1520; margin-bottom: 2px; }
+.mh-role-desc { font-size: 11px; color: #9b7a84; line-height: 1.4; }
+.mh-role-arrow { color: #e8325a; font-size: 19px; margin-left: auto; opacity: 0.45; flex-shrink: 0; }
+
+/* ── ОБЩИЕ ПАНЕЛИ ── */
+.mh-panel {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow-y: auto; overflow-x: hidden;
+  z-index: 2;
+  background: #fff8f8;
+  -webkit-overflow-scrolling: touch;
+}
+.mh-panel.mh-dark {
+  background: #0d0008;
+  overflow: hidden; /* чат не скроллит, скроллит список */
+  display: none;
+  flex-direction: column;
+}
+
+/* ── ШАПКА ПАНЕЛЕЙ ── */
+.mh-panel-header {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; background: #fff8f8;
+  z-index: 10; border-bottom: 1px solid rgba(232,50,90,0.1);
+  padding-right: 52px; /* место под крестик закрытия */
+}
+.mh-panel-header h2 {
+  font-family: 'Georgia', serif;
+  font-size: 18px; font-weight: 400; color: #e8325a; margin-bottom: 2px;
+}
+.mh-panel-header p { font-size: 11px; color: #9b7a84; }
+.mh-back {
+  background: rgba(232,50,90,0.1);
+  border: none; color: #e8325a;
+  min-width: 38px; height: 38px; border-radius: 11px;
+  cursor: pointer; font-size: 17px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s; flex-shrink: 0;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.mh-back:hover, .mh-back:active { background: #e8325a; color: #fff; }
+
+/* ── ФОРМА ── */
+.mh-form {
+  padding: 18px 18px 50px;
+  display: flex; flex-direction: column; gap: 14px;
+  max-width: 500px; margin: 0 auto; width: 100%;
+}
+.mh-section-label {
+  font-size: 10px; font-weight: 700; color: #e8325a;
+  text-transform: uppercase; letter-spacing: 2px; margin-top: 4px;
+}
+.mh-field { display: flex; flex-direction: column; gap: 5px; }
+.mh-field label { font-size: 13px; color: #9b7a84; font-weight: 500; }
+.mh-field input, .mh-field select, .mh-field textarea {
+  width: 100%; padding: 13px 15px;
+  background: #fff;
+  border: 1.5px solid rgba(232,50,90,0.18);
+  border-radius: 12px; font-size: 15px; color: #2d1520;
+  outline: none; transition: border-color 0.12s, box-shadow 0.12s;
+  -webkit-appearance: none; font-family: inherit;
+  -webkit-user-select: text; user-select: text;
+}
+.mh-field input:focus, .mh-field select:focus, .mh-field textarea:focus {
+  border-color: #e8325a; box-shadow: 0 0 0 3px rgba(232,50,90,0.1);
+}
+.mh-field textarea { resize: none; height: 78px; }
+
+/* загрузка */
+.mh-upload-area {
+  border: 2px dashed rgba(232,50,90,0.28);
+  border-radius: 12px; padding: 18px; text-align: center; cursor: pointer;
+  background: rgba(232,50,90,0.03); touch-action: manipulation;
+}
+.mh-upload-area:active { background: rgba(232,50,90,0.08); }
+.mh-upload-area p { font-size: 12px; color: #9b7a84; margin-top: 4px; }
+#mh-fileList { font-size: 11px; color: #e8325a; margin-top: 4px; }
+
+/* навыки */
+.mh-skills-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.mh-skill-tag {
+  padding: 7px 13px;
+  background: #fff; border: 1.5px solid rgba(232,50,90,0.22);
+  border-radius: 20px; font-size: 12px; color: #9b7a84;
+  cursor: pointer; user-select: none; touch-action: manipulation;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+}
+.mh-skill-tag.selected { background: #e8325a; border-color: #e8325a; color: #fff; }
+
+/* кнопки сохранить */
+.mh-save-btn, .mh-action-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, #e8325a, #c02040);
+  border: none; border-radius: 13px; color: #fff;
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: opacity 0.12s, transform 0.08s;
+  box-shadow: 0 5px 18px rgba(232,50,90,0.28);
+  margin-top: 4px; font-family: inherit;
+  touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.mh-save-btn:active, .mh-action-btn:active { transform: scale(0.98); opacity: 0.88; }
+.mh-save-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+#mh-saveMsg {
+  text-align: center; font-size: 13px; color: #28a745;
+  display: none; padding: 6px; background: rgba(40,167,69,0.08);
+  border-radius: 8px;
+}
+
+/* инфо карточки */
+.mh-info-card {
+  background: rgba(232,50,90,0.05);
+  border: 1px solid rgba(232,50,90,0.13);
+  border-radius: 13px; padding: 14px;
+}
+.mh-info-card h4 { font-size: 13px; color: #e8325a; margin-bottom: 6px; }
+.mh-info-card p { font-size: 12px; color: #7a5060; line-height: 1.6; }
+
+/* статистика руководителя */
+.mh-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.mh-stat-card {
+  background: #fff; border: 1px solid rgba(232,50,90,0.13);
+  border-radius: 13px; padding: 14px; text-align: center;
+}
+.mh-stat-num { font-size: 26px; font-weight: 700; color: #e8325a; }
+.mh-stat-label { font-size: 10px; color: #9b7a84; margin-top: 2px; }
+
+/* ── ИИ ЭКРАН — ФИКС ── */
+#mh-aiScreen {
+  position: absolute !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+  display: none;
+  flex-direction: column !important;
+  background: #100008 !important;
+  z-index: 3;
+  overflow: hidden !important;
+}
+/* Декор */
+#mh-aiScreen::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(232,50,90,0.12) 0%, transparent 70%);
+  border-radius: 50%; pointer-events: none;
+}
+.mh-ai-header {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 14px;
+  padding-right: 52px; /* место под крестик */
+  background: rgba(0,0,0,0.45);
+  border-bottom: 1px solid rgba(232,50,90,0.18);
+  backdrop-filter: blur(16px);
+  flex-shrink: 0; position: relative; z-index: 1;
+}
+.mh-ai-avatar {
+  width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(232,50,90,0.35), rgba(160,20,50,0.5));
+  border: 1px solid rgba(232,50,90,0.35);
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.mh-ai-name {
+  font-family: 'Georgia', serif; font-size: 15px; color: #fff; font-weight: 400;
+}
+.mh-ai-status {
+  font-size: 10px; color: rgba(232,50,90,0.75);
+  display: flex; align-items: center; gap: 5px; margin-top: 1px;
+}
+.mh-ai-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #ff6b8a; animation: mh-pulse 2s infinite;
+}
+@keyframes mh-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.mh-child-badge {
+  margin-left: auto; padding: 4px 9px;
+  background: rgba(232,50,90,0.14);
+  border: 1px solid rgba(232,50,90,0.28);
+  border-radius: 18px; font-size: 10px;
+  color: rgba(255,150,170,0.9); white-space: nowrap;
+  max-width: 110px; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0;
+}
+
+/* сообщения */
+.mh-ai-messages {
+  flex: 1 1 0; overflow-y: auto; padding: 14px 14px 8px;
+  display: flex; flex-direction: column; gap: 11px;
+  position: relative; z-index: 1;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0; /* важно! */
+}
+.mh-msg { display: flex; gap: 8px; align-items: flex-start; }
+.mh-msg-avatar {
+  width: 28px; height: 28px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(232,50,90,0.25), rgba(160,20,50,0.4));
+  border: 1px solid rgba(232,50,90,0.22);
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.mh-msg-bubble {
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 14px; line-height: 1.6; max-width: 84%;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.92); word-break: break-word;
+}
+.mh-msg.user { flex-direction: row-reverse; }
+.mh-msg.user .mh-msg-bubble {
+  background: linear-gradient(135deg, rgba(232,50,90,0.22), rgba(160,20,50,0.28));
+  border-color: rgba(232,50,90,0.25);
+  border-radius: 14px 4px 14px 14px;
+}
+.mh-typing {
+  display: flex; gap: 4px; align-items: center; padding: 11px 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 4px 14px 14px 14px; width: fit-content;
+}
+.mh-typing span {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(232,50,90,0.55); animation: mh-bounce 1.2s ease-in-out infinite;
+}
+.mh-typing span:nth-child(2) { animation-delay: 0.2s; }
+.mh-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes mh-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+/* инпут чата */
+.mh-ai-input-area {
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.5);
+  border-top: 1px solid rgba(232,50,90,0.15);
+  backdrop-filter: blur(16px);
+  display: flex; gap: 8px; align-items: flex-end;
+  position: relative; z-index: 2;
+  flex-shrink: 0; /* НЕ сжиматься */
+}
+#mh-aiInput {
+  flex: 1; padding: 11px 14px;
+  background: rgba(255,255,255,0.09);
+  border: 1.5px solid rgba(232,50,90,0.22);
+  border-radius: 12px; color: #fff; font-size: 14px;
+  outline: none; resize: none; max-height: 90px;
+  -webkit-user-select: text; user-select: text;
+  transition: border-color 0.12s; font-family: inherit;
+  display: block !important;
+}
+#mh-aiInput:focus { border-color: rgba(232,50,90,0.5); }
+#mh-aiInput::placeholder { color: rgba(255,255,255,0.25); }
+#mh-sendBtn {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: linear-gradient(135deg, #e8325a, #c02040);
+  border: none; border-radius: 12px; color: #fff; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 12px rgba(232,50,90,0.38);
+  transition: transform 0.1s; touch-action: manipulation;
+}
+#mh-sendBtn:active { transform: scale(0.92); }
+
+/* ── ДЕСКТОП ── */
+@media (min-width: 768px) {
+  .mh-roles { max-width: 520px; }
+  .mh-role-btn { padding: 20px 24px; }
+  .mh-role-icon { width: 54px; height: 54px; font-size: 25px; }
+  .mh-role-name { font-size: 18px; }
+  .mh-title { font-size: 44px; }
+  .mh-form { max-width: 560px; }
+  .mh-msg-bubble { font-size: 15px; }
+}
+
+/* ── МОБИЛЬ ── */
+@media (max-width: 767px) {
+  .mh-title { font-size: 30px; }
+  #maternalModal { z-index: 999999 !important; }
+}
+
+  /* ── МАТЬ СЕРДЦА: ГЛАВНЫЙ КОНТЕЙНЕР ── */
+#maternalModal {
+  display: none;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background: #fff8f8;
+  z-index: 9999999 !important;
+  overflow: hidden;
+  touch-action: manipulation;
+  /* ← ВОТ ГЛАВНЫЙ ФИХ: */
+  flex-direction: column !important;
+}
+
+#maternalModal.active {
+  display: flex !important;
+  flex-direction: column !important;
+}
+  /* Все экраны внутри модала — скрыты по умолчанию */
+#mh-roleScreen,
+#mh-parentScreen,
+#mh-specialistScreen,
+#mh-directorScreen,
+#mh-aiScreen,
+.mh-panel {
+  display: none;
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Показываем только активный экран */
+#mh-roleScreen.mh-active,
+#mh-parentScreen.mh-active,
+#mh-specialistScreen.mh-active,
+#mh-directorScreen.mh-active,
+#mh-aiScreen.mh-active,
+.mh-panel.mh-active {
+  display: flex !important;
+  flex-direction: column;
+}
+  #aboutModal .modal-content {
+    max-width: 680px;
+    width: 94%;
+    padding: 50px 40px;
+    line-height: 1.75;
+}
+
+#aboutModal p {
+    font-size: 1.05rem;
+    margin-bottom: 1.4em;
+    color: #ddd;
+}
+
+#aboutModal h1, #aboutModal h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+  /* Глобальный фикс полноэкранности модалок */
+.modal.active {
+    display: flex !important;
+}
+
+.modal-content {
+    animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.88) translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Чтобы на мобильных ничего не вылезало */
+@media (max-width: 640px) {
+    .modal-content {
+        width: 96%;
+        margin: 10px;
+        border-radius: 16px;
+    }
+}
+  /* МОДАЛКИ — ОБЩИЕ ИСПРАВЛЕНИЯ */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;           /* важно: dvh вместо vh */
+    background: rgba(0, 0, 0, 0.95);   /* плотный оверлей */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 460px;
+    background: #111113;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 80px rgba(0, 242, 255, 0.15);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Специально для WhatsNew / Offline модалки */
+#whatsNewModal .modal-content,
+#offlineModal .modal-content {
+    max-width: 520px;
+    padding: 40px 30px;
+    text-align: center;
+}
+
+.modal-content h2 {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #00f2ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+ /* ============================================= */
+/* ФИНАЛЬНЫЙ ФИКС — ПОЛНЫЙ ЭКРАН ДЛЯ ВСЕХ МОДАЛОК */
+/* ============================================= */
+
+.custom-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    background: #050507 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10000 !important;
+    overflow: hidden !important;
+    backdrop-filter: blur(10px);
+}
+
+.custom-modal.active {
+    display: flex !important;
+}
+
+/* === What's New (System Chronicles) — ПОЛНЫЙ ЭКРАН === */
+#whatsNewModal .modal-content.lumifex-fullscreen {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: #050507 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+}
+
+/* Убираем лишние отступы внутри */
+#whatsNewModal .modal-header {
+    padding: 20px 30px !important;
+    background: rgba(10,10,15,0.95) !important;
+    border-bottom: 1px solid rgba(0,242,255,0.15) !important;
+}
+
+#whatsNewModal .modal-body {
+    padding: 30px !important;
+    height: calc(100dvh - 80px) !important;
+    overflow-y: auto !important;
+}
+
+/* === Скачивание Offline (downloadModal) — ПОЛНЫЙ ЭКРАН === */
+#downloadModal .modal-content {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: #050507 !important;
+    overflow: hidden !important;
+}
+
+#downloadModal iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+}
+
+/* Анимация и мобильная адаптация */
+.custom-modal .modal-content {
+    animation: modalFullPop 0.4s ease forwards;
+}
+
+@keyframes modalFullPop {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    #whatsNewModal .modal-body,
+    #downloadModal .modal-content {
+        padding: 15px !important;
+    }
+}
+  /* ============================================= */
+/* ФИКС ДЛЯ ABOUT SOLIFON AI — ПОЛНЫЙ ЭКРАН      */
+/* ============================================= */
+
+#aboutModal.custom-modal {
+    background: #050507 !important;
+}
+
+#aboutModal .modal-content {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: #050507 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+/* Шапка модалки */
+#aboutModal .modal-header {
+    padding: 25px 30px !important;
+    background: rgba(10, 10, 15, 0.95) !important;
+    border-bottom: 1px solid rgba(0, 242, 255, 0.2) !important;
+    flex-shrink: 0 !important;
+}
+
+#aboutModal .modal-header h3 {
+    font-size: 1.6rem !important;
+    color: #00f2ff !important;
+}
+
+/* Основное тело с текстом */
+#aboutModal .modal-body {
+    flex: 1 !important;
+    padding: 40px 35px !important;
+    overflow-y: auto !important;
+    line-height: 1.75 !important;
+    font-size: 1.08rem !important;
+    color: #ddd !important;
+}
+
+/* Заголовок SOLIFON AI внутри текста */
+#aboutModal .mission-header h2 {
+    font-size: 2.8rem !important;
+    margin-bottom: 20px !important;
+    background: linear-gradient(90deg, #00f2ff, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent !important;
+    text-align: center !important;
+}
+
+/* Улучшение читаемости текста */
+#aboutModal .modal-body p {
+    margin-bottom: 1.4em !important;
+}
+
+/* Карточки внизу (Мульти-Ядро и Code Dev) */
+#aboutModal .feature-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    margin: 40px 0 !important;
+}
+
+@media (max-width: 768px) {
+    #aboutModal .modal-body {
+        padding: 25px 20px !important;
+    }
+    
+    #aboutModal .feature-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    #aboutModal .mission-header h2 {
+        font-size: 2.2rem !important;
+    }
+}
+
+/* ============================================= */
+/* ФИНАЛЬНЫЙ ЧИСТЫЙ ФИКС ВЫБОРА МОДЕЛИ — 29.03.2026 */
+/* ============================================= */
+
+.model-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    background: rgba(5, 5, 15, 0.68) !important;     /* полупрозрачный тёмный */
+    backdrop-filter: blur(4px) !important;            /* слабый блюр, чтобы фон оставался видимым */
+    z-index: 9960 !important;
+    opacity: 0 !important;
+    transition: opacity 0.25s ease !important;
+    display: none !important;
+    pointer-events: auto !important;
+}
+
+.model-overlay.active {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* Панель выбора моделей */
+#modelDropdown {
+    position: fixed !important;
+    z-index: 9970 !important;
+    background: rgba(15, 15, 25, 0.97) !important;
+    border: 1px solid rgba(0, 242, 255, 0.25) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7) !important;
+    width: 355px !important;
+    max-height: 78dvh !important;
+    overflow-y: auto !important;
+    padding: 15px 8px !important;
+    top: 70px !important;           /* подстраивается под шапку */
+    left: 20px !important;
+}
+
+/* Отключаем сильное размытие основного контента (звезда + чат) */
+body:has(.model-overlay.active) .star-glow-wrapper,
+body:has(.model-overlay.active) #chat-area,
+body:has(.model-overlay.active) .welcome-container,
+body:has(.model-overlay.active) .star-animation {
+    filter: blur(0px) !important;
+    opacity: 1 !important;
+}
+
+/* Убираем все лишние частицы */
+.star-particle, .sparkle, .particle, .blue-x, .model-sparkle {
+    display: none !important;
+}
+
+/* Красивые пункты */
+.model-option {
+    padding: 13px 18px !important;
+    margin: 3px 6px !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+.model-option:hover {
+    background: rgba(0, 242, 255, 0.16) !important;
+    transform: translateX(4px);
+}
+
+/* Мобильная версия */
+@media (max-width: 640px) {
+    #modelDropdown {
+        width: 96% !important;
+        left: 2% !important;
+        right: 2% !important;
+        top: auto !important;
+        bottom: 20px !important;
+        border-radius: 18px !important;
+    }
+}
+  
