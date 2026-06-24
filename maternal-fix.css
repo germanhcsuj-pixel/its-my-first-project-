@@ -1,0 +1,3015 @@
+/* Final visual layer for "Ananyn Zhuregi". Loaded after style.css. */
+body .language-switcher,
+body #languageSwitcher {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  height: 42px !important;
+  padding: 4px !important;
+  margin-left: 4px !important;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035)),
+    rgba(0, 0, 0, 0.72) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(18px) !important;
+  flex-shrink: 0 !important;
+}
+
+body #languageSwitcher::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: 15px;
+  background: linear-gradient(135deg, transparent, transparent, transparent 72%);
+  opacity: 0.65;
+}
+
+body #languageSwitcher button {
+  min-width: 42px !important;
+  height: 32px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  background: transparent !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  cursor: pointer !important;
+  transition: transform 0.18s ease, color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+body #languageSwitcher button:hover {
+  transform: translateY(-1px) !important;
+  color: #ffffff !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+body #languageSwitcher button.active,
+body #languageSwitcher button[aria-pressed="true"] {
+  color: #000000 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%) !important;
+  box-shadow: 0 8px 20px transparent !important;
+}
+
+body .logo {
+  gap: 12px !important;
+}
+
+body .white-square-icon {
+  position: relative !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 10px !important;
+  background:
+    radial-gradient(circle at 50% 50%, #ffffff 0 10%, transparent 11%),
+    conic-gradient(from 45deg, transparent 0 10%, #ffffff 10% 15%, transparent 15% 35%, #ffffff 35% 42%, transparent 42% 60%, #ffffff 60% 68%, transparent 68% 100%),
+    linear-gradient(135deg, #ffffff, #ffffff) !important;
+  box-shadow: 0 0 22px transparent, inset 0 1px 0 rgba(255,255,255,0.55) !important;
+  transform: rotate(45deg) !important;
+  flex-shrink: 0 !important;
+}
+
+body .white-square-icon::before,
+body .white-square-icon::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 6px 13px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 12px rgba(255,255,255,0.8) !important;
+}
+
+body .white-square-icon::after {
+  transform: rotate(90deg) !important;
+}
+
+body .app-header {
+  overflow: visible !important;
+  height: 112px !important;
+  align-items: flex-start !important;
+  padding-top: 22px !important;
+  padding-left: 24px !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+body .top-controls-pill {
+  min-height: 54px !important;
+  max-width: calc(100vw - 20px) !important;
+  overflow: visible !important;
+  transform: translate(-5px, -8px) !important;
+  padding: 6px !important;
+  gap: 7px !important;
+  margin-top: 0 !important;
+  position: relative !important;
+  z-index: 10001 !important;
+  pointer-events: auto !important;
+}
+
+body .close-modal,
+body button.close-modal,
+body .modal .close-modal,
+body .custom-modal .close-modal,
+body #whatsNewModal .close-modal,
+body #voiceSettingsModal .close-modal,
+body #aboutModal .close-modal {
+  position: absolute !important;
+  top: calc(14px + env(safe-area-inset-top)) !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.86) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.34) !important;
+  font-size: 28px !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 10000010 !important;
+  transform: none !important;
+  cursor: pointer !important;
+}
+
+body .modal-content,
+body .custom-modal .modal-content {
+  overflow: visible !important;
+}
+
+body #toggleBtn,
+body #clearBtn,
+body .icon-btn,
+body .btn-clear {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 13px !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+}
+
+body #toggleBtn i,
+body #clearBtn i,
+body .icon-btn i,
+body .btn-clear i {
+  display: block !important;
+  color: #ffffff !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+}
+
+body #clearBtn:hover,
+body #toggleBtn:hover {
+  color: #ffffff !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: 0 0 18px transparent !important;
+}
+
+body #clearBtn:hover i,
+body #toggleBtn:hover i {
+  color: #ffffff !important;
+}
+
+body .model-selector-container {
+  min-width: 0 !important;
+  flex: 1 1 260px !important;
+}
+
+body #modelTrigger {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+body #modelTrigger .select-trigger {
+  min-width: 0 !important;
+}
+
+body #currentModel {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+body .model-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body .model-overlay.active {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body #modelDropdown {
+  z-index: 10000001 !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+body .chat-wrapper {
+  position: relative !important;
+}
+
+body #welcomeScreen.welcome-screen {
+  position: relative !important;
+  width: min(980px, calc(100vw - 28px)) !important;
+  min-height: 520px !important;
+  margin: 10px auto 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+}
+
+body.chat-started #welcomeScreen,
+body.chat-started #welcomeScreen.welcome-screen,
+body.chat-started #welcomeScreen .star-animation-container,
+body.chat-started #welcomeScreen .quick-pills-wrapper,
+body.chat-started #welcomeScreen #quickPills {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+body.chat-started #messagesContainer {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(920px, calc(100vw - 24px)) !important;
+  margin: 8px auto 0 !important;
+}
+
+body #welcomeTitle {
+  display: none !important;
+}
+
+body #welcomeScreen .star-animation-container {
+  position: absolute !important;
+  left: 50% !important;
+  top: 48% !important;
+  width: 600px !important;
+  height: 600px !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2 !important;
+}
+
+body #welcomeScreen .quick-pills-wrapper {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 5 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+}
+
+body #welcomeScreen #quickPills.quick-pills {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+body #welcomeScreen .quick-card {
+  position: absolute !important;
+  width: 270px !important;
+  min-height: 74px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 16px 18px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 19px !important;
+  color: #ffffff !important;
+  background: #2a2b30 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+
+body #welcomeScreen .quick-card i {
+  color: #ffffff !important;
+  font-size: 21px !important;
+  min-width: 22px !important;
+}
+
+body #welcomeScreen .quick-card span {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.18 !important;
+  letter-spacing: 0 !important;
+}
+
+body #welcomeScreen .quick-card-1 {
+  top: 76px !important;
+  left: 70px !important;
+}
+
+body #welcomeScreen .quick-card-2 {
+  top: 112px !important;
+  right: 25px !important;
+}
+
+body #welcomeScreen .quick-card-3 {
+  left: 150px !important;
+  bottom: 92px !important;
+}
+
+body #welcomeScreen .quick-card-4 {
+  right: 33px !important;
+  bottom: 50px !important;
+}
+
+body .input-area {
+  transform: translateY(-20px) !important;
+}
+
+body:has(#mainAppLayout.deep-mode) #languageSwitcher,
+body #mainAppLayout.deep-mode #languageSwitcher {
+  border-color: rgba(255, 0, 0, 0.38) !important;
+  background:
+    linear-gradient(135deg, rgba(255,0,0,0.16), rgba(255,255,255,0.025)),
+    rgba(8, 0, 0, 0.84) !important;
+  box-shadow: 0 12px 34px rgba(255,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+body:has(#mainAppLayout.deep-mode) #languageSwitcher::before,
+body #mainAppLayout.deep-mode #languageSwitcher::before {
+  background: linear-gradient(135deg, rgba(255,0,0,0.72), rgba(0,0,0,0.28), transparent 72%) !important;
+}
+
+body:has(#mainAppLayout.deep-mode) #languageSwitcher button,
+body #mainAppLayout.deep-mode #languageSwitcher button {
+  color: rgba(255,255,255,0.76) !important;
+}
+
+body:has(#mainAppLayout.deep-mode) #languageSwitcher button:hover,
+body #mainAppLayout.deep-mode #languageSwitcher button:hover {
+  background: rgba(255,0,0,0.16) !important;
+  color: #ffffff !important;
+}
+
+body:has(#mainAppLayout.deep-mode) #languageSwitcher button.active,
+body:has(#mainAppLayout.deep-mode) #languageSwitcher button[aria-pressed="true"],
+body #mainAppLayout.deep-mode #languageSwitcher button.active,
+body #mainAppLayout.deep-mode #languageSwitcher button[aria-pressed="true"] {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff1b1b, #090000) !important;
+  box-shadow: 0 8px 22px rgba(255,0,0,0.34) !important;
+}
+
+body .live-mode-btn {
+  height: 44px !important;
+  width: 48px !important;
+  min-width: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  border: 1px solid transparent !important;
+  border-radius: 13px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, transparent, transparent) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  overflow: visible !important;
+}
+
+body .live-mode-btn span {
+  display: none !important;
+}
+
+body .live-mode-btn i {
+  font-size: 20px !important;
+}
+
+body .live-mode-btn.active-live {
+  color: #000000 !important;
+  background: linear-gradient(135deg, #ffffff, #ffffff) !important;
+  box-shadow: 0 0 26px transparent !important;
+}
+
+body .live-pulse {
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 999px !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  animation: liveDotPulse 1.4s ease-out infinite !important;
+}
+
+@keyframes liveDotPulse {
+  0% { box-shadow: 0 0 0 0 transparent; }
+  100% { box-shadow: 0 0 0 14px transparent; }
+}
+
+body .live-overlay {
+  position: fixed !important;
+  inset: auto 18px calc(92px + env(safe-area-inset-bottom)) auto !important;
+  z-index: 10000005 !important;
+  display: none;
+  align-items: center !important;
+  justify-content: center !important;
+  width: min(360px, calc(100vw - 24px)) !important;
+  padding: 0 !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: opacity 0.22s ease !important;
+  pointer-events: none !important;
+}
+
+body .live-content {
+  width: 100% !important;
+  min-height: 132px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 14px !important;
+  padding: 16px !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 22px !important;
+  text-align: left !important;
+  background:
+    radial-gradient(circle at 18% 12%, transparent, transparent 34%),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.94), rgba(0, 0, 0, 0.88)) !important;
+  box-shadow: 0 22px 58px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  pointer-events: auto !important;
+}
+
+body .live-content::before {
+  content: "LIVE";
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: rgba(255,255,255,0.48);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+body .wave-container {
+  position: relative !important;
+  width: 76px !important;
+  height: 76px !important;
+  min-width: 76px !important;
+  display: grid !important;
+  place-items: center !important;
+  margin: 8px 0 !important;
+}
+
+body .wave-container::after {
+  content: "";
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffffff, #ffffff);
+  box-shadow: 0 0 40px transparent;
+}
+
+body .wave {
+  position: absolute !important;
+  inset: 8px !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px !important;
+  animation: liveWave 2.1s ease-out infinite !important;
+}
+
+@keyframes liveWave {
+  0% { transform: scale(0.62); opacity: 0.9; }
+  100% { transform: scale(1.36); opacity: 0; }
+}
+
+body #liveStatus {
+  flex: 1 !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  padding-right: 34px !important;
+  margin: 0 !important;
+  color: rgba(255,255,255,0.86) !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+
+body .live-hints {
+  display: none !important;
+}
+
+body .live-hints span {
+  padding: 10px 8px !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 14px !important;
+  color: rgba(255,255,255,0.7) !important;
+  background: rgba(255,255,255,0.06) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+body .stop-live-btn {
+  position: absolute !important;
+  right: 12px !important;
+  bottom: 12px !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  color: #000000 !important;
+  background: linear-gradient(135deg, #ffffff, #ffffff) !important;
+  font-size: 0 !important;
+  cursor: pointer !important;
+}
+
+body .stop-live-btn::before {
+  content: "×";
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+body #downloadModal {
+  background: #000000 !important;
+}
+
+body #downloadModal .modal-content {
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+
+#maternalModal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  display: none !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  overflow: hidden !important;
+  z-index: 9999999 !important;
+  color: #2b1118 !important;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 107, 139, 0.25), transparent 28%),
+    radial-gradient(circle at 88% 10%, rgba(132, 94, 247, 0.16), transparent 30%),
+    radial-gradient(circle at 50% 96%, rgba(255, 196, 209, 0.48), transparent 34%),
+    linear-gradient(145deg, #fff7f8 0%, #ffeef3 42%, #fffafa 100%) !important;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+#maternalModal.active {
+  display: flex !important;
+}
+
+#maternalModal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(232, 50, 90, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232, 50, 90, 0.05) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at center, black, transparent 78%);
+}
+
+#maternalModal * {
+  box-sizing: border-box !important;
+}
+
+#maternalModal .mh-close {
+  position: fixed !important;
+  top: calc(14px + env(safe-area-inset-top)) !important;
+  right: max(18px, env(safe-area-inset-right)) !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10000000 !important;
+  border: 1px solid rgba(232, 50, 90, 0.22) !important;
+  border-radius: 50% !important;
+  color: #d92852 !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  box-shadow: 0 16px 42px rgba(173, 30, 68, 0.2) !important;
+  backdrop-filter: blur(18px) !important;
+  cursor: pointer !important;
+  transform: translateX(-2px) !important;
+}
+
+#maternalModal .mh-close:hover {
+  transform: translateY(-1px) scale(1.03) !important;
+  background: #ffffff !important;
+}
+
+#maternalModal #mh-roleScreen,
+#maternalModal #mh-parentScreen,
+#maternalModal #mh-specialistScreen,
+#maternalModal #mh-directorScreen,
+#maternalModal #mh-aiScreen {
+  position: relative !important;
+  z-index: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+#maternalModal #mh-roleScreen {
+  display: flex;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: calc(72px + env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom)) !important;
+  text-align: center !important;
+}
+
+#maternalModal .mh-panel {
+  display: none;
+  flex-direction: column !important;
+  padding: calc(72px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom)) !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  background:
+    radial-gradient(circle at 15% 12%, rgba(255, 79, 123, 0.15), transparent 28%),
+    radial-gradient(circle at 85% 0%, rgba(185, 75, 255, 0.12), transparent 28%),
+    linear-gradient(145deg, rgba(255, 247, 248, 0.96), rgba(255, 238, 243, 0.96)) !important;
+}
+
+#maternalModal #mh-roleScreen.mh-active,
+#maternalModal .mh-panel.mh-active,
+#maternalModal #mh-parentScreen.mh-active,
+#maternalModal #mh-specialistScreen.mh-active,
+#maternalModal #mh-directorScreen.mh-active,
+#maternalModal #mh-aiScreen.mh-active {
+  display: flex !important;
+}
+
+#maternalModal .mh-heart-icon {
+  width: 86px !important;
+  height: 86px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 0 18px !important;
+  border-radius: 28px !important;
+  font-size: 42px !important;
+  background: linear-gradient(145deg, #ff4f7b, #ff9ab3) !important;
+  color: white !important;
+  box-shadow: 0 22px 52px rgba(232, 50, 90, 0.32) !important;
+  animation: mhFinalPulse 2.2s ease-in-out infinite !important;
+}
+
+@keyframes mhFinalPulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.05); }
+}
+
+#maternalModal .mh-title {
+  max-width: 720px !important;
+  margin: 0 0 8px !important;
+  color: #d92852 !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(34px, 7vw, 64px) !important;
+  font-weight: 500 !important;
+  line-height: 1.02 !important;
+  letter-spacing: 0 !important;
+  text-align: center !important;
+  text-shadow: 0 14px 36px rgba(232, 50, 90, 0.16) !important;
+}
+
+#maternalModal .mh-subtitle {
+  max-width: 560px !important;
+  margin: 0 auto 6px !important;
+  color: #8c5967 !important;
+  font-size: clamp(14px, 3.6vw, 18px) !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+
+#maternalModal .mh-project-name {
+  margin: 0 0 28px !important;
+  color: rgba(217, 40, 82, 0.72) !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 3px !important;
+  text-transform: uppercase !important;
+}
+
+#maternalModal .mh-roles {
+  width: min(100%, 560px) !important;
+  display: grid !important;
+  gap: 14px !important;
+}
+
+#maternalModal .mh-role-btn {
+  width: 100% !important;
+  min-height: 92px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(232, 50, 90, 0.16) !important;
+  border-radius: 18px !important;
+  color: #32151d !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 18px 44px rgba(173, 30, 68, 0.12) !important;
+  backdrop-filter: blur(16px) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+#maternalModal .mh-role-btn:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(232, 50, 90, 0.44) !important;
+  box-shadow: 0 24px 56px rgba(173, 30, 68, 0.18) !important;
+}
+
+#maternalModal .mh-role-icon {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 18px !important;
+  font-size: 24px !important;
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #ff4f7b, #b94bff) !important;
+  box-shadow: 0 12px 26px rgba(232, 50, 90, 0.22) !important;
+}
+
+#maternalModal .mh-role-name {
+  margin-bottom: 4px !important;
+  color: #251016 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+#maternalModal .mh-role-desc {
+  color: #835767 !important;
+  font-size: 13px !important;
+  line-height: 1.42 !important;
+}
+
+#maternalModal .mh-role-arrow {
+  margin-left: auto !important;
+  color: #d92852 !important;
+  font-size: 28px !important;
+}
+
+#maternalModal .mh-panel-header,
+#maternalModal .mh-form,
+#maternalModal .mh-info-card,
+#maternalModal .mh-stat-card {
+  width: min(100%, 920px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#maternalModal .mh-panel-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
+  padding: 16px !important;
+  border: 1px solid rgba(232, 50, 90, 0.14) !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 14px 34px rgba(173, 30, 68, 0.1) !important;
+}
+
+#maternalModal .mh-back {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  color: #d92852 !important;
+  background: rgba(232, 50, 90, 0.11) !important;
+  cursor: pointer !important;
+}
+
+#maternalModal .mh-panel-header h2 {
+  margin: 0 !important;
+  color: #251016 !important;
+  font-size: clamp(20px, 4.6vw, 30px) !important;
+  line-height: 1.15 !important;
+}
+
+#maternalModal .mh-panel-header p {
+  margin: 4px 0 0 !important;
+  color: #835767 !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+#maternalModal .mh-form {
+  display: grid !important;
+  gap: 14px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(232, 50, 90, 0.14) !important;
+  border-radius: 24px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 0 22px 54px rgba(173, 30, 68, 0.12) !important;
+}
+
+#maternalModal #mh-parentScreen .mh-form,
+#maternalModal #mh-specialistScreen .mh-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+#maternalModal #mh-parentScreen .mh-section-label,
+#maternalModal #mh-parentScreen .mh-skills-grid,
+#maternalModal #mh-parentScreen #mh-saveMsg,
+#maternalModal #mh-parentScreen .mh-save-btn,
+#maternalModal #mh-specialistScreen .mh-info-card,
+#maternalModal #mh-specialistScreen .mh-section-label,
+#maternalModal #mh-specialistScreen .mh-skills-grid,
+#maternalModal #mh-specialistScreen .mh-save-btn {
+  grid-column: 1 / -1 !important;
+}
+
+#maternalModal .mh-section-label {
+  color: #d92852 !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.8px !important;
+  text-transform: uppercase !important;
+}
+
+#maternalModal .mh-field {
+  display: grid !important;
+  gap: 7px !important;
+}
+
+#maternalModal .mh-field label {
+  color: #4b2630 !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+#maternalModal .mh-field input,
+#maternalModal .mh-field textarea,
+#maternalModal .mh-field select,
+#maternalModal #mh-aiInput {
+  width: 100% !important;
+  min-height: 46px !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(232, 50, 90, 0.18) !important;
+  border-radius: 14px !important;
+  color: #251016 !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  outline: none !important;
+  font: inherit !important;
+}
+
+#maternalModal .mh-field textarea {
+  min-height: 98px !important;
+  resize: vertical !important;
+}
+
+#maternalModal .mh-upload-area {
+  display: grid !important;
+  place-items: center !important;
+  gap: 8px !important;
+  min-height: 104px !important;
+  padding: 16px !important;
+  border: 1.5px dashed rgba(232, 50, 90, 0.26) !important;
+  border-radius: 18px !important;
+  color: #835767 !important;
+  background: rgba(255, 240, 244, 0.75) !important;
+  cursor: pointer !important;
+}
+
+#maternalModal .mh-skills-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+#maternalModal .mh-skill-tag {
+  padding: 10px 12px !important;
+  border: 1px solid rgba(232, 50, 90, 0.18) !important;
+  border-radius: 999px !important;
+  color: #5e3440 !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+#maternalModal .mh-skill-tag.selected {
+  color: #ffffff !important;
+  border-color: #d92852 !important;
+  background: linear-gradient(135deg, #ff4f7b, #d92852) !important;
+}
+
+#maternalModal .mh-save-btn,
+#maternalModal .mh-action-btn {
+  min-height: 50px !important;
+  padding: 13px 18px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff4f7b, #d92852) !important;
+  box-shadow: 0 16px 34px rgba(232, 50, 90, 0.24) !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+
+#maternalModal .mh-info-card,
+#maternalModal .mh-stat-card {
+  padding: 16px !important;
+  border: 1px solid rgba(232, 50, 90, 0.14) !important;
+  border-radius: 18px !important;
+  color: #4b2630 !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+}
+
+#maternalModal .mh-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+#maternalModal .mh-stat-num {
+  color: #d92852 !important;
+  font-size: 28px !important;
+  font-weight: 900 !important;
+}
+
+#maternalModal .mh-stat-label {
+  color: #835767 !important;
+  font-size: 12px !important;
+}
+
+#maternalModal #mh-aiScreen {
+  background: linear-gradient(145deg, #231018, #12090d) !important;
+  color: #ffffff !important;
+}
+
+#maternalModal .mh-ai-header {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: calc(14px + env(safe-area-inset-top)) 58px 14px 14px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(0, 0, 0, 0.92) !important;
+}
+
+#maternalModal .mh-ai-avatar {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #ff4f7b, #b94bff) !important;
+}
+
+#maternalModal .mh-ai-messages {
+  flex: 1 !important;
+  min-height: 0 !important;
+  padding: 16px !important;
+  overflow-y: auto !important;
+}
+
+#maternalModal .mh-ai-input-area {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: flex-end !important;
+  padding: 12px 14px calc(12px + env(safe-area-inset-bottom)) !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+}
+
+#maternalModal #mh-aiInput {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+#maternalModal #mh-sendBtn {
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  border: 0 !important;
+  border-radius: 15px !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff4f7b, #d92852) !important;
+}
+
+@media (max-width: 680px) {
+  body .top-controls-pill {
+    display: grid !important;
+    grid-template-columns: 44px 44px minmax(0, 1fr) !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  body .app-header {
+    height: auto !important;
+    min-height: 118px !important;
+    padding-top: 14px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  body .top-controls-pill {
+    transform: translate(-5px, -8px) !important;
+  }
+
+  body .close-modal,
+  body button.close-modal,
+  body .modal .close-modal,
+  body .custom-modal .close-modal,
+  #maternalModal .mh-close {
+    top: calc(12px + env(safe-area-inset-top)) !important;
+    right: calc(18px + env(safe-area-inset-right)) !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+  }
+
+  body #welcomeScreen.welcome-screen {
+    width: calc(100vw - 20px) !important;
+    min-height: 430px !important;
+    margin-top: 0 !important;
+  }
+
+  body #welcomeScreen .star-animation-container {
+    width: 420px !important;
+    height: 420px !important;
+    top: 42% !important;
+  }
+
+  body #welcomeScreen .quick-card {
+    width: min(235px, 44vw) !important;
+    min-height: 62px !important;
+    padding: 11px 12px !important;
+    border-radius: 15px !important;
+  }
+
+  body #welcomeScreen .quick-card span {
+    font-size: 12px !important;
+  }
+
+  body #welcomeScreen .quick-card i {
+    font-size: 17px !important;
+    min-width: 18px !important;
+  }
+
+  body #welcomeScreen .quick-card-1 {
+    top: 22px !important;
+    left: 0 !important;
+  }
+
+  body #welcomeScreen .quick-card-2 {
+    top: 54px !important;
+    right: 0 !important;
+  }
+
+  body #welcomeScreen .quick-card-3 {
+    left: 0 !important;
+    bottom: 90px !important;
+  }
+
+  body #welcomeScreen .quick-card-4 {
+    right: 0 !important;
+    bottom: 46px !important;
+  }
+
+  body .input-area {
+    transform: none !important;
+  }
+
+  body #languageSwitcher {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    height: 40px !important;
+    margin-left: 0 !important;
+    justify-content: space-between !important;
+  }
+
+  body #languageSwitcher button {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  body .live-mode-btn {
+    grid-column: auto !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 40px !important;
+  }
+
+  body .live-overlay {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(88px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+  }
+
+  body .live-content {
+    min-height: 118px !important;
+    padding: 14px !important;
+    border-radius: 20px !important;
+  }
+
+  body .live-hints {
+    display: none !important;
+  }
+
+  #maternalModal #mh-roleScreen {
+    justify-content: flex-start !important;
+  }
+
+  #maternalModal .mh-heart-icon {
+    width: 68px !important;
+    height: 68px !important;
+    border-radius: 22px !important;
+    font-size: 34px !important;
+  }
+
+  #maternalModal .mh-title {
+    font-size: clamp(31px, 10vw, 44px) !important;
+  }
+
+  #maternalModal .mh-role-btn {
+    min-height: 82px !important;
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  #maternalModal .mh-role-icon {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    border-radius: 16px !important;
+    font-size: 21px !important;
+  }
+
+  #maternalModal .mh-role-name {
+    font-size: 16px !important;
+  }
+
+  #maternalModal .mh-role-desc {
+    font-size: 12px !important;
+  }
+
+  #maternalModal .mh-panel-header,
+  #maternalModal .mh-form {
+    padding: 14px !important;
+    border-radius: 18px !important;
+  }
+
+  #maternalModal #mh-parentScreen .mh-form,
+  #maternalModal #mh-specialistScreen .mh-form {
+    grid-template-columns: 1fr !important;
+  }
+
+  #maternalModal .mh-skills-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #maternalModal .mh-skill-tag {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 40px !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+  }
+
+  #maternalModal .mh-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Final safety for modal close buttons: keep the X fully inside the viewport. */
+body #maternalModal .mh-close,
+body #maternalModal.active .mh-close {
+  position: fixed !important;
+  top: calc(18px + env(safe-area-inset-top)) !important;
+  right: calc(28px + env(safe-area-inset-right)) !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border-radius: 50% !important;
+  font-size: 0 !important;
+  line-height: 1 !important;
+  transform: none !important;
+  z-index: 10000050 !important;
+}
+
+body #maternalModal .mh-close::before {
+  content: "X" !important;
+  display: block !important;
+  color: #d92852 !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+body #maternalModal .mh-close:hover::before {
+  color: #ffffff !important;
+}
+
+@media (max-width: 680px) {
+  body #maternalModal .mh-close,
+  body #maternalModal.active .mh-close {
+    top: calc(14px + env(safe-area-inset-top)) !important;
+    right: calc(26px + env(safe-area-inset-right)) !important;
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+  }
+}
+
+/* SOLIFON FINAL PLATFORM POLISH */
+html,
+body {
+  min-height: 100% !important;
+  background: #000000 !important;
+}
+
+body::before {
+  content: "" !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: -2 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(circle at 18% 12%, transparent, transparent 30%),
+    radial-gradient(circle at 84% 16%, rgba(0, 109, 255, 0.12), transparent 32%),
+    linear-gradient(145deg, #000000, #000000 52%, #000000) !important;
+}
+
+body #mainAppLayout,
+body .main-app-layout,
+body .app-container {
+  background:
+    radial-gradient(circle at 50% 24%, transparent, transparent 40%),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.98)) !important;
+}
+
+body #welcomeScreen .quick-card {
+  overflow: hidden !important;
+  transform: translateZ(0) !important;
+  transition:
+    transform 0.46s cubic-bezier(.16,1,.3,1),
+    border-color 0.46s ease,
+    box-shadow 0.46s ease,
+    background 0.46s ease,
+    filter 0.46s ease !important;
+}
+
+body #welcomeScreen .quick-card::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -70% !important;
+  z-index: -1 !important;
+  background: conic-gradient(from 90deg, transparent, transparent, transparent 28%) !important;
+  opacity: 0 !important;
+  animation: quickHaloSpin 4s linear infinite !important;
+  transition: opacity 0.42s ease !important;
+}
+
+body #welcomeScreen .quick-card::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 1px !important;
+  z-index: -1 !important;
+  border-radius: 18px !important;
+  background: #2a2b30 !important;
+}
+
+body #welcomeScreen .quick-card:hover,
+body #welcomeScreen .quick-card:focus-visible {
+  transform: translateY(-5px) scale(1.018) !important;
+  border-color: transparent !important;
+  box-shadow:
+    0 0 0 1px transparent,
+    0 16px 38px transparent,
+    inset 0 1px 0 rgba(255,255,255,0.14) !important;
+}
+
+body #welcomeScreen .quick-card:hover::before,
+body #welcomeScreen .quick-card:focus-visible::before {
+  opacity: 1 !important;
+}
+
+body #welcomeScreen .quick-card:hover i,
+body #welcomeScreen .quick-card:focus-visible i {
+  transform: scale(1.08) rotate(-4deg) !important;
+  filter: drop-shadow(0 0 8px transparent) !important;
+}
+
+body #welcomeScreen .quick-card i {
+  transition: transform 0.42s cubic-bezier(.16,1,.3,1), filter 0.42s ease !important;
+}
+
+@keyframes quickHaloSpin {
+  to { transform: rotate(360deg); }
+}
+
+body #mainAppLayout.deep-mode #welcomeScreen .quick-card,
+body:has(#mainAppLayout.deep-mode) #welcomeScreen .quick-card {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: #2a2b30 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+
+body #mainAppLayout.deep-mode #welcomeScreen .quick-card::before,
+body:has(#mainAppLayout.deep-mode) #welcomeScreen .quick-card::before {
+  background: conic-gradient(from 90deg, transparent, rgba(255, 0, 0, 0.78), transparent 28%) !important;
+}
+
+body #mainAppLayout.deep-mode #welcomeScreen .quick-card::after,
+body:has(#mainAppLayout.deep-mode) #welcomeScreen .quick-card::after {
+  background: #2a2b30 !important;
+}
+
+body #mainAppLayout.deep-mode #welcomeScreen .quick-card i,
+body:has(#mainAppLayout.deep-mode) #welcomeScreen .quick-card i {
+  color: #ff3030 !important;
+}
+
+body #mainAppLayout.deep-mode #toggleBtn:hover,
+body #mainAppLayout.deep-mode #clearBtn:hover,
+body #mainAppLayout.deep-mode .icon-btn:hover,
+body #mainAppLayout.deep-mode .btn-clear:hover,
+body #mainAppLayout.deep-mode .live-mode-btn:hover,
+body:has(#mainAppLayout.deep-mode) #toggleBtn:hover,
+body:has(#mainAppLayout.deep-mode) #clearBtn:hover,
+body:has(#mainAppLayout.deep-mode) .icon-btn:hover,
+body:has(#mainAppLayout.deep-mode) .btn-clear:hover,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn:hover {
+  color: #ffffff !important;
+  border-color: rgba(255, 0, 0, 0.46) !important;
+  background: rgba(255, 0, 0, 0.13) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.16) !important;
+}
+
+body #mainAppLayout.deep-mode #toggleBtn:hover i,
+body #mainAppLayout.deep-mode #clearBtn:hover i,
+body #mainAppLayout.deep-mode .icon-btn:hover i,
+body #mainAppLayout.deep-mode .btn-clear:hover i,
+body #mainAppLayout.deep-mode .live-mode-btn:hover i,
+body:has(#mainAppLayout.deep-mode) #toggleBtn:hover i,
+body:has(#mainAppLayout.deep-mode) #clearBtn:hover i,
+body:has(#mainAppLayout.deep-mode) .icon-btn:hover i,
+body:has(#mainAppLayout.deep-mode) .btn-clear:hover i,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn:hover i {
+  color: #ffffff !important;
+}
+
+body #mainAppLayout.deep-mode #modelTrigger:hover,
+body:has(#mainAppLayout.deep-mode) #modelTrigger:hover {
+  border-color: rgba(255, 0, 0, 0.42) !important;
+  background: rgba(255, 0, 0, 0.12) !important;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.14) !important;
+}
+
+body #downloadModal {
+  background:
+    radial-gradient(circle at 18% 12%, transparent, transparent 34%),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.82), rgba(0, 0, 0, 0.96)) !important;
+  backdrop-filter: blur(24px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.2) !important;
+}
+
+body #downloadModal .modal-content {
+  width: min(1180px, calc(100vw - 32px)) !important;
+  height: min(780px, calc(100dvh - 32px)) !important;
+  margin: auto !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 26px !important;
+  overflow: hidden !important;
+  background: rgba(0, 0, 0, 0.68) !important;
+  box-shadow: 0 32px 90px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+body #upgradeModal > div {
+  width: min(520px, calc(100vw - 28px)) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 28px !important;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(251, 191, 36, 0.16), transparent 32%),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.88)) !important;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.46), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+@media (max-width: 680px) {
+  body #downloadModal .modal-content {
+    width: 100vw !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+}
+
+/* Final top toolbar tuning */
+body #languageSwitcher button:hover {
+  color: #ffffff !important;
+  background: transparent !important;
+  box-shadow: 0 0 14px transparent !important;
+}
+
+body #modelTrigger,
+body #modelTrigger .select-trigger {
+  transition: border-color 0.28s ease, background 0.28s ease, box-shadow 0.28s ease, transform 0.28s ease !important;
+}
+
+body #modelTrigger:hover,
+body #modelTrigger:hover .select-trigger {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: 0 0 16px transparent !important;
+}
+
+body .live-mode-btn:hover {
+  color: #ffffff !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: 0 0 16px transparent !important;
+}
+
+body .live-mode-btn:hover i {
+  color: #ffffff !important;
+}
+
+body #mainAppLayout.deep-mode #languageSwitcher button:hover,
+body:has(#mainAppLayout.deep-mode) #languageSwitcher button:hover,
+body #mainAppLayout.deep-mode #modelTrigger:hover,
+body #mainAppLayout.deep-mode #modelTrigger:hover .select-trigger,
+body:has(#mainAppLayout.deep-mode) #modelTrigger:hover,
+body:has(#mainAppLayout.deep-mode) #modelTrigger:hover .select-trigger,
+body #mainAppLayout.deep-mode .live-mode-btn:hover,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn:hover {
+  color: #ffffff !important;
+  border-color: rgba(255, 0, 0, 0.42) !important;
+  background: rgba(255, 0, 0, 0.12) !important;
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.14) !important;
+}
+
+@media (max-width: 680px) {
+  body .live-mode-btn {
+    width: 42px !important;
+    min-width: 42px !important;
+  }
+
+  body .live-mode-btn i {
+    font-size: 18px !important;
+  }
+}
+
+/* Final modal polish: close animation, blue lift, cleaner layers */
+body .custom-modal {
+  scrollbar-width: thin !important;
+  scrollbar-color: transparent rgba(255,255,255,0.04) !important;
+}
+
+body .custom-modal * {
+  scrollbar-width: thin !important;
+  scrollbar-color: transparent rgba(255,255,255,0.04) !important;
+}
+
+body .custom-modal::-webkit-scrollbar,
+body .custom-modal *::-webkit-scrollbar,
+body #maternalModal *::-webkit-scrollbar {
+  width: 7px !important;
+  height: 7px !important;
+}
+
+body .custom-modal::-webkit-scrollbar-track,
+body .custom-modal *::-webkit-scrollbar-track,
+body #maternalModal *::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.035) !important;
+  border-radius: 999px !important;
+}
+
+body .custom-modal::-webkit-scrollbar-thumb,
+body .custom-modal *::-webkit-scrollbar-thumb,
+body #maternalModal *::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, transparent, rgba(0,109,255,0.72)) !important;
+  box-shadow: 0 0 12px transparent !important;
+}
+
+body .close-modal,
+body button.close-modal,
+body .modal .close-modal,
+body .custom-modal .close-modal,
+body #whatsNewModal .close-modal,
+body #aboutModal .close-modal,
+body #voiceSettingsModal .close-modal {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 15px !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.76) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 16px 38px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  transform: translateZ(0) !important;
+  transition: transform 0.34s cubic-bezier(.16,1,.3,1), border-color 0.34s ease, background 0.34s ease, box-shadow 0.34s ease !important;
+}
+
+body .close-modal:hover,
+body button.close-modal:hover,
+body .modal .close-modal:hover,
+body .custom-modal .close-modal:hover {
+  transform: translateY(-2px) scale(1.06) rotate(90deg) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: 0 18px 44px transparent, inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+
+body #mainAppLayout.deep-mode .close-modal:hover,
+body:has(#mainAppLayout.deep-mode) .close-modal:hover {
+  border-color: rgba(255, 0, 0, 0.54) !important;
+  background: rgba(255, 0, 0, 0.14) !important;
+  box-shadow: 0 18px 44px rgba(255,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+body #whatsNewModal .modal-content.lumifex-fullscreen,
+body #aboutModal .modal-content {
+  width: min(1120px, calc(100vw - 32px)) !important;
+  height: min(820px, calc(100dvh - 32px)) !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: auto !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 26px !important;
+  overflow: hidden !important;
+  background:
+    radial-gradient(circle at 20% 0%, transparent, transparent 34%),
+    linear-gradient(145deg, rgba(0, 0, 0, 0.94), rgba(0, 0, 0, 0.96)) !important;
+  box-shadow: 0 32px 90px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+body #whatsNewModal .modal-header,
+body #aboutModal .modal-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 5 !important;
+  padding-right: 72px !important;
+  background: rgba(0, 0, 0, 0.78) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.09) !important;
+}
+
+body #whatsNewModal .modal-body,
+body #whatsNewModal .lumifex-scroll-area,
+body #aboutModal .modal-body {
+  height: calc(100% - 72px) !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-bottom: 28px !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+body #whatsNewModal #carousel-container,
+body #whatsNewModal #stellar-carousel {
+  width: min(420px, 74vw) !important;
+  height: min(420px, 74vw) !important;
+  max-width: 420px !important;
+  max-height: 420px !important;
+  margin: 0 auto !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  filter: drop-shadow(0 0 28px transparent) !important;
+}
+
+body #whatsNewModal .carousel-section {
+  display: grid !important;
+  place-items: center !important;
+  min-height: 420px !important;
+}
+
+body #downloadModal {
+  background: rgba(0, 0, 0, 0.90) !important;
+}
+
+body #downloadModal .modal-content {
+  width: min(1120px, calc(100vw - 28px)) !important;
+  height: min(760px, calc(100dvh - 28px)) !important;
+  border-radius: 24px !important;
+  border: 1px solid transparent !important;
+  background: rgba(0, 0, 0, 0.92) !important;
+  box-shadow: 0 28px 80px rgba(0,0,0,0.50) !important;
+}
+
+body #downloadModal iframe {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000000 !important;
+}
+
+body #maternalModal {
+  isolation: isolate !important;
+}
+
+body #maternalModal #mh-roleScreen,
+body #maternalModal .mh-panel {
+  background: transparent !important;
+}
+
+body #maternalModal .mh-panel-header,
+body #maternalModal .mh-form,
+body #maternalModal .mh-info-card,
+body #maternalModal .mh-stat-card {
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+@media (max-width: 680px) {
+  body #whatsNewModal .modal-content.lumifex-fullscreen,
+  body #aboutModal .modal-content,
+  body #downloadModal .modal-content {
+    width: 100vw !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  body #whatsNewModal #carousel-container,
+  body #whatsNewModal #stellar-carousel {
+    width: min(300px, 82vw) !important;
+    height: min(300px, 82vw) !important;
+  }
+
+  body #whatsNewModal .carousel-section {
+    min-height: 320px !important;
+  }
+}
+
+/* Fullscreen modal reset: one layer only, no corner gaps */
+body #whatsNewModal,
+body #aboutModal,
+body #downloadModal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background:
+    radial-gradient(circle at 18% 12%, transparent, transparent 34%),
+    linear-gradient(145deg, #000000 0%, #000000 52%, #000000 100%) !important;
+  border: 0 !important;
+  overflow: hidden !important;
+}
+
+body #whatsNewModal .modal-content.lumifex-fullscreen,
+body #aboutModal .modal-content,
+body #downloadModal .modal-content {
+  position: relative !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+body #whatsNewModal .modal-header,
+body #aboutModal .modal-header {
+  height: 68px !important;
+  min-height: 68px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 78px 0 22px !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  border-bottom: 1px solid transparent !important;
+}
+
+body #whatsNewModal .modal-body,
+body #whatsNewModal .lumifex-scroll-area,
+body #aboutModal .modal-body {
+  height: calc(100dvh - 68px) !important;
+  max-height: calc(100dvh - 68px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 22px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: transparent rgba(255,255,255,0.04) !important;
+}
+
+body #downloadModal iframe {
+  width: 100vw !important;
+  height: 100dvh !important;
+  display: block !important;
+  border: 0 !important;
+  background: #000000 !important;
+}
+
+body #whatsNewModal #carousel-container,
+body #whatsNewModal #stellar-carousel {
+  width: min(520px, 86vw) !important;
+  height: min(520px, 86vw) !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  filter: none !important;
+}
+
+body #whatsNewModal .carousel-section {
+  min-height: 540px !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+  padding-bottom: 96px !important;
+}
+
+body #whatsNewModal #dot-nav {
+  position: absolute !important;
+  left: 50% !important;
+  top: calc(50% + min(320px, 36vw)) !important;
+  bottom: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 30 !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  pointer-events: auto !important;
+}
+
+body #whatsNewModal .dot {
+  width: 11px !important;
+  height: 11px !important;
+}
+
+body #whatsNewModal .close-modal,
+body #aboutModal .close-modal,
+body #downloadModal .close-modal,
+body #voiceSettingsModal .close-modal {
+  position: fixed !important;
+  top: 14px !important;
+  right: 22px !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  border-radius: 16px !important;
+  border: 1px solid transparent !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  transform: translateZ(0) rotate(0deg) !important;
+  transition: transform 0.36s cubic-bezier(.16,1,.3,1), border-color 0.36s ease, background 0.36s ease, box-shadow 0.36s ease !important;
+  z-index: 10000080 !important;
+}
+
+body #whatsNewModal .close-modal:hover,
+body #aboutModal .close-modal:hover,
+body #downloadModal .close-modal:hover,
+body #voiceSettingsModal .close-modal:hover {
+  transform: translateY(-2px) scale(1.06) rotate(90deg) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: 0 18px 46px transparent, inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+
+body #whatsNewModal ::-webkit-scrollbar,
+body #aboutModal ::-webkit-scrollbar,
+body #downloadModal ::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+body #whatsNewModal ::-webkit-scrollbar-track,
+body #aboutModal ::-webkit-scrollbar-track,
+body #downloadModal ::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.04) !important;
+}
+
+body #whatsNewModal ::-webkit-scrollbar-thumb,
+body #aboutModal ::-webkit-scrollbar-thumb,
+body #downloadModal ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ffffff, #ffffff) !important;
+  border-radius: 999px !important;
+}
+
+@media (max-width: 680px) {
+  body #whatsNewModal .modal-header,
+  body #aboutModal .modal-header {
+    height: 62px !important;
+    min-height: 62px !important;
+    padding-left: 14px !important;
+  }
+
+  body #whatsNewModal .modal-body,
+  body #whatsNewModal .lumifex-scroll-area,
+  body #aboutModal .modal-body {
+    height: calc(100dvh - 62px) !important;
+    max-height: calc(100dvh - 62px) !important;
+    padding: 14px !important;
+  }
+
+  body #whatsNewModal #carousel-container,
+  body #whatsNewModal #stellar-carousel {
+    width: min(360px, 88vw) !important;
+    height: min(360px, 88vw) !important;
+  }
+
+  body #whatsNewModal .carousel-section {
+    min-height: 380px !important;
+    padding-bottom: 76px !important;
+  }
+
+  body #whatsNewModal #dot-nav {
+    top: calc(50% + 210px) !important;
+    gap: 14px !important;
+  }
+}
+
+/* Absolute final visual corrections */
+body .top-controls-pill {
+  transform: translate(-5px, -8px) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+  border-radius: 22px !important;
+  background: rgba(0, 0, 0, 0.46) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+body #welcomeScreen,
+body #welcomeScreen .hero-visual,
+body #welcomeScreen .profile-wrapper,
+body #welcomeScreen .star-animation-container,
+body .chat-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body #whatsNewModal,
+body #whatsNewModal .modal-content,
+body #whatsNewModal .modal-content.lumifex-fullscreen,
+body #whatsNewModal .modal-body,
+body #whatsNewModal .lumifex-scroll-area,
+body #whatsNewModal .lumifex-wrapper,
+body #whatsNewModal .carousel-section,
+body #whatsNewModal #carousel-container,
+body #whatsNewModal #stellar-carousel,
+body #aboutModal,
+body #aboutModal .modal-content,
+body #aboutModal .modal-body {
+  background-color: transparent !important;
+}
+
+body #whatsNewModal .carousel-section,
+body #whatsNewModal #carousel-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body #whatsNewModal .carousel-slide {
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025)) !important;
+  box-shadow: 0 22px 64px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+body #whatsNewModal #dot-nav {
+  top: calc(50% + min(326px, 36vw)) !important;
+  bottom: auto !important;
+}
+
+body #whatsNewModal .close-modal,
+body #aboutModal .close-modal,
+body #voiceSettingsModal .close-modal,
+body #downloadModal .close-modal {
+  right: 30px !important;
+}
+
+body #maternalModal .mh-close,
+body #maternalModal.active .mh-close {
+  right: calc(34px + env(safe-area-inset-right)) !important;
+}
+
+body #whatsNewModal .modal-body,
+body #whatsNewModal .lumifex-scroll-area,
+body #aboutModal .modal-body {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(155, 165, 178, 0.82) transparent !important;
+  scroll-behavior: smooth !important;
+}
+
+body #whatsNewModal .modal-body::-webkit-scrollbar,
+body #whatsNewModal .lumifex-scroll-area::-webkit-scrollbar,
+body #aboutModal .modal-body::-webkit-scrollbar {
+  width: 2px !important;
+  height: 2px !important;
+}
+
+body #whatsNewModal .modal-body::-webkit-scrollbar-track,
+body #whatsNewModal .lumifex-scroll-area::-webkit-scrollbar-track,
+body #aboutModal .modal-body::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+body #whatsNewModal .modal-body::-webkit-scrollbar-thumb,
+body #whatsNewModal .lumifex-scroll-area::-webkit-scrollbar-thumb,
+body #aboutModal .modal-body::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: rgba(155, 165, 178, 0.82) !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 680px) {
+  body .top-controls-pill {
+    transform: translate(-5px, -8px) !important;
+  }
+
+  body #whatsNewModal #dot-nav {
+    top: calc(50% + 216px) !important;
+  }
+
+  body #whatsNewModal .close-modal,
+  body #aboutModal .close-modal,
+  body #voiceSettingsModal .close-modal,
+  body #downloadModal .close-modal {
+    right: 26px !important;
+  }
+
+  body #maternalModal .mh-close,
+  body #maternalModal.active .mh-close {
+    right: calc(30px + env(safe-area-inset-right)) !important;
+  }
+}
+
+/* Presentation / code workspace redesign */
+body #presentation-screen {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  z-index: 10000020 !important;
+  display: none;
+  flex-direction: column !important;
+  padding: 14px !important;
+  color: #f8fbff !important;
+  background:
+    radial-gradient(circle at 18% 10%, transparent, transparent 30%),
+    radial-gradient(circle at 82% 16%, rgba(0,109,255,0.07), transparent 34%),
+    linear-gradient(145deg, #000000 0%, #000000 56%, #000000 100%) !important;
+  overflow: hidden !important;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+body #presentation-screen::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background-image:
+    linear-gradient(transparent 1px, transparent 1px),
+    linear-gradient(90deg, transparent 1px, transparent 1px) !important;
+  background-size: 42px 42px !important;
+  mask-image: radial-gradient(circle at center, black, transparent 78%) !important;
+}
+
+body #presentation-screen .tabs-bar {
+  position: relative !important;
+  z-index: 2 !important;
+  min-height: 64px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 22px !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  box-shadow: 0 20px 54px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+body #presentation-screen .tabs-bar::before {
+  content: "SOLIFON CODE LAB" !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 42px !important;
+  padding: 0 14px !important;
+  margin-right: 4px !important;
+  border-right: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.6px !important;
+  white-space: nowrap !important;
+}
+
+body #presentation-screen .tab-button,
+body #presentation-screen .tab-btn,
+body #presentation-screen .run-btn {
+  height: 42px !important;
+  min-width: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 16px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 14px !important;
+  color: rgba(255,255,255,0.76) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: transform 0.26s ease, border-color 0.26s ease, background 0.26s ease, box-shadow 0.26s ease, color 0.26s ease !important;
+}
+
+body #presentation-screen .tab-button {
+  max-width: none !important;
+  margin-right: 4px !important;
+}
+
+body #presentation-screen .tab-button::before {
+  content: "←" !important;
+  margin-right: 7px !important;
+  font-weight: 900 !important;
+}
+
+body #presentation-screen .tab-btn:hover,
+body #presentation-screen .tab-button:hover {
+  transform: translateY(-1px) !important;
+  border-color: rgba(126, 146, 166, 0.34) !important;
+  color: #ffffff !important;
+  background: rgba(255,255,255,0.075) !important;
+  box-shadow: 0 0 18px rgba(0,0,0,0.14) !important;
+}
+
+body #presentation-screen .tab-btn.active {
+  border-color: transparent !important;
+  color: #000000 !important;
+  background: linear-gradient(135deg, #dff8ff, #66d7e7) !important;
+  box-shadow: 0 14px 30px transparent !important;
+}
+
+body #presentation-screen .run-btn {
+  margin-left: auto !important;
+  color: #000000 !important;
+  border-color: transparent !important;
+  background: linear-gradient(135deg, #dff8ff, #66d7e7) !important;
+  box-shadow: 0 14px 34px transparent !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.8px !important;
+}
+
+body #presentation-screen .run-btn::before {
+  content: "▶" !important;
+  margin-right: 8px !important;
+}
+
+body #presentation-screen > div:last-child {
+  position: relative !important;
+  z-index: 1 !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(320px, 0.98fr) minmax(320px, 1.02fr) !important;
+  gap: 14px !important;
+  padding-top: 14px !important;
+}
+
+body #presentation-screen #editor-container,
+body #presentation-screen #preview-container {
+  position: relative !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 24px !important;
+  background: rgba(0, 0, 0, 0.74) !important;
+  box-shadow: 0 22px 58px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+body #presentation-screen #editor-container::before,
+body #presentation-screen #preview-container::before {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 3 !important;
+  height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 15px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  color: rgba(255,255,255,0.58) !important;
+  background: rgba(255,255,255,0.035) !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.2px !important;
+}
+
+body #presentation-screen #editor-container::before {
+  content: "EDITOR" !important;
+}
+
+body #presentation-screen #preview-container::before {
+  content: "LIVE PREVIEW" !important;
+}
+
+body #presentation-screen .editor-tab-content {
+  height: 100% !important;
+  width: 100% !important;
+  padding-top: 38px !important;
+  background: transparent !important;
+}
+
+body #presentation-screen textarea,
+body #presentation-screen .CodeMirror {
+  width: 100% !important;
+  height: 100% !important;
+  color: #e8f7ff !important;
+  background: transparent !important;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+body #presentation-screen textarea {
+  padding: 18px !important;
+  border: 0 !important;
+  outline: none !important;
+  resize: none !important;
+}
+
+body #presentation-screen .CodeMirror {
+  padding-top: 0 !important;
+  background: #000000 !important;
+  color: #d8e7ef !important;
+}
+
+body #presentation-screen .CodeMirror-gutters {
+  background: #000000 !important;
+  border-right: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+body #presentation-screen .CodeMirror-lines,
+body #presentation-screen .CodeMirror pre,
+body #presentation-screen .CodeMirror-code,
+body #presentation-screen .CodeMirror-line,
+body #presentation-screen .CodeMirror-selected,
+body #presentation-screen .CodeMirror-cursors {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+body #presentation-screen .CodeMirror-selected {
+  background: rgba(116, 182, 204, 0.24) !important;
+}
+
+body #presentation-screen .CodeMirror-focused .CodeMirror-selected {
+  background: rgba(116, 182, 204, 0.30) !important;
+}
+
+body #presentation-screen .CodeMirror-cursor {
+  border-left: 2px solid #9adcea !important;
+}
+
+body #presentation-screen .CodeMirror-linenumber {
+  color: rgba(216,231,239,0.36) !important;
+}
+
+body #presentation-screen .cm-tag,
+body #presentation-screen .cm-variable,
+body #presentation-screen .cm-variable-2 {
+  color: #8fd4e8 !important;
+}
+
+body #presentation-screen .cm-attribute,
+body #presentation-screen .cm-property,
+body #presentation-screen .cm-def {
+  color: #c9d98c !important;
+}
+
+body #presentation-screen .cm-string,
+body #presentation-screen .cm-string-2 {
+  color: #d9b77e !important;
+}
+
+body #presentation-screen .cm-keyword,
+body #presentation-screen .cm-atom {
+  color: #c8a7e8 !important;
+}
+
+body #presentation-screen .cm-number {
+  color: #d6a184 !important;
+}
+
+body #presentation-screen .cm-comment {
+  color: rgba(216,231,239,0.42) !important;
+  font-style: italic !important;
+}
+
+body #presentation-screen .cm-error {
+  color: #ff9a9a !important;
+  background: rgba(255, 70, 70, 0.12) !important;
+}
+
+body #presentation-screen .CodeMirror-scroll {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(126,146,166,0.50) transparent !important;
+}
+
+body #presentation-screen #preview-container {
+  background: rgba(255,255,255,0.92) !important;
+}
+
+body #presentation-screen #preview-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  padding-top: 38px !important;
+  border: 0 !important;
+  background: #ffffff !important;
+}
+
+body #presentation-screen ::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+body #presentation-screen ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+body #presentation-screen ::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: transparent !important;
+}
+
+@media (max-width: 780px) {
+  body #presentation-screen {
+    padding: 8px !important;
+  }
+
+  body #presentation-screen .tabs-bar {
+    min-height: 0 !important;
+    flex-wrap: wrap !important;
+    border-radius: 18px !important;
+  }
+
+  body #presentation-screen .tabs-bar::before {
+    width: 100% !important;
+    height: 28px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  }
+
+  body #presentation-screen .tab-button,
+  body #presentation-screen .tab-btn,
+  body #presentation-screen .run-btn {
+    height: 38px !important;
+    flex: 1 1 auto !important;
+    padding: 0 10px !important;
+    font-size: 12px !important;
+  }
+
+  body #presentation-screen .run-btn {
+    margin-left: 0 !important;
+    flex-basis: 100% !important;
+  }
+
+  body #presentation-screen > div:last-child {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: minmax(260px, 1fr) minmax(260px, 1fr) !important;
+    gap: 10px !important;
+    padding-top: 10px !important;
+  }
+
+  body #presentation-screen #editor-container,
+  body #presentation-screen #preview-container {
+    border-radius: 18px !important;
+  }
+}
+
+/* Chat readability fix: single clean input layer and unobstructed messages */
+body .main-content {
+  min-height: 0 !important;
+}
+
+body .app-header {
+  flex: 0 0 72px !important;
+  height: 72px !important;
+  min-height: 72px !important;
+}
+
+body .chat-wrapper {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+body.chat-started #messagesContainer,
+body #messagesContainer {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  width: min(920px, calc(100vw - 24px)) !important;
+  margin: 0 auto !important;
+  padding: 18px 12px 24px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scroll-padding-top: 18px !important;
+  scroll-padding-bottom: 24px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: transparent transparent !important;
+}
+
+body #messagesContainer::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+body #messagesContainer::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+body #messagesContainer::-webkit-scrollbar-thumb {
+  border-radius: 999px !important;
+  background: transparent !important;
+}
+
+body .user-message,
+body .ai-message {
+  color: rgba(255, 255, 255, 0.90) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+body .user-message {
+  background: rgba(255, 255, 255, 0.105) !important;
+}
+
+body .ai-message {
+  background: rgba(255, 255, 255, 0.075) !important;
+}
+
+body .user-message .text,
+body .ai-message .text {
+  color: inherit !important;
+}
+
+body .input-area {
+  flex: 0 0 auto !important;
+  width: min(820px, calc(100vw - 28px)) !important;
+  max-width: 820px !important;
+  margin: 0 auto !important;
+  padding: 8px 0 calc(12px + env(safe-area-inset-bottom)) !important;
+  transform: none !important;
+  z-index: 40 !important;
+}
+
+body .input-main-wrapper {
+  padding: 1px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28) !important;
+}
+
+body .input-main-wrapper::before {
+  display: none !important;
+}
+
+body #imagePreviewContainer {
+  position: static !important;
+  inset: auto !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  gap: 8px !important;
+  padding: 10px 12px 8px !important;
+  margin: 0 !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018)),
+    rgba(0, 0, 0, 0.96) !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 17px 17px 0 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+
+body > #imagePreviewContainer {
+  position: fixed !important;
+  left: 50% !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: calc(74px + env(safe-area-inset-bottom)) !important;
+  width: min(820px, calc(100vw - 28px)) !important;
+  transform: translateX(-50%) !important;
+}
+
+body #imagePreviewContainer::-webkit-scrollbar {
+  display: none !important;
+}
+
+body #imagePreviewContainer > div {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 14px !important;
+  overflow: visible !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+body #imagePreviewContainer img {
+  width: 58px !important;
+  height: 58px !important;
+  margin: 0 !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.22) !important;
+}
+
+body #imagePreviewContainer > div > div {
+  top: -7px !important;
+  right: -7px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border: 1px solid rgba(255,255,255,0.72) !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.34) !important;
+  font-size: 0 !important;
+}
+
+body #imagePreviewContainer > div > div::before {
+  content: "x";
+  font-size: 13px !important;
+  line-height: 1 !important;
+  font-weight: 800 !important;
+}
+
+body .input-main-wrapper:has(#imagePreviewContainer[style*="flex"]) .input-glass-container {
+  border-radius: 0 0 17px 17px !important;
+  border-top-color: transparent !important;
+}
+
+body .input-glass-container {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-height: 52px !important;
+  padding: 8px 10px 8px 14px !important;
+  border-radius: 17px !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+body .input-top {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+body .input-top input {
+  height: 36px !important;
+  font-size: 15px !important;
+}
+
+body .input-bottom {
+  flex: 0 0 auto !important;
+  gap: 8px !important;
+  padding: 0 !important;
+  border-top: 0 !important;
+}
+
+body .input-tools {
+  gap: 6px !important;
+}
+
+body .tool-btn,
+body .mic-btn {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  justify-content: center !important;
+}
+
+body .input-tools .tool-btn:first-child {
+  position: relative !important;
+  color: rgba(230, 252, 255, 0.96) !important;
+  background:
+    linear-gradient(145deg, transparent, rgba(255,255,255,0.035)),
+    rgba(0, 0, 0, 0.92) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+body .input-tools .tool-btn:first-child:hover {
+  transform: translateY(-1px) !important;
+  background:
+    linear-gradient(145deg, transparent, rgba(255,255,255,0.055)),
+    rgba(0, 0, 0, 0.96) !important;
+  box-shadow: 0 10px 26px transparent, inset 0 1px 0 rgba(255,255,255,0.14) !important;
+}
+
+body .input-tools .tool-btn:first-child i {
+  font-size: 20px !important;
+  color: inherit !important;
+}
+
+body .input-tools .tool-btn:first-child::before {
+  content: "+";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 500;
+  color: inherit;
+}
+
+body .input-tools .tool-btn:first-child i {
+  opacity: 0 !important;
+}
+
+body .send-btn-wrapper {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, #ffffff, #ffffff) !important;
+  box-shadow: 0 8px 22px transparent !important;
+}
+
+body .send-btn-wrapper::before {
+  display: none !important;
+}
+
+body .send-btn-main {
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 14px !important;
+  padding: 0 !important;
+  color: #061015 !important;
+  font-size: 0 !important;
+  background: transparent !important;
+}
+
+body .send-btn-main span {
+  display: none !important;
+}
+
+body .send-btn-main i {
+  display: block !important;
+  font-size: 20px !important;
+}
+
+body .send-btn-main::before {
+  content: "\2191";
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+body .send-btn-main i {
+  display: none !important;
+}
+
+body .live-overlay {
+  inset: auto 14px calc(76px + env(safe-area-inset-bottom)) auto !important;
+}
+
+@media (max-width: 640px) {
+  body .app-header {
+    flex-basis: 122px !important;
+    height: 122px !important;
+    min-height: 122px !important;
+    padding-bottom: 8px !important;
+    overflow: visible !important;
+  }
+
+  body .top-controls-pill {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+  }
+
+  body .model-selector-container {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+  }
+
+  body .custom-select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body .language-switcher,
+  body #languageSwitcher {
+    order: 20 !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    height: 36px !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  body .language-switcher::before,
+  body #languageSwitcher::before {
+    display: none !important;
+  }
+
+  body .language-switcher button,
+  body #languageSwitcher button {
+    height: 32px !important;
+    border-radius: 10px !important;
+  }
+
+  body.chat-started #messagesContainer,
+  body #messagesContainer {
+    width: 100% !important;
+    padding: 14px 10px 18px !important;
+  }
+
+  body .input-area {
+    width: calc(100vw - 16px) !important;
+    padding: 6px 0 calc(8px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body .input-glass-container {
+    min-height: 48px !important;
+    gap: 7px !important;
+    padding: 7px 8px 7px 11px !important;
+  }
+
+  body .sparkle-icon {
+    display: none !important;
+  }
+
+  body .input-tools {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    gap: 6px !important;
+  }
+
+  body .input-tools .tool-btn {
+    display: none !important;
+  }
+
+  body .input-tools .tool-btn:first-child {
+    display: inline-flex !important;
+  }
+
+  body .tool-btn,
+  body .mic-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+  }
+
+  body .send-btn-wrapper {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+/* Attachment preview, Deep mode, and Live control polish */
+body #imagePreviewContainer .attachment-preview-item,
+body #imagePreviewContainer > div {
+  cursor: zoom-in !important;
+}
+
+body #imagePreviewContainer .attachment-preview-item::after,
+body #imagePreviewContainer > div::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: 13px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), transparent 45%);
+}
+
+body #imagePreviewContainer img {
+  cursor: zoom-in !important;
+}
+
+body #attachmentLightbox {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 10000020 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 22px !important;
+  background: rgba(0, 0, 0, 0.76) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+body #attachmentLightbox.active {
+  display: flex !important;
+}
+
+body .attachment-lightbox-image {
+  max-width: min(92vw, 980px) !important;
+  max-height: 82dvh !important;
+  border-radius: 18px !important;
+  object-fit: contain !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  box-shadow: 0 28px 90px rgba(0,0,0,0.58), 0 0 0 1px transparent !important;
+  background: rgba(0, 0, 0, 0.9) !important;
+}
+
+body .attachment-lightbox-close {
+  position: fixed !important;
+  top: 18px !important;
+  right: 18px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  box-shadow: 0 14px 34px rgba(0,0,0,0.34) !important;
+  cursor: pointer !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+body .send-btn-wrapper {
+  border: 1px solid transparent !important;
+  background:
+    linear-gradient(145deg, transparent, rgba(255,255,255,0.06)),
+    rgba(0, 0, 0, 0.94) !important;
+  box-shadow: 0 10px 28px transparent, inset 0 1px 0 rgba(255,255,255,0.14) !important;
+}
+
+body .send-btn-main {
+  color: #dffbff !important;
+}
+
+body .live-mode-btn {
+  position: relative !important;
+  overflow: hidden !important;
+  color: rgba(234, 252, 255, 0.92) !important;
+  background:
+    linear-gradient(145deg, transparent, transparent),
+    rgba(0, 0, 0, 0.82) !important;
+  border: 1px solid transparent !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+body .live-mode-btn::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent 44%);
+}
+
+body .live-mode-btn .live-pulse {
+  background: #58f4ff !important;
+  box-shadow: 0 0 0 4px transparent, 0 0 18px transparent !important;
+}
+
+body .live-mode-btn:hover {
+  transform: translateY(-1px) !important;
+  border-color: transparent !important;
+  box-shadow: 0 14px 34px transparent, inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+
+body .live-mode-btn.active-live,
+body .live-mode-btn.active {
+  color: #f3fdff !important;
+  background:
+    linear-gradient(145deg, transparent, transparent),
+    rgba(0, 0, 0, 0.96) !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 0 1px transparent, 0 16px 38px transparent !important;
+}
+
+body #mainAppLayout.deep-mode .input-glass-container,
+body:has(#mainAppLayout.deep-mode) .input-glass-container {
+  border-color: rgba(255, 48, 48, 0.22) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 0, 0, 0.06), rgba(255,255,255,0.02)),
+    rgba(12, 8, 9, 0.95) !important;
+}
+
+body #mainAppLayout.deep-mode #imagePreviewContainer,
+body:has(#mainAppLayout.deep-mode) #imagePreviewContainer {
+  background:
+    linear-gradient(180deg, rgba(255, 0, 0, 0.06), rgba(255,255,255,0.015)),
+    rgba(12, 8, 9, 0.96) !important;
+  border-bottom-color: rgba(255, 48, 48, 0.14) !important;
+}
+
+body #mainAppLayout.deep-mode #imagePreviewContainer img,
+body:has(#mainAppLayout.deep-mode) #imagePreviewContainer img {
+  border-color: rgba(255, 48, 48, 0.46) !important;
+  box-shadow: 0 10px 24px rgba(255,0,0,0.10), 0 10px 22px rgba(0,0,0,0.26) !important;
+}
+
+body #mainAppLayout.deep-mode .input-tools .tool-btn:first-child,
+body:has(#mainAppLayout.deep-mode) .input-tools .tool-btn:first-child,
+body #mainAppLayout.deep-mode .send-btn-wrapper,
+body:has(#mainAppLayout.deep-mode) .send-btn-wrapper {
+  color: #fff2f2 !important;
+  border-color: rgba(255, 48, 48, 0.36) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 0, 0, 0.20), rgba(255,255,255,0.035)),
+    rgba(0, 0, 0, 0.94) !important;
+  box-shadow: 0 12px 28px rgba(255,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+body #mainAppLayout.deep-mode .send-btn-main,
+body:has(#mainAppLayout.deep-mode) .send-btn-main {
+  color: #fff4f4 !important;
+}
+
+body #mainAppLayout.deep-mode .live-mode-btn,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn {
+  color: #fff4f4 !important;
+  border-color: rgba(255, 48, 48, 0.30) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 0, 0, 0.14), rgba(255,255,255,0.025)),
+    rgba(0, 0, 0, 0.90) !important;
+  box-shadow: 0 12px 30px rgba(255,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+
+body #mainAppLayout.deep-mode .live-mode-btn .live-pulse,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn .live-pulse {
+  background: #ff4040 !important;
+  box-shadow: 0 0 0 4px rgba(255,0,0,0.08), 0 0 18px rgba(255,0,0,0.30) !important;
+}
+
+body #mainAppLayout.deep-mode .live-mode-btn.active-live,
+body #mainAppLayout.deep-mode .live-mode-btn.active,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn.active-live,
+body:has(#mainAppLayout.deep-mode) .live-mode-btn.active {
+  border-color: rgba(255, 48, 48, 0.56) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 0, 0, 0.24), rgba(0,0,0,0.16)),
+    rgba(16, 5, 6, 0.98) !important;
+  box-shadow: 0 0 0 1px rgba(255,48,48,0.14), 0 16px 38px rgba(255,0,0,0.20) !important;
+}
+
+
+
+
+
+/* FINAL FIX: FORCE FULLSCREEN FOR ALL MODALS, WITHOUT BLACKOUT */
+body #whatsNewModal,
+body #aboutModal,
+body #voiceSettingsModal,
+body #upgradeModal,
+body .custom-modal {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10000099 !important;
+}
+
+body #whatsNewModal .modal-content.lumifex-fullscreen,
+body #whatsNewModal .modal-content,
+body #aboutModal .modal-content,
+body #voiceSettingsModal .modal-content,
+body #upgradeModal > div,
+body .custom-modal .modal-content {
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* FIX MAIN SCREEN AND SIM SCREEN FULLSCREEN OVERLAY */
+body #main-screen,
+body #sim-screen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    z-index: 10000099 !important;
+    background: #111113 !important;
+    overflow-y: auto !important;
+}
+
