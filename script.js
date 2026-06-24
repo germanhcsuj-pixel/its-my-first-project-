@@ -601,7 +601,7 @@ window.closeModal = function(id) {
 };
 
 // ============================================================
-// 4. ОСНОВНАЯ ЛОГРКА (DOMContentLoaded)
+// 4. ОСНОВНАЯ ЛОГИКА (DOMContentLoaded)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
@@ -641,118 +641,239 @@ if (chatTrigger) {
         });
     });
 
-    // FIX: handleAI вЂ” auth check FIRST, then deep mode check
     window.handleAI = async function handleAI() {
-    // Авторизация не требуется
-        // 2. Проверка Deep Mode лимита
-        const isDeepMode = document.getElementById('mainAppLayout')?.classList.contains('deep-mode');
-        if (isDeepMode) {
-            if (!checkDeepLimit()) return;
-            incrementDeepUsage();
-            const remaining = DEEP_LIMIT - getDeepUsage();
-            console.log(`Deep Mode: ${remaining} запросов осталось`);
-        }
-
-        const text = userInput?.value.trim();
-        const filesToSend = [...selectedFiles];
-        if (!text && filesToSend.length === 0) return;
-
-        // ПРОВЕРКА НА АГЕНТА:
-        if (text.toLowerCase().startsWith("браузер:")) {
-            let task = text.replace(/браузер:/i, '').trim();
-            
-            // Показываем сообщение юзера
-            const userMsg = document.createElement('div');
-            userMsg.className = 'message user-message';
-            userMsg.innerHTML = `<div class="text">${text}</div>`;
-            document.getElementById('messagesContainer').appendChild(userMsg);
-            
-            userInput.value = ""; // Очищаем поле
-            
-            // Запускаем магию!
-            window.startCloudBrowser(task);
-            return; // Останавливаем обычную логику РР
-        }
-
-        const currentProvider = selectedProvider;
-        if (!isLiveMode) {
-    // Показываем текст + фото в сообщении пользователя
-    let userContent = text || '';
-    if (filesToSend.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const msgDiv = addMessageToUI('user', 
-                `${userContent ? userContent + '<br>' : ''}<img src="${e.target.result}" style="max-width:200px;border-radius:10px;margin-top:6px;display:block;">`
-            );
-        };
-        reader.readAsDataURL(filesToSend[0]);
-    } else {
-        addMessageToUI('user', userContent);
+    if (window.isHandlingAI) return;
+    
+    const isDeepMode = document.getElementById('mainAppLayout')?.classList.contains('deep-mode');
+    if (isDeepMode) {
+        if (!checkDeepLimit()) return;
+        incrementDeepUsage();
     }
+
+    const text = userInput?.value.trim();
+    const filesToSend = [...selectedFiles];
+    if (!text && filesToSend.length === 0) return;
+
+    if (text.toLowerCase().startsWith("браузер:")) {
+        let task = text.replace(/браузер:/i, '').trim();
+        const userMsg = document.createElement('div');
+        userMsg.className = 'message user-message';
+        userMsg.innerHTML = `<div class="text">${text}</div>`;
+        document.getElementById('messagesContainer').appendChild(userMsg);
+        if (userInput) userInput.value = "";
+        window.startCloudBrowser(task);
+        return;
+    }
+
+    window.isHandlingAI = true;
+
+    const currentProvider = selectedProvider;
+    if (!isLiveMode) {
+        let userContent = text || '';
+        if (filesToSend.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                addMessageToUI('user', `${userContent ? userContent + '<br>' : ''}<img src="${e.target.result}" style="max-width:200px;border-radius:10px;margin-top:6px;display:block;">`);
+            };
+            reader.readAsDataURL(filesToSend[0]);
+        } else {
+            addMessageToUI('user', userContent);
         }
-        saveToFirebase('user', text);
+    }
+    saveToFirebase('user', text);
 
-        userInput.value = "";
-        selectedFiles = [];
-        const preview = document.getElementById('imagePreviewContainer');
-        if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
+    if (userInput) userInput.value = "";
+    selectedFiles = [];
+    const preview = document.getElementById('imagePreviewContainer');
+    if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
 
-        const botMsgElement = isLiveMode 
-            ? { querySelector: () => ({ innerText: '', textContent: '' }) } 
-            : addMessageToUI('ai', "Solifon thinking...");
-      
-        try {
-            const formData = new FormData();
-            const finalPrompt = isDeepMode 
-                ? `[ГЛУБОКРЙ АНАЛРЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
-                : text;
-            formData.append('prompt', finalPrompt);
-            formData.append('provider', currentProvider);
-            formData.append('use_voice', isLiveMode ? 'true' : 'false');
-            if (filesToSend.length > 0) formData.append('file', filesToSend[0]);
+    const stepsHTML = `
+<style>
+.ai-thinking-steps {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 10px;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.thinking-step {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 25px;
+}
+.thinking-step:last-child {
+    padding-bottom: 0;
+}
+.step-line {
+    position: absolute;
+    left: 9px;
+    top: 22px;
+    bottom: -5px;
+    width: 2px;
+    background-color: #333;
+    z-index: 1;
+}
+.thinking-step:last-child .step-line {
+    display: none;
+}
+.step-icon-container {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    margin-top: 2px;
+}
+.step-icon {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #555;
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.step-icon i {
+    opacity: 0;
+    font-size: 10px;
+    color: #000;
+    transition: opacity 0.3s ease;
+}
+.thinking-step.completed .step-icon {
+    background: #fff;
+    border-color: #fff;
+}
+.thinking-step.completed .step-icon i {
+    opacity: 1;
+}
+.step-content {
+    display: flex;
+    flex-direction: column;
+}
+.step-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    transition: color 0.3s ease;
+}
+</style>
+<div class="ai-thinking-steps">
+  <div class="thinking-step" id="step1">
+    <div class="step-line"></div>
+    <div class="step-icon-container">
+        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+    </div>
+    <div class="step-content">
+        <span class="step-title">Анализ запроса</span>
+    </div>
+  </div>
+  <div class="thinking-step" id="step2">
+    <div class="step-line"></div>
+    <div class="step-icon-container">
+        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+    </div>
+    <div class="step-content">
+        <span class="step-title">Поиск информации</span>
+    </div>
+  </div>
+  <div class="thinking-step" id="step3">
+    <div class="step-line"></div>
+    <div class="step-icon-container">
+        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+    </div>
+    <div class="step-content">
+        <span class="step-title">Формирование ответа</span>
+    </div>
+  </div>
+</div>
+`;
 
-            const response = await fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
-                method: "POST",
-                body: formData
-            });
+    const botMsgElement = isLiveMode 
+        ? { querySelector: () => ({ innerText: '', textContent: '' }) } 
+        : addMessageToUI('ai', stepsHTML);
 
-            if (!response.ok) throw new Error("Server Error");
-
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('image')) {
-                const blob = await response.blob();
-                const imageUrl = URL.createObjectURL(blob);
-                renderMediaInMessage(botMsgElement, imageUrl);
-                saveToFirebase('ai', '[image]');
-            } else {
-                const data = await response.json();
-                const reply = data.reply || '...';
-                typeEffect(botMsgElement, reply);
-                saveToFirebase('ai', reply);
-                if (isLiveMode) {
-                    const status = document.getElementById('liveStatus');
-                    if (!reply || reply === '...') {
-                        if (status) status.innerText = "Нет ответа...";
-                        setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
-                    } else {
-                        if (status) status.innerText = "Ответ получен вњ“";
-                        speakText(reply);
-                    }
-                }
+    if (!isLiveMode) {
+        const markStep = (stepId) => {
+            if (!botMsgElement || !botMsgElement.querySelector) return;
+            const step = botMsgElement.querySelector('#' + stepId);
+            if (step) {
+                step.classList.add('completed');
             }
-        } catch (error) {
+        };
+        setTimeout(() => markStep('step1'), 800);
+        setTimeout(() => markStep('step2'), 1600);
+        setTimeout(() => markStep('step3'), 2400);
+    }
+  
+    try {
+        const formData = new FormData();
+        const finalPrompt = isDeepMode 
+            ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
+            : text;
+        formData.append('prompt', finalPrompt);
+        formData.append('provider', currentProvider);
+        formData.append('use_voice', isLiveMode ? 'true' : 'false');
+        if (filesToSend.length > 0) formData.append('file', filesToSend[0]);
+
+        const fetchPromise = fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
+            method: "POST",
+            body: formData
+        });
+
+        const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2600));
+        const [response] = await Promise.all([fetchPromise, minDelayPromise]);
+
+        if (!response.ok) throw new Error("Server Error");
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('image')) {
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            renderMediaInMessage(botMsgElement, imageUrl);
+            saveToFirebase('ai', '[image]');
+        } else {
+            const data = await response.json();
+            const reply = data.reply || '...';
+            typeEffect(botMsgElement, reply);
+            saveToFirebase('ai', reply);
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
-                if (status) status.innerText = "Ошибка... повтор через 2 сек";
-                setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
-            } else {
-                if (botMsgElement?.querySelector) {
-                    const t = botMsgElement.querySelector('.text');
-                    if (t) t.innerText = "Ошибка соединения.";
+                if (!reply || reply === '...') {
+                    if (status) status.innerText = "Нет ответа...";
+                    setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
+                } else {
+                    if (status) status.innerText = "Ответ получен ✓";
+                    speakText(reply);
                 }
             }
         }
-    };
+    } catch (error) {
+        if (isLiveMode) {
+            const status = document.getElementById('liveStatus');
+            if (status) status.innerText = "Ошибка... повтор через 2 сек";
+            setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
+        } else {
+            if (botMsgElement && botMsgElement.querySelector) {
+                const t = botMsgElement.querySelector('.text');
+                if (t) t.innerText = "Ошибка соединения.";
+            }
+        }
+    } finally {
+        window.isHandlingAI = false;
+        if (userInput) userInput.focus();
+    }
+};
+
+
 
     sendBtn?.addEventListener('click', handleAI);
     userInput?.addEventListener('keypress', (e) => {
@@ -1375,12 +1496,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  document.addEventListener('click', event => {
-    if (!trigger) return;
-    event.preventDefault();
-    event.stopPropagation();
-    openSafe();
-  }, true);
+  // Removed buggy click interceptor that crashed on missing trigger variable
 
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') closeSafe();
@@ -2928,7 +3044,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const parentRect = activeItem.parentElement.getBoundingClientRect();
             
             lamp.style.width = `${rect.width}px`;
-            lamp.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+    lamp.style.transform = `translateX(${rect.left - parentRect.left}px)`;
         }
     }
 
@@ -2941,3 +3057,401 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+// ============================================================
+// AUTOCOMPLETE SYSTEM — Ghost Text + Dropdown Suggestions
+// Based on cleaned_data.json (ru + en + kz)
+// ============================================================
+(function() {
+    // ---- База данных из cleaned_data.json ----
+    const generatedData = {
+        "ru": [
+            "что такое API","что такое циклы","что такое лоукод","что такое облако",
+            "как быстро читать","как улучшить речь","как развить память","основы базы данных",
+            "основы кодирования","что такое алгоритм","что такое блокчейн","что такое протокол",
+            "что такое процессы","как стать увереннее","что такое нейросеть","что такое фреймворк",
+            "как найти ментора ит","как развить внимание","как развить слушание","как создать веб-сайт",
+            "что такое переменные","что такое чистый код","как говорить публично","как научиться учиться",
+            "как улучшить внимание","основы веб-разработки","упражнения для голоса","упражнения для дикции",
+            "что такое база данных","как развить творчество","как учиться эффективно","методы развития памяти",
+            "упражнения для дыхания","что такое микросервисы","что такое сетевой слой","как быстро выучить стих",
+            "как улучшить пунктуацию","что такое виртуализация","как развить коммуникацию","методы spaced repetition",
+            "основы бэкенд разработки","основы паттернов дизайна","основы тестирования кода","что такое большие данные",
+            "что такое интернет вещей","что такое нейронная сеть","что такое парсинг данных","как избавиться от акцента",
+            "как научиться презентации","как улучшить концентрацию","методы активного обучения","методы глубокого обучения",
+            "основы компьютерных сетей","что такое версионирование","что такое контейнеризация","что такое машинное зрение",
+            "как настроить голос дикцию","как улучшить скорость речи","основы дизайна интерфейсов","основы защиты от кибератак",
+            "основы фронтенд разработки","подготовка к школе логопед","упражнения для артикуляции","упражнения для беглой речи",
+            "упражнения для уверенности","что такое микроархитектура","что такое облачные сервисы","заикание у взрослых лечение",
+            "как организовать свое время","методы адаптивного обучения","методы проблемного обучения","основы мобильной разработки",
+            "что такое кибербезопасность","что такое машинное обучение","что такое облако вычислений","дизартрия симптомы и лечение",
+            "как научиться говорить четко","как преодолеть застенчивость","как развить уверенность речи","как улучшить звучание голоса",
+            "как улучшить письменную речь","как улучшить словарный запас","как улучшить чувство времени","методы геймификации обучения",
+            "методы развивающего обучения","основы вычислительной теории","как выучить таблицу умножения","как научиться импровизировать",
+            "методы запоминания информации","основы архитектуры приложений","основы джава программирования","основы программирования питон",
+            "что такое нативное приложение","что такое облачные технологии","как преодолеть языковой барьер","как структурировать информацию",
+            "методы интерактивного обучения","развитие критического мышления","что такое квантовые компьютеры","упражнения для речевого дыхания",
+            "что такое виртуальная реальность","что такое графические процессоры","как развить ораторское мастерство","обучение детей иностранному языку",
+            "что такое искусственный интеллект","методы повествовательного обучения","коррекция нарушений письменной речи","основы системного администрирования",
+            "техники запоминания английских слов","нарушения голоса причины профилактика","как развивать пространственное мышление",
+            "упражнения для правильного произношения","что такое тестирование программного обеспечения"
+        ],
+        "en": [
+            "DL methods","what is AI","what is DL","what is ML","what is API","what are loops",
+            "voice exercises","what is protocol","how to get it job","what are big data","what is framework",
+            "how to read faster","learn how to learn","learn to improvise","what are processes","what are variables",
+            "what is a Database","what is blockchain","what is clean code","breathing exercises","coding fundamentals",
+            "how to learn Python","how to start coding","improve speech rate","cybersecurity basics","how to code for free",
+            "how to find a mentor","public speaking tips","what is a native app","what is an algorithm","what is web scraping",
+            "develop better memory","how to create website","how to cure a stutter","how to improve speech","improve voice quality",
+            "overcome stage fright","speed reading methods","what is cybersecurity","what is network layer","articulation exercises",
+            "causes of speech delay","design patterns basics","develop attention span","how to improve diction","how to memorize a poem",
+            "how to stop stuttering","mobile app development","problem based learning","UI design fundamentals","what are microservices",
+            "what is git and GitHub","what is virtualization","cloud services overview","expand vocabulary words","fluent speech exercises",
+            "how to choose it career","how to set up workspace","how to train your voice","how to write first code","improve time management",
+            "Java programming basics","pronunciation exercises","software testing basics","what is an API endpoint","what is cloud computing",
+            "what is computer vision","what is neural networks","what is version control","what is virtual reality","AI text generation tools",
+            "computer networks basics","develop listening skills","how to build mobile apps","how to fix speech errors","how to learn effectively",
+            "improve memory retention","spaced repetition method","speak clearly articulate","speech clarity exercises","what is a neural network",
+            "what is a smart contract","what is cloud technology","what is containerization","what is software testing","best books on programming",
+            "develop creative thinking","develop speech confidence","eliminate accent patterns","how to become a developer","how to learn english fast",
+            "how to prepare for school","improve punctuation usage","Python programming basics","what is a DevOps engineer","what is microarchitecture",
+            "active learning strategies","backend development basics","exercises for clear speech","memory tricks for students","overcome language barriers",
+            "pros and cons of elearning","SQL tutorial for beginners","vocal breathing techniques","what are quantum computers","what is a quantum computer",
+            "what is internet of things","computational theory basics","develop analytical thinking","develop speaking confidence","frontend development basics",
+            "improve concentration focus","language games for toddlers","latest trends in technology","Python basics for beginners","adaptive learning strategies",
+            "best coding bootcamps online","building a childs vocabulary","Database design fundamentals","develop communication skills","front end development basics",
+            "game based learning for kids","how to build self confidence","how to correct speech sounds","how to increase mental focus","improving grammar in writing",
+            "interactive learning methods","presentation skills training","web development fundamentals","what is cloud infrastructure","what is low code development",
+            "what is reactive programming","back end development tutorial","confidence speaking exercises","critical thinking development","educational apps for toddlers",
+            "experiential learning methods","improve written communication","information retention methods","memory development techniques","narrative learning approaches",
+            "speech therapy games for kids","systems administration basics","what is blockchain technology","frameworks for web development","how to boost creative thinking",
+            "how to manage time effectively","what is full stack development","application architecture basics","school readiness speech therapy","teaching kids a second language",
+            "what is a programming algorithm","what is Docker containerization","articulation therapy for r sound","at home speech therapy exercises",
+            "constructivist learning approach","gamification learning strategies","how to improve spatial reasoning","mnemonics for memory improvement",
+            "organize information effectively","user interface design principles","dysarthria symptoms and treatment","adult stuttering treatment options",
+            "how to learn multiplication tables","speech sound disorders in children","what are graphics processing units","what is microservices architecture",
+            "articulation exercises for children","effective study methods for college","programming languages for beginners","how to develop mathematical thinking",
+            "techniques for memorizing vocabulary","correcting written language disorders","data structures and algorithms basics","developing expressive language skills",
+            "fast learning techniques for students","how to develop emotional intelligence","voice disorders causes and prevention","skills needed for software engineering",
+            "speed reading techniques for beginners","brainstorming techniques for innovation","most popular programming languages 2024",
+            "preschool speech development activities","fine motor skills development activities","phonological awareness activities for kids"
+        ],
+        "kz": [
+            "айқын сөйлеу","жадыны дамыту","назарды дамыту","API дегеніміз не","кодтау негіздері",
+            "дауыс жаттығулары","оқуды оқуды үйрену","UI дизайн негіздері","жылдам оқу әдістері",
+            "айтылымын жұмсап ету","сын тұрғысынан ойлау","сөздік қорын кеңейту","таз код дегеніміз не",
+            "терең оқыту әдістері","циклдар дегеніміз не","алгоритм дегеніміз не","блокчейн дегеніміз не",
+            "веб-әзірлеу негіздері","дауыс сапасын арттыру","есті дамыту техникасы","облақ сервистері шолу",
+            "протокол дегеніміз не","пунктуацияны жақсарту","сөйлеу сенімін дамыту","терең машиналық оқыту",
+            "тыныс алу жаттығулары","акцентті жоюу әдістері","веб-сайт құру әдістері","нейрожелі дегеніміз не",
+            "сахарау қатынасын жеңу","тиімді оқытың әдістері","тіл барьеріне түс болу","уақытты тиімді басқару",
+            "фреймворк дегеніміз не","ұсыну дағдыларын оқыту","spaced repetition әдісі","айнымалысы дегеніміз не",
+            "ит саласында жұмыс табу","ойын қозғау техникалары","процесстер дегеніміз не","тегін код жазуды үйрену",
+            "өлеңді қалай жаттап алу","алғашқы кодты қалай жазу","беглі сөйлеу жаттығулары","бэкенд әзірлеу негіздері",
+            "жазба қатынасын жақсарту","желі қабаты дегеніміз не","жүргіндік оқыту әдістері","импровизе істеуді үйрену",
+            "микросервис дегеніміз не","мобильді қосымша әзірлеу","мәліметтерді ұйымдастыру","сөйлеу қарқынын жақсарту",
+            "терең оқыту дегеніміз не","тыңдау дағдыларын дамыту","үйде логопед жаттығулары","ауысынды сөйлеу кеңестері",
+            "бэкенд разработка оқулығы","дауыс тыныс алу техникасы","креативтік ойлауды дамыту","мектепке дайындық логопед",
+            "мәліметті сақтау әдістері","мәселенің негізінде оқыту","түндігін беру жаттығулары","уақыт басқарысын жақсарту",
+            "веб скрейпинг дегеніміз не","виртуализация дегеніміз не","есептеу теориясы негіздері","жадыны арттыру техникалары",
+            "ит мамандығын қалай таңдау","киберқауіпсіздік негіздері","сөйлеу сенімді жаттығулары","сөйлеу сенімділігін дамыту",
+            "сөйлеуді жақсарту әдістері","фронтенд әзірлеу негіздері","эмпирикалық оқыту әдістері","Java программалау негіздері",
+            "аналитикалық ойлауды дамыту","ағылшын тілін жылдам үйрену","бейімді оқыту стратегиялары","дауыс бұзылуларын алдын алу",
+            "дизайн шаблондары негіздері","интерактивті оқыту әдістері","компьютерлік желі негіздері","облақ есептеуі дегеніміз не",
+            "сахна қорқынышын қалай жеңу","смарт контракт дегеніміз не","сөйлеу кешігуінің себептері","үлкен деректер дегеніміз не",
+            "айқын сөйлеу үшін жаттығулар","баланың сөздік қорын кеңейту","бұлттық есептеу дегеніміз не","гит және гитхаб дегеніміз не",
+            "девопс инженері дегеніміз не","конструктивті оқыту әдістері","контейнеризация дегеніміз не","машиналық оқыту дегеніміз не",
+            "менторды қалай табуға болады","нативті қосымша дегеніміз не","р және л дыбыстарын дұрыстау","сөйлеу айқындығы жаттығулары",
+            "түйілуруді қалай емдеу керек","Python программалау негіздері","балаларға екінші тілді үйрету","виртуалды шындық дегеніміз не",
+            "жылдам оқу техникасы әдістері","жұмыс орнын қалай ұйымдастыру","заттар интернеті дегеніміз не","киберқауіпсіздік дегеніміз не",
+            "код жазуды қалай бастау керек","көбейту кестесін қалай үйрену","мектепке дейінгі сөйлеу дамуы","микроархитектура дегеніміз не",
+            "нұсқасын басқару дегеніміз не","питонды қалай үйренуге болады","сөйлеу қателерін қалай түзету","фронтенд разработка негіздері",
+            "қалай жылдамырақ оқуға болады","дизартрия белгілері және емдеу","жазбаша тіл бұзылуларын түзету","жазудағы грамматиканы жақсарту",
+            "жасанды интеллект дегеніміз не","зейінді қалай арттыруға болады","кибер қауіпсіздік дегеніміз не","коммуникация дағдыларын дамыту",
+            "компьютерлік көру дегеніміз не","креативті ойлауды қалай дамыту","лоукод разработка дегеніміз не","мәліметтер базасы дегеніміз не"
+        ]
+    };
+
+    // Объединяем все три языка в один массив
+    const autocompleteDB = [
+        ...generatedData.ru,
+        ...generatedData.en,
+        ...generatedData.kz
+    ];
+
+    // ---- DOM элементы ----
+    const userInput = document.getElementById('userInput');
+    const ghostText = document.getElementById('ghostText');
+    const dropdown = document.getElementById('suggestionsDropdown');
+    const suggestionsList = document.getElementById('suggestionsList');
+    const chatHeader = document.getElementById('animatedChatHeader');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+
+    if (!userInput) return; // Безопасный выход если элемент не найден
+
+    let currentGhostSuggestion = '';
+    let activeIndex = -1;
+    let lastMatches = [];
+
+    // ---- Поиск совпадений ----
+    function findMatches(query) {
+        if (!query || query.trim().length < 2) return [];
+        const q = query.toLowerCase().trim();
+        return autocompleteDB
+            .filter(item => item.toLowerCase().startsWith(q))
+            .slice(0, 8); // Максимум 8 подсказок
+    }
+
+    // ---- Обновить ghost text ----
+    function updateGhostText(typed, suggestion) {
+        if (!ghostText) return;
+        if (suggestion && suggestion.toLowerCase().startsWith(typed.toLowerCase()) && typed.length > 0) {
+            const rest = suggestion.slice(typed.length);
+            ghostText.innerHTML =
+                `<span class="ghost-typed">${escapeHtml(typed)}</span>` +
+                `<span class="ghost-suggestion">${escapeHtml(rest)}</span>`;
+            currentGhostSuggestion = suggestion;
+        } else {
+            ghostText.innerHTML = '';
+            currentGhostSuggestion = '';
+        }
+    }
+
+    // ---- Рендер dropdown ----
+    function renderDropdown(matches, typed) {
+        if (!dropdown || !suggestionsList) return;
+        if (matches.length === 0) {
+            dropdown.classList.remove('visible');
+            return;
+        }
+
+        activeIndex = -1;
+        suggestionsList.innerHTML = '';
+
+        matches.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.setAttribute('data-index', idx);
+
+            // Подсвечиваем совпавшую часть
+            const matchLen = typed.length;
+            const matchPart = item.slice(0, matchLen);
+            const restPart = item.slice(matchLen);
+
+            div.innerHTML = `
+                <i class="ph ph-magnifying-glass suggestion-icon"></i>
+                <span>
+                    <span class="suggestion-text-match">${escapeHtml(matchPart)}</span><span class="suggestion-text-rest">${escapeHtml(restPart)}</span>
+                </span>
+                <span class="tab-hint">Tab ↹</span>
+            `;
+
+            div.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // Не снимаем фокус с textarea
+                selectSuggestion(item);
+            });
+
+            suggestionsList.appendChild(div);
+        });
+
+        dropdown.classList.add('visible');
+    }
+
+    // ---- Применить выбранную подсказку ----
+    function selectSuggestion(text) {
+        if (!userInput) return;
+        userInput.value = text;
+        updateGhostText('', '');
+        dropdown.classList.remove('visible');
+        userInput.focus();
+
+        // Ставим курсор в конец
+        userInput.setSelectionRange(text.length, text.length);
+
+        // Активируем кнопку Send
+        const sendBtn = document.getElementById('sendBtn');
+        if (sendBtn) sendBtn.classList.add('active');
+
+        // Триггерим resize textarea
+        userInput.dispatchEvent(new Event('input'));
+    }
+
+    // ---- Анимация заголовка ----
+    function setHeaderTyping(isTyping) {
+        if (!chatHeader) return;
+        if (isTyping) {
+            chatHeader.classList.add('typing-active');
+        } else {
+            chatHeader.classList.remove('typing-active');
+        }
+    }
+
+    // ---- Безопасное экранирование HTML ----
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    // ---- Навигация по dropdown с клавиатуры ----
+    function updateActiveItem() {
+        const items = suggestionsList ? suggestionsList.querySelectorAll('.suggestion-item') : [];
+        items.forEach((el, i) => {
+            el.classList.toggle('keyboard-active', i === activeIndex);
+        });
+    }
+
+    // ---- Основной обработчик ввода ----
+    userInput.addEventListener('input', function() {
+        const val = this.value;
+        const isTyping = val.trim().length > 0;
+
+        // Анимация заголовка
+        setHeaderTyping(isTyping && welcomeScreen && welcomeScreen.style.display !== 'none');
+
+        if (!isTyping) {
+            updateGhostText('', '');
+            if (dropdown) dropdown.classList.remove('visible');
+            return;
+        }
+
+        // Ищем совпадения
+        const matches = findMatches(val);
+        lastMatches = matches;
+
+        // Ghost text - первое совпадение
+        if (matches.length > 0) {
+            updateGhostText(val, matches[0]);
+        } else {
+            updateGhostText('', '');
+        }
+
+        // Dropdown
+        renderDropdown(matches, val);
+    });
+
+    // ---- Tab / ArrowDown / ArrowUp / Escape ----
+    userInput.addEventListener('keydown', function(e) {
+        const isDropdownVisible = dropdown && dropdown.classList.contains('visible');
+
+        if (e.key === 'Tab') {
+            // Tab - принять ghost suggestion
+            if (currentGhostSuggestion) {
+                e.preventDefault();
+                selectSuggestion(currentGhostSuggestion);
+            } else if (isDropdownVisible && lastMatches.length > 0) {
+                e.preventDefault();
+                selectSuggestion(lastMatches[0]);
+            }
+            return;
+        }
+
+        if (e.key === 'ArrowDown' && isDropdownVisible) {
+            e.preventDefault();
+            activeIndex = Math.min(activeIndex + 1, lastMatches.length - 1);
+            updateActiveItem();
+            if (activeIndex >= 0) updateGhostText(this.value, lastMatches[activeIndex]);
+            return;
+        }
+
+        if (e.key === 'ArrowUp' && isDropdownVisible) {
+            e.preventDefault();
+            activeIndex = Math.max(activeIndex - 1, -1);
+            updateActiveItem();
+            if (activeIndex >= 0) updateGhostText(this.value, lastMatches[activeIndex]);
+            return;
+        }
+
+        if (e.key === 'Enter' && isDropdownVisible && activeIndex >= 0) {
+            e.preventDefault();
+            selectSuggestion(lastMatches[activeIndex]);
+            return;
+        }
+
+        if (e.key === 'Escape') {
+            if (dropdown) dropdown.classList.remove('visible');
+            updateGhostText('', '');
+            activeIndex = -1;
+            return;
+        }
+
+        if (e.key === 'ArrowRight') {
+            // → стрелка вправо - принять ghost suggestion (как в браузере)
+            if (currentGhostSuggestion && this.selectionStart === this.value.length) {
+                e.preventDefault();
+                selectSuggestion(currentGhostSuggestion);
+            }
+        }
+    });
+
+    // ---- Закрываем dropdown при клике вне его ----
+    document.addEventListener('click', function(e) {
+        if (!dropdown) return;
+        if (!dropdown.contains(e.target) && e.target !== userInput) {
+            dropdown.classList.remove('visible');
+            updateGhostText('', '');
+        }
+    });
+
+    // ---- Сброс при очистке чата ----
+    const origClearChat = window.clearChat;
+    window.clearChat = function() {
+        if (origClearChat) origClearChat();
+        if (dropdown) dropdown.classList.remove('visible');
+        updateGhostText('', '');
+        if (chatHeader) chatHeader.classList.remove('typing-active');
+    };
+
+    console.log('[SOLIFON] Autocomplete system loaded — ' + autocompleteDB.length + ' entries');
+})();
+
+
+// ============================================================
+// MENU FIX v4 — document capture, no stopPropagation → лампа работает
+// ============================================================
+(function() {
+    var _open = false;
+
+    function _show() {
+        var sb = document.getElementById('sidebar');
+        if (!sb) return;
+        _open = true;
+        sb.style.cssText += ';transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);transform:translateX(280px);';
+        var bd = document.getElementById('__sbd__');
+        if (!bd) {
+            bd = document.createElement('div');
+            bd.id = '__sbd__';
+            bd.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:998;';
+            bd.onclick = _hide;
+            document.body.appendChild(bd);
+        }
+        bd.style.display = 'block';
+    }
+
+    function _hide() {
+        var sb = document.getElementById('sidebar');
+        if (!sb) return;
+        _open = false;
+        sb.style.transform = 'translateX(0px)';
+        var bd = document.getElementById('__sbd__');
+        if (bd) bd.style.display = 'none';
+        var nt = document.getElementById('nav-toggle');
+        if (nt) nt.checked = false;
+    }
+
+    // Capture на document — срабатывает ДО всех listeners на элементе
+    // НЕ вызываем stopPropagation → tubelight handler работает → лампа работает ✓
+    document.addEventListener('click', function(e) {
+        var lbl = document.querySelector('label[for="nav-toggle"]');
+        if (!lbl) return;
+        if (e.target === lbl || lbl.contains(e.target)) {
+            // Даём событию пройти дальше (туbelight обновит лампу)
+            // Мы только управляем видимостью sidebar
+            if (_open) { _hide(); } else { _show(); }
+        }
+    }, true); // capture = true, но БЕЗ stopPropagation
+
+    console.log('[SOLIFON] Menu fix v4 ready');
+})();
