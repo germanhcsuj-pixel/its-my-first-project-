@@ -222,9 +222,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="chat-wrapper" id="chatWrapper">
   
                 <div class="welcome-screen" id="welcomeScreen">
-    <div class="animated-chat-header">
-        <h1 class="chat-title">How can I help today?</h1>
-        <p class="chat-subtitle">Type a command or ask a question</p>
+    <div class="animated-chat-header" id="animatedChatHeader">
+        <h1 class="chat-title" id="chatMainTitle">How can I help today?</h1>
+        <p class="chat-subtitle" id="chatSubtitle">Type a command or ask a question</p>
     </div>
     
     
@@ -233,8 +233,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <div class="animated-chat-container">
+    <!-- Autocomplete Suggestions Dropdown -->
+    <div id="suggestionsDropdown" class="suggestions-dropdown">
+        <div id="suggestionsList"></div>
+    </div>
+
     <div class="animated-input-box">
-        <textarea id="userInput" class="chat-textarea" placeholder="Ask zap a question..."></textarea>
+        <!-- Ghost text wrapper -->
+        <div class="textarea-ghost-wrapper">
+            <textarea id="userInput" class="chat-textarea" placeholder="Спросите SOLIFON AI что угодно..."></textarea>
+            <div id="ghostText" class="ghost-text-overlay"></div>
+        </div>
         
         <div class="chat-bottom-controls">
             <div class="left-actions">
