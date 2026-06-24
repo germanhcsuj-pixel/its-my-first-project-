@@ -54,7 +54,7 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
         }
     });
 }
-// ── AUTH: Email + Password ──
+// в”Ђв”Ђ AUTH: Email + Password в”Ђв”Ђ
 let authMode = 'login'; // 'login' или 'register'
 
 window.switchAuthTab = function(mode) {
@@ -133,7 +133,7 @@ window.submitAuth = function() {
 };
 
 // ============================================================
-// FIX 1: saveToFirebase — путь привязан к uid пользователя
+// FIX 1: saveToFirebase вЂ” путь привязан к uid пользователя
 // ============================================================
 function saveToFirebase(role, content) {
     if (database && currentUser) {
@@ -150,7 +150,7 @@ function saveToFirebase(role, content) {
 }
 
 // ============================================================
-// FIX 2: loadChatHistory — только данные текущего пользователя
+// FIX 2: loadChatHistory вЂ” только данные текущего пользователя
 // ============================================================
 function loadChatHistory() {
     if (!database || !currentUser) return;
@@ -168,7 +168,7 @@ function loadChatHistory() {
         historyContainer.innerHTML = '';
 
         if (!snapshot.exists()) {
-            // Нет сообщений — показываем пустой блок обратно
+            // Нет сообщений вЂ” показываем пустой блок обратно
             if (emptyEl) emptyEl.style.display = 'flex';
             return;
         }
@@ -177,7 +177,7 @@ function loadChatHistory() {
             const data = childSnapshot.val();
             const item = document.createElement('div');
             item.className = 'history-item';
-            const icon = data.role === 'user' ? '👤' : '🤖';
+            const icon = data.role === 'user' ? 'рџ‘¤' : 'рџ¤–';
             const isFav = data.isFavorite ? 'ph-star-fill' : 'ph-star';
             const favColor = data.isFavorite ? '#ffcf33' : 'rgba(255,255,255,0.2)';
             item.innerHTML = `
@@ -198,7 +198,7 @@ function loadChatHistory() {
 }
 
 // ============================================================
-// FIX 3: toggleFavorite — путь привязан к uid пользователя
+// FIX 3: toggleFavorite вЂ” путь привязан к uid пользователя
 // ============================================================
 window.toggleFavorite = function(msgId, btnElement) {
     if (!database || !currentUser) return;
@@ -215,7 +215,7 @@ window.toggleFavorite = function(msgId, btnElement) {
 };
 
 // ============================================================
-// FIX 4: loadLibrary — uid + правильный контейнер #savedItemsContainer
+// FIX 4: loadLibrary вЂ” uid + правильный контейнер #savedItemsContainer
 // ============================================================
 function loadLibrary() {
     if (!database || !currentUser) return;
@@ -256,8 +256,8 @@ const MAX_IMAGES = 5;
 let selectedProvider = 'gemini';
 let lumifexActive = false;
 
-// FIX: Correct comment syntax (was "/ ──" causing JS parse error)
-// ── DEEP MODE СИСТЕМА ──
+// FIX: Correct comment syntax (was "/ в”Ђв”Ђ" causing JS parse error)
+// в”Ђв”Ђ DEEP MODE СРСТЕМА в”Ђв”Ђ
 let deepRequestsToday = 0;
 const DEEP_LIMIT = 5;
 
@@ -278,7 +278,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('ai', '🔬 Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!');
+        addMessageToUI('ai', 'рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!');
         return false;
     }
     return true;
@@ -313,7 +313,7 @@ const modelMap = {
 };
 
 // ============================================================
-// 2. ВСПОМОГАТЕЛЬНЫЕ UI ФУНКЦИИ
+// 2. ВСПОМОГАТЕЛЬНЫЕ UI ФУНКЦРР
 // ============================================================
 function typeEffect(element, text) {
     const textContainer = element.querySelector('.text');
@@ -365,7 +365,7 @@ function addMessageToUI(role, content = "") {
 }
 
 // ============================================================
-// QUICK QUESTIONS — 40 вопросов, 4 случайных
+// QUICK QUESTIONS вЂ” 40 вопросов, 4 случайных
 // ============================================================
 const ALL_QUESTIONS = [
   { icon: "ph ph-brain", text: "Что такое нейронная сеть?" },
@@ -413,8 +413,12 @@ const ALL_QUESTIONS = [
 function renderQuickPills() {
   const container = document.getElementById('quickPills');
   if (!container) return;
-  const shuffled = [...ALL_QUESTIONS].sort(() => Math.random() - 0.5);
-  const selected = shuffled.slice(0, 4);
+  const selected = [
+    { icon: "ph ph-cpu", text: "Что такое искусственный интеллект?" },
+    { icon: "ph ph-desktop", text: "Что такое метавселенная?" },
+    { icon: "ph ph-fire", text: "Что такое антиматерия?" },
+    { icon: "ph ph-lightning", text: "Что такое машинное обучение?" }
+  ];
   container.innerHTML = '';
   selected.forEach((q, i) => {
     const card = document.createElement('div');
@@ -480,9 +484,26 @@ function initModelSelector() {
 }
 
 // ============================================================
-// 3. ГЛОБАЛЬНЫЕ ФУНКЦИИ ОКНО И ФАЙЛОВ
+// 3. ГЛОБАЛЬНЫЕ ФУНКЦРР ОКНО Р ФАЙЛОВ
 // ============================================================
+function ensureAttachmentPreviewInComposer() {
+    const preview = document.getElementById('imagePreviewContainer');
+    const composer = document.querySelector('.input-main-wrapper');
+    const glass = document.querySelector('.input-glass-container');
+    if (!preview || !composer || !glass) return;
+    if (preview.parentElement !== composer) {
+        composer.insertBefore(preview, glass);
+    }
+    preview.removeAttribute('style');
+    if (selectedFiles.length === 0 && preview.children.length === 0) {
+        preview.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', ensureAttachmentPreviewInComposer);
+
 window.handleFileSelect = function(input) {
+    ensureAttachmentPreviewInComposer();
     const files = Array.from(input.files);
     const container = document.getElementById('imagePreviewContainer');
     if (!container) return;
@@ -497,10 +518,11 @@ window.handleFileSelect = function(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const div = document.createElement('div');
+            div.className = 'attachment-preview-item';
             div.style.position = 'relative';
             div.innerHTML = `
                 <img src="${e.target.result}" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid #00f2ff; margin-right: 5px;">
-                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">✕</div>
+                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">вњ•</div>
             `;
             container.appendChild(div);
         };
@@ -518,6 +540,32 @@ window.removeImage = function(element) {
     if (selectedFiles.length === 0) container.style.display = 'none';
 };
 
+window.openAttachmentPreview = function(src) {
+    let modal = document.getElementById('attachmentLightbox');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'attachmentLightbox';
+        modal.innerHTML = `
+            <button type="button" class="attachment-lightbox-close" aria-label="Close preview">x</button>
+            <img class="attachment-lightbox-image" alt="Selected image preview">
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal || event.target.classList.contains('attachment-lightbox-close')) {
+                modal.classList.remove('active');
+            }
+        });
+    }
+    const img = modal.querySelector('.attachment-lightbox-image');
+    if (img) img.src = src;
+    modal.classList.add('active');
+};
+
+document.addEventListener('click', (event) => {
+    const img = event.target.closest('#imagePreviewContainer img');
+    if (img) window.openAttachmentPreview(img.src);
+});
+
 window.clearChat = function() {
     const container = document.getElementById('messagesContainer');
     if (container) container.innerHTML = '';
@@ -532,14 +580,14 @@ window.openFilePicker = function() {
 };
 
 window.openModal = function(id) {
+    const navToggle = document.getElementById('nav-toggle');
+    if (navToggle) navToggle.checked = false;
+    
     const m = document.getElementById(id);
     if (m) {
         m.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-        setTimeout(() => {
-            m.classList.add('active');
-            if (id === 'whatsNewModal') initLumifexSystem();
-        }, 10);
+        setTimeout(() => m.classList.add('active'), 10);
     }
 };
 
@@ -548,12 +596,12 @@ window.closeModal = function(id) {
     if (m) {
         m.classList.remove('active');
         document.body.style.overflow = '';
-        setTimeout(() => { m.style.display = 'none'; }, 400);
+        setTimeout(() => m.style.display = 'none', 300);
     }
 };
 
 // ============================================================
-// 4. ОСНОВНАЯ ЛОГИКА (DOMContentLoaded)
+// 4. ОСНОВНАЯ ЛОГРКА (DOMContentLoaded)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
@@ -593,14 +641,9 @@ if (chatTrigger) {
         });
     });
 
-    // FIX: handleAI — auth check FIRST, then deep mode check
+    // FIX: handleAI вЂ” auth check FIRST, then deep mode check
     window.handleAI = async function handleAI() {
-        // 1. Проверка авторизации
-        if (!currentUser) {
-            window.openModal('authModal');
-            return;
-        }
-
+    // Авторизация не требуется
         // 2. Проверка Deep Mode лимита
         const isDeepMode = document.getElementById('mainAppLayout')?.classList.contains('deep-mode');
         if (isDeepMode) {
@@ -613,6 +656,23 @@ if (chatTrigger) {
         const text = userInput?.value.trim();
         const filesToSend = [...selectedFiles];
         if (!text && filesToSend.length === 0) return;
+
+        // ПРОВЕРКА НА АГЕНТА:
+        if (text.toLowerCase().startsWith("браузер:")) {
+            let task = text.replace(/браузер:/i, '').trim();
+            
+            // Показываем сообщение юзера
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.innerHTML = `<div class="text">${text}</div>`;
+            document.getElementById('messagesContainer').appendChild(userMsg);
+            
+            userInput.value = ""; // Очищаем поле
+            
+            // Запускаем магию!
+            window.startCloudBrowser(task);
+            return; // Останавливаем обычную логику РР
+        }
 
         const currentProvider = selectedProvider;
         if (!isLiveMode) {
@@ -644,7 +704,7 @@ if (chatTrigger) {
         try {
             const formData = new FormData();
             const finalPrompt = isDeepMode 
-                ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
+                ? `[ГЛУБОКРЙ АНАЛРЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
                 : text;
             formData.append('prompt', finalPrompt);
             formData.append('provider', currentProvider);
@@ -675,7 +735,7 @@ if (chatTrigger) {
                         if (status) status.innerText = "Нет ответа...";
                         setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
                     } else {
-                        if (status) status.innerText = "Ответ получен ✓";
+                        if (status) status.innerText = "Ответ получен вњ“";
                         speakText(reply);
                     }
                 }
@@ -847,23 +907,23 @@ function initLumifexSystem() {
 const SLIDES = [
   { 
     title: "SOLIFON OFFLINE ", 
-    icon: "𓆩𓇽𓆪", 
+    icon: "р“†©р“‡Ѕр“†Є", 
     description: "работает без интернета", 
-    stats: ["Доступность: Всегда готов ", "Скорость отклика : Обработка идет прямо на вашем железе — никакой задержки сети (пинга)."],
+    stats: ["Доступность: Всегда готов ", "Скорость отклика : Обработка идет прямо на вашем железе вЂ” никакой задержки сети (пинга)."],
     info: "Работайте над важными проектами в полете или в местах, где нет связи..",
     skills: [{n: "Конфиденциальность", p: 100}, {n: "Автономность", p: 100}, {n: "Контроль данных ", p: 100}]
   },
   { 
     title: "SOLIFON SOUL", 
-    icon: "𓆩𓋖𓆪", 
+    icon: "р“†©р“‹–р“†Є", 
     description: "разговорит как живой человек", 
     stats: ["Video Intelligence:", "Giant Context:"],
-    info: "Понимает интонации, музыку и звуки. Можно просто отправить голосовое сообщение — Soul поймет всё до последнего вздоха..",
+    info: "Понимает интонации, музыку и звуки. Можно просто отправить голосовое сообщение вЂ” Soul поймет всё до последнего вздоха..",
     skills: [{n: "Объем памяти", p: 100}, {n: "Эмпатия и контекст", p: 100}, {n: "Работа с данными", p: 95}]
   },
   { 
     title: "SOLIFON ULTRA", 
-    icon: "—͟͟͞͞☢︎", 
+    icon: "вЂ”НџНџНћНћвўпёЋ", 
     description: "самый умный модел", 
     stats: ["Мультимодальность: Актуальность данных", "Стабильность: 100%"],
     info: "Точность фактов .",
@@ -871,7 +931,7 @@ const SLIDES = [
   },
   { 
     title: "SOLIFON AIR", 
-    icon: "𓆩⚝𓆪", 
+    icon: "р“†©вљќр“†Є", 
     description: "отвечает мгновенно", 
     stats: ["Скорость: до 2000к", "Стабильность: 99%"],
     info: "Быстрое распознавание объектов на фото и сканирование документов на лету.",
@@ -879,39 +939,39 @@ const SLIDES = [
   },
   { 
     title: "SOLIFON UNBOUND", 
-    icon: "—͟͟͞͞𖣘", 
+    icon: "вЂ”НџНџНћНћр–Ј", 
     description: "работает без цензуры", 
     stats: ["Работа с данными: 100%", "Следование инструкциям: Математический анализ"],
-    info: "Мой самый амбициозный модел. Этот модел представляется сабой Прямой доступ к знаниям без «безопасных» искажений..",
+    info: "Мой самый амбициозный модел. Этот модел представляется сабой Прямой доступ к знаниям без В«безопасныхВ» искажений..",
     skills: [{n: "Обход фильтров ", p: 98}, {n: "Следование инструкциям", p: 96}]
   },
   { 
     title:"SOLIFON MOTION", 
-    icon: "𓆩✧𓆪", 
+    icon: "р“†©вњ§р“†Є", 
     description: "делают качественные видео", 
-    stats: ["От киберпанка до классической живописи:", "Идеальные руки, глаза и пропорции тела:"],
+    stats: ["От киберпанка до классической живописи:", "Рдеальные руки, глаза и пропорции тела:"],
     info: "На Лунной базе я сосредоточился на автоматизации добычи ресурсов. Весь процесс управляется удаленно через этот интерфейс, минимизируя риски для персонала.",
     skills: [{n: "Фотореализм", p: 95}, {n: "Сложные композиции", p: 92}]
   },
   { 
     title: "SOLIFON PULSE", 
-    icon: "—͟͟͞͞⚙︎", 
+    icon: "вЂ”НџНџНћНћвљ™пёЋ", 
     description: "самая лучшая модел и работает без цензуры", 
-    stats: ["Скорость: 500–800 токенов в секунду", "Мгновенный старт:"],
+    stats: ["Скорость: 500вЂ“800 токенов в секунду", "Мгновенный старт:"],
     info: "Прямой доступ к новостям, курсам валют и событиям, произошедшим всего 5 минут назад..",
     skills: [{n: "Эффективность", p: 100}, {n: "Скорость генерации", p: 100}]
   },
   { 
     title: "SOLIFON ECHO", 
-    icon: "🌀", 
+    icon: "рџЊЂ", 
     description: "полноценная имитация человеческих эмоций и интонаций", 
-    stats: ["Мультиязычность:", "Идеально справляется со сложными пошаговыми командами :"],
+    stats: ["Мультиязычность:", "Рдеально справляется со сложными пошаговыми командами :"],
     info: "Способность передать гнев, радость, шепот или иронию в зависимости от контекста текста.",
     skills: [{n: "Естественность голоса", p: 100}, {n: "Скорость озвучки", p: 96}]
   },
   { 
     title: "SOLIFON FLOW", 
-    icon: "—͟͟͞͞🗡️", 
+    icon: "вЂ”НџНџНћНћрџ—ЎпёЏ", 
     description: "самый лучший модел для кода", 
     stats: ["Стабильность:", "стандартных текстовых задачах:"],
     info: ".",
@@ -1243,12 +1303,88 @@ window.closeSim = function() {
             clearInterval(checkInterval);
             console.log("Solifon: System Online.");
             btn.addEventListener('click', () => {
-                document.getElementById('mainAppLayout').style.display = 'none';
+                const nav = document.getElementById('nav-toggle');
+                if (nav) nav.checked = false;
                 document.getElementById('main-screen').style.display = 'block';
                 window.filterCards('physics', document.querySelector('.tab-button'));
             });
         }
     }, 100);
+})();
+
+window.addEventListener("DOMContentLoaded", () => {
+  const buttons = document.querySelectorAll(".tariff__button");
+
+  [...buttons].forEach((button) => {
+    button.addEventListener("click", () => {
+      [...buttons].forEach((btn) => {
+        if (btn !== button) btn.classList.remove("active");
+      });
+
+      button.classList.toggle("active");
+    });
+  });
+});
+
+// ============================================================
+// SOLIFON HOTFIX: reliable "АнаныТЈ жТЇрегі" opening
+// ============================================================
+(function () {
+  const screens = ['mh-roleScreen', 'mh-parentScreen', 'mh-specialistScreen', 'mh-directorScreen', 'mh-aiScreen'];
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  function showScreen(id) {
+    screens.forEach(screenId => {
+      const screen = byId(screenId);
+      if (!screen) return;
+      screen.classList.toggle('mh-active', screenId === id);
+      screen.style.setProperty('display', screenId === id ? 'flex' : 'none', 'important');
+      screen.style.setProperty('flex-direction', 'column', 'important');
+    });
+  }
+
+  function openSafe() {
+    const navToggle = byId('nav-toggle');
+    if (navToggle) navToggle.checked = false;
+
+    if (!modal) {
+      return;
+    }
+
+    modal.classList.add('active');
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('position', 'fixed', 'important');
+    modal.style.setProperty('inset', '0', 'important');
+    modal.style.setProperty('width', '100vw', 'important');
+    modal.style.setProperty('height', '100dvh', 'important');
+    modal.style.setProperty('z-index', '9999999', 'important');
+    modal.style.setProperty('overflow', 'hidden', 'important');
+    document.body.style.overflow = 'hidden';
+
+    showScreen('mh-roleScreen');
+  }
+
+  function closeSafe() {
+    if (!modal) return;
+    modal.classList.remove('active');
+    modal.style.setProperty('display', 'none', 'important');
+    document.body.style.overflow = '';
+  }
+
+
+  document.addEventListener('click', event => {
+    if (!trigger) return;
+    event.preventDefault();
+    event.stopPropagation();
+    openSafe();
+  }, true);
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeSafe();
+  });
 })();
 
 // ============================================================
@@ -1264,7 +1400,23 @@ function initLumifexEditors() {
         tabSize: 2, 
         indentWithTabs: true,
         lineWrapping: true,
-        viewportMargin: Infinity 
+        viewportMargin: Infinity,
+        extraKeys: {
+            "Ctrl-C": false,
+            "Cmd-C": false,
+            "Ctrl-V": false,
+            "Cmd-V": false,
+            "Ctrl-X": false,
+            "Cmd-X": false,
+            "Ctrl-A": "selectAll",
+            "Cmd-A": "selectAll",
+            "Ctrl-S": function(cm) {
+                window.runEditorCode();
+            },
+            "Cmd-S": function(cm) {
+                window.runEditorCode();
+            }
+        }
     };
     codeEditors.html = CodeMirror.fromTextArea(document.getElementById("html-edit-area"), { ...config, mode: "xml" });
     codeEditors.css = CodeMirror.fromTextArea(document.getElementById("css-edit-area"), { ...config, mode: "css" });
@@ -1321,17 +1473,28 @@ window.runEditorCode = function() {
 };
 
 window.openPresentation = function() {
+    const navToggle = document.getElementById('nav-toggle');
+    if (navToggle) navToggle.checked = false;
+    
     const presScreen = document.getElementById('presentation-screen');
     if(presScreen) {
         presScreen.style.display = 'flex';
+        setTimeout(() => presScreen.classList.add('active'), 10);
         if (Object.keys(codeEditors).length === 0) initLumifexEditors();
-        setTimeout(() => window.runEditorCode(), 200);
+        setTimeout(() => {
+            Object.values(codeEditors).forEach(editor => editor && editor.refresh());
+            if (codeEditors[currentEditorLang]) codeEditors[currentEditorLang].focus();
+            window.runEditorCode();
+        }, 200);
     }
 };
 
 window.closePresentation = function() {
     const presScreen = document.getElementById('presentation-screen');
-    if(presScreen) presScreen.style.display = 'none';
+    if(presScreen) {
+        presScreen.classList.remove('active');
+        setTimeout(() => presScreen.style.display = 'none', 300);
+    }
 };
 
 // ============================================================
@@ -1389,17 +1552,6 @@ let mhCurrentChild = {};
 let mhConversation = [];
 
 // --- Открыть / Закрыть ---
-window.openMaternalModal = function() {
-  const navToggle = document.getElementById('nav-toggle');
-  if (navToggle) navToggle.checked = false;
-
-  const modal = document.getElementById('maternalModal');
-  modal.style.display = 'block';
-  mhShowScreen('roleScreen');
-};
-window.closeMaternalModal = function() {
-  document.getElementById('maternalModal').style.display = 'none';
-};
 
 // --- Переключение экранов ---
 function mhShowScreen(name) {
@@ -1435,13 +1587,13 @@ window.mhBackToProfile = function() {
 window.mhHandleDocs = function(input) {
   const files = Array.from(input.files);
   const listEl = document.getElementById('mh-fileList');
-  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">📄 ${f.name}</div>`).join('');
+  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">рџ“„ ${f.name}</div>`).join('');
 };
 
 // --- Навыки ---
 window.mhToggleSkill = function(el) { el.classList.toggle('selected'); };
 
-// FIX 6: mhLoadStats — функция не существовала, кнопка "Обновить" падала с ошибкой
+// FIX 6: mhLoadStats вЂ” функция не существовала, кнопка "Обновить" падала с ошибкой
 window.mhLoadStats = function() {
   if (!database) return;
   const childCountEl = document.getElementById('dir-childCount');
@@ -1454,14 +1606,14 @@ window.mhLoadStats = function() {
   });
 };
 
-// --- СОХРАНИТЬ ПРОФИЛЬ РЕБЁНКА (Родитель) ---
+// --- СОХРАНРТЬ ПРОФРЛЬ РЕБЁНКА (Родитель) ---
 window.mhSaveProfile = async function() {
   const fio       = (document.getElementById('mh-fio')?.value || '').trim();
   const dob       = document.getElementById('mh-dob')?.value || '';
   const diagnosis = (document.getElementById('mh-diagnosis')?.value || '').trim();
 
   if (!fio || !dob || !diagnosis) {
-    alert('Заполните ФИО, дату рождения и диагноз');
+    alert('Заполните ФРО, дату рождения и диагноз');
     return;
   }
 
@@ -1482,10 +1634,10 @@ window.mhSaveProfile = async function() {
     setTimeout(() => mhOpenAI('parent'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и открыть ИИ-помощника →'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и открыть РР-помощника в†’'; }
 };
 
-// --- СОХРАНИТЬ ЗАПИСЬ СПЕЦИАЛИСТА ---
+// --- СОХРАНРТЬ ЗАПРСЬ СПЕЦРАЛРСТА ---
 window.mhSaveSession = async function() {
   const child   = (document.getElementById('sp-childName')?.value || '').trim();
   const type    = document.getElementById('sp-sessionType')?.value || '';
@@ -1512,10 +1664,10 @@ window.mhSaveSession = async function() {
     setTimeout(() => mhOpenAI('specialist'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и проконсультироваться с ИИ →'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и проконсультироваться с РР в†’'; }
 };
 
-// --- ОТКРЫТЬ ИИ-ЭКРАН ---
+// --- ОТКРЫТЬ РР-ЭКРАН ---
 function mhOpenAI(role) {
   const saveMsg = document.getElementById('mh-saveMsg');
   if (saveMsg) saveMsg.style.display = 'none';
@@ -1529,13 +1681,13 @@ function mhOpenAI(role) {
   let greeting = '';
 
   if (role === 'parent') {
-    if (badge) badge.textContent = '👧 ' + (mhCurrentChild.fio || 'Ребёнок');
-    if (aiName) aiName.textContent = 'SoulDrive — Советник родителей';
+    if (badge) badge.textContent = 'рџ‘§ ' + (mhCurrentChild.fio || 'Ребёнок');
+    if (aiName) aiName.textContent = 'SoulDrive вЂ” Советник родителей';
     greeting = `Здравствуйте! Я SoulDrive, ваш помощник.\n\nЯ знаю о **${mhCurrentChild.fio}**: диагноз **${mhCurrentChild.diagnosis}**, навыки: ${mhCurrentChild.skills.length ? mhCurrentChild.skills.join(', ') : 'не указаны'}.\n\nЧем могу помочь? Могу предложить домашние упражнения, ответить на вопросы о развитии или поддержать вас.`;
   } else if (role === 'specialist') {
-    if (badge) badge.textContent = '👩‍⚕️ Специалист';
-    if (aiName) aiName.textContent = 'SoulDrive — Ассистент специалиста';
-    greeting = `Здравствуйте, коллега! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio}** сохранена. Я могу помочь с:\n— Методиками коррекции\n— Составлением индивидуального маршрута\n— Рекомендациями для родителей\n\nЧто вас интересует?`;
+    if (badge) badge.textContent = 'рџ‘©вЂЌвљ•пёЏ Специалист';
+    if (aiName) aiName.textContent = 'SoulDrive вЂ” Ассистент специалиста';
+    greeting = `Здравствуйте, коллега! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio}** сохранена. Я могу помочь с:\nвЂ” Методиками коррекции\nвЂ” Составлением индивидуального маршрута\nвЂ” Рекомендациями для родителей\n\nЧто вас интересует?`;
   }
 
   mhShowScreen('aiScreen');
@@ -1549,7 +1701,7 @@ function mhAddAI(text) {
   const d = document.createElement('div');
   d.className = 'mh-msg ai';
   d.innerHTML = `
-    <div class="mh-msg-avatar">💗</div>
+    <div class="mh-msg-avatar">рџ’—</div>
     <div class="mh-msg-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
@@ -1559,7 +1711,7 @@ function mhAddUser(text) {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg user';
-  d.innerHTML = `<div class="mh-msg-avatar">👤</div><div class="mh-msg-bubble">${text}</div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">рџ‘¤</div><div class="mh-msg-bubble">${text}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -1568,7 +1720,7 @@ function mhShowTyping() {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg ai'; d.id = 'mh-typing';
-  d.innerHTML = `<div class="mh-msg-avatar">💗</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">рџ’—</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -1593,11 +1745,11 @@ window.mhSend = async function() {
   let system = '';
 
   if (role === 'parent') {
-    system = `Ты SoulDrive — добрый ИИ-помощник для родителей детей с особыми потребностями в Казахстане.
-Ребёнок: ${mhCurrentChild.fio||'—'}, диагноз: ${mhCurrentChild.diagnosis||'—'}, навыки: ${(mhCurrentChild.skills||[]).join(', ')||'не указаны'}.
+    system = `Ты SoulDrive вЂ” добрый РР-помощник для родителей детей с особыми потребностями в Казахстане.
+Ребёнок: ${mhCurrentChild.fio||'вЂ”'}, диагноз: ${mhCurrentChild.diagnosis||'вЂ”'}, навыки: ${(mhCurrentChild.skills||[]).join(', ')||'не указаны'}.
 Давай конкретные, простые и добрые советы на русском языке. Ответы 2-4 предложения. Всегда заканчивай позитивно.`;
   } else {
-    system = `Ты SoulDrive — профессиональный ИИ-ассистент для специалистов (логопедов, дефектологов, психологов) в Казахстане.
+    system = `Ты SoulDrive вЂ” профессиональный РР-ассистент для специалистов (логопедов, дефектологов, психологов) в Казахстане.
 Отвечай на русском языке. Давай методические рекомендации, упражнения и советы по коррекционной работе.`;
   }
 
@@ -1623,7 +1775,7 @@ window.mhSend = async function() {
   }
 };
 
-// ── DOWNLOAD MODAL ──
+// в”Ђв”Ђ DOWNLOAD MODAL в”Ђв”Ђ
 window.openDownloadModal = function() {
   const m = document.getElementById('downloadModal');
   m.style.display = 'flex';
@@ -1637,28 +1789,1155 @@ function showInstallGuide() {
   let steps = '';
   if (isAndroid) {
     steps = `
-      <div style="font-size:48px;text-align:center">📱</div>
+      <div style="font-size:48px;text-align:center">рџ“±</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на Android</h3>
-      <p>1. Нажми <b>⋮</b> три точки в Chrome</p>
+      <p>1. Нажми <b>в‹®</b> три точки в Chrome</p>
       <p>2. Выбери <b>"Установить приложение"</b></p>
       <p>3. Нажми <b>"Установить"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Иконка Solifon AI появится на главном экране</p>`;
+      <p style="opacity:0.5;font-size:12px;text-align:center">Рконка Solifon AI появится на главном экране</p>`;
   } else if (isIOS) {
     steps = `
-      <div style="font-size:48px;text-align:center">📱</div>
+      <div style="font-size:48px;text-align:center">рџ“±</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на iPhone</h3>
-      <p>1. Нажми кнопку <b>□↑ Поделиться</b> внизу</p>
+      <p>1. Нажми кнопку <b>в–Ўв†‘ Поделиться</b> внизу</p>
       <p>2. Выбери <b>"На экран Домой"</b></p>
       <p>3. Нажми <b>"Добавить"</b></p>`;
   } else {
     steps = `
-      <div style="font-size:48px;text-align:center">💻</div>
+      <div style="font-size:48px;text-align:center">рџ’»</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на Windows/Mac</h3>
-      <p>1. В Chrome нажми <b>⋮</b></p>
+      <p>1. В Chrome нажми <b>в‹®</b></p>
       <p>2. Выбери <b>"Установить Solifon AI"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Или нажми иконку ⊕ в адресной строке</p>`;
+      <p style="opacity:0.5;font-size:12px;text-align:center">Рли нажми иконку вЉ• в адресной строке</p>`;
   }
 
   document.querySelector('#pwaTipModal .modal-body').innerHTML = steps;
   openModal('pwaTipModal');
 }
+
+// ============================================================
+// SOLIFON POLISH PATCH: clean UI text, languages, mobile fixes
+// ============================================================
+(function () {
+  const LANG_KEY = 'solifon-language';
+  const packs = {
+    ru: {
+      code: 'RU',
+      htmlLang: 'ru',
+      newChat: 'Новый чат',
+      system: 'Система',
+      whatsNew: 'Что нового',
+      about: 'О SOLIFON',
+      features: 'Функции',
+      chat: 'Чат',
+      library: 'Библиотека',
+      workspaces: 'Рабочие зоны',
+      newProject: 'Новый проект',
+      presentation: 'Презентация',
+      deep: 'Глубокий поиск',
+      download: 'Скачать Solifon AI',
+      upgradeText: 'Перейти на Premium',
+      upgrade: 'Улучшить',
+      historyEmpty: 'Рстория пуста',
+      chatHistory: 'Рстория чатов',
+      modelPick: 'Выберите модель',
+      ask: 'Спросите Solifon...',
+      clear: 'Очистить чат',
+      mhTitle: 'АнаныТЈ жТЇрегі',
+      mhSubtitle: 'Цифровая платформа поддержки семьи',
+      mhParent: 'Родитель',
+      mhParentDesc: 'Профиль ребенка, навыки и задания от РР',
+      mhSpecialist: 'Специалист',
+      mhSpecialistDesc: 'Журнал занятий и коррекционные методики',
+      mhDirector: 'Руководитель',
+      mhDirectorDesc: 'Управление центром и аналитика',
+      childProfile: 'Профиль ребенка',
+      childProfileDesc: 'Данные сохраняются в вашем аккаунте',
+      personalInfo: 'Личная информация',
+      childName: 'ФРО ребенка',
+      childNamePh: 'Например: Алибек Сейтов',
+      dob: 'Дата рождения (ДД.ММ.ГГГГ)',
+      diagnosis: 'Диагноз / особенности',
+      diagnosisPh: 'Например: ЗРР, ДЦП, РАС...',
+      docs: 'Документы',
+      upload: 'Нажмите, чтобы загрузить',
+      uploadHint: 'Справки, заключения специалистов',
+      skills: 'Навыки ребенка',
+      saveProfile: 'Сохранить и открыть РР-помощника',
+      sessionJournal: 'Журнал занятия',
+      sessionDesc: 'Единая цифровая база вместо бумажных тетрадей',
+      whyTitle: 'Зачем это?',
+      whyText: 'Все специалисты центра видят общую базу. Один профиль на каждого ребенка, без бумажной путаницы.',
+      sessionInfo: 'Рнформация о занятии',
+      sessionType: 'Тип занятия',
+      chooseType: 'Выберите тип...',
+      notes: 'Что делали на занятии',
+      notesPh: 'Опишите упражнения, активности, методики...',
+      result: 'Результат / наблюдения',
+      resultPh: 'Как ребенок справился? Что улучшилось?',
+      rating: 'Оценка занятия',
+      saveSession: 'Сохранить и проконсультироваться с РР',
+      directorPanel: 'Панель руководителя',
+      overview: 'Центр В«АнаныТЈ жТЇрегіВ» вЂ” обзор',
+      stats: 'Статистика',
+      children: 'Детей в базе',
+      sessions: 'Занятий',
+      villages: 'Сел в охвате',
+      specialists: 'Специалиста',
+      refresh: 'Обновить',
+      exportReport: 'Экспорт отчета',
+      team: 'Специалисты',
+      aiReady: 'Готов помочь',
+      aiInput: 'Напишите вопрос...'
+    },
+    kk: {
+      code: 'KZ',
+      htmlLang: 'kk',
+      newChat: 'ЖаТЈа чат',
+      system: 'ЖТЇйе',
+      whatsNew: 'ЖаТЈалыТ›тар',
+      about: 'SOLIFON туралы',
+      features: 'МТЇмкіндіктер',
+      chat: 'Чат',
+      library: 'Кітапхана',
+      workspaces: 'ЖТ±мыс аймаТ›тары',
+      newProject: 'ЖаТЈа жоба',
+      presentation: 'Презентация',
+      deep: 'ТереТЈ зерттеу',
+      download: 'Solifon AI жТЇктеу',
+      upgradeText: 'Premium-Т“а У©ту',
+      upgrade: 'ЖаТ›сарту',
+      historyEmpty: 'Тарих бос',
+      chatHistory: 'Чат тарихы',
+      modelPick: 'Модель таТЈдаТЈыз',
+      ask: 'Solifon-нан сТ±раТЈыз...',
+      clear: 'Чатты тазалау',
+      mhTitle: 'АнаныТЈ жТЇрегі',
+      mhSubtitle: 'Отбасын Т›олдауТ“а арналТ“ан цифрлыТ› платформа',
+      mhParent: 'Ата-ана',
+      mhParentDesc: 'БаланыТЈ профилі, даТ“дылары жУ™не РР тапсырмалары',
+      mhSpecialist: 'Маман',
+      mhSpecialistDesc: 'СабаТ› журналы жУ™не тТЇзету У™дістемелері',
+      mhDirector: 'Жетекші',
+      mhDirectorDesc: 'ОрталыТ›ты басТ›ару жУ™не аналитика',
+      childProfile: 'БаланыТЈ профилі',
+      childProfileDesc: 'Деректер аккаунтыТЈызда саТ›талады',
+      personalInfo: 'Жеке аТ›парат',
+      childName: 'БаланыТЈ толыТ› аты-жУ©ні',
+      childNamePh: 'Мысалы: Улібек Сейтов',
+      dob: 'ТуТ“ан кТЇні (КК.АА.ЖЖЖЖ)',
+      diagnosis: 'Диагноз / ерекшеліктер',
+      diagnosisPh: 'Мысалы: сУ©йлеу дамуыныТЈ кешігуі, БЦП, аутизм...',
+      docs: 'ТљТ±жаттар',
+      upload: 'ЖТЇктеу ТЇшін басыТЈыз',
+      uploadHint: 'АныТ›тамалар, мамандар Т›орытындылары',
+      skills: 'БаланыТЈ даТ“дылары',
+      saveProfile: 'СаТ›тап, РР-кУ©мекшіні ашу',
+      sessionJournal: 'СабаТ› журналы',
+      sessionDesc: 'ТљаТ“аз дУ™птердіТЈ орнына ортаТ› цифрлыТ› база',
+      whyTitle: 'БТ±л не ТЇшін?',
+      whyText: 'ОрталыТ› мамандары ортаТ› базаны кУ©реді. Ур балаТ“а бір профиль, Т›аТ“аз шатасуы жоТ›.',
+      sessionInfo: 'СабаТ› туралы аТ›парат',
+      sessionType: 'СабаТ› тТЇрі',
+      chooseType: 'ТТЇрін таТЈдаТЈыз...',
+      notes: 'СабаТ›та не істелді',
+      notesPh: 'ЖаттыТ“уларды, белсенділіктерді, У™дістемелерді жазыТЈыз...',
+      result: 'НУ™тиже / баТ›ылау',
+      resultPh: 'Бала Т›алай орындады? Не жаТ›сарды?',
+      rating: 'СабаТ›ты баТ“алау',
+      saveSession: 'СаТ›тап, РР-мен кеТЈесу',
+      directorPanel: 'Жетекші панелі',
+      overview: 'В«АнаныТЈ жТЇрегіВ» орталыТ“ы вЂ” шолу',
+      stats: 'Статистика',
+      children: 'БазадаТ“ы балалар',
+      sessions: 'СабаТ›тар',
+      villages: 'ТљамтылТ“ан ауылдар',
+      specialists: 'Маман',
+      refresh: 'ЖаТЈарту',
+      exportReport: 'Есепті экспорттау',
+      team: 'Мамандар',
+      aiReady: 'КУ©мектесуге дайын',
+      aiInput: 'СТ±раТ“ыТЈызды жазыТЈыз...'
+    },
+    en: {
+      code: 'EN',
+      htmlLang: 'en',
+      newChat: 'New Chat',
+      system: 'System',
+      whatsNew: "What's New",
+      about: 'About SOLIFON',
+      features: 'Features',
+      chat: 'Chat',
+      library: 'Library',
+      workspaces: 'Workspaces',
+      newProject: 'New Project',
+      presentation: 'Presentation',
+      deep: 'Explore Deeply',
+      download: 'Download Solifon AI',
+      upgradeText: 'Upgrade to premium',
+      upgrade: 'Upgrade',
+      historyEmpty: 'History is empty',
+      chatHistory: 'Chat History',
+      modelPick: 'Choose a model',
+      ask: 'Ask Solifon...',
+      clear: 'Clear chat',
+      mhTitle: "Mother's Heart",
+      mhSubtitle: 'Digital family support platform',
+      mhParent: 'Parent',
+      mhParentDesc: 'Child profile, skills, and AI tasks',
+      mhSpecialist: 'Specialist',
+      mhSpecialistDesc: 'Session journal and correction methods',
+      mhDirector: 'Director',
+      mhDirectorDesc: 'Center management and analytics',
+      childProfile: 'Child Profile',
+      childProfileDesc: 'Data is saved to your account',
+      personalInfo: 'Personal information',
+      childName: 'Child full name',
+      childNamePh: 'Example: Alibek Seitov',
+      dob: 'Date of birth (DD.MM.YYYY)',
+      diagnosis: 'Diagnosis / needs',
+      diagnosisPh: 'Example: speech delay, cerebral palsy, autism...',
+      docs: 'Documents',
+      upload: 'Tap to upload',
+      uploadHint: 'Certificates and specialist reports',
+      skills: 'Child skills',
+      saveProfile: 'Save and open AI assistant',
+      sessionJournal: 'Session Journal',
+      sessionDesc: 'One digital base instead of paper notebooks',
+      whyTitle: 'Why use it?',
+      whyText: 'All center specialists see one shared base. One profile for each child, without paper confusion.',
+      sessionInfo: 'Session information',
+      sessionType: 'Session type',
+      chooseType: 'Choose type...',
+      notes: 'What happened during the session',
+      notesPh: 'Describe exercises, activities, and methods...',
+      result: 'Result / observations',
+      resultPh: 'How did the child do? What improved?',
+      rating: 'Session rating',
+      saveSession: 'Save and consult with AI',
+      directorPanel: 'Director Dashboard',
+      overview: 'вЂњMotherвЂ™s HeartвЂќ center overview',
+      stats: 'Statistics',
+      children: 'Children in database',
+      sessions: 'Sessions',
+      villages: 'Villages covered',
+      specialists: 'Specialists',
+      refresh: 'Refresh',
+      exportReport: 'Export report',
+      team: 'Team',
+      aiReady: 'Ready to help',
+      aiInput: 'Write a question...'
+    }
+  };
+
+  const skillTexts = {
+    ru: ['Говорит слова', 'Говорит предложения', 'Понимает речь', 'Самообслуживание', 'Рисует', 'Читает', 'Счет', 'Социальные навыки', 'Моторика рук', 'Внимание'],
+    kk: ['СУ©з айтады', 'СУ©йлем Т›Т±райды', 'СУ©зді тТЇсінеді', 'УЁзін-У©зі кТЇту', 'Сурет салады', 'ОТ›иды', 'Санайды', 'Улеуметтік даТ“дылар', 'Тљол моторикасы', 'Зейін'],
+    en: ['Says words', 'Uses sentences', 'Understands speech', 'Self-care', 'Draws', 'Reads', 'Counting', 'Social skills', 'Hand motor skills', 'Attention']
+  };
+
+  const sessionSkillTexts = {
+    ru: ['Активно участвовал', 'Был сосредоточен', 'Есть прогресс', 'Был капризным', 'Устал быстро', 'Требует повтора'],
+    kk: ['Белсенді Т›атысты', 'Зейіні тТ±раТ›ты болды', 'Ілгерілеу бар', 'ТљыТЈырлыТ› болды', 'Тез шаршады', 'Тљайталау Т›ажет'],
+    en: ['Participated actively', 'Stayed focused', 'Progress noticed', 'Was upset', 'Got tired quickly', 'Needs repetition']
+  };
+
+  const sessionTypes = {
+    ru: ['Логопедическое занятие', 'Дефектологическое занятие', 'Психологическое занятие', 'Арт-терапия', 'ЛФК', 'Сенсорная интеграция', 'Другое'],
+    kk: ['Логопед сабаТ“ы', 'Дефектолог сабаТ“ы', 'Психолог сабаТ“ы', 'Арт-терапия', 'Емдік дене шыныТ›тыру', 'СенсорлыТ› интеграция', 'БасТ›а'],
+    en: ['Speech therapy', 'Special education session', 'Psychology session', 'Art therapy', 'Therapeutic exercise', 'Sensory integration', 'Other']
+  };
+
+  function q(sel) { return document.querySelector(sel); }
+  function qa(sel) { return Array.from(document.querySelectorAll(sel)); }
+  function set(el, text) { if (el && typeof text === 'string') el.textContent = text; }
+  function setPlaceholder(sel, text) { const el = q(sel); if (el) el.placeholder = text; }
+
+  function setMenuText(t) {
+    set(q('#newChatBtn span'), t.newChat);
+    const sectionTitles = qa('.menu-section-title');
+    set(sectionTitles[0], t.system);
+    set(sectionTitles[1], t.features);
+    set(sectionTitles[2], t.workspaces);
+
+    set(q('.menu-item[onclick*="whatsNewModal"] span'), t.whatsNew);
+    set(q('.menu-item[onclick*="aboutModal"] span'), t.about);
+    set(q('#chatTrigger span'), t.chat);
+    set(q('#libraryTrigger span'), t.library);
+    set(q('#newProjectBtn span'), t.newProject);
+    set(q('.menu-item[onclick*="openPresentation"] span'), t.presentation);
+    set(q('#deepBtn span'), t.deep);
+    set(q('.menu-item[onclick*="openDownloadModal"] span'), t.download);
+    set(q('.upgrade-card p'), t.upgradeText);
+    set(q('.upgrade-btn'), t.upgrade);
+    set(q('#currentModel'), t.modelPick);
+    const clear = q('#clearBtn');
+    if (clear) {
+      clear.title = t.clear;
+      if (!clear.querySelector('i')) clear.innerHTML = '<i class="ph ph-trash"></i>';
+    }
+    setPlaceholder('#userInput', t.ask);
+    qa('.empty-library p').forEach(el => set(el, t.historyEmpty));
+    set(q('#chatPanel h2'), t.chatHistory);
+    set(q('#libraryPanel h2'), t.library);
+  }
+
+
+  function ensureLanguageSwitcher() {
+    if (q('#languageSwitcher')) return;
+    const pill = q('.top-controls-pill');
+    if (!pill) return;
+    const box = document.createElement('div');
+    box.id = 'languageSwitcher';
+    box.className = 'language-switcher';
+    box.setAttribute('aria-label', 'Language');
+    box.innerHTML = `
+      <button type="button" data-lang="ru">RU</button>
+      <button type="button" data-lang="kk">KZ</button>
+      <button type="button" data-lang="en">EN</button>
+    `;
+    pill.appendChild(box);
+    box.addEventListener('click', (event) => {
+      const btn = event.target.closest('button[data-lang]');
+      if (btn) applyLanguage(btn.dataset.lang);
+    });
+  }
+
+  function applyLanguage(lang) {
+    const safeLang = packs[lang] ? lang : 'ru';
+    const t = packs[safeLang];
+    localStorage.setItem(LANG_KEY, safeLang);
+    document.documentElement.lang = t.htmlLang;
+    ensureLanguageSwitcher();
+    qa('#languageSwitcher button').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === safeLang);
+      btn.setAttribute('aria-pressed', btn.dataset.lang === safeLang ? 'true' : 'false');
+    });
+    setMenuText(t);
+  }
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    ensureLanguageSwitcher();
+    applyLanguage(localStorage.getItem(LANG_KEY) || 'ru');
+    setTimeout(() => applyLanguage(localStorage.getItem(LANG_KEY) || 'ru'), 700);
+  });
+})();
+
+// ============================================================
+// SOLIFON FINAL HOTFIX: keep "АнаныТЈ жТЇрегі" above old handlers
+// ============================================================
+(function () {
+  const screenIds = ['mh-roleScreen', 'mh-parentScreen', 'mh-specialistScreen', 'mh-directorScreen', 'mh-aiScreen'];
+
+  function el(id) {
+    return document.getElementById(id);
+  }
+
+
+
+
+
+
+  document.addEventListener('keydown', event => {
+  });
+})();
+
+// ============================================================
+// SOLIFON HOTFIX: live mode UI + download back button
+// ============================================================
+(function () {
+  function ensureLiveMarkup() {
+    const content = document.querySelector('#liveOverlay .live-content');
+    if (!content || content.dataset.solifonLiveReady) return;
+    content.dataset.solifonLiveReady = '1';
+    if (!content.querySelector('.live-hints')) {
+      const hints = document.createElement('div');
+      hints.className = 'live-hints';
+      hints.innerHTML = '<span>Голос</span><span>РР говорит</span><span>Live</span>';
+      const stop = content.querySelector('.stop-live-btn');
+      content.insertBefore(hints, stop || null);
+    }
+  }
+
+  function setLiveStatus(text) {
+    const status = document.getElementById('liveStatus');
+    if (status) status.textContent = text;
+  }
+
+  function startLiveSpeechSafe() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setLiveStatus('Голосовой ввод в этом браузере недоступен. Live-экран работает, можно закрыть и писать в чат.');
+      return;
+    }
+
+    try {
+      if (liveRecognition) {
+        try { liveRecognition.stop(); } catch (error) {}
+      }
+      liveRecognition = new SpeechRecognition();
+      liveRecognition.lang = (document.documentElement.lang === 'kk') ? 'kk-KZ' : (document.documentElement.lang === 'en' ? 'en-US' : 'ru-RU');
+      liveRecognition.interimResults = true;
+      liveRecognition.onstart = () => setLiveStatus('Слушаю вас... скажите вопрос для Solifon.');
+      liveRecognition.onresult = event => {
+        const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ').trim();
+        setLiveStatus(transcript ? `Услышал: ${transcript}` : 'Слушаю...');
+        const last = event.results[event.results.length - 1];
+        if (last && last.isFinal) {
+          const input = document.getElementById('userInput');
+          if (input) input.value = transcript;
+          isVoiceResponseActive = true;
+          document.getElementById('sendBtn')?.click();
+        }
+      };
+      liveRecognition.onerror = event => {
+        const msg = event.error === 'not-allowed'
+          ? 'Разрешите микрофон в браузере, чтобы Live мог слушать голос.'
+          : 'Не удалось запустить микрофон. Можно закрыть Live и написать вопрос текстом.';
+        setLiveStatus(msg);
+      };
+      liveRecognition.onend = () => {
+        if (isLiveMode) {
+          setTimeout(() => {
+            try { liveRecognition && liveRecognition.start(); } catch (error) {}
+          }, 700);
+        }
+      };
+      liveRecognition.start();
+    } catch (error) {
+      setLiveStatus('Live открыт. Если микрофон не запустился, проверьте разрешение браузера.');
+    }
+  }
+
+  window.toggleLiveMode = function () {
+    const overlay = document.getElementById('liveOverlay');
+    const btn = document.getElementById('liveToggle');
+    const inputArea = document.querySelector('.input-area');
+    ensureLiveMarkup();
+
+    if (isLiveMode) {
+      window.stopLiveMode();
+      return;
+    }
+
+    isLiveMode = true;
+    isVoiceResponseActive = false;
+    if (overlay) {
+      overlay.style.setProperty('display', 'flex', 'important');
+      overlay.style.opacity = '1';
+    }
+    if (inputArea) inputArea.style.display = 'none';
+    if (btn) btn.classList.add('active-live');
+    setLiveStatus('Слушаю... когда РР отвечает, здесь будет анимация голоса.');
+    startLiveSpeechSafe();
+  };
+
+  window.stopLiveMode = function () {
+    isLiveMode = false;
+    isVoiceResponseActive = false;
+    const overlay = document.getElementById('liveOverlay');
+    const btn = document.getElementById('liveToggle');
+    const inputArea = document.querySelector('.input-area');
+    if (overlay) {
+      overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.setProperty('display', 'none', 'important'), 180);
+    }
+    if (inputArea) inputArea.style.display = '';
+    if (btn) btn.classList.remove('active-live');
+    if (liveRecognition) {
+      try { liveRecognition.stop(); } catch (error) {}
+      liveRecognition = null;
+    }
+  };
+
+  window.closeDownloadModal = function () {
+    const modal = document.getElementById('downloadModal');
+    if (!modal) return;
+    modal.classList.remove('active');
+    modal.style.setProperty('display', 'none', 'important');
+    document.body.style.overflow = '';
+  };
+
+  window.openDownloadModal = function () {
+    const modal = document.getElementById('downloadModal');
+    if (!modal) return;
+    modal.classList.add('active');
+    modal.style.setProperty('display', 'flex', 'important');
+    document.body.style.overflow = 'hidden';
+  };
+
+  window.closeModal = function (id) {
+    if (id === 'downloadModal') {
+      window.closeDownloadModal();
+      return;
+    }
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('DOMContentLoaded', ensureLiveMarkup);
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      if (isLiveMode) window.stopLiveMode();
+      window.closeDownloadModal();
+    }
+  });
+
+  window.addEventListener('message', event => {
+    if (event?.data?.type === 'solifon-close-download') {
+      window.closeDownloadModal();
+    }
+  });
+})();
+
+// ============================================================
+// SOLIFON HOTFIX: start chat cleanly after a question/message
+// ============================================================
+(function () {
+  function hideWelcomeForChat() {
+    document.body.classList.add('chat-started');
+    const welcome = document.getElementById('welcomeScreen');
+    if (welcome) {
+      welcome.classList.add('chat-hidden');
+      welcome.style.setProperty('display', 'none', 'important');
+      welcome.style.setProperty('visibility', 'hidden', 'important');
+      welcome.style.setProperty('opacity', '0', 'important');
+      welcome.style.setProperty('pointer-events', 'none', 'important');
+    }
+  }
+
+  function showWelcomeForNewChat() {
+    document.body.classList.remove('chat-started');
+    const welcome = document.getElementById('welcomeScreen');
+    if (welcome) {
+      welcome.classList.remove('chat-hidden');
+      welcome.style.removeProperty('visibility');
+      welcome.style.removeProperty('opacity');
+      welcome.style.removeProperty('pointer-events');
+      welcome.style.setProperty('display', 'grid', 'important');
+    }
+  }
+
+  const originalAddMessage = window.addMessageToUI;
+  if (typeof originalAddMessage === 'function') {
+    window.addMessageToUI = function (...args) {
+      hideWelcomeForChat();
+      return originalAddMessage.apply(this, args);
+    };
+    try { addMessageToUI = window.addMessageToUI; } catch (error) {}
+  }
+
+  const originalClearChat = window.clearChat;
+  if (typeof originalClearChat === 'function') {
+    window.clearChat = function (...args) {
+      const result = originalClearChat.apply(this, args);
+      showWelcomeForNewChat();
+      return result;
+    };
+  }
+
+  function installChatStartHandlers() {
+    const input = document.getElementById('userInput');
+    const send = document.getElementById('sendBtn');
+    if (send && !send.dataset.solifonChatStartFix) {
+      send.dataset.solifonChatStartFix = '1';
+      send.addEventListener('click', () => {
+        if (!input || input.value.trim()) hideWelcomeForChat();
+      }, true);
+    }
+
+    if (input && !input.dataset.solifonChatStartFix) {
+      input.dataset.solifonChatStartFix = '1';
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter' && !event.shiftKey && input.value.trim()) {
+          hideWelcomeForChat();
+        }
+      }, true);
+    }
+
+    document.querySelectorAll('#quickPills .quick-card').forEach(card => {
+      if (card.dataset.solifonChatStartFix) return;
+      card.dataset.solifonChatStartFix = '1';
+      card.addEventListener('click', hideWelcomeForChat, true);
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', installChatStartHandlers);
+  window.addEventListener('load', installChatStartHandlers);
+  setTimeout(installChatStartHandlers, 400);
+})();
+
+// ============================================================
+// SOLIFON FINAL HOTFIX: full language, quick card, premium text
+// ============================================================
+(function () {
+  const LANG_KEY = 'solifon-language';
+  const dict = {
+    ru: {
+      download: 'Скачать Solifon AI',
+      upgradeText: 'Перейти на Premium',
+      upgrade: 'Улучшить',
+      premiumTitle: 'Solifon Premium',
+      premiumSub: 'Безлимитный доступ ко всем моделям',
+      premium1: 'Все модели без ограничений',
+      premium2: 'Приоритетный доступ',
+      premium3: 'Рстория чатов',
+      premium4: 'Голосовые ответы',
+      premiumSoon: 'Скоро доступно',
+      deep: 'Глубокий поиск',
+      modelPick: 'Выберите модель',
+      ask: 'Спросите SOLIFON AI что угодно...',
+      questions: [
+        ['ph ph-cpu', 'Что такое искусственный интеллект?'],
+        ['ph ph-desktop', 'Что такое метавселенная?'],
+        ['ph ph-fire', 'Что такое антиматерия?'],
+        ['ph ph-lightning', 'Что такое машинное обучение?']
+      ]
+    },
+    kk: {
+      download: 'Solifon AI жТЇктеу',
+      upgradeText: 'Premium-Т“а У©ту',
+      upgrade: 'ЖаТ›сарту',
+      premiumTitle: 'Solifon Premium',
+      premiumSub: 'БарлыТ› модельдерге шексіз Т›олжетімділік',
+      premium1: 'БарлыТ› модельдер шектеусіз',
+      premium2: 'Басым Т›олжетімділік',
+      premium3: 'Чат тарихы',
+      premium4: 'ДауыстыТ› жауаптар',
+      premiumSoon: 'ЖаТ›ында Т›олжетімді',
+      deep: 'ТереТЈ іздеу',
+      modelPick: 'Модель таТЈдаТЈыз',
+      ask: 'SOLIFON AI-дан кез келген нУ™рсе сТ±раТЈыз...',
+      questions: [
+        ['ph ph-cpu', 'Жасанды интеллект деген не?'],
+        ['ph ph-desktop', 'Метаверс деген не?'],
+        ['ph ph-fire', 'Антиматерия деген не?'],
+        ['ph ph-lightning', 'МашиналыТ› оТ›ыту деген не?']
+      ]
+    },
+    en: {
+      download: 'Download Solifon AI',
+      upgradeText: 'Upgrade to Premium',
+      upgrade: 'Upgrade',
+      premiumTitle: 'Solifon Premium',
+      premiumSub: 'Unlimited access to every model',
+      premium1: 'All models without limits',
+      premium2: 'Priority access',
+      premium3: 'Chat history',
+      premium4: 'Voice answers',
+      premiumSoon: 'Coming soon',
+      deep: 'Deep Search',
+      modelPick: 'Choose a model',
+      ask: 'Ask SOLIFON AI anything...',
+      questions: [
+        ['ph ph-cpu', 'What is artificial intelligence?'],
+        ['ph ph-desktop', 'What is the metaverse?'],
+        ['ph ph-fire', 'What is antimatter?'],
+        ['ph ph-lightning', 'What is machine learning?']
+      ]
+    }
+  };
+
+  function lang() {
+    return localStorage.getItem(LANG_KEY) || document.documentElement.lang || 'ru';
+  }
+
+  function setText(selector, text) {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = text;
+  }
+
+  function applyPremiumText(t) {
+    setText('#upgradeModal h1', t.premiumTitle);
+    const ps = Array.from(document.querySelectorAll('#upgradeModal p'));
+    if (ps[0]) ps[0].textContent = t.premiumSub;
+    if (ps[1]) ps[1].textContent = t.premiumSoon;
+    const items = Array.from(document.querySelectorAll('#upgradeModal div[style*="font-size:15px"]'));
+    [t.premium1, t.premium2, t.premium3, t.premium4].forEach((text, index) => {
+      if (items[index]) items[index].textContent = `вњ“  ${text}`;
+    });
+  }
+
+  function renderLocalizedQuickCards(t) {
+    const container = document.getElementById('quickPills');
+    if (!container) return;
+    container.innerHTML = '';
+    t.questions.forEach(([icon, text], index) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = `quick-card quick-card-${index + 1}`;
+      card.innerHTML = `<i class="${icon}"></i><span>${text}</span>`;
+      card.addEventListener('click', () => {
+        const input = document.getElementById('userInput');
+        if (input) input.value = text;
+        document.body.classList.add('chat-started');
+        document.getElementById('sendBtn')?.click();
+      });
+      container.appendChild(card);
+    });
+  }
+
+  function applyFinalLanguage() {
+    const key = ['ru', 'kk', 'en'].includes(lang()) ? lang() : 'ru';
+    const t = dict[key];
+    document.documentElement.lang = key === 'kk' ? 'kk' : key;
+
+    setText('.menu-item[onclick*="openDownloadModal"] span', t.download);
+    setText('.upgrade-card p', t.upgradeText);
+    setText('.upgrade-btn', t.upgrade);
+    setText('#deepBtn span', t.deep);
+    setText('#currentModel', t.modelPick);
+    const input = document.getElementById('userInput');
+    if (input) input.placeholder = t.ask;
+
+    applyPremiumText(t);
+    renderLocalizedQuickCards(t);
+
+    const iframe = document.querySelector('#downloadModal iframe');
+    if (iframe && iframe.contentWindow) {
+      try { iframe.contentWindow.postMessage({ type: 'solifon-lang', lang: key }, '*'); } catch (error) {}
+    }
+  }
+
+  const originalSetLanguage = window.setLanguage;
+  window.setLanguage = function (nextLang) {
+    localStorage.setItem(LANG_KEY, nextLang);
+    if (typeof originalSetLanguage === 'function') originalSetLanguage(nextLang);
+    applyFinalLanguage();
+  };
+
+  document.addEventListener('click', event => {
+    const button = event.target.closest('#languageSwitcher button, [data-lang]');
+    if (!button) return;
+    const next = button.dataset.lang || button.textContent.trim().toLowerCase().replace('kz', 'kk');
+    if (['ru', 'kk', 'en'].includes(next)) {
+      setTimeout(applyFinalLanguage, 0);
+      setTimeout(applyFinalLanguage, 120);
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', applyFinalLanguage);
+  window.addEventListener('load', applyFinalLanguage);
+  document.addEventListener('click', event => {
+    if (event.target.closest('.menu-item[onclick*="openDownloadModal"]')) {
+      setTimeout(applyFinalLanguage, 180);
+      setTimeout(applyFinalLanguage, 650);
+    }
+    if (event.target.closest('#deepBtn')) {
+      setTimeout(applyFinalLanguage, 80);
+    }
+  });
+  setTimeout(applyFinalLanguage, 300);
+})();
+
+// ============================================================
+// SOLIFON HOTFIX: translate info modals
+// ============================================================
+(function () {
+  const LANG_KEY = 'solifon-language';
+  const modalText = {
+    ru: {
+      whatsTitle: 'Что нового',
+      whats01: '01 < Системные навыки />',
+      whats02: '02 < Скоро />',
+      whats03: '03 < Новости />',
+      aboutTitle: 'О SOLIFON AI',
+      aboutHero: 'SOLIFON AI',
+      aboutLead: 'Solifon AI объединяет чат, поиск, модели, голос, визуальные инструменты и рабочие пространства в одной платформе.',
+      aboutGoal: 'Наша цель',
+      aboutGoalText: 'Мы создаём удобную AI-платформу, где пользователь может учиться, работать, исследовать идеи и запускать разные инструменты без лишних вкладок.',
+      card1: 'Мульти-ядро',
+      card1Text: 'Несколько AI-моделей в одном интерфейсе.',
+      card2: 'Code Dev',
+      card2Text: 'Рабочее пространство для кода и экспериментов.'
+    },
+    kk: {
+      whatsTitle: 'ЖаТЈалыТ›тар',
+      whats01: '01 < ЖТЇйелік даТ“дылар />',
+      whats02: '02 < ЖаТ›ында />',
+      whats03: '03 < ЖаТЈалыТ› />',
+      aboutTitle: 'SOLIFON AI туралы',
+      aboutHero: 'SOLIFON AI',
+      aboutLead: 'Solifon AI чат, іздеу, модельдер, дауыс, визуалды Т›Т±ралдар жУ™не жТ±мыс кеТЈістіктерін бір платформаТ“а біріктіреді.',
+      aboutGoal: 'БіздіТЈ маТ›сат',
+      aboutGoalText: 'Біз оТ›уТ“а, жТ±мыс істеуге, идеяларды зерттеуге жУ™не У™ртТЇрлі Т›Т±ралдарды артыТ› беттерсіз іске Т›осуТ“а ыТЈТ“айлы AI-платформа жасаймыз.',
+      card1: 'КУ©п ядро',
+      card1Text: 'Бір интерфейсте бірнеше AI моделі.',
+      card2: 'Code Dev',
+      card2Text: 'Код пен тУ™жірибелерге арналТ“ан жТ±мыс кеТЈістігі.'
+    },
+    en: {
+      whatsTitle: "What's New",
+      whats01: '01 < System Skills />',
+      whats02: '02 < Coming Soon />',
+      whats03: '03 < News />',
+      aboutTitle: 'About SOLIFON AI',
+      aboutHero: 'SOLIFON AI',
+      aboutLead: 'Solifon AI brings chat, search, models, voice, visual tools, and workspaces into one platform.',
+      aboutGoal: 'Our Goal',
+      aboutGoalText: 'We are building a practical AI platform for learning, work, research, and creative tools without unnecessary tab switching.',
+      card1: 'Multi-core',
+      card1Text: 'Several AI models in one interface.',
+      card2: 'Code Dev',
+      card2Text: 'A workspace for code and experiments.'
+    }
+  };
+
+  function currentLang() {
+    const value = localStorage.getItem(LANG_KEY) || document.documentElement.lang || 'ru';
+    return ['ru', 'kk', 'en'].includes(value) ? value : 'ru';
+  }
+
+  function set(selector, text) {
+    const el = document.querySelector(selector);
+    if (el) el.textContent = text;
+  }
+
+  function applyInfoModalLanguage() {
+    const t = modalText[currentLang()];
+
+    set('#whatsNewModal .modal-header h3', t.whatsTitle);
+    set('#whatsNewModal #current-title', t.whats01);
+    const whatsHeads = document.querySelectorAll('#whatsNewModal .content-block h2');
+    if (whatsHeads[1]) whatsHeads[1].textContent = t.whats02;
+    if (whatsHeads[2]) whatsHeads[2].textContent = t.whats03;
+
+    set('#aboutModal .modal-header h3', t.aboutTitle);
+    set('#aboutModal .mission-header h2', t.aboutHero);
+    const aboutLead = document.querySelector('#aboutModal .mission-header p');
+    if (aboutLead) aboutLead.textContent = t.aboutLead;
+    const aboutGoal = document.querySelector('#aboutModal .modal-body h3');
+    if (aboutGoal) aboutGoal.textContent = t.aboutGoal;
+    const aboutParagraphs = document.querySelectorAll('#aboutModal .modal-body > p');
+    if (aboutParagraphs[0]) aboutParagraphs[0].textContent = t.aboutGoalText;
+    const cards = document.querySelectorAll('#aboutModal .feature-grid .skill-card');
+    if (cards[0]) {
+      const h = cards[0].querySelector('h4');
+      const p = cards[0].querySelector('p');
+      if (h) h.textContent = t.card1;
+      if (p) p.textContent = t.card1Text;
+    }
+    if (cards[1]) {
+      const h = cards[1].querySelector('h4');
+      const p = cards[1].querySelector('p');
+      if (h) h.textContent = t.card2;
+      if (p) p.textContent = t.card2Text;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', applyInfoModalLanguage);
+  window.addEventListener('load', applyInfoModalLanguage);
+  document.addEventListener('click', event => {
+    if (event.target.closest('#languageSwitcher button, [data-lang], .menu-item[onclick*="whatsNewModal"], .menu-item[onclick*="aboutModal"]')) {
+      setTimeout(applyInfoModalLanguage, 80);
+      setTimeout(applyInfoModalLanguage, 300);
+    }
+  });
+  setTimeout(applyInfoModalLanguage, 400);
+})();
+
+
+// --- LANGUAGE TRANSLATION SYSTEM ---
+const langDict = {
+  ru: {
+    select_model: "Выберите модель",
+    new_chat: "Новый чат",
+    system_whatsnew: "Что нового",
+    system_about: "О SOLIFON",
+    menu_chat: "Чат",
+    menu_library: "Библиотека",
+    menu_new_project: "Новый проект",
+    menu_presentation: "Презентация",
+    upgrade: "Upgrade to premium",
+    upgrade_title: "Solifon Premium",
+    upgrade_subtitle: "Раскройте весь потенциал нейросетей",
+    tariff1_type: "Basic",
+    tariff1_desc: "Лучший выбор для повседневных задач",
+    tariff1_btn: "Выбрать Basic",
+    tariff2_type: "Pro",
+    tariff2_desc: "Для профессионалов и разработчиков",
+    tariff2_btn: "Выбрать Pro",
+    tariff3_type: "Ultra",
+    tariff3_desc: "Максимальная мощь без ограничений",
+    tariff3_btn: "Выбрать Ultra",
+  },
+  kz: {
+    select_model: "Модель таТЈдаТЈыз",
+    new_chat: "ЖаТЈа чат",
+    system_whatsnew: "ЖаТЈалыТ›тар",
+    system_about: "SOLIFON туралы",
+    menu_chat: "Чат",
+    menu_library: "Кітапхана",
+    menu_new_project: "ЖаТЈа жоба",
+    menu_presentation: "Презентация",
+    upgrade: "Premium-Т“а У©ту",
+    upgrade_title: "Solifon Premium",
+    upgrade_subtitle: "НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз",
+    tariff1_type: "Basic",
+    tariff1_desc: "КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау",
+    tariff1_btn: "Basic таТЈдау",
+    tariff2_type: "Pro",
+    tariff2_desc: "КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін",
+    tariff2_btn: "Pro таТЈдау",
+    tariff3_type: "Ultra",
+    tariff3_desc: "ЕшТ›андай шектеусіз максималды кТЇш",
+    tariff3_btn: "Ultra таТЈдау",
+  },
+  en: {
+    select_model: "Select Model",
+    new_chat: "New Chat",
+    system_whatsnew: "What's New",
+    system_about: "About SOLIFON",
+    menu_chat: "Chat",
+    menu_library: "Library",
+    menu_new_project: "New Project",
+    menu_presentation: "Presentation",
+    upgrade: "Upgrade to premium",
+    upgrade_title: "Solifon Premium",
+    upgrade_subtitle: "Unleash the full potential of AI",
+    tariff1_type: "Basic",
+    tariff1_desc: "Best choice for daily tasks",
+    tariff1_btn: "Choose Basic",
+    tariff2_type: "Pro",
+    tariff2_desc: "For professionals and developers",
+    tariff2_btn: "Choose Pro",
+    tariff3_type: "Ultra",
+    tariff3_desc: "Maximum power without limits",
+    tariff3_btn: "Choose Ultra",
+  }
+};
+
+window.changeLang = function(lang, btnElement) {
+  // Update buttons state
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.style.background = 'transparent';
+    btn.style.borderColor = 'transparent';
+    btn.style.color = 'rgba(255,255,255,0.5)';
+    btn.classList.remove('active');
+  });
+  if (btnElement) {
+    btnElement.style.background = 'rgba(255,255,255,0.1)';
+    btnElement.style.borderColor = 'rgba(255,255,255,0.2)';
+    btnElement.style.color = '#fff';
+    btnElement.classList.add('active');
+  } else {
+    // If no btnElement passed (e.g. on load), find the right button
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      if (btn.textContent.toLowerCase() === lang) {
+        btn.style.background = 'rgba(255,255,255,0.1)';
+        btn.style.borderColor = 'rgba(255,255,255,0.2)';
+        btn.style.color = '#fff';
+        btn.classList.add('active');
+      }
+    });
+  }
+
+  const dict = langDict[lang];
+  if (!dict) return;
+
+  const updateText = (selector, key) => {
+    const el = document.querySelector(selector);
+    if (el && dict[key]) el.textContent = dict[key];
+  };
+
+  updateText("#currentModel", "select_model");
+  updateText("#newChatBtn span", "new_chat");
+  updateText(".menu-item[onclick*='whatsNewModal'] span", "system_whatsnew");
+  updateText(".menu-item[onclick*='aboutModal'] span", "system_about");
+  updateText("#chatTrigger span", "menu_chat");
+  updateText("#libraryTrigger span", "menu_library");
+  updateText("#newProjectBtn span", "menu_new_project");
+  updateText(".menu-item[onclick*='openPresentation'] span", "menu_presentation");
+  
+  updateText(".upgrade-btn", "upgrade");
+  updateText(".upgrade-tariff-title", "upgrade_title");
+  updateText(".upgrade-tariff-subtitle", "upgrade_subtitle");
+  
+  updateText(".first__tariff-type", "tariff1_type");
+  updateText(".first-tariff .tariff__description", "tariff1_desc");
+  updateText(".first__tariff-button", "tariff1_btn");
+  
+  updateText(".second__tariff-type", "tariff2_type");
+  updateText(".second-tariff .tariff__description", "tariff2_desc");
+  updateText(".second__tariff-button", "tariff2_btn");
+  
+  updateText(".third__tariff-type", "tariff3_type");
+  updateText(".third-tariff .tariff__description", "tariff3_desc");
+  updateText(".third__tariff-button", "tariff3_btn");
+  
+  localStorage.setItem('solifon-lang', lang);
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedLang = localStorage.getItem('solifon-lang') || 'ru';
+  if(window.changeLang) {
+    window.changeLang(savedLang, null);
+  }
+});
+
+// --- BILLING TOGGLE LOGIC ---
+document.addEventListener('DOMContentLoaded', () => {
+    const billingBtns = document.querySelectorAll('.billing-btn');
+    const customContainer = document.getElementById('custom-months-container');
+    const customRange = document.getElementById('customMonthsRange');
+    const customValueDisplay = document.getElementById('customMonthsValue');
+    
+    // Default base prices per month
+    const prices = {
+        second: 60,
+        third: 90
+    };
+    
+    const updatePrices = (period, months = 1) => {
+        let multiplier = 1;
+        let suffix = '/мес';
+        
+        if (period === 'year') {
+            multiplier = 12 * 0.8; // 20% discount
+            suffix = '/год';
+        } else if (period === 'custom') {
+            multiplier = months;
+            // Pluralization for Russian
+            let monthLabel = 'месяцев';
+            if (months % 10 === 1 && months % 100 !== 11) monthLabel = 'месяц';
+            else if ([2,3,4].includes(months % 10) && ![12,13,14].includes(months % 100)) monthLabel = 'месяца';
+            suffix = `/за ${months} ${monthLabel}`;
+            customValueDisplay.textContent = `${months} ${monthLabel}`;
+        }
+        
+        const priceEls = {
+            second: document.querySelector('.second-tariff .tariff__number'),
+            third: document.querySelector('.third-tariff .tariff__number')
+        };
+        const periodEls = {
+            second: document.querySelector('.second-tariff .tariff__period'),
+            third: document.querySelector('.third-tariff .tariff__period')
+        };
+        
+        if (priceEls.second && periodEls.second) {
+            priceEls.second.textContent = Math.round(prices.second * multiplier);
+            periodEls.second.textContent = suffix;
+        }
+        if (priceEls.third && periodEls.third) {
+            priceEls.third.textContent = Math.round(prices.third * multiplier);
+            periodEls.third.textContent = suffix;
+        }
+    };
+    
+    let currentPeriod = 'month';
+    
+    billingBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            billingBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            currentPeriod = btn.dataset.period;
+            
+            if (currentPeriod === 'custom') {
+                customContainer.style.display = 'block';
+                updatePrices('custom', parseInt(customRange.value));
+            } else {
+                customContainer.style.display = 'none';
+                updatePrices(currentPeriod);
+            }
+        });
+    });
+    
+    if (customRange) {
+        customRange.addEventListener('input', (e) => {
+            if (currentPeriod === 'custom') {
+                updatePrices('custom', parseInt(e.target.value));
+            }
+        });
+    }
+});
+
+// ============================================================
+// SOLIFON CLOUD BROWSER AGENT
+// ============================================================
+window.startCloudBrowser = function(task) {
+    // ВАЖНО: Замени ссылку на URL твоего Space на Hugging Face!
+    const wsUrl = "wss://ТВОЙ-СЕРВЕР.hf.space/ws/browser"; 
+    
+    // Создаем сообщение в чате от имени РР с черным экраном
+    const msgId = "browser-" + Date.now();
+    const uiHtml = `
+        <div style="font-size: 13px; color: #00f2ff; margin-bottom: 8px;">
+            <i class="ph ph-globe"></i> Solifon Agent подключен к интернету...
+        </div>
+        <div style="font-size: 14px; margin-bottom: 10px;"><b>Цель:</b> ${task}</div>
+        <img id="${msgId}" src="" style="width: 100%; border-radius: 12px; border: 1px solid #00f2ff; background: #050505; min-height: 200px;" alt="Загрузка облачного браузера...">
+        <div id="btn-${msgId}" style="display: none; margin-top: 10px;"></div>
+    `;
+    
+    // Рспользуем твою готовую функцию добавления сообщений (если она называется так)
+    // Либо просто создай div и добавь его в #messagesContainer
+    const container = document.getElementById('messagesContainer');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message ai-message';
+    msgDiv.innerHTML = `<div class="text">${uiHtml}</div>`;
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
+
+    // Запускаем WebSocket
+    const ws = new WebSocket(wsUrl);
+    const screen = document.getElementById(msgId);
+    const btnContainer = document.getElementById(`btn-${msgId}`);
+
+    ws.onopen = () => { ws.send(task); };
+
+    ws.onmessage = (event) => {
+        const data = event.data;
+        if (data.startsWith("data:image")) {
+            screen.src = data; // Показываем трансляцию
+            container.scrollTop = container.scrollHeight;
+        } 
+        else if (data.startsWith("LINK:")) {
+            const link = data.split("LINK:")[1];
+            btnContainer.style.display = "block";
+            btnContainer.innerHTML = `<a href="${link}" target="_blank" style="padding: 10px 20px; background: #00f2ff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">рџ“Ґ Скачать результат</a>`;
+        } 
+        else if (data === "DONE") {
+            console.log("Задача в браузере завершена");
+        } 
+        else if (data.startsWith("Ошибка")) {
+            alert(data);
+        }
+    };
+};
+
+
+
+
+
+
+// TUBELIGHT NAVBAR LOGIC
+document.addEventListener("DOMContentLoaded", () => {
+    const navItems = document.querySelectorAll('.tubelight-nav-item');
+    const lamp = document.getElementById('tubelight-lamp');
+
+    function updateLamp() {
+        const activeItem = document.querySelector('.tubelight-nav-item.active');
+        if (activeItem && lamp) {
+            const rect = activeItem.getBoundingClientRect();
+            const parentRect = activeItem.parentElement.getBoundingClientRect();
+            
+            lamp.style.width = `${rect.width}px`;
+            lamp.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+        }
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => { e.preventDefault(); if (item.tagName.toLowerCase() === 'label') { const targetId = item.getAttribute('for'); if (targetId) { const cb = document.getElementById(targetId); if (cb) cb.checked = !cb.checked; } } navItems.forEach(nav => nav.classList.remove('active')); item.classList.add('active'); updateLamp(); });
+    });
+
+    setTimeout(updateLamp, 100);
+    window.addEventListener('resize', updateLamp);
+});
+
+
