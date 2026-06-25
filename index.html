@@ -52,7 +52,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=20260625">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
@@ -175,9 +175,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="fas fa-robot md-hidden"></i>
                 <span class="md-inline" id="currentModel">Model</span>
             </div>
-            <div class="tubelight-nav-item" id="liveToggle" data-tab="Live">
-                <i class="ph ph-broadcast md-hidden"></i>
-                <span class="md-inline">Live</span>
+            <div class="tubelight-nav-item" onclick="openModal('fullscreenLayerModal')" data-tab="Explore">
+                <i class="ph ph-squares-four md-hidden"></i>
+                <span class="md-inline">Explore</span>
             </div>
             <div class="tubelight-lamp" id="tubelight-lamp">
                 <div class="lamp-core">
@@ -586,7 +586,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 </div>
-    <script src="script.js?v=20260603-7" charset="utf-8"></script>
+    <script src="script.js?v=20260625-3" charset="utf-8"></script>
   
 
 <!-- ── UPGRADE MODAL ── -->
@@ -859,115 +859,196 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> <!-- /base-template__cards -->
+            </div> <!-- /base-template__wrapper -->
+        </section>
+    </div> <!-- /inner scroll wrapper -->
+</div> <!-- /upgradeModal -->
 
-                <!-- Support Dastan Banner -->
-                <div class="support-banner">
-                    <div class="support-banner__text">
-                        <h3>💛 Поддержать Дастана</h3>
-                        <p>Вам нравится проект? Вы можете инвестировать в его развитие или оставить пожертвование, чтобы мотивировать меня делать его еще лучше!</p>
+      <div class="custom-modal" id="whatsNewModal">
+    <div class="modal-content wn-modal-content">
+        <button class="close-modal" onclick="closeModal('whatsNewModal')">&times;</button>
+
+        <!-- HEADER -->
+        <div class="wn-header">
+            <div class="wn-badge">v2.6 · ИЮНЬ 2026</div>
+            <h1 class="wn-title">Что нового<span class="wn-dot">.</span></h1>
+            <p class="wn-subtitle">Solifon работает на инфраструктуре мирового класса — той же, что стоит за X, Instagram и NASA.</p>
+        </div>
+
+        <!-- INFRA CARDS -->
+        <div class="wn-infra-row">
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">𝕏</div>
+                <div class="wn-infra-name">X Infrastructure</div>
+                <div class="wn-infra-desc">Edge delivery · Real-time streams</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">◈</div>
+                <div class="wn-infra-name">Instagram Stack</div>
+                <div class="wn-infra-desc">CDN · Media pipeline · Scale</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">⬡</div>
+                <div class="wn-infra-name">NASA Standards</div>
+                <div class="wn-infra-desc">Fault-tolerant · Mission-critical</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">₿</div>
+                <div class="wn-infra-name">Solifon Crypto</div>
+                <div class="wn-infra-desc">Новости о крипте · Децентрализация</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">🎥</div>
+                <div class="wn-infra-name">Solifon Motion 2.0</div>
+                <div class="wn-infra-desc">Крутая генерация видео · Кинематографичность</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">🧠</div>
+                <div class="wn-infra-name">Умные Модели</div>
+                <div class="wn-infra-desc">Высокий интеллект · Стали еще умнее</div>
+            </div>
+            <div class="wn-infra-card">
+                <div class="wn-infra-icon">🚀</div>
+                <div class="wn-infra-name">Постоянное Развитие</div>
+                <div class="wn-infra-desc">Мы не стоим на месте · Эволюция ИИ</div>
+            </div>
+        </div>
+
+        <!-- CHANGELOG -->
+        <div class="wn-section-label">CHANGELOG</div>
+        <div class="wn-timeline">
+
+            <div class="wn-item wn-item--new">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--green">NEW</span>
+                        <span class="wn-date">25 июн 2026</span>
                     </div>
-                    <button class="support-banner__btn">Инвестировать / Donate</button>
+                    <div class="wn-item-title">Tubelight Navigation</div>
+                    <div class="wn-item-text">Живая лампа-навигация с плавными анимациями. Menu, Clear, Model — теперь всё работает мгновенно.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--blue">AI</span>
+                        <span class="wn-date">20 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Smart Autocomplete</div>
+                    <div class="wn-item-text">Поисковые подсказки как в Google — система предугадывает запрос пока вы печатаете.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--purple">MODEL</span>
+                        <span class="wn-date">15 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Solifon SoulDrive</div>
+                    <div class="wn-item-text">Новая модель на базе Qwen 3. Эмоциональный интеллект нового поколения для глубоких диалогов.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--orange">PERF</span>
+                        <span class="wn-date">10 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Edge CDN · 99.97% Uptime</div>
+                    <div class="wn-item-text">Перенесли инфраструктуру на глобальную edge-сеть. Latency снижена на 40%. Работает как X и Instagram.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--gray">SOON</span>
+                        <span class="wn-date">Июль 2026</span>
+                    </div>
+                    <div class="wn-item-title">Solifon Offline Mode</div>
+                    <div class="wn-item-text">Edge AI на устройстве без интернета. Протокол готов — идёт интеграция с партнёрами.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--orange">VOICE</span>
+                        <span class="wn-date">08 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Solifon RealVoice</div>
+                    <div class="wn-item-text">Реалистичный синтез речи. Модель умеет смеяться, делать паузы и передавать эмоции в голосе.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--gray">DESIGN</span>
+                        <span class="wn-date">05 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Темная Материя</div>
+                    <div class="wn-item-text">Ультра-черная тема интерфейса. Максимальная глубина черного для OLED дисплеев и комфорта глаз.</div>
+                </div>
+            </div>
+
+            <div class="wn-item">
+                <div class="wn-item-dot"></div>
+                <div class="wn-item-body">
+                    <div class="wn-item-meta">
+                        <span class="wn-tag wn-tag--green">CORE</span>
+                        <span class="wn-date">01 июн 2026</span>
+                    </div>
+                    <div class="wn-item-title">Quantum Search</div>
+                    <div class="wn-item-text">Новый движок поиска знаний со скоростью мысли. Индексация миллиардов фактов за миллисекунды.</div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- PREMIUM FEATURES -->
+        <div class="wn-section-label">INNOVATIONS</div>
+        <div class="wn-premium-grid">
+            <div class="wn-premium-card wn-premium-card--ai">
+                <div class="wn-premium-glow"></div>
+                <div class="wn-premium-content">
+                    <div class="wn-premium-icon"><i class="ph ph-brain"></i></div>
+                    <div class="wn-premium-title">Solifon Neural Engine</div>
+                    <div class="wn-premium-desc">Основано на архитектуре трансформеров следующего поколения. Вычисления происходят на 300% быстрее благодаря динамической оптимизации весов.</div>
+                </div>
+            </div>
+            <div class="wn-premium-card wn-premium-card--sec">
+                <div class="wn-premium-glow"></div>
+                <div class="wn-premium-content">
+                    <div class="wn-premium-icon"><i class="ph ph-shield-check"></i></div>
+                    <div class="wn-premium-title">Zero-Knowledge Cloud</div>
+                    <div class="wn-premium-desc">Абсолютная приватность. Никто, даже мы, не имеем доступа к вашим данным благодаря сквозному квантовому шифрованию.</div>
                 </div>
             </div>
         </div>
-    </section>
-  </div>
-</div>
 
-<!-- DOWNLOAD MODAL -->
-<div class="custom-modal" id="downloadModal">
-  <div class="modal-content" style="padding:0; overflow:hidden;">
-    <iframe 
-      src="offline-download.html?v=20260603-8" 
-      style="width:100%; height:100%; border:none;"
-    ></iframe>
-  </div>
-</div>
-  
-<div class="custom-modal" id="whatsNewModal" >
-    <div class="modal-content lumifex-fullscreen">
-        <div class="modal-header">
-            <h3><i class="ph ph-sparkle"></i> System Chronicles</h3>
-            <button class="close-modal" onclick="closeModal('whatsNewModal')">&times;</button>
-        </div>
-        <div class="modal-body lumifex-scroll-area">
-            <div class="lumifex-wrapper">
-                
-                <section class="carousel-section">
-                    <div id="carousel-container">
-                        <div id="stellar-carousel"></div>
-                        <div id="dot-nav"></div>
-                    </div>
-                </section>
-
-                <section class="info-section">
-                    
-                    <div class="content-block">
-                        <h2 id="current-title">01 < СИСТЕМНЫЕ НАВЫКИ /></h2>
-                        <div id="dynamic-skills">
-                            </div>
-                    </div>
-
-                    <div class="content-block">
-                        <h2>02 < Скоро  /></h2>
-                        <div class="simple-info-grid">
-                            <div class="skill-card">
-                                <div style="display: flex; gap: 20px; align-items: flex-start;">
-                                    <span style="font-size: 2rem;">𓆩𓇽𓆪</span>
-                                    <div>
-                                        <h4 style="font-family: 'Orbitron'; color: #ffffff; margin: 0;">Solifon Offline </h4>
-                                        <p style="color: rgba(255,255,255,0.7); line-height: 1.5; margin: 5px 0;">
-                                            Протокол готов к интеграции с глобальными облачными решениями. Для реализации модуля Offline требуется поддержка Edge AI технологий. Мы открыты к грантовым программам для стартапов от лидеров индустрии (Google Cloud / OpenAI).
-                                        </p>
-                                        <span style="font-size: 0.8rem; color: #00ff00;">● Статус: ТРЕБУЕТСЯ ИНВЕСТИРОВАНИЕ</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="skill-card" style="margin-top: 20px;">
-                                <div style="display: flex; gap: 20px; align-items: flex-start;">
-                                    <span style="font-size: 2rem;">—͟͟͞͞𖣘</span>
-                                    <div>
-                                        <h4 style="font-family: 'Orbitron'; color: #a855f7; margin: 0;">Solifon Unbound</h4>
-                                        <p style="color: rgba(255,255,255,0.7); line-height: 1.5; margin: 5px 0;">
-                                            Высокопроизводительная нейросеть с открытой архитектурой. Мы доказали эффективность модели, но для стабильной работы 24/7 нам нужны гранты на GPU-мощности. Solifon ищет партнеров, готовых поддержать развитие нецензурируемого ИИ.
-                                        </p>
-                                        <span style="font-size: 0.8rem; color: #ccc;"> Статус: Требуется расширение GPU-кластера.</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-block">
-                        <h2>03 < Заголовок /></h2>
-                        <div class="news-container">
-                            <div class="news-card">
-                                <div class="news-date">2026-02-10</div>
-                                <h4 class="news-header">ЧТО НУЖНО ЗНАТЬ</h4>
-                                <p class="news-body">
-                                Solifon Unbound свободен от цензуры, но не от здравого смысла. Если вы спросите его, как создать что-то опасное, он даст вам рецепт из бумаги и стакана воды. Мы не читаем нотации — мы просто считаем, что созидание важнее разрушения. Для обучения более умных (и безопасных) алгоритмов нам нужна ваша поддержка.
-                                </p>
-                            </div>
-
-                            <div class="news-card">
-                                <div class="news-date">2026-01-21</div>
-                                <h4 class="news-header">ЧТО НУЖНО ЗНАТЬ </h4>
-                                <p class="news-body">
-                                    Интеграция всех модулей Solifon завершена с приоритетом на коллективную безопасность. Мы разработали уникальные фильтры, которые блокируют деструктивные запросы, превращая их в безопасный абсурд. Для масштабирования этой технологии и защиты миллионов пользователей мы ищем поддержку Google Cloud, гранты от ИИ-сообщества и стратегических партнеров. Наша цель — доказать, что свободный ИИ может быть ответственным..
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </section> <footer style="text-align: center; padding: 40px; color: rgba(255,255,255,0.1); font-size: 0.7rem; letter-spacing: 2px; font-family: 'Orbitron';">
-                    &copy; 2026 SOLIFON AI // TERMINAL_ID: 777
-                </footer>
-            </div>
+        <!-- FOOTER -->
+        <div class="wn-footer">
+            <span>© 2026 SOLIFON AI</span>
+            <span class="wn-footer-sep">·</span>
+            <span>Built for scale</span>
+            <span class="wn-footer-sep">·</span>
+            <span>KZ · Global</span>
         </div>
     </div>
 </div>
+
 
 <div class="custom-modal" id="aboutModal" >
         <div class="modal-content">
@@ -1083,26 +1164,386 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
 
-<div id="presentation-screen" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; background: #1e1e1e; flex-direction: column;">
-    <div class="tabs-bar" style="background: #181818; display: flex; padding: 10px 20px; gap: 8px; border-bottom: 1px solid #333; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-        <button class="tab-button" onclick="closePresentation()" style="padding: 6px 12px; margin-right: 20px; background: transparent; border: 1px solid #444; color: #ccc; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;"><i class="ph ph-arrow-left"></i> Back</button> <div class="ide-tab-group" style="display: flex; background: #252526; border-radius: 8px; padding: 4px; gap: 4px;">
-            <button class="tab-btn active" onclick="openEditorTab(event, 'html')" style="padding: 6px 16px; background: #1e1e1e; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s;"><i class="ph ph-file-html" style="color: #e34c26; margin-right: 4px;"></i>HTML</button>
-            <button class="tab-btn" onclick="openEditorTab(event, 'css')" style="padding: 6px 16px; background: transparent; color: #aaa; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s;"><i class="ph ph-file-css" style="color: #264de4; margin-right: 4px;"></i>CSS</button>
-            <button class="tab-btn" onclick="openEditorTab(event, 'js')" style="padding: 6px 16px; background: transparent; color: #aaa; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s;"><i class="ph ph-file-js" style="color: #f7df1e; margin-right: 4px;"></i>JS</button>
-            <button class="tab-btn" onclick="openEditorTab(event, 'py')" style="padding: 6px 16px; background: transparent; color: #aaa; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s;"><i class="ph ph-file-code" style="color: #3776ab; margin-right: 4px;"></i>Python</button>
+<div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0d0d0f; flex-direction:column; font-family:'Inter',sans-serif;">
+
+    <!-- TOP BAR: macOS-style -->
+    <div id="ide-topbar" style="background:#161618; display:flex; align-items:center; padding:0 16px; height:48px; border-bottom:1px solid #2a2a2e; flex-shrink:0; gap:12px;">
+        <!-- Traffic Lights -->
+        <div style="display:flex; gap:7px; align-items:center; margin-right:8px;">
+            <div onclick="closePresentation()" title="Закрыть" style="width:13px;height:13px;border-radius:50%;background:#ff5f57;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
+            <div style="width:13px;height:13px;border-radius:50%;background:#febc2e;">​</div>
+            <div onclick="window.setIDELayout('preview')" title="Полный экран превью" style="width:13px;height:13px;border-radius:50%;background:#28c840;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
         </div>
-        <button class="run-btn" onclick="runEditorCode()" style="margin-left: auto; background: #2ea043; color: white; border: none; padding: 8px 24px; border-radius: 6px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(46,160,67,0.3);"><i class="ph ph-play"></i> Run Code</button>
+
+        <!-- File Tabs -->
+        <div id="ide-file-tabs" style="display:flex; align-items:stretch; height:100%; overflow-x:auto; flex:1;">
+            <div class="ide-ftab active" onclick="openEditorTab(event,'html')" data-lang="html" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e06c75;white-space:nowrap;background:#0d0d0f;border-top:2px solid #528bff;">📄 index.html</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'css')" data-lang="css" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#61afef;white-space:nowrap;background:transparent;">🎨 style.css</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'js')" data-lang="js" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e5c07b;white-space:nowrap;background:transparent;">⚡ script.js</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'py')" data-lang="py" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#c678dd;white-space:nowrap;background:transparent;">🐍 main.py</div>
+        </div>
+
+        <!-- Close button -->
+        <button onclick="closePresentation()" title="Выйти из редактора" style="display:flex;align-items:center;gap:7px;background:rgba(255,95,87,0.12);border:1px solid rgba(255,95,87,0.3);color:#ff5f57;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,95,87,0.25)';this.style.borderColor='#ff5f57'" onmouseout="this.style.background='rgba(255,95,87,0.12)';this.style.borderColor='rgba(255,95,87,0.3)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5f57" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Выйти
+        </button>
+
+        <!-- Right controls -->
+        <div style="display:flex;gap:10px;align-items:center;margin-left:auto;flex-shrink:0;">
+            <div style="display:flex;background:#252529;border-radius:8px;padding:3px;gap:2px;">
+                <button id="layout-split" onclick="window.setIDELayout('split')" title="Разделённый" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
+                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Только редактор" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▣ Code</button>
+                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Только превью" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▢ Preview</button>
+            </div>
+            <div id="ide-status-pill" style="background:#1a1a1e;border:1px solid #333;border-radius:20px;padding:5px 14px;font-size:12px;color:#888;"><span id="ide-cursor-pos">Ln 1, Col 1</span></div>
+            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Запустить</button>
+        </div>
     </div>
-    <div style="display: flex; flex-direction: column; flex-grow: 1;">
-        <div id="editor-container" style="height: 50%; background: #1e1e1e; padding: 10px;">
-            <div id="html-editor-box" class="editor-tab-content show" style="height: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #333;"><textarea id="html-edit-area"></textarea></div>
-            <div id="css-editor-box" class="editor-tab-content" style="display:none; height: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #333;"><textarea id="css-edit-area"></textarea></div>
-            <div id="js-editor-box" class="editor-tab-content" style="display:none; height: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #333;"><textarea id="js-edit-area"></textarea></div>
-            <div id="py-editor-box" class="editor-tab-content" style="display:none; height: 100%; border-radius: 8px; overflow: hidden; border: 1px solid #333;"><textarea id="py-edit-area"></textarea></div>
+
+    <!-- BODY: Sidebar + Editor + Preview -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+
+        <!-- LEFT SIDEBAR -->
+        <div id="ide-sidebar" style="width:200px;background:#141416;border-right:1px solid #222;display:flex;flex-direction:column;flex-shrink:0;">
+            <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Файлы</div>
+            <div style="padding:6px 0;">
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">📄 index.html</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🎨 style.css</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e5c07b;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">⚡ script.js</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" style="padding:6px 14px 6px 24px;font-size:13px;color:#c678dd;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🐍 main.py</div>
+            </div>
+            <div style="margin-top:auto;padding:10px 14px;border-top:1px solid #1e1e1e;font-size:11px;color:#444;">Solifon Code v2.6</div>
         </div>
-        <div id="preview-container" style="height: 50%; background: #ffffff; border-top: 1px solid #333; position: relative;">
-            <div style="position: absolute; top: -1px; left: 50%; transform: translateX(-50%); background: #333; color: #aaa; padding: 2px 12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-size: 12px; z-index: 10;">Preview Output</div>
-            <iframe id="editor-preview-window" style="width: 100%; height: 100%; border: none;"></iframe>
+
+        <!-- EDITOR PANE -->
+        <div id="ide-editor-pane" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
+            <div style="background:#181820;padding:4px 16px;font-size:12px;color:#555;border-bottom:1px solid #222;display:flex;align-items:center;gap:6px;">
+                <span style="color:#444;">solifon ›</span> <span id="ide-breadcrumb" style="color:#888;">index.html</span>
+            </div>
+            <div id="editor-container" style="flex:1;overflow:hidden;position:relative;">
+                <div id="html-editor-box" class="editor-tab-content show" style="height:100%;"><textarea id="html-edit-area"></textarea></div>
+                <div id="css-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="css-edit-area"></textarea></div>
+                <div id="js-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="js-edit-area"></textarea></div>
+                <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
+            </div>
+            <div style="background:#2ea043;padding:3px 16px;display:flex;align-items:center;gap:16px;font-size:11px;color:#fff;flex-shrink:0;">
+                <span>✓ Solifon Code</span>
+                <span style="margin-left:auto;" id="ide-lines-count"></span>
+            </div>
+        </div>
+
+        <!-- PREVIEW PANE -->
+        <div id="ide-preview-pane" style="flex:1;display:flex;flex-direction:column;border-left:1px solid #222;min-width:0;">
+            <div style="background:#181820;padding:6px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;flex-shrink:0;">
+                <span style="font-size:12px;color:#555;">🔒 Предварительный обзор</span>
+                <button onclick="runEditorCode()" title="Обновить" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
+            </div>
+            <iframe id="editor-preview-window" style="width:100%;flex:1;border:none;"></iframe>
+        </div>
+
+    </div>
+
+    <style>
+        .ide-ftab { transition: background 0.15s !important; }
+        .ide-ftab.active { background: #0d0d0f !important; border-top: 2px solid #528bff !important; }
+        .ide-ftab:not(.active):hover { background: rgba(255,255,255,0.05) !important; }
+
+        /* Make editor-container a proper flex column */
+        #editor-container {
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-tab-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-tab-content.show {
+            display: flex !important;
+        }
+
+        /* CodeMirror fills 100% */
+        #presentation-screen .CodeMirror {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.7 !important;
+            background: #1e1e2e !important;
+        }
+        #presentation-screen .CodeMirror-wrap { height: 100% !important; }
+        #presentation-screen .CodeMirror-scroll {
+            height: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+        }
+        #presentation-screen .CodeMirror-sizer { min-height: 100% !important; }
+        #presentation-screen .CodeMirror-gutters {
+            background: #181825 !important;
+            border-right: 1px solid #252530 !important;
+            min-width: 48px;
+            height: 100% !important;
+        }
+        #presentation-screen .CodeMirror-linenumber { color: #3d3d5c !important; padding: 0 12px 0 8px !important; }
+        #presentation-screen .CodeMirror-cursor { border-left: 2px solid #528bff !important; }
+        #presentation-screen .CodeMirror-selected { background: rgba(82,139,255,0.2) !important; }
+        #presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.03) !important; }
+
+        /* No black gap — fill with editor bg color */
+        #ide-editor-pane { background: #1e1e2e; }
+        #editor-container { background: #1e1e2e; }
+    </style>
+</div>
+
+
+<div class="custom-modal" id="fullscreenLayerModal">
+    <div class="modal-content fs-layer-content">
+        <button class="close-modal" onclick="closeModal('fullscreenLayerModal')">&times;</button>
+        <div class="fs-layer-body" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto; width: 100%;">
+            <style>
+            .fs-premium-card {
+                background: rgba(25, 25, 30, 0.4);
+                backdrop-filter: blur(30px);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 28px;
+                padding: 36px;
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            }
+            .fs-premium-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.2);
+            }
+            .theme-btn {
+                padding: 16px 32px;
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #a0a0a0;
+                border-radius: 18px;
+                font-weight: 600;
+                font-size: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-family: 'Inter', sans-serif;
+            }
+            .theme-btn:hover {
+                background: rgba(255, 255, 255, 0.08);
+                color: #fff;
+                border-color: rgba(255, 255, 255, 0.25);
+            }
+            .theme-btn.active {
+                background: #fff;
+                color: #000;
+                border-color: #fff;
+                box-shadow: 0 0 20px rgba(255,255,255,0.25);
+            }
+            .theme-btn.neon {
+                background: linear-gradient(45deg, rgba(79, 70, 229, 0.1), rgba(192, 38, 211, 0.1));
+                border: 1px solid rgba(192, 38, 211, 0.3);
+                color: #e879f9;
+            }
+            .theme-btn.neon:hover {
+                background: linear-gradient(45deg, rgba(79, 70, 229, 0.3), rgba(192, 38, 211, 0.3));
+                border-color: rgba(192, 38, 211, 0.6);
+                color: #fff;
+            }
+            .theme-btn.neon.active {
+                background: linear-gradient(45deg, #4f46e5, #c026d3);
+                color: #fff;
+                border-color: #f0abfc;
+                box-shadow: 0 0 30px rgba(192, 38, 211, 0.5);
+            }
+            .wp-btn {
+                width: 64px; height: 64px;
+                border-radius: 18px;
+                cursor: pointer;
+                border: 2px solid transparent;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                position: relative;
+                overflow: hidden;
+            }
+            .wp-btn:hover {
+                transform: scale(1.08) translateY(-2px);
+                border-color: rgba(255,255,255,0.4);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            }
+            .wp-btn.active {
+                border-color: #fff;
+                transform: scale(1.12);
+                box-shadow: 0 0 25px rgba(255,255,255,0.4);
+                z-index: 2;
+            }
+            .wp-btn.active::after {
+                content: '✓';
+                position: absolute;
+                top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.4);
+                display: flex; align-items: center; justify-content: center;
+                color: #fff; font-weight: bold; font-size: 24px;
+                backdrop-filter: blur(2px);
+            }
+            </style>
+            
+            <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2);">Стиль и Настройки</h1>
+            
+            <div class="settings-dashboard" style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 32px;">
+                
+                <!-- LEFT COLUMN: Large Preview Cards (Red boxes in sketch) -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    
+                    <!-- What's New Card Preview -->
+                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: #08080a; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('whatsNewModal').classList.add('active');" title="Что нового">
+                        
+                        <!-- Crisp CSS Mini UI -->
+                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
+                            <div style="font-size: 8px; color: #aaa; background: #222; padding: 2px 8px; border-radius: 12px; margin-bottom: 8px;">v2.6 · ИЮНЬ 2026</div>
+                            <h3 style="color: #fff; font-size: 24px; font-weight: bold; margin: 0; letter-spacing: -0.5px;">Что нового<span style="color: #ff0050;">.</span></h3>
+                            <p style="color: #666; font-size: 10px; margin-top: 6px; width: 80%;">Solifon работает на инфраструктуре мирового класса.</p>
+                            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; width: 80%;">
+                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dark Hover Overlay -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
+                        
+                        <!-- Hover Open Button -->
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
+                            <i class="ph ph-arrow-right"></i> Что нового
+                        </div>
+                    </div>
+
+                    <!-- About Solifon Card Preview -->
+                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: #030303; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('aboutModal').classList.add('active');" title="О Solifon">
+                        
+                        <!-- Crisp CSS Mini UI -->
+                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
+                            <h3 style="color: #c084fc; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 2px;">SOLIFON AI</h3>
+                            <p style="color: #666; font-size: 10px; margin-top: 8px; width: 80%; font-style: italic;">Solifon AI brings chat, search, models, voice into one platform.</p>
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 16px; width: 90%;">
+                                <div style="flex: 1; height: 35px; background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                                <div style="flex: 1; height: 35px; background: linear-gradient(135deg, rgba(192,132,252,0.1), transparent); border-radius: 8px; border: 1px solid rgba(192,132,252,0.3);"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Dark Hover Overlay -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
+                        
+                        <!-- Hover Open Button -->
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
+                            <i class="ph ph-info"></i> О Solifon
+                        </div>
+                    </div>
+                    
+                    <style>
+                        .fs-premium-card:hover .preview-btn {
+                            opacity: 1 !important;
+                        }
+                        .fs-premium-card:hover .preview-overlay {
+                            background: rgba(0,0,0,0.5) !important;
+                        }
+                    </style>
+                    
+                </div>
+
+                <!-- RIGHT COLUMN: Settings Grids -->
+                <div style="display: flex; flex-direction: column; gap: 24px;">
+                    
+                    <!-- Avatar Upload -->
+                    <div class="fs-premium-card" style="padding: 24px;">
+                        <h3 style="color: #fff; margin-bottom: 16px; font-size: 20px; font-weight: 600;">Аватар</h3>
+                        <div style="display: flex; align-items: center; gap: 24px;">
+                            <img id="settingsAvatarPreview" src="https://ui-avatars.com/api/?name=User&background=random" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #222; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 8px 20px rgba(0,0,0,0.5);" alt="Avatar">
+                            <div>
+                                <input type="file" id="avatarUploadInput" style="display: none;" accept="image/*" onchange="window.handleAvatarUpload(event)">
+                                <button onclick="document.getElementById('avatarUploadInput').click()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);">Выбрать фото</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wallpapers (Purple boxes in sketch) -->
+                    <div class="fs-premium-card" style="padding: 24px;">
+                        <h3 style="color: #fff; margin-bottom: 16px; font-size: 20px; font-weight: 600;">Обои и Живые фоны</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 14px;">
+                            <div onclick="window.setWallpaper('none')" data-wp="none" style="background: #000;" class="wp-btn" title="Черный"></div>
+                            
+                            <!-- Static -->
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200); background-size: cover;" class="wp-btn" title="Абстракция"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=200); background-size: cover;" class="wp-btn" title="Земля из Космоса"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=200); background-size: cover;" class="wp-btn" title="Материнская плата"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=200); background-size: cover;" class="wp-btn" title="Темный паттерн"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=200); background-size: cover;" class="wp-btn" title="Морской пляж"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=200); background-size: cover;" class="wp-btn" title="Альпийские горы"></div>
+                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200); background-size: cover;" class="wp-btn" title="Неоновый Киберпанк"></div>
+                            
+                            <!-- Live -->
+                            <div onclick="window.setWallpaper('video:live_bg_1.mp4')" data-wp="video:live_bg_1.mp4" style="background: linear-gradient(45deg, #1e3c72, #2a5298); position: relative;" class="wp-btn" title="Видео: Анимированный Фон">
+                                <i class="ph ph-video-camera" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); font-size: 20px;"></i>
+                            </div>
+                            <div onclick="window.setWallpaper('live_leaves')" data-wp="live_leaves" style="background: url(https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=200); background-size: cover; position: relative;" class="wp-btn" title="Анимация: Осенний Лес">
+                                <i class="ph ph-wind" style="position: absolute; top: 5px; right: 5px; color: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); font-size: 14px;"></i>
+                            </div>
+                            <div onclick="window.setWallpaper('live_matrix')" data-wp="live_matrix" style="background: #001100; position: relative;" class="wp-btn" title="Анимация: Матрица">
+                                <i class="ph ph-terminal-window" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #0f0; filter: drop-shadow(0 0 5px #0f0); font-size: 20px;"></i>
+                            </div>
+
+                            <!-- Upload -->
+                            <input type="file" id="wallpaperUploadInput" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="window.handleWallpaperUpload(event)">
+                            <div onclick="document.getElementById('wallpaperUploadInput').click()" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: #fff; font-size: 24px; border: 1px dashed rgba(255,255,255,0.3);" class="wp-btn" title="Загрузить свои">
+                                <i class="ph ph-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fonts (Yellow boxes in sketch) -->
+                    <div class="fs-premium-card" style="padding: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Шрифт интерфейса</h3>
+                            <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <button onclick="window.setFont('Inter')" data-font="Inter" class="theme-btn font-btn" style="font-family: 'Inter', sans-serif; padding: 12px; justify-content: center;">Inter</button>
+                            <button onclick="window.setFont('Roboto')" data-font="Roboto" class="theme-btn font-btn" style="font-family: 'Roboto', sans-serif; padding: 12px; justify-content: center;">Roboto</button>
+                            <button onclick="window.setFont('Montserrat')" data-font="Montserrat" class="theme-btn font-btn" style="font-family: 'Montserrat', sans-serif; padding: 12px; justify-content: center;">Montserrat</button>
+                            <button onclick="window.setFont('Courier New')" data-font="Courier New" class="theme-btn font-btn" style="font-family: 'Courier New', monospace; padding: 12px; justify-content: center;">Courier</button>
+                        </div>
+                    </div>
+
+                    <!-- Layout & Window Style -->
+                    <div class="fs-premium-card" style="padding: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Стиль системы</h3>
+                        </div>
+                        
+                        <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 12px;">Глобальный фон</p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+                            <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-drop"></i> Глассморфизм</button>
+                            <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-square"></i> Прозрачный</button>
+                            <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn neon" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-lightning"></i> Неон</button>
+                        </div>
+
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                            <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin: 0;">Стиль всплывающих окон</p>
+                            <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                            <button onclick="window.setModalStyle('black')" data-modal-style="black" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-moon"></i> Темный</button>
+                            <button onclick="window.setModalStyle('glass')" data-modal-style="glass" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-drop"></i> Стеклянный</button>
+                            <button onclick="window.setModalStyle('clear')" data-modal-style="clear" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-square"></i> Прозрачный</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 </div>
