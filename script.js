@@ -581,11 +581,21 @@ window.openFilePicker = function() {
 
 window.openModal = function(id) {
     const navToggle = document.getElementById('nav-toggle');
-    if (navToggle) navToggle.checked = false;
-    
+    if (navToggle) {
+        navToggle.checked = false;
+        navToggle.dispatchEvent(new Event('change'));
+    }
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.transform = 'translateX(0px)';
+    const bd = document.getElementById('__sbd__');
+    if (bd) bd.style.display = 'none';
+
     const m = document.getElementById(id);
     if (m) {
-        m.style.display = 'flex';
+        m.style.setProperty('display', 'flex', 'important');
+        m.style.setProperty('opacity', '1', 'important');
+        m.style.setProperty('pointer-events', 'auto', 'important');
+        m.style.setProperty('visibility', 'visible', 'important');
         document.body.style.overflow = 'hidden';
         setTimeout(() => m.classList.add('active'), 10);
     }
@@ -596,9 +606,15 @@ window.closeModal = function(id) {
     if (m) {
         m.classList.remove('active');
         document.body.style.overflow = '';
-        setTimeout(() => m.style.display = 'none', 300);
+        setTimeout(() => {
+            m.style.display = 'none';
+            m.style.removeProperty('opacity');
+            m.style.removeProperty('pointer-events');
+            m.style.removeProperty('visibility');
+        }, 300);
     }
 };
+
 
 // ============================================================
 // 4. ОСНОВНАЯ ЛОГИКА (DOMContentLoaded)
@@ -1514,34 +1530,135 @@ function initLumifexEditors() {
         theme: "dracula", 
         lineNumbers: true, 
         tabSize: 2, 
-        indentWithTabs: true,
-        lineWrapping: true,
+        indentWithTabs: false,
+        lineWrapping: false,
         viewportMargin: Infinity,
+        autofocus: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        styleActiveLine: true,
         extraKeys: {
-            "Ctrl-C": false,
-            "Cmd-C": false,
-            "Ctrl-V": false,
-            "Cmd-V": false,
-            "Ctrl-X": false,
-            "Cmd-X": false,
             "Ctrl-A": "selectAll",
             "Cmd-A": "selectAll",
-            "Ctrl-S": function(cm) {
-                window.runEditorCode();
-            },
-            "Cmd-S": function(cm) {
-                window.runEditorCode();
-            }
+            "Ctrl-S": function(cm) { window.runEditorCode(); },
+            "Cmd-S": function(cm) { window.runEditorCode(); },
+            "Tab": function(cm) { cm.replaceSelection("  "); }
         }
     };
     codeEditors.html = CodeMirror.fromTextArea(document.getElementById("html-edit-area"), { ...config, mode: "xml" });
-    codeEditors.css = CodeMirror.fromTextArea(document.getElementById("css-edit-area"), { ...config, mode: "css" });
-    codeEditors.js = CodeMirror.fromTextArea(document.getElementById("js-edit-area"), { ...config, mode: "javascript" });
-    codeEditors.py = CodeMirror.fromTextArea(document.getElementById("py-edit-area"), { ...config, mode: "python" });
-    codeEditors.html.setValue("\n<div class='hero'>\n  <h1>Hello World</h1>\n  <button onclick='greet()'>Click Me</button>\n</div>");
-    codeEditors.css.setValue(".hero {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  height: 100vh;\n  background: #1e1e1e;\n  color: #00f2ff;\n  font-family: sans-serif;\n}");
-    codeEditors.js.setValue("function greet() {\n  alert('Lumifex Engine Active!');\n}");
-    codeEditors.py.setValue("print('Python running in Lumifex AI...')\nfor i in range(3):\n    print(f'Syncing core... {i+1}')");
+    codeEditors.css  = CodeMirror.fromTextArea(document.getElementById("css-edit-area"),  { ...config, mode: "css" });
+    codeEditors.js   = CodeMirror.fromTextArea(document.getElementById("js-edit-area"),   { ...config, mode: "javascript" });
+    codeEditors.py   = CodeMirror.fromTextArea(document.getElementById("py-edit-area"),   { ...config, mode: "python" });
+
+    // Starter code — modern & styled
+    codeEditors.html.setValue(`<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Solifon Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="hero">
+    <div class="badge">✦ Solifon Code</div>
+    <h1>Hello, <span class="accent">World</span>!</h1>
+    <p>Редактируй код — видь результат в реальном времени.</p>
+    <button onclick="greet()">Нажми меня</button>
+  </div>
+</body>
+</html>`);
+
+    codeEditors.css.setValue(`:root {
+  --accent: #7c6aff;
+  --bg: #0d0d12;
+  --card: #16161e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero {
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--card);
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+  max-width: 520px;
+  width: 90%;
+}
+.badge {
+  display: inline-block;
+  background: rgba(124,106,255,0.15);
+  color: var(--accent);
+  border: 1px solid rgba(124,106,255,0.3);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+h1 { color: #fff; font-size: 42px; font-weight: 700; margin-bottom: 12px; }
+.accent { color: var(--accent); }
+p { color: rgba(255,255,255,0.4); font-size: 16px; margin-bottom: 28px; }
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 14px 36px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(124,106,255,0.4);
+}
+button:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(124,106,255,0.5); }`);
+
+    codeEditors.js.setValue(`function greet() {
+  // Анимированный алерт
+  const btn = document.querySelector('button');
+  btn.textContent = '🎉 Привет!';
+  btn.style.background = '#2ea043';
+  setTimeout(() => {
+    btn.textContent = 'Нажми меня';
+    btn.style.background = '';
+  }, 2000);
+}`);
+
+    codeEditors.py.setValue(`# Python в браузере — Solifon Playground
+print("🚀 Python Engine Active!")
+print("-" * 30)
+
+for i in range(1, 6):
+    stars = "★" * i
+    print(f"Уровень {i}: {stars}")
+
+print("-" * 30)
+print("✓ Готово!")`); 
+
+    // Track cursor position
+    Object.entries(codeEditors).forEach(([lang, editor]) => {
+        editor.on('cursorActivity', (cm) => {
+            if (lang !== currentEditorLang) return;
+            const cur = cm.getCursor();
+            const el = document.getElementById('ide-cursor-pos');
+            if (el) el.textContent = `Ln ${cur.line + 1}, Col ${cur.ch + 1}`;
+            const linesEl = document.getElementById('ide-lines-count');
+            if (linesEl) linesEl.textContent = `${cm.lineCount()} строк`;
+        });
+        editor.on('change', (cm) => {
+            const linesEl = document.getElementById('ide-lines-count');
+            if (linesEl && lang === currentEditorLang) linesEl.textContent = `${cm.lineCount()} строк`;
+        });
+    });
 }
 
 window.openEditorTab = function(evt, lang) {
@@ -1549,20 +1666,74 @@ window.openEditorTab = function(evt, lang) {
         content.style.display = "none";
         content.classList.remove("show");
     });
-    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+    // Update file tabs
+    document.querySelectorAll(".ide-ftab").forEach(btn => {
+        btn.classList.remove("active");
+        btn.style.background = 'transparent';
+        btn.style.borderTop = '2px solid transparent';
+    });
     const targetBox = document.getElementById(`${lang}-editor-box`);
     if (targetBox) {
         targetBox.style.display = "block";
         targetBox.classList.add("show");
     }
-    evt.currentTarget.classList.add("active");
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add("active");
+        evt.currentTarget.style.background = '#0d0d0f';
+        evt.currentTarget.style.borderTop = '2px solid #528bff';
+    }
     currentEditorLang = lang;
+    // Update breadcrumb
+    const names = { html: 'index.html', css: 'style.css', js: 'script.js', py: 'main.py' };
+    const bc = document.getElementById('ide-breadcrumb');
+    if (bc) bc.textContent = names[lang] || lang;
+    // Update sidebar badge
+    const badge = document.getElementById('ide-lang-name');
+    const badgeDot = badge && badge.previousElementSibling;
+    const colors = { html:'#e06c75', css:'#61afef', js:'#e5c07b', py:'#c678dd' };
+    if (badge) badge.textContent = names[lang];
+    if (badgeDot) badgeDot.style.background = colors[lang] || '#888';
     setTimeout(() => {
         if (codeEditors[currentEditorLang]) {
             codeEditors[currentEditorLang].refresh();
             codeEditors[currentEditorLang].focus();
+            const cur = codeEditors[currentEditorLang].getCursor();
+            const el = document.getElementById('ide-cursor-pos');
+            if (el) el.textContent = `Ln ${cur.line+1}, Col ${cur.ch+1}`;
+            const lc = document.getElementById('ide-lines-count');
+            if (lc) lc.textContent = `${codeEditors[currentEditorLang].lineCount()} строк`;
         }
-    }, 1);
+    }, 10);
+};
+
+window.setIDELayout = function(mode) {
+    const editorPane  = document.getElementById('ide-editor-pane');
+    const previewPane = document.getElementById('ide-preview-pane');
+    const sidebar     = document.getElementById('ide-sidebar');
+    // Reset layout buttons
+    ['layout-split','layout-editor','layout-preview'].forEach(id => {
+        const b = document.getElementById(id);
+        if (b) { b.style.background = 'transparent'; b.style.color = '#666'; }
+    });
+    const activeBtn = document.getElementById('layout-' + mode);
+    if (activeBtn) { activeBtn.style.background = '#3a3a40'; activeBtn.style.color = '#ccc'; }
+
+    if (mode === 'split') {
+        if (editorPane)  { editorPane.style.display  = 'flex'; editorPane.style.flex  = '1'; }
+        if (previewPane) { previewPane.style.display = 'flex'; previewPane.style.flex = '1'; }
+        if (sidebar)     { sidebar.style.display     = 'flex'; }
+    } else if (mode === 'editor') {
+        if (editorPane)  { editorPane.style.display  = 'flex'; editorPane.style.flex  = '1'; }
+        if (previewPane) { previewPane.style.display = 'none'; }
+        if (sidebar)     { sidebar.style.display     = 'flex'; }
+    } else if (mode === 'preview') {
+        if (editorPane)  { editorPane.style.display  = 'none'; }
+        if (previewPane) { previewPane.style.display = 'flex'; previewPane.style.flex = '1'; }
+        if (sidebar)     { sidebar.style.display     = 'none'; }
+    }
+    setTimeout(() => {
+        Object.values(codeEditors).forEach(ed => ed && ed.refresh());
+    }, 50);
 };
 
 window.runEditorCode = function() {
@@ -1590,11 +1761,21 @@ window.runEditorCode = function() {
 
 window.openPresentation = function() {
     const navToggle = document.getElementById('nav-toggle');
-    if (navToggle) navToggle.checked = false;
+    if (navToggle) {
+        navToggle.checked = false;
+        navToggle.dispatchEvent(new Event('change'));
+    }
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.transform = 'translateX(0px)';
+    const bd = document.getElementById('__sbd__');
+    if (bd) bd.style.display = 'none';
     
     const presScreen = document.getElementById('presentation-screen');
     if(presScreen) {
-        presScreen.style.display = 'flex';
+        presScreen.style.setProperty('display', 'flex', 'important');
+        presScreen.style.setProperty('opacity', '1', 'important');
+        presScreen.style.setProperty('pointer-events', 'auto', 'important');
+        presScreen.style.setProperty('visibility', 'visible', 'important');
         setTimeout(() => presScreen.classList.add('active'), 10);
         if (Object.keys(codeEditors).length === 0) initLumifexEditors();
         setTimeout(() => {
@@ -1609,7 +1790,12 @@ window.closePresentation = function() {
     const presScreen = document.getElementById('presentation-screen');
     if(presScreen) {
         presScreen.classList.remove('active');
-        setTimeout(() => presScreen.style.display = 'none', 300);
+        setTimeout(() => {
+            presScreen.style.display = 'none';
+            presScreen.style.removeProperty('opacity');
+            presScreen.style.removeProperty('pointer-events');
+            presScreen.style.removeProperty('visibility');
+        }, 300);
     }
 };
 
@@ -3199,7 +3385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const q = query.toLowerCase().trim();
         return autocompleteDB
             .filter(item => item.toLowerCase().startsWith(q))
-            .slice(0, 8); // Максимум 8 подсказок
+            .slice(0, 2); // Максимум 2 подсказки
     }
 
     // ---- Обновить ghost text ----
@@ -3453,5 +3639,428 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }, true); // capture = true, но БЕЗ stopPropagation
 
+    // Синхронизация: когда openModal() сбрасывает checkbox → закрываем sidebar
+    document.addEventListener('DOMContentLoaded', function() {
+        var nt = document.getElementById('nav-toggle');
+        if (nt) {
+            nt.addEventListener('change', function() {
+                if (!nt.checked && _open) { _hide(); }
+            });
+        }
+    });
+
     console.log('[SOLIFON] Menu fix v4 ready');
 })();
+
+// ====== EXPLORE PERSONALIZATION ======
+window.handleAvatarUpload = function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            localStorage.setItem('solifon_custom_avatar', dataUrl);
+            document.getElementById('settingsAvatarPreview').src = dataUrl;
+            window.applyCustomAvatar();
+        };
+        reader.readAsDataURL(file);
+    }
+};
+
+window.applyCustomAvatar = function() {
+    const avatarData = localStorage.getItem('solifon_custom_avatar');
+    if (avatarData) {
+        const preview = document.getElementById('settingsAvatarPreview');
+        if (preview) preview.src = avatarData;
+        
+        // Update user message avatars in the chat history
+        document.querySelectorAll('.user-message .mh-msg-avatar').forEach(el => {
+            el.innerHTML = `<img src="${avatarData}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        });
+        
+        // Update regular user messages if we decide to add avatars to them
+        document.querySelectorAll('.user-message .avatar-img').forEach(el => {
+            el.src = avatarData;
+            el.style.display = 'block';
+        });
+        
+        // Save to window so new messages can pick it up
+        window.userAvatarOverride = avatarData;
+        
+        // Also update sidebar avatar if it exists
+        const sidebarAvatar = document.getElementById('userAvatar');
+        if (sidebarAvatar) {
+            sidebarAvatar.src = avatarData;
+            sidebarAvatar.style.display = 'block';
+        }
+    }
+};
+
+window.setWallpaper = function(bg) {
+    localStorage.setItem('solifon_custom_wallpaper', bg);
+    
+    // Automatically switch to glassmorphism if a custom wallpaper is selected 
+    // and current theme is opaque (neon or default/missing)
+    if (bg && bg !== 'none') {
+        const currentTheme = localStorage.getItem('solifon_custom_theme');
+        if (currentTheme !== 'glass' && currentTheme !== 'clear') {
+            localStorage.setItem('solifon_custom_theme', 'glass');
+        }
+    }
+    
+    window.applyWallpaper();
+    window.applyTheme(); // Ensure theme updates immediately
+};
+
+window.handleWallpaperUpload = function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        if (file.type.startsWith('video/')) {
+            const videoUrl = URL.createObjectURL(file);
+            // We set it but warn the user if they want since blob URLs don't survive refresh
+            window.setWallpaper(`video:${videoUrl}`);
+            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы. Для постоянного видеофона поместите файл рядом с index.html.');
+        } else {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                window.setWallpaper(`url(${dataUrl})`);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+};
+
+window.liveWallpaperAnimationId = null;
+
+window.applyWallpaper = function() {
+    const bg = localStorage.getItem('solifon_custom_wallpaper');
+    
+    // Stop any existing animation and remove canvas or video
+    if (window.liveWallpaperAnimationId) {
+        cancelAnimationFrame(window.liveWallpaperAnimationId);
+        window.liveWallpaperAnimationId = null;
+    }
+    const oldCanvas = document.getElementById('live-wallpaper-canvas');
+    if (oldCanvas) oldCanvas.remove();
+    const oldVideo = document.getElementById('live-wallpaper-video');
+    if (oldVideo) oldVideo.remove();
+
+    if (bg && bg.startsWith('video:')) {
+        const videoSrc = bg.replace('video:', '');
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#000';
+        
+        const video = document.createElement('video');
+        video.id = 'live-wallpaper-video';
+        video.src = videoSrc;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true; // Required for auto-play
+        video.playsInline = true;
+        video.style.position = 'fixed';
+        video.style.top = '0';
+        video.style.left = '0';
+        video.style.width = '100vw';
+        video.style.height = '100vh';
+        video.style.objectFit = 'cover';
+        video.style.zIndex = '-2'; // Behind UI and backdrop
+        video.style.pointerEvents = 'none';
+        document.body.appendChild(video);
+    } else if (bg === 'live_leaves') {
+        document.body.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=2564")'; // Autumn forest
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+        startFallingLeaves();
+    } else if (bg === 'live_matrix') {
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#050505';
+        startMatrixRain();
+    } else if (bg && bg !== 'none') {
+        document.body.style.backgroundImage = bg;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+    } else {
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#000'; // fallback
+    }
+    
+    // Update UI active states
+    document.querySelectorAll('.wp-btn').forEach(btn => {
+        if (btn.dataset.wp === bg || (!bg && btn.dataset.wp === 'none')) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
+
+function startFallingLeaves() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'live-wallpaper-canvas';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '-2';
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+    
+    const leaves = [];
+    for(let i=0; i<40; i++) {
+        leaves.push({
+            x: Math.random() * width,
+            y: Math.random() * height - height,
+            size: Math.random() * 12 + 8,
+            speedY: Math.random() * 1.5 + 0.5,
+            speedX: Math.random() * 2 - 1,
+            angle: Math.random() * 360,
+            spin: Math.random() * 3 - 1.5,
+            color: `hsla(${Math.random() * 40 + 20}, ${Math.random() * 30 + 60}%, ${Math.random() * 20 + 40}%, ${Math.random() * 0.4 + 0.4})`
+        });
+    }
+    
+    let time = 0;
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+        time += 0.01;
+        
+        leaves.forEach(leaf => {
+            ctx.save();
+            ctx.translate(leaf.x, leaf.y);
+            ctx.rotate(leaf.angle * Math.PI / 180);
+            
+            ctx.fillStyle = leaf.color;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, leaf.size/2, leaf.size, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+            
+            leaf.y += leaf.speedY;
+            leaf.x += leaf.speedX + Math.sin(time + leaf.size) * 1.5;
+            leaf.angle += leaf.spin;
+            
+            if (leaf.y > height + leaf.size) {
+                leaf.y = -leaf.size;
+                leaf.x = Math.random() * width;
+            }
+            if (leaf.x > width + leaf.size) leaf.x = -leaf.size;
+            if (leaf.x < -leaf.size) leaf.x = width + leaf.size;
+        });
+        
+        window.liveWallpaperAnimationId = requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+function startMatrixRain() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'live-wallpaper-canvas';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '-2';
+    document.body.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    
+    window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    });
+    
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+{}[]|:;"<>,.?/~`';
+    const fontSize = 14;
+    const columns = width / fontSize;
+    const drops = [];
+    
+    for(let x = 0; x < columns; x++) {
+        drops[x] = 1;
+    }
+    
+    let lastDraw = 0;
+    function draw(timestamp) {
+        window.liveWallpaperAnimationId = requestAnimationFrame(draw);
+        
+        if (timestamp - lastDraw < 50) return;
+        lastDraw = timestamp;
+        
+        ctx.fillStyle = 'rgba(5, 5, 5, 0.08)';
+        ctx.fillRect(0, 0, width, height);
+        
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+        
+        for(let i = 0; i < drops.length; i++) {
+            const text = chars[Math.floor(Math.random() * chars.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if(drops[i] * fontSize > height && Math.random() > 0.975)
+                drops[i] = 0;
+            
+            drops[i]++;
+        }
+    }
+    window.liveWallpaperAnimationId = requestAnimationFrame(draw);
+}
+
+window.setTheme = function(theme) {
+    localStorage.setItem('solifon_custom_theme', theme);
+    window.applyTheme();
+};
+
+window.applyTheme = function() {
+    const theme = localStorage.getItem('solifon_custom_theme') || 'default';
+    const mainContainer = document.querySelector('.main-content');
+    if (!mainContainer) return;
+    
+    // Reset mainContainer to prevent any inner edge rendering bugs
+    mainContainer.style.background = 'transparent';
+    mainContainer.style.backdropFilter = 'none';
+    mainContainer.style.webkitBackdropFilter = 'none';
+    mainContainer.style.border = 'none';
+    mainContainer.style.boxShadow = 'none';
+    
+    // Find or create a dedicated backdrop div
+    let backdrop = document.getElementById('theme-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'theme-backdrop';
+        backdrop.style.position = 'fixed';
+        // Extend beyond viewport to hide the blur edge halo
+        backdrop.style.top = '-50px';
+        backdrop.style.left = '-50px';
+        backdrop.style.right = '-50px';
+        backdrop.style.bottom = '-50px';
+        backdrop.style.zIndex = '-1'; // Behind app-layout
+        backdrop.style.pointerEvents = 'none';
+        document.body.prepend(backdrop);
+    }
+    
+    if (theme === 'glass') {
+        backdrop.style.background = 'rgba(0, 0, 0, 0.2)';
+        backdrop.style.backdropFilter = 'blur(15px)';
+        backdrop.style.webkitBackdropFilter = 'blur(15px)';
+        backdrop.style.boxShadow = 'none';
+    } else if (theme === 'clear') {
+        backdrop.style.background = 'transparent';
+        backdrop.style.backdropFilter = 'none';
+        backdrop.style.webkitBackdropFilter = 'none';
+        backdrop.style.boxShadow = 'none';
+    } else if (theme === 'neon') {
+        backdrop.style.background = 'rgba(10, 10, 10, 0.85)';
+        backdrop.style.backdropFilter = 'blur(20px)';
+        backdrop.style.webkitBackdropFilter = 'blur(20px)';
+        backdrop.style.boxShadow = 'inset 0 0 150px rgba(192, 38, 211, 0.15)';
+    } else {
+        backdrop.style.background = '#0a0a0a';
+        backdrop.style.backdropFilter = 'none';
+        backdrop.style.webkitBackdropFilter = 'none';
+        backdrop.style.boxShadow = 'none';
+    }
+    
+    // Update UI active states
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        if (btn.dataset.theme === theme) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
+
+window.setModalStyle = function(style) {
+    localStorage.setItem('solifon_custom_modal_style', style);
+    window.applyModalStyle();
+};
+
+window.applyModalStyle = function() {
+    const style = localStorage.getItem('solifon_custom_modal_style') || 'black';
+    const modals = document.querySelectorAll('.custom-modal');
+    
+    modals.forEach(modal => {
+        // Find modal-content inside this modal
+        const content = modal.querySelector('.modal-content');
+        if (!content) return;
+        
+        if (style === 'glass') {
+            modal.style.setProperty('background', 'rgba(0, 0, 0, 0.4)', 'important');
+            content.style.setProperty('background', 'rgba(20, 20, 20, 0.5)', 'important');
+            content.style.setProperty('backdrop-filter', 'blur(20px)', 'important');
+            content.style.setProperty('-webkit-backdrop-filter', 'blur(20px)', 'important');
+            content.style.setProperty('border', '1px solid rgba(255, 255, 255, 0.1)', 'important');
+        } else if (style === 'clear') {
+            modal.style.setProperty('background', 'rgba(0, 0, 0, 0.6)', 'important');
+            content.style.setProperty('background', 'transparent', 'important');
+            content.style.setProperty('backdrop-filter', 'none', 'important');
+            content.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+            content.style.setProperty('border', 'none', 'important');
+        } else {
+            // black
+            modal.style.setProperty('background', '#000000', 'important');
+            content.style.setProperty('background', '#000000', 'important');
+            content.style.setProperty('backdrop-filter', 'none', 'important');
+            content.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+            content.style.setProperty('border', 'none', 'important');
+        }
+    });
+
+    // Update UI active states
+    document.querySelectorAll('.modal-style-btn').forEach(btn => {
+        if (btn.dataset.modalStyle === style) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
+
+window.setFont = function(font) {
+    localStorage.setItem('solifon_custom_font', font);
+    window.applyFont();
+};
+
+window.applyFont = function() {
+    const font = localStorage.getItem('solifon_custom_font') || 'Inter';
+    
+    if (font === 'Courier New') {
+        document.body.style.setProperty('font-family', '"Courier New", Courier, monospace', 'important');
+    } else {
+        document.body.style.setProperty('font-family', `"${font}", sans-serif`, 'important');
+    }
+
+    // Update UI active states
+    document.querySelectorAll('.font-btn').forEach(btn => {
+        if (btn.dataset.font === font) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
+
+// Apply on load
+document.addEventListener('DOMContentLoaded', () => {
+    window.applyCustomAvatar();
+    window.applyWallpaper();
+    window.applyTheme();
+    window.applyModalStyle();
+    window.applyFont();
+});
