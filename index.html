@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -238,6 +239,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div id="suggestionsList"></div>
     </div>
 
+    <!-- Model Mini Dropdown -->
+    <div class="model-mini-dropdown" id="modelMiniDropdown">
+        <div class="mmd-label">Выберите модель</div>
+        <div class="mmd-option" data-value="gemini">
+            <span class="mmd-icon" style="color:#86efac">⬡</span>
+            <div class="mmd-info">
+                <span class="mmd-name">Solifon Air</span>
+                <span class="mmd-sub">Gemini Flash · Быстрый</span>
+            </div>
+        </div>
+        <div class="mmd-option" data-value="solifon-pulse">
+            <span class="mmd-icon" style="color:#fbbf24">◈</span>
+            <div class="mmd-info">
+                <span class="mmd-name">Solifon Pulse</span>
+                <span class="mmd-sub">Claude · Мощный</span>
+            </div>
+        </div>
+        <div class="mmd-option" data-value="github">
+            <span class="mmd-icon" style="color:#a78bfa">✦</span>
+            <div class="mmd-info">
+                <span class="mmd-name">Solifon Ultra</span>
+                <span class="mmd-sub">GPT-4o · Максимум</span>
+            </div>
+        </div>
+        <div class="mmd-option" data-value="solifon-souldrive">
+            <span class="mmd-icon" style="color:#f472b6">♥</span>
+            <div class="mmd-info">
+                <span class="mmd-name">Solifon SoulDrive</span>
+                <span class="mmd-sub">Qwen 3 · Творческий</span>
+            </div>
+        </div>
+    </div>
+
     <div class="animated-input-box">
         <!-- Ghost text wrapper -->
         <div class="textarea-ghost-wrapper">
@@ -254,11 +288,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <i class="ph ph-microphone"></i>
                 </button>
             </div>
-            
-            <button type="button" class="chat-send-btn" id="sendBtn">
-                <i class="ph ph-paper-plane-tilt"></i>
-                <span>Send</span>
-            </button>
+
+            <div class="right-actions">
+                <button type="button" class="model-mini-btn" id="modelMiniBtn">
+                    <i class="ph ph-robot"></i>
+                    <span id="modelMiniName">Air</span>
+                    <i class="ph ph-caret-up caret"></i>
+                </button>
+                <button type="button" class="chat-send-btn" id="sendBtn">
+                    <i class="ph ph-paper-plane-tilt"></i>
+                    <span>Send</span>
+                </button>
+            </div>
         </div>
     
     </div>
@@ -296,6 +337,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
             ta.addEventListener('keydown', function(e) {
                 if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sb.click(); }
+            });
+
+            // ===== ЗАГОЛОВОК: уходит вверх при отправке =====
+            sb.addEventListener('click', function() {
+                const hdr = document.getElementById('animatedChatHeader');
+                if (hdr && ta.value.trim().length > 0) {
+                    hdr.classList.add('sent-hidden');
+                    hdr.classList.remove('typing-active');
+                }
+            });
+        }
+
+        // ===== MODEL MINI BUTTON =====
+        const miniBtn = document.getElementById('modelMiniBtn');
+        const miniName = document.getElementById('modelMiniName');
+        const mmdDropdown = document.getElementById('modelMiniDropdown');
+
+        const mmdShortNames = {
+            'gemini': 'Air',
+            'solifon-pulse': 'Pulse',
+            'github': 'Ultra',
+            'solifon-souldrive': 'SoulDrive'
+        };
+
+        if (miniBtn && mmdDropdown) {
+            miniBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = mmdDropdown.classList.contains('open');
+                mmdDropdown.classList.toggle('open', !isOpen);
+                miniBtn.classList.toggle('open', !isOpen);
+            });
+
+            mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const val = opt.getAttribute('data-value');
+                    const shortName = mmdShortNames[val] || val;
+                    if (miniName) miniName.textContent = shortName;
+
+                    // Also trigger the existing model selection logic
+                    const existingOpt = document.querySelector('.model-option[data-value="' + val + '"]');
+                    if (existingOpt) existingOpt.click();
+
+                    mmdDropdown.classList.remove('open');
+                    miniBtn.classList.remove('open');
+
+                    // Highlight active
+                    mmdDropdown.querySelectorAll('.mmd-option').forEach(o => o.classList.remove('active'));
+                    opt.classList.add('active');
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!miniBtn.contains(e.target) && !mmdDropdown.contains(e.target)) {
+                    mmdDropdown.classList.remove('open');
+                    miniBtn.classList.remove('open');
+                }
             });
         }
     }, 1000);
@@ -1548,7 +1645,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 </div>
 
-</body>
+<script src="https://replit-cdn.com/replit-pill/replit-pill.global.js" data-repl-id="4b94be4a-3a3e-43d1-af43-0df4ef91154f"></script></body>
 
 
 <!-- PWA Install Banner -->
