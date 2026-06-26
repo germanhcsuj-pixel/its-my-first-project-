@@ -4064,3 +4064,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.applyModalStyle();
     window.applyFont();
 });
+
