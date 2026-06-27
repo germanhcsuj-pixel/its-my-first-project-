@@ -447,7 +447,7 @@ function initModelSelector() {
     const modelTriggerIcon = document.querySelector('#modelTrigger i'); 
     const userInput = document.getElementById('userInput');
     const modelDropdown = document.getElementById('modelDropdown');
-    document.body.appendChild(modelDropdown);
+    if (modelDropdown) document.body.appendChild(modelDropdown);
 
     options.forEach(opt => {
         opt.addEventListener('click', function(e) {
@@ -703,32 +703,93 @@ if (chatTrigger) {
     const preview = document.getElementById('imagePreviewContainer');
     if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
 
+    const rand = Math.random();
+    let numSteps = 5;
+    if (rand < 0.10) numSteps = 4;
+    else if (rand < 0.40) numSteps = 6; // 30% chance (since rand between 0.1 and 0.4 is 0.3)
+    else numSteps = 5; // 60% chance
+
+    let totalTime = 0;
+    if (Math.random() < 0.50) {
+        totalTime = 20000; // 50% chance of taking 20 seconds
+    } else {
+        totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
+    }
+
+    const stage1 = ["Разбор семантической структуры запроса...", "Извлечение ключевых сущностей и намерений...", "Определение контекстной глубины...", "Построение карты логических связей...", "Классификация интента пользователя...", "Распознавание скрытых паттернов в тексте...", "Оценка тональности входных данных...", "Инициализация векторов внимания..."];
+    const stage2 = ["Сканирование многомерных баз данных...", "Извлечение релевантных контекстных блоков...", "Обращение к модулям долгосрочной памяти...", "Синхронизация информационных потоков...", "Фильтрация избыточного шума...", "Поиск пересечений в векторном пространстве...", "Извлечение ассоциативных паттернов...", "Сбор верифицированных фактов..."];
+    const stage3 = ["Кросс-верификация найденных источников...", "Устранение логических противоречий...", "Проверка контекста на безопасность (Safety Check)...", "Каскадная валидация аргументов...", "Оценка достоверности метаданных...", "Взвешивание вероятностных исходов...", "Оптимизация цепочки рассуждений..."];
+    const stage4 = ["Запуск процессов языкового синтеза...", "Формирование структуры финальных тезисов...", "Адаптация стилистики под контекст беседы...", "Подбор точных лингвистических формулировок...", "Калибровка параметров вывода текста...", "Финальный рендеринг ответа модели...", "Проверка грамматических паттернов..."];
+    
+    const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    let selectedTexts = [];
+    if (numSteps === 4) {
+        selectedTexts = [pickRandom(stage1), pickRandom(stage2), pickRandom(stage3), pickRandom(stage4)];
+    } else if (numSteps === 5) {
+        selectedTexts = [pickRandom(stage1), pickRandom(stage2), pickRandom(stage3), pickRandom(stage3), pickRandom(stage4)];
+    } else {
+        selectedTexts = [pickRandom(stage1), pickRandom(stage2), pickRandom(stage2), pickRandom(stage3), pickRandom(stage3), pickRandom(stage4)];
+    }
+
+    let stepsHTMLContent = '';
+    selectedTexts.forEach((text, i) => {
+        stepsHTMLContent += `
+          <div class="thinking-step" id="step${i+1}">
+            <div class="step-line"></div>
+            <div class="step-icon-container">
+                <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+            </div>
+            <div class="step-content">
+                <span class="step-title">${text}</span>
+            </div>
+          </div>
+        `;
+    });
+
     const stepsHTML = `
 <style>
 .ai-thinking-steps {
     display: flex;
     flex-direction: column;
-    padding: 15px 10px;
+    padding: 10px 0;
     font-family: 'Inter', sans-serif;
     color: #fff;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 .thinking-step {
     display: flex;
     align-items: flex-start;
     position: relative;
-    padding-bottom: 25px;
+    padding-bottom: 0; /* starts collapsed */
+    
+    /* Initially hidden for sequential appearance */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, transform 0.5s ease, padding-bottom 0.5s ease;
 }
-.thinking-step:last-child {
+.thinking-step.active {
+    opacity: 1;
+    max-height: 80px;
+    transform: translateY(0);
+    padding-bottom: 20px;
+}
+.thinking-step:last-child.active {
     padding-bottom: 0;
 }
 .step-line {
     position: absolute;
-    left: 9px;
-    top: 22px;
-    bottom: -5px;
+    left: 8px;
+    top: 20px;
+    bottom: -4px;
     width: 2px;
-    background-color: #333;
+    background-color: rgba(255,255,255,0.15);
     z-index: 1;
 }
 .thinking-step:last-child .step-line {
@@ -738,19 +799,18 @@ if (chatTrigger) {
     position: relative;
     z-index: 2;
     background: transparent;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
+    width: 18px;
+    height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 15px;
+    margin-right: 14px;
     margin-top: 2px;
 }
 .step-icon {
     width: 16px;
     height: 16px;
-    border: 2px solid #555;
+    border: 2px solid rgba(255,255,255,0.3);
     background: transparent;
     border-radius: 50%;
     display: flex;
@@ -758,18 +818,31 @@ if (chatTrigger) {
     justify-content: center;
     transition: all 0.3s ease;
 }
+/* Pulsing animation while active but not completed (Claude style) */
+.thinking-step.active:not(.completed) .step-icon {
+    border-color: rgba(255,255,255,0.6);
+    animation: claudePulse 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes claudePulse {
+    0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+    100% { transform: scale(1.1); box-shadow: 0 0 8px 0 rgba(255,255,255,0.05); }
+}
 .step-icon i {
     opacity: 0;
-    font-size: 10px;
+    font-size: 8px;
     color: #000;
-    transition: opacity 0.3s ease;
+    transform: scale(0.5);
+    transition: all 0.3s ease;
 }
 .thinking-step.completed .step-icon {
-    background: #fff;
-    border-color: #fff;
+    background: #e5e5e5;
+    border-color: #e5e5e5;
+    box-shadow: none;
 }
 .thinking-step.completed .step-icon i {
     opacity: 1;
+    transform: scale(1);
+    color: #000;
 }
 .step-content {
     display: flex;
@@ -777,39 +850,17 @@ if (chatTrigger) {
 }
 .step-title {
     font-size: 14px;
-    font-weight: 500;
-    color: #fff;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
     transition: color 0.3s ease;
+    line-height: 1.4;
+}
+.thinking-step.completed .step-title {
+    color: rgba(255,255,255,0.9);
 }
 </style>
 <div class="ai-thinking-steps">
-  <div class="thinking-step" id="step1">
-    <div class="step-line"></div>
-    <div class="step-icon-container">
-        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
-    </div>
-    <div class="step-content">
-        <span class="step-title">Анализ запроса</span>
-    </div>
-  </div>
-  <div class="thinking-step" id="step2">
-    <div class="step-line"></div>
-    <div class="step-icon-container">
-        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
-    </div>
-    <div class="step-content">
-        <span class="step-title">Поиск информации</span>
-    </div>
-  </div>
-  <div class="thinking-step" id="step3">
-    <div class="step-line"></div>
-    <div class="step-icon-container">
-        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
-    </div>
-    <div class="step-content">
-        <span class="step-title">Формирование ответа</span>
-    </div>
-  </div>
+  ${stepsHTMLContent}
 </div>
 `;
 
@@ -818,16 +869,24 @@ if (chatTrigger) {
         : addMessageToUI('ai', stepsHTML);
 
     if (!isLiveMode) {
-        const markStep = (stepId) => {
+        const activateStep = (stepId) => {
             if (!botMsgElement || !botMsgElement.querySelector) return;
             const step = botMsgElement.querySelector('#' + stepId);
-            if (step) {
-                step.classList.add('completed');
-            }
+            if (step) step.classList.add('active');
         };
-        setTimeout(() => markStep('step1'), 800);
-        setTimeout(() => markStep('step2'), 1600);
-        setTimeout(() => markStep('step3'), 2400);
+        const completeStep = (stepId) => {
+            if (!botMsgElement || !botMsgElement.querySelector) return;
+            const step = botMsgElement.querySelector('#' + stepId);
+            if (step) step.classList.add('completed');
+        };
+
+        const stepDuration = totalTime / numSteps;
+        for (let i = 0; i < numSteps; i++) {
+            // Make step visible and pulsing
+            setTimeout(() => activateStep('step' + (i+1)), i * stepDuration);
+            // Mark step as completed and show checkmark
+            setTimeout(() => completeStep('step' + (i+1)), (i+1) * stepDuration);
+        }
     }
   
     try {
@@ -845,7 +904,7 @@ if (chatTrigger) {
             body: formData
         });
 
-        const minDelayPromise = new Promise(resolve => setTimeout(resolve, 2600));
+        const minDelayPromise = new Promise(resolve => setTimeout(resolve, totalTime));
         const [response] = await Promise.all([fetchPromise, minDelayPromise]);
 
         if (!response.ok) throw new Error("Server Error");
