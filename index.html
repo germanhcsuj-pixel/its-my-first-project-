@@ -104,16 +104,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
-            <div class="menu-item" id="newProjectBtn" style="cursor: pointer;">
-    <i class="ph ph-folder-plus"></i><span>New Project</span>
-</div>
-
-            
-            
-
-<div class="menu-item" onclick="openPresentation()">
+            <div class="menu-item" onclick="openPresentation()">
     <i class="ph ph-presentation-chart"></i><span>Presentation</span>
 </div>
+
+            
+            
+
+
 
             </nav>
 
@@ -171,9 +169,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="ph ph-trash md-hidden"></i>
                 <span class="md-inline">Clear</span>
             </a>
-            <div class="tubelight-nav-item" id="modelTrigger" data-tab="Model">
-                <i class="fas fa-robot md-hidden"></i>
-                <span class="md-inline" id="currentModel">Model</span>
+            <div class="tubelight-nav-item" onclick="openModal('newFeatureModal')" data-tab="NewFeature">
+                <i class="ph ph-star md-hidden"></i>
+                <span class="md-inline">Новая функция</span>
             </div>
             <div class="tubelight-nav-item" onclick="openModal('fullscreenLayerModal')" data-tab="Explore">
                 <i class="ph ph-squares-four md-hidden"></i>
@@ -189,21 +187,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
     </div>
     
-    <div class="model-dropdown" id="modelDropdown">
-        <div class="dropdown-label">Available Models</div>
-        <div class="model-option" data-value="gemini" data-name="Solifon Air">
-            <i class="ph ph-wind" style="color: #86efac;"></i> Solifon Air (Gemini Flash)
-        </div>
-        <div class="model-option" data-value="solifon-pulse" data-name="Solifon Pulse">
-            <i class="ph ph-eye" style="color: #fbbf24;"></i> Solifon Pulse (Claude power)
-        </div>
-        <div class="model-option" data-value="github" data-name="Solifon Ultra">
-            <i class="fas fa-brain" style="color: #ffffff;"></i> Solifon Ultra (GPT-4o power)
-        </div>
-        <div class="model-option" data-value="solifon-souldrive" data-name="Solifon SoulDrive">
-            <i class="ph-fill ph-heart" style="color: #ff3366;"></i> Solifon SoulDrive (Qwen 3 power)
-        </div>
-    </div>
+
     <div id="liveOverlay" class="live-overlay" style="display: none;">
         <div class="live-content">
             <div class="wave-container">
@@ -233,41 +217,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <div class="animated-chat-container">
-    <!-- Autocomplete Suggestions Dropdown -->
-    <div id="suggestionsDropdown" class="suggestions-dropdown">
-        <div id="suggestionsList"></div>
-    </div>
-
-    <!-- Model Mini Dropdown -->
-    <div class="model-mini-dropdown" id="modelMiniDropdown">
-        <div class="mmd-label">Выберите модель</div>
-        <div class="mmd-option" data-value="gemini">
-            <span class="mmd-icon" style="color:#86efac">⬡</span>
-            <div class="mmd-info">
-                <span class="mmd-name">Solifon Air</span>
-                <span class="mmd-sub">Gemini Flash · Быстрый</span>
-            </div>
-        </div>
-        <div class="mmd-option" data-value="solifon-pulse">
-            <span class="mmd-icon" style="color:#fbbf24">◈</span>
-            <div class="mmd-info">
-                <span class="mmd-name">Solifon Pulse</span>
-                <span class="mmd-sub">Claude · Мощный</span>
-            </div>
-        </div>
-        <div class="mmd-option" data-value="github">
-            <span class="mmd-icon" style="color:#a78bfa">✦</span>
-            <div class="mmd-info">
-                <span class="mmd-name">Solifon Ultra</span>
-                <span class="mmd-sub">GPT-4o · Максимум</span>
-            </div>
-        </div>
-        <div class="mmd-option" data-value="solifon-souldrive">
-            <span class="mmd-icon" style="color:#f472b6">♥</span>
-            <div class="mmd-info">
-                <span class="mmd-name">Solifon SoulDrive</span>
-                <span class="mmd-sub">Qwen 3 · Творческий</span>
-            </div>
+    <style>
+        /* ===== SUGGESTIONS DROPDOWN - PREMIUM CENTERED ===== */
+        .suggestions-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 16px;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            width: min(600px, 95%);
+            background: rgba(20, 20, 22, 0.35); /* Translucent for glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.25); /* Subtle highlight */
+            border-radius: 20px;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+            z-index: 9999;
+            animation: suggestFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .suggestions-dropdown.visible { display: block; }
+        
+        /* Hide suggestions when chat has started */
+        body.chat-started .suggestions-dropdown { display: none !important; }
+        
+        /* Hide the ugly inline ghost text entirely */
+        #ghostText, .ghost-text-overlay { display: none !important; }
+        
+        @keyframes suggestFadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .suggestions-dropdown .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 15px;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .suggestions-dropdown .suggestion-item:last-child { border-bottom: none; }
+        .suggestions-dropdown .suggestion-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            padding-left: 24px;
+        }
+        .suggestions-dropdown .suggestion-item i {
+            font-size: 18px;
+            color: rgba(255,255,255,0.4);
+            flex-shrink: 0;
+        }
+        .suggestions-dropdown .suggestion-text-match {
+            color: #fff;
+            font-weight: 600;
+        }
+        .suggestions-dropdown .suggestion-text-rest {
+            color: rgba(255,255,255,0.5);
+        }
+        .suggestions-dropdown .tab-hint {
+            margin-left: auto;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+    <div style="position: relative; width: 100%; height: 0; display: flex; justify-content: center; z-index: 10000;">
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div id="suggestionsDropdown" class="suggestions-dropdown">
+            <div id="suggestionsList"></div>
         </div>
     </div>
 
@@ -289,11 +315,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <div class="right-actions">
-                <button type="button" class="model-mini-btn" id="modelMiniBtn">
-                    <i class="ph ph-robot"></i>
-                    <span id="modelMiniName">Air</span>
-                    <i class="ph ph-caret-up caret"></i>
-                </button>
+
                 <button type="button" class="chat-send-btn" id="sendBtn">
                     <i class="ph ph-paper-plane-tilt"></i>
                     <span>Send</span>
@@ -1395,10 +1417,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 
+<div class="custom-modal" id="newFeatureModal">
+    <div class="modal-content fs-layer-content">
+        <button class="close-modal" onclick="closeModal('newFeatureModal')">&times;</button>
+        <div class="fs-layer-body" style="padding: 60px 40px; width: 100%; display: flex; align-items: center; justify-content: center; height: 100%;">
+            <div style="text-align: center; background: rgba(255,255,255,0.02); padding: 60px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px);">
+                <i class="ph ph-star" style="font-size: 80px; color: #fff; margin-bottom: 24px; opacity: 0.9; text-shadow: 0 0 40px rgba(255,255,255,0.5);"></i>
+                <h1 style="color: #fff; font-family: 'Inter', sans-serif; font-size: 48px; margin-bottom: 16px; font-weight: 700; letter-spacing: -1px;">Новая функция</h1>
+                <p style="color: rgba(255,255,255,0.5); font-size: 18px; max-width: 400px; margin: 0 auto;">Этот раздел находится в активной разработке. Совсем скоро здесь появится мощный новый инструмент.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="custom-modal" id="fullscreenLayerModal">
     <div class="modal-content fs-layer-content">
         <button class="close-modal" onclick="closeModal('fullscreenLayerModal')">&times;</button>
-        <div class="fs-layer-body" style="padding: 60px 40px; max-width: 1000px; margin: 0 auto; width: 100%;">
+        <div class="fs-layer-body" style="padding: 60px 40px; max-width: 1100px; margin: 0 auto; width: 100%;">
             <style>
             .fs-premium-card {
                 background: rgba(25, 25, 30, 0.4);
@@ -1457,45 +1492,46 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 box-shadow: 0 0 30px rgba(192, 38, 211, 0.5);
             }
             .wp-btn {
-                width: 64px; height: 64px;
-                border-radius: 18px;
+                width: 72px; height: 72px;
+                border-radius: 20px;
                 cursor: pointer;
-                border: 2px solid transparent;
+                border: 2px solid rgba(255,255,255,0.1);
                 transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
                 position: relative;
                 overflow: hidden;
             }
             .wp-btn:hover {
-                transform: scale(1.08) translateY(-2px);
-                border-color: rgba(255,255,255,0.4);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+                transform: scale(1.08) translateY(-4px);
+                border-color: rgba(255,255,255,0.6);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+                z-index: 10;
             }
             .wp-btn.active {
                 border-color: #fff;
-                transform: scale(1.12);
-                box-shadow: 0 0 25px rgba(255,255,255,0.4);
-                z-index: 2;
+                transform: scale(1.15);
+                box-shadow: 0 0 30px rgba(255,255,255,0.5);
+                z-index: 20;
             }
             .wp-btn.active::after {
                 content: '✓';
                 position: absolute;
                 top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.4);
+                background: rgba(0,0,0,0.5);
                 display: flex; align-items: center; justify-content: center;
-                color: #fff; font-weight: bold; font-size: 24px;
-                backdrop-filter: blur(2px);
+                color: #fff; font-weight: bold; font-size: 28px;
+                backdrop-filter: blur(3px);
             }
             </style>
             
-            <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2);">Стиль и Настройки</h1>
+            <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2); text-align: center;">Настройки и Стиль</h1>
             
-            <div class="settings-dashboard" style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 32px;">
+            <div class="settings-dashboard" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 32px;">
                 
-                <!-- LEFT COLUMN: Large Preview Cards (Red boxes in sketch) -->
-                <div style="display: flex; flex-direction: column; gap: 32px;">
+                <!-- LEFT COLUMN: Apple iOS Style Widget Grid -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-content: start;">
                     
-                    <!-- What's New Card Preview -->
-                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: #08080a; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('whatsNewModal').classList.add('active');" title="Что нового">
+                    <!-- What's New Card Preview (2x1 Wide Widget) -->
+                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: rgba(8, 8, 10, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 2 / 1; grid-column: span 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('whatsNewModal').classList.add('active');" title="Что нового">
                         
                         <!-- Crisp CSS Mini UI -->
                         <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
@@ -1518,8 +1554,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </div>
 
-                    <!-- About Solifon Card Preview -->
-                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: #030303; border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; position: relative; overflow: hidden; aspect-ratio: 16 / 9; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('aboutModal').classList.add('active');" title="О Solifon">
+                    <!-- About Solifon Card Preview (1x1 Square Widget) -->
+                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: rgba(3, 3, 3, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 1 / 1; grid-column: span 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('aboutModal').classList.add('active');" title="О Solifon">
                         
                         <!-- Crisp CSS Mini UI -->
                         <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
@@ -1537,6 +1573,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <!-- Hover Open Button -->
                         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
                             <i class="ph ph-info"></i> О Solifon
+                        </div>
+                    </div>
+                    
+                    <!-- New Function Card Preview (1x1 Square Widget) -->
+                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(192,38,211,0.15)); backdrop-filter: blur(20px); border: 1px solid rgba(192,38,211,0.25); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 1 / 1; grid-column: span 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); openModal('newFeatureModal');" title="Новая функция">
+                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
+                            <i class="ph ph-star" style="font-size: 32px; color: #f0abfc; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(192,38,211,0.5));"></i>
+                            <h3 style="color: #fff; font-size: 18px; font-weight: bold; margin: 0;">Новая функция</h3>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 8px; width: 80%;">В активной разработке</p>
+                        </div>
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
+                            <i class="ph ph-star"></i> Открыть
                         </div>
                     </div>
                     
@@ -1614,30 +1663,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                     </div>
 
-                    <!-- Layout & Window Style -->
-                    <div class="fs-premium-card" style="padding: 24px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                            <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Стиль системы</h3>
-                        </div>
-                        
-                        <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 12px;">Глобальный фон</p>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
-                            <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-drop"></i> Глассморфизм</button>
-                            <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-square"></i> Прозрачный</button>
-                            <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn neon" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-lightning"></i> Неон</button>
-                        </div>
-
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                            <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin: 0;">Стиль всплывающих окон</p>
-                            <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-                            <button onclick="window.setModalStyle('black')" data-modal-style="black" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-moon"></i> Темный</button>
-                            <button onclick="window.setModalStyle('glass')" data-modal-style="glass" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-drop"></i> Стеклянный</button>
-                            <button onclick="window.setModalStyle('clear')" data-modal-style="clear" class="theme-btn modal-style-btn" style="padding: 12px; justify-content: center; font-size: 13px;"><i class="ph ph-square"></i> Прозрачный</button>
                         </div>
                     </div>
 
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 32px; margin-top: 32px;">
+                <!-- Layout & Window Style -->
+                <div class="fs-premium-card" style="padding: 24px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                        <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Стиль системы</h3>
+                    </div>
+                    
+                    <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 12px; font-weight: 600;">Глобальный фон</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+                        <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-drop"></i> Глассморфизм</button>
+                        <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-square"></i> Прозрачный</button>
+                        <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn neon" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-lightning"></i> Неон</button>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin: 0; font-weight: 600;">Стиль всплывающих окон</p>
+                        <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <button onclick="window.setModalStyle('black')" data-modal-style="black" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-moon"></i> Темный</button>
+                        <button onclick="window.setModalStyle('glass')" data-modal-style="glass" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-drop"></i> Стеклянный</button>
+                        <button onclick="window.setModalStyle('clear')" data-modal-style="clear" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-square"></i> Прозрачный</button>
+                    </div>
                 </div>
             </div>
         </div>
