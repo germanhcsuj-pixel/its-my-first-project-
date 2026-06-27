@@ -798,6 +798,87 @@ html, body {
     pointer-events: none;
 }
 
+/* Center inner contents of whatsNewModal */
+#whatsNewModal .wn-header,
+#whatsNewModal .wn-infra-row,
+#whatsNewModal .wn-section-label,
+#whatsNewModal .wn-timeline,
+#whatsNewModal .wn-premium-grid,
+#whatsNewModal .wn-footer {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Premium Model Dropdown Styles */
+.model-dropdown .dropdown-label, .model-mini-dropdown .mmd-label {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 1.5px !important;
+    color: rgba(255,255,255,0.4) !important;
+    text-transform: uppercase !important;
+    margin-bottom: 12px !important;
+}
+
+.model-option, .mmd-option {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    padding: 12px 16px !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    margin-bottom: 8px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.model-option:hover, .mmd-option:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+}
+
+.model-option.active, .mmd-option.active {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+}
+
+.model-opt-icon, .mmd-icon-box {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 18px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+}
+
+.model-opt-text, .mmd-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.model-opt-name, .mmd-name {
+    color: #ffffff !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+}
+
+.model-opt-sub, .mmd-sub {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
 .carousel-slide.active .top-label {
     opacity: 1;
     transform: translateY(-10px);
@@ -4984,8 +5065,7 @@ body.chat-started .suggestion-btn {
 
 #fullscreenLayerModal .fs-layer-body {
     flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: visible;
 }
 
 /* Кнопка закрытия для fs modal — фиксированная позиция */
@@ -5002,10 +5082,10 @@ body.chat-started .suggestion-btn {
 
 /* Основной контейнер модалки */
 #whatsNewModal .modal-content.wn-modal-content {
-    max-width: 680px !important;
+    max-width: 100% !important;
     width: 100% !important;
     height: 100% !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     padding: 0 0 60px !important;
     overflow-y: scroll !important;
     display: flex !important;
@@ -5336,48 +5416,66 @@ body.chat-started .suggestion-btn {
 .suggestions-dropdown {
     display: none;
     position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(560px, 90%);
-    background: rgba(14, 14, 16, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    bottom: 16px;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: min(600px, 95%);
+    background: rgba(20, 20, 22, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    box-shadow: 0 10px 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1);
     overflow: hidden;
-    z-index: 500;
-    animation: suggestFadeIn 0.18s ease-out;
+    z-index: 9999;
+    animation: suggestFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .suggestions-dropdown.visible { display: block; }
 
 @keyframes suggestFadeIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .suggestions-dropdown .suggestion-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 11px 16px;
+    gap: 14px;
+    padding: 14px 20px;
     cursor: pointer;
-    font-size: 0.88rem;
-    color: rgba(255,255,255,0.75);
-    letter-spacing: 0.01em;
-    transition: background 0.15s, color 0.15s;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 15px;
+    color: rgba(255,255,255,0.7);
+    transition: all 0.2s ease;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .suggestions-dropdown .suggestion-item:last-child { border-bottom: none; }
 .suggestions-dropdown .suggestion-item:hover {
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.1);
     color: #fff;
+    padding-left: 24px;
 }
 .suggestions-dropdown .suggestion-item i {
-    font-size: 14px;
-    color: rgba(255,255,255,0.3);
+    font-size: 18px;
+    color: rgba(255,255,255,0.4);
     flex-shrink: 0;
+}
+.suggestions-dropdown .suggestion-text-match {
+    color: #fff;
+    font-weight: 600;
+}
+.suggestions-dropdown .suggestion-text-rest {
+    color: rgba(255,255,255,0.5);
+}
+.suggestions-dropdown .tab-hint {
+    margin-left: auto;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
 /* ===== RIGHT ACTIONS GROUP ===== */
