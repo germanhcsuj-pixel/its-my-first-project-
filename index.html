@@ -1703,12 +1703,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
     <!-- Виртуальная доска (Ananyn Zhuregi) -->
-    <div style="background: #111; color: white; text-align: center; font-family: sans-serif; padding: 40px 20px;">
-        <h1>Виртуальная доска</h1>
-        <div id="paywall-message" style="color: red; display: none;">Оформите подписку Premium для доступа!</div>
-        
-        <video id="input_video" style="display:none;"></video>
-        <canvas id="output_canvas" width="640" height="480" style="border: 2px solid #333; border-radius: 10px; margin: 0 auto; display: block;"></canvas>
+    <div id="virtual_board_modal" style="display: none; background: rgba(0,0,0,0.85); position: fixed; inset: 0; z-index: 999999; align-items: center; justify-content: center;">
+        <div style="background: #111; color: white; text-align: center; font-family: sans-serif; padding: 40px 20px; border-radius: 20px; position: relative; max-width: 700px; width: 90%;">
+            <button onclick="document.getElementById('virtual_board_modal').style.display='none'" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 20px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%;">✕</button>
+            <h1 style="margin-top: 0;">Виртуальная доска</h1>
+            <div id="paywall-message" style="color: red; display: none; margin-bottom: 15px;">Оформите подписку Premium для доступа!</div>
+            
+            <video id="input_video" style="display:none;"></video>
+            <canvas id="output_canvas" width="640" height="480" style="border: 2px solid #333; border-radius: 10px; margin: 0 auto; display: block; max-width: 100%; height: auto;"></canvas>
+        </div>
     </div>
 
 </body>
