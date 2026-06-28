@@ -4216,5 +4216,13 @@ function onResults(results) {
     canvasCtx.restore();
 }
 
-// Запускаем проверку при загрузке скрипта
-verifySubscription();
+// Функция для открытия виртуальной доски и проверки
+window.openVirtualBoard = function() {
+    const modal = document.getElementById('virtual_board_modal');
+    if (modal) modal.style.display = 'flex';
+    if (!isPremiumUser) {
+        verifySubscription();
+    } else {
+        startAirCanvas();
+    }
+};
