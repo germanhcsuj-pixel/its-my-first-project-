@@ -4123,3 +4123,98 @@ document.addEventListener('DOMContentLoaded', () => {
     window.applyModalStyle();
     window.applyFont();
 });
+
+// ============================================================
+// ВИРТУАЛЬНАЯ ДОСКА И ПРОВЕРКА ПОДПИСКИ
+// ============================================================
+const videoElement = document.getElementById('input_video');
+const canvasElement = document.getElementById('output_canvas');
+const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
+
+let prevX = 0; 
+let prevY = 0;
+let isPremiumUser = false;
+
+// 1. ПРОВЕРКА ПОДПИСКИ (Связь с твоим app (2).py)
+async function verifySubscription() {
+    try {
+        const response = await fetch('/api/check-premium', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: 'user_001', token: 'secret_paid_token_123' })
+        });
+        
+        if (response.ok) {
+            isPremiumUser = true;
+            startAirCanvas(); // Запускаем камеру только если есть доступ
+        } else {
+            const paywallMsg = document.getElementById('paywall-message');
+            if (paywallMsg) paywallMsg.style.display = 'block';
+        }
+    } catch (e) {
+        console.error("Ошибка проверки подписки");
+    }
+}
+
+// 2. БЫСТРАЯ ЛОГИКА РИСОВАНИЯ В БРАУЗЕРЕ
+function startAirCanvas() {
+    if (!videoElement || !canvasElement) return;
+
+    const hands = new Hands({locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }});
+
+    hands.setOptions({
+        maxNumHands: 1,
+        minDetectionConfidence: 0.7,
+        minTrackingConfidence: 0.7
+    });
+
+    hands.onResults(onResults);
+
+    const camera = new Camera(videoElement, {
+        onFrame: async () => { await hands.send({image: videoElement}); },
+        width: 640, height: 480
+    });
+    camera.start();
+}
+
+function onResults(results) {
+    if (!isPremiumUser || !canvasCtx) return; // Защита: если нет подписки, код дальше не идет
+
+    // Отрисовка видео с камеры
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        
+        // Координаты указательного пальца
+        const x = landmarks[8].x * canvasElement.width;
+        const y = landmarks[8].y * canvasElement.height;
+
+        // Красный прицел
+        canvasCtx.beginPath();
+        canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
+        canvasCtx.fillStyle = 'red';
+        canvasCtx.fill();
+
+        // Рисование линии
+        if (prevX !== 0 && prevY !== 0) {
+            canvasCtx.beginPath();
+            canvasCtx.moveTo(prevX, prevY);
+            canvasCtx.lineTo(x, y);
+            canvasCtx.strokeStyle = 'white';
+            canvasCtx.lineWidth = 5;
+            canvasCtx.stroke();
+        }
+        prevX = x; prevY = y;
+    } else {
+        prevX = 0; prevY = 0;
+    }
+    canvasCtx.restore();
+}
+
+// Запускаем проверку при загрузке скрипта
+verifySubscription();
