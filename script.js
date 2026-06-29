@@ -580,6 +580,16 @@ window.openFilePicker = function() {
 };
 
 window.openModal = function(id) {
+    if (id === 'aboutModal') {
+        window.currentViewBg = 'about';
+        window.applyWallpaper();
+    } else if (id === 'upgradeModal') {
+        window.currentViewBg = 'sub';
+        window.applyWallpaper();
+    } else if (id === 'whatsNewModal') {
+        window.currentViewBg = 'whatsnew';
+        window.applyWallpaper();
+    }
     const navToggle = document.getElementById('nav-toggle');
     if (navToggle) {
         navToggle.checked = false;
@@ -602,12 +612,16 @@ window.openModal = function(id) {
 };
 
 window.closeModal = function(id) {
+    if (['aboutModal', 'upgradeModal', 'whatsNewModal', 'fullscreenLayerModal'].includes(id)) {
+        window.currentViewBg = 'main';
+        window.applyWallpaper('main');
+    }
     const m = document.getElementById(id);
     if (m) {
         m.classList.remove('active');
         document.body.style.overflow = '';
         setTimeout(() => {
-            m.style.display = 'none';
+            m.style.setProperty('display', 'none', 'important');
             m.style.removeProperty('opacity');
             m.style.removeProperty('pointer-events');
             m.style.removeProperty('visibility');
@@ -2636,7 +2650,7 @@ function showInstallGuide() {
     const modal = document.getElementById(id);
     if (modal) {
       modal.classList.remove('active');
-      modal.style.display = 'none';
+      modal.style.setProperty('display', 'none', 'important');
     }
     document.body.style.overflow = '';
   };
@@ -3755,11 +3769,12 @@ window.applyCustomAvatar = function() {
     }
 };
 
-window.setWallpaper = function(bg) {
-    localStorage.setItem('solifon_custom_wallpaper', bg);
+window.currentViewBg = 'main';
+
+window.setWallpaper = function(view, bg) {
+    if (!view) view = 'main';
+    localStorage.setItem('solifon_custom_wallpaper_' + view, bg);
     
-    // Automatically switch to glassmorphism if a custom wallpaper is selected 
-    // and current theme is opaque (neon or default/missing)
     if (bg && bg !== 'none') {
         const currentTheme = localStorage.getItem('solifon_custom_theme');
         if (currentTheme !== 'glass' && currentTheme !== 'clear') {
@@ -3767,9 +3782,11 @@ window.setWallpaper = function(bg) {
         }
     }
     
-    window.applyWallpaper();
-    window.applyTheme(); // Ensure theme updates immediately
+    window.applyWallpaper(view);
+    window.applyTheme();
 };
+
+
 
 window.handleWallpaperUpload = function(event) {
     const file = event.target.files[0];
@@ -3792,8 +3809,12 @@ window.handleWallpaperUpload = function(event) {
 
 window.liveWallpaperAnimationId = null;
 
-window.applyWallpaper = function() {
-    const bg = localStorage.getItem('solifon_custom_wallpaper');
+window.applyWallpaper = function(forceView) {
+    const viewToApply = forceView || window.currentViewBg || 'main';
+    let bg = localStorage.getItem('solifon_custom_wallpaper_' + viewToApply);
+    if (!bg && viewToApply === 'main') {
+        bg = localStorage.getItem('solifon_custom_wallpaper'); // fallback
+    }
     
     // Stop any existing animation and remove canvas or video
     if (window.liveWallpaperAnimationId) {
@@ -3805,17 +3826,43 @@ window.applyWallpaper = function() {
     const oldVideo = document.getElementById('live-wallpaper-video');
     if (oldVideo) oldVideo.remove();
 
+    // Create modal bg layer if not exists
+    let modalBgLayer = document.getElementById('solifon_modal_bg_layer');
+    if (!modalBgLayer) {
+        modalBgLayer = document.createElement('div');
+        modalBgLayer.id = 'solifon_modal_bg_layer';
+        modalBgLayer.style.position = 'fixed';
+        modalBgLayer.style.top = '0';
+        modalBgLayer.style.left = '0';
+        modalBgLayer.style.width = '100vw';
+        modalBgLayer.style.height = '100vh';
+        modalBgLayer.style.zIndex = '9998'; // Just behind modals (9999)
+        modalBgLayer.style.pointerEvents = 'none';
+        document.body.appendChild(modalBgLayer);
+    }
+    
+    // Determine target container based on view
+    const targetElement = (viewToApply === 'main') ? document.body : modalBgLayer;
+    
+    if (viewToApply === 'main' || !bg || bg === 'none') {
+        modalBgLayer.style.display = 'none';
+    } else {
+        modalBgLayer.style.display = 'block';
+        modalBgLayer.style.backgroundImage = 'none';
+        modalBgLayer.style.backgroundColor = 'transparent';
+    }
+
     if (bg && bg.startsWith('video:')) {
         const videoSrc = bg.replace('video:', '');
-        document.body.style.backgroundImage = 'none';
-        document.body.style.backgroundColor = '#000';
+        targetElement.style.backgroundImage = 'none';
+        targetElement.style.backgroundColor = '#000';
         
         const video = document.createElement('video');
         video.id = 'live-wallpaper-video';
         video.src = videoSrc;
         video.autoplay = true;
         video.loop = true;
-        video.muted = true; // Required for auto-play
+        video.muted = true;
         video.playsInline = true;
         video.style.position = 'fixed';
         video.style.top = '0';
@@ -3823,32 +3870,59 @@ window.applyWallpaper = function() {
         video.style.width = '100vw';
         video.style.height = '100vh';
         video.style.objectFit = 'cover';
-        video.style.zIndex = '-2'; // Behind UI and backdrop
+        video.style.zIndex = (viewToApply === 'main') ? '-2' : '9998';
         video.style.pointerEvents = 'none';
-        document.body.appendChild(video);
+        
+        // Append to the appropriate layer
+        if (viewToApply === 'main') {
+            document.body.appendChild(video);
+        } else {
+            modalBgLayer.appendChild(video);
+        }
     } else if (bg === 'live_leaves') {
-        document.body.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=2564")'; // Autumn forest
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
+        targetElement.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=2564")'; // Autumn forest
+        targetElement.style.backgroundSize = 'cover';
+        targetElement.style.backgroundPosition = 'center';
+        targetElement.style.backgroundAttachment = 'fixed';
         startFallingLeaves();
     } else if (bg === 'live_matrix') {
-        document.body.style.backgroundImage = 'none';
-        document.body.style.backgroundColor = '#050505';
+        targetElement.style.backgroundImage = 'none';
+        targetElement.style.backgroundColor = '#050505';
         startMatrixRain();
     } else if (bg && bg !== 'none') {
-        document.body.style.backgroundImage = bg;
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
+        targetElement.style.backgroundImage = bg;
+        targetElement.style.backgroundSize = 'cover';
+        targetElement.style.backgroundPosition = 'center';
+        targetElement.style.backgroundAttachment = 'fixed';
     } else {
-        document.body.style.backgroundImage = 'none';
-        document.body.style.backgroundColor = '#000'; // fallback
+        targetElement.style.backgroundImage = 'none';
+        targetElement.style.backgroundColor = (viewToApply === 'main') ? '#000' : 'transparent';
     }
+    
+    // Update preview squares in settings dashboard
+    ['main', 'whatsnew', 'about', 'sub'].forEach(v => {
+        const sq = document.getElementById('preview_square_' + v);
+        if (sq) {
+            const vbg = localStorage.getItem('solifon_custom_wallpaper_' + v) || (v === 'main' ? localStorage.getItem('solifon_custom_wallpaper') : null);
+            if (vbg && vbg.startsWith('url')) {
+                sq.style.background = vbg + ' center/cover';
+            } else if (vbg && vbg.startsWith('video:')) {
+                sq.style.background = 'linear-gradient(45deg, #1e3c72, #2a5298)';
+            } else if (vbg === 'live_leaves') {
+                sq.style.background = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400") center/cover';
+            } else if (vbg === 'live_matrix') {
+                sq.style.background = '#001100';
+            } else {
+                sq.style.background = '#0a0a0a';
+            }
+        }
+    });
     
     // Update UI active states
     document.querySelectorAll('.wp-btn').forEach(btn => {
-        if (btn.dataset.wp === bg || (!bg && btn.dataset.wp === 'none')) {
+        const btnView = btn.dataset.view || 'main';
+        const viewBg = localStorage.getItem('solifon_custom_wallpaper_' + btnView) || (btnView === 'main' ? localStorage.getItem('solifon_custom_wallpaper') : null);
+        if (btn.dataset.wp === viewBg || (!viewBg && btn.dataset.wp === 'none')) {
             btn.classList.add('active');
         } else {
             btn.classList.remove('active');
@@ -4127,9 +4201,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================================
 // ВИРТУАЛЬНАЯ ДОСКА И ПРОВЕРКА ПОДПИСКИ
 // ============================================================
-const videoElement = document.getElementById('input_video');
-const canvasElement = document.getElementById('output_canvas');
-const canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
+let videoElement = document.getElementById('input_video');
+let canvasElement = document.getElementById('output_canvas');
+let canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
 
 let prevX = 0; 
 let prevY = 0;
@@ -4146,19 +4220,62 @@ async function verifySubscription() {
         
         if (response.ok) {
             isPremiumUser = true;
-            startAirCanvas(); // Запускаем камеру только если есть доступ
+            // Скрываем paywall, но камеру запускаем только по кнопке "Включить камеру"
+            const paywallMsg = document.getElementById('premium-paywall');
+            if (paywallMsg) paywallMsg.style.display = 'none';
         } else {
-            const paywallMsg = document.getElementById('paywall-message');
-            if (paywallMsg) paywallMsg.style.display = 'block';
+            const paywallMsg = document.getElementById('premium-paywall');
+            if (paywallMsg) paywallMsg.style.display = 'flex';
         }
     } catch (e) {
         console.error("Ошибка проверки подписки");
     }
 }
 
-// 2. БЫСТРАЯ ЛОГИКА РИСОВАНИЯ В БРАУЗЕРЕ
+let drawCtx = null;
+let cameraStarted = false;
+
+function initDrawingCanvas() {
+    const dCanvas = document.getElementById('drawing_canvas');
+    if (dCanvas) {
+        drawCtx = dCanvas.getContext('2d');
+        // Настраиваем кисть
+        drawCtx.lineCap = 'round';
+        drawCtx.lineJoin = 'round';
+    }
+}
+
 function startAirCanvas() {
+    if (!videoElement) videoElement = document.getElementById('input_video');
+    if (!canvasElement) {
+        canvasElement = document.getElementById('output_canvas');
+        canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
+    }
     if (!videoElement || !canvasElement) return;
+    if (cameraStarted) return; // Защита от повторного запуска
+
+    cameraStarted = true;
+        let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'none';
+    initDrawingCanvas();
+    
+    // Show the container over iframe
+    let container = document.getElementById('camera-overlay-container');
+    if (container) {
+        container.style.display = 'block';
+        container.style.width = '640px';
+        container.style.height = '480px';
+    }
+        videoElement.style.width = '640px';
+    videoElement.style.height = '480px';
+    videoElement.width = 640;
+    videoElement.height = 480;
+    canvasElement.style.width = '640px';
+    canvasElement.style.height = '480px';
+    canvasElement.width = 640;
+    canvasElement.height = 480;
+    const dCanvas = document.getElementById('drawing_canvas');
+    if (dCanvas) { dCanvas.width = window.innerWidth; dCanvas.height = window.innerHeight; }
+
 
     const hands = new Hands({locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -4172,57 +4289,177 @@ function startAirCanvas() {
 
     hands.onResults(onResults);
 
+    window.mpCamera = null;
     const camera = new Camera(videoElement, {
         onFrame: async () => { await hands.send({image: videoElement}); },
         width: 640, height: 480
     });
+    window.mpCamera = camera;
     camera.start();
 }
 
 function onResults(results) {
-    if (!isPremiumUser || !canvasCtx) return; // Защита: если нет подписки, код дальше не идет
+    if (!canvasCtx) return;
 
-    // Отрисовка видео с камеры
+    // 1. Отрисовка видео с камеры на заднем слое (output_canvas)
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    
+    // Зеркальное отображение камеры для удобства пользователя
+    canvasCtx.scale(-1, 1);
+    canvasCtx.translate(-canvasElement.width, 0);
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.restore();
 
-    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    // 2. Логика рисования жестами
+    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && drawCtx) {
         const landmarks = results.multiHandLandmarks[0];
         
-        // Координаты указательного пальца
-        const x = landmarks[8].x * canvasElement.width;
+        // Координаты указательного пальца (с учетом зеркальности)
+        const x = canvasElement.width - (landmarks[8].x * canvasElement.width);
         const y = landmarks[8].y * canvasElement.height;
 
-        // Красный прицел
+        // Рисуем красный прицел (указатель) на слое камеры
         canvasCtx.beginPath();
         canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = 'red';
+        canvasCtx.fillStyle = '#ec4899'; // Неоновый розовый
         canvasCtx.fill();
 
-        // Рисование линии
+        // Если палец поднят (рисуем линию на слое рисования)
         if (prevX !== 0 && prevY !== 0) {
-            canvasCtx.beginPath();
-            canvasCtx.moveTo(prevX, prevY);
-            canvasCtx.lineTo(x, y);
-            canvasCtx.strokeStyle = 'white';
-            canvasCtx.lineWidth = 5;
-            canvasCtx.stroke();
+            // Расстояние между точками (простейшая защита от резких скачков)
+            const dist = Math.sqrt(Math.pow(x - prevX, 2) + Math.pow(y - prevY, 2));
+            if (dist < 100) {
+                drawCtx.beginPath();
+                drawCtx.moveTo(prevX, prevY);
+                drawCtx.lineTo(x, y);
+                drawCtx.strokeStyle = '#a5b4fc'; // Красивый светлый фиолетовый
+                drawCtx.lineWidth = 6;
+                drawCtx.stroke();
+                
+                // Добавляем свечение кисти
+                drawCtx.shadowColor = '#4f46e5';
+                drawCtx.shadowBlur = 10;
+                drawCtx.stroke();
+                drawCtx.shadowBlur = 0; // Сбрасываем тень для производительности
+            }
         }
         prevX = x; prevY = y;
     } else {
         prevX = 0; prevY = 0;
     }
-    canvasCtx.restore();
 }
 
 // Функция для открытия виртуальной доски и проверки
 window.openVirtualBoard = function() {
-    const modal = document.getElementById('virtual_board_modal');
-    if (modal) modal.style.display = 'flex';
-    if (!isPremiumUser) {
-        verifySubscription();
+    if (typeof openModal === 'function') {
+        openModal('newFeatureModal');
+    }
+    verifySubscription();
+};
+
+// Подключение обработчиков для кнопок управления
+document.addEventListener('DOMContentLoaded', () => {
+    const btnStart = document.getElementById('btn-start-camera');
+    const btnClear = document.getElementById('btn-clear-canvas');
+    const btnAnalyze = document.getElementById('btn-analyze');
+
+    if (btnStart) {
+        btnStart.addEventListener('click', () => {
+            if (isPremiumUser) {
+                startAirCanvas();
+                btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
+                btnStart.style.opacity = '0.5';
+                btnStart.disabled = true;
+            } else {
+                alert("Пожалуйста, разблокируйте Premium.");
+            }
+        });
+    }
+
+    if (btnClear) {
+        btnClear.addEventListener('click', () => {
+            if (drawCtx) {
+                const dCanvas = document.getElementById('drawing_canvas');
+                drawCtx.clearRect(0, 0, dCanvas.width, dCanvas.height);
+            }
+        });
+    }
+
+    if (btnAnalyze) {
+        btnAnalyze.addEventListener('click', async () => {
+            if (!isPremiumUser) return;
+            const dCanvas = document.getElementById('drawing_canvas');
+            if (!dCanvas) return;
+            
+            // Анимация кнопки
+            const originalText = btnAnalyze.innerHTML;
+            btnAnalyze.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Анализируем...';
+            
+            // Получаем рисунок в base64
+            const imageBase64 = dCanvas.toDataURL('image/png');
+            
+            try {
+                const formData = new FormData();
+                formData.append('image_base64', imageBase64);
+                formData.append('is_premium', 'true');
+                
+                const response = await fetch('/api/analyze-canvas', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                alert("Solifon Visionary: " + (data.reply || "Анализ завершен."));
+            } catch (err) {
+                alert("Ошибка при анализе рисунка.");
+            } finally {
+                btnAnalyze.innerHTML = originalText;
+            }
+        });
+    }
+});
+
+
+window.toggleAirCanvas = function() {
+    let container = document.getElementById('camera-overlay-container');
+    if (!container) return;
+    
+    if (typeof cameraStarted === 'undefined' || !cameraStarted) {
+        // Start it for the first time
+        if (typeof startAirCanvas === 'function') {
+            startAirCanvas();
+        }
     } else {
-        startAirCanvas();
+        // Toggle visibility
+        if (container.style.display === 'none' || container.style.display === '') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
     }
 };
+
+
+window.stopAirCanvas = function() {
+    let container = document.getElementById('camera-overlay-container');
+    if (container) container.style.display = 'none';
+    
+    if (window.mpCamera) {
+        window.mpCamera.stop();
+        window.mpCamera = null;
+    }
+    
+    let video = document.getElementById('input_video');
+    if (video && video.srcObject) {
+        let stream = video.srcObject;
+        let tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
+    }
+    
+    let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'inline-block';
+    
+    cameraStarted = false;
+};
+
