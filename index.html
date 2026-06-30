@@ -330,12 +330,113 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </button>
             </div>
 
-            <div class="right-actions">
+            <div class="right-actions" style="display: flex; align-items: center; gap: 12px;">
+                <style>
+                    .mmd-dropdown {
+                        display: none;
+                        position: absolute;
+                        bottom: calc(100% + 12px);
+                        right: 0;
+                        background: rgba(18, 18, 20, 0.65);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-top: 1px solid rgba(255, 255, 255, 0.15);
+                        border-radius: 16px;
+                        padding: 8px;
+                        width: 170px;
+                        box-shadow: 0 16px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+                        backdrop-filter: blur(24px) saturate(180%);
+                        -webkit-backdrop-filter: blur(24px) saturate(180%);
+                        z-index: 1000;
+                        transform-origin: bottom right;
+                        animation: suggestFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                    }
+                    .mmd-dropdown.open {
+                        display: block;
+                    }
+                    .mmd-option {
+                        padding: 10px 14px;
+                        color: rgba(255,255,255,0.65);
+                        font-size: 13.5px;
+                        cursor: pointer;
+                        border-radius: 10px;
+                        transition: all 0.2s ease;
+                        text-align: left;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        border-bottom: 1px solid transparent;
+                    }
+                    .mmd-option:hover {
+                        background: rgba(255,255,255,0.08);
+                        color: #fff;
+                        padding-left: 18px;
+                    }
+                    .mmd-option.active {
+                        background: rgba(255,255,255,0.1);
+                        color: #fff;
+                        font-weight: 600;
+                        box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+                    }
+                    .mmd-option.active::before {
+                        content: '';
+                        display: block;
+                        width: 4px;
+                        height: 4px;
+                        background: #fff;
+                        border-radius: 50%;
+                        box-shadow: 0 0 6px #fff;
+                    }
+                    #modelMiniBtn {
+                        border-radius: 14px;
+                        padding: 0 16px;
+                        height: 44px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        background: rgba(255,255,255,0.04);
+                        color: #fff;
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                        backdrop-filter: blur(10px);
+                    }
+                    #modelMiniBtn:hover, #modelMiniBtn.open {
+                        background: rgba(255,255,255,0.08);
+                        border-color: rgba(255,255,255,0.2);
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+                    }
+                    #modelMiniBtn i {
+                        color: rgba(255,255,255,0.7);
+                        transition: color 0.2s;
+                    }
+                    #modelMiniBtn:hover i {
+                        color: #fff;
+                    }
+                </style>
+                
+                <div style="position: relative;">
+                    <button type="button" id="modelMiniBtn" title="Select Model">
+                        <i class="ph ph-cpu"></i>
+                        <span id="modelMiniName">Solifon Air</span>
+                        <i class="ph ph-caret-down" style="font-size: 12px; margin-left: 2px;"></i>
+                    </button>
+                    <div id="modelMiniDropdown" class="mmd-dropdown">
+                        <div class="mmd-option active" data-value="gemini">Solifon Air</div>
+                        <div class="mmd-option" data-value="solifon-souldrive">Solifon SoulDrive</div>
+                        <div class="mmd-option" data-value="github">Solifon Ultra</div>
+                        <div class="mmd-option" data-value="solifon-pulse">Solifon Pulse</div>
+                    </div>
+                </div>
 
                 <button type="button" class="chat-send-btn" id="sendBtn">
                     <i class="ph ph-paper-plane-tilt"></i>
                     <span>Send</span>
                 </button>
+
             </div>
         </div>
     
