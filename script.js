@@ -1,3 +1,94 @@
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+
+
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P5MZ4C6S');
+
+
+    setTimeout(() => {
+        const ta = document.getElementById('userInput');
+        const sb = document.getElementById('sendBtn');
+        if(ta && sb) {
+            ta.addEventListener('input', function() {
+                this.style.height = '60px';
+                this.style.height = (this.scrollHeight) + 'px';
+                if(this.value.trim().length > 0) sb.classList.add('active');
+                else sb.classList.remove('active');
+            });
+            ta.addEventListener('keydown', function(e) {
+                if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sb.click(); }
+            });
+
+            // ===== ЗАГОЛОВОК: уходит вверх при отправке =====
+            sb.addEventListener('click', function() {
+                const hdr = document.getElementById('animatedChatHeader');
+                if (hdr && ta.value.trim().length > 0) {
+                    hdr.classList.add('sent-hidden');
+                    hdr.classList.remove('typing-active');
+                }
+            });
+        }
+
+        // ===== MODEL MINI BUTTON =====
+        const miniBtn = document.getElementById('modelMiniBtn');
+        const miniName = document.getElementById('modelMiniName');
+        const mmdDropdown = document.getElementById('modelMiniDropdown');
+
+        const mmdShortNames = {
+            'gemini': 'Air',
+            'solifon-pulse': 'Pulse',
+            'github': 'Ultra',
+            'solifon-souldrive': 'SoulDrive'
+        };
+
+        if (miniBtn && mmdDropdown) {
+            miniBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = mmdDropdown.classList.contains('open');
+                mmdDropdown.classList.toggle('open', !isOpen);
+                miniBtn.classList.toggle('open', !isOpen);
+            });
+
+            mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    const val = opt.getAttribute('data-value');
+                    const shortName = mmdShortNames[val] || val;
+                    if (miniName) miniName.textContent = shortName;
+
+                    // Also trigger the existing model selection logic
+                    const existingOpt = document.querySelector('.model-option[data-value="' + val + '"]');
+                    if (existingOpt) existingOpt.click();
+
+                    mmdDropdown.classList.remove('open');
+                    miniBtn.classList.remove('open');
+
+                    // Highlight active
+                    mmdDropdown.querySelectorAll('.mmd-option').forEach(o => o.classList.remove('active'));
+                    opt.classList.add('active');
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!miniBtn.contains(e.target) && !mmdDropdown.contains(e.target)) {
+                    mmdDropdown.classList.remove('open');
+                    miniBtn.classList.remove('open');
+                }
+            });
+        }
+    }, 1000);
+
+
+
 // ============================================================
 // 0. FIREBASE SETUP
 // ============================================================
@@ -761,118 +852,7 @@ if (chatTrigger) {
     });
 
     const stepsHTML = `
-<style>
-.ai-thinking-steps {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    font-family: 'Inter', sans-serif;
-    color: #fff;
-    margin-bottom: 12px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-.thinking-step {
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-    padding-bottom: 0; /* starts collapsed */
-    
-    /* Initially hidden for sequential appearance */
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transform: translateY(-10px);
-    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, transform 0.5s ease, padding-bottom 0.5s ease;
-}
-.thinking-step.active {
-    opacity: 1;
-    max-height: 80px;
-    transform: translateY(0);
-    padding-bottom: 20px;
-}
-.thinking-step:last-child.active {
-    padding-bottom: 0;
-}
-.step-line {
-    position: absolute;
-    left: 8px;
-    top: 20px;
-    bottom: -4px;
-    width: 2px;
-    background-color: rgba(255,255,255,0.15);
-    z-index: 1;
-}
-.thinking-step:last-child .step-line {
-    display: none;
-}
-.step-icon-container {
-    position: relative;
-    z-index: 2;
-    background: transparent;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 14px;
-    margin-top: 2px;
-}
-.step-icon {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    background: transparent;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-/* Pulsing animation while active but not completed (Claude style) */
-.thinking-step.active:not(.completed) .step-icon {
-    border-color: rgba(255,255,255,0.6);
-    animation: claudePulse 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-}
-@keyframes claudePulse {
-    0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
-    100% { transform: scale(1.1); box-shadow: 0 0 8px 0 rgba(255,255,255,0.05); }
-}
-.step-icon i {
-    opacity: 0;
-    font-size: 8px;
-    color: #000;
-    transform: scale(0.5);
-    transition: all 0.3s ease;
-}
-.thinking-step.completed .step-icon {
-    background: #e5e5e5;
-    border-color: #e5e5e5;
-    box-shadow: none;
-}
-.thinking-step.completed .step-icon i {
-    opacity: 1;
-    transform: scale(1);
-    color: #000;
-}
-.step-content {
-    display: flex;
-    flex-direction: column;
-}
-.step-title {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.4);
-    transition: color 0.3s ease;
-    line-height: 1.4;
-}
-.thinking-step.completed .step-title {
-    color: rgba(255,255,255,0.9);
-}
-</style>
+
 <div class="ai-thinking-steps">
   ${stepsHTMLContent}
 </div>
@@ -1813,9 +1793,9 @@ window.runEditorCode = function() {
     const previewWindow = document.getElementById("editor-preview-window");
     const preview = previewWindow.contentWindow.document;
     preview.open();
-    const baseStyle = `<style>body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; } #output { background: #282a36; color: #f8f8f2; padding: 20px; border-radius: 8px; font-family: monospace; }</style>`;
+    const baseStyle = ``;
     if (['html', 'css', 'js'].includes(currentEditorLang)) {
-        const code = codeEditors.html.getValue() + `<style>${codeEditors.css.getValue()}</style>` + `<script>${codeEditors.js.getValue()}<\/script>`;
+        const code = codeEditors.html.getValue() + `` + `<script>${codeEditors.js.getValue()}<\/script>`;
         preview.write(code);
     } else if (currentEditorLang === 'py') {
         preview.write(baseStyle + "<h3>Python Output:</h3><pre id='output'></pre>");
@@ -4464,3 +4444,27 @@ window.stopAirCanvas = function() {
 };
 
 
+
+
+
+// Spotlight effect tracking
+document.querySelectorAll('.dev21-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+    });
+});
+
+
+
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
