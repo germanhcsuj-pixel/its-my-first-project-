@@ -6,9 +6,9 @@
 <!-- ═══════════════════════════════════════════════
   SOLIFON AI — PWA PATCH
   
-  ИНСТРУКЦИЯ: Добавь эти блоки в index.html
+  INSTRUCTION: Add these blocks to index.html
 
-  ① Блок 1 → вставь внутрь <head>
+  ① Block 1 → insert inside <head>
 <meta charset="UTF-8"> ... </head>
 
 <script>
@@ -21,13 +21,21 @@ window.addEventListener('message', function(event) {
     }
 });
 </script>
+
+    
+
+
+
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 
 ═══════════════════════════════════════════════ -->
 
 
 <!-- ════════════════════════════════════════
-     БЛОК 1 — Вставить в <head>
+     BLOCK 1 — Insert into <head>
 <meta charset="UTF-8">
 ════════════════════════════════════════ -->
 
@@ -38,10 +46,10 @@ window.addEventListener('message', function(event) {
 <meta name="apple-mobile-web-app-title" content="Solifon AI">
 <link rel="apple-touch-icon" href="https://huggingface.co/spaces/germanhcsuj/Solifon-ai/resolve/main/icon-192.png">
 
-<!-- Мета для Google / Open Graph -->
-<meta name="description" content="Мульти-модельный ИИ-ассистент: GPT-4o, Gemini, Claude и Llama в одном месте">
+<!-- Meta for Google / Open Graph -->
+<meta name="description" content="Multi-model AI assistant: GPT-4o, Gemini, Claude and Llama в одном moте">
 <meta property="og:title" content="Solifon AI">
-<meta property="og:description" content="ИИ-платформа нового поколения из Казахстана">
+<meta property="og:description" content="Next-generation AI platform from Kazakhstan">
 <meta property="og:image" content="https://huggingface.co/spaces/germanhcsuj/Solifon-ai/resolve/main/icon-512.png">
 
 
@@ -121,7 +129,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <div class="menu-section-title">Workspaces</div>
             <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-presentation-chart"></i><span>Presentation</span>
+    <i class="ph ph-code"></i><span>Solifon AI Code</span>
 </div>
 
             
@@ -150,7 +158,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="library-body">
             <div class="empty-library">
                 <i class="ph ph-bookmarks-simple"></i>
-                <p>История пуста</p>
+                <p>History is empty</p>
             </div>
             <div id="savedItemsContainer"></div>
         </div>
@@ -164,7 +172,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="library-body">
             <div class="empty-library">
                 <i class="ph ph-clock-counter-clockwise"></i>
-                <p>История чатов пуста</p>
+                <p>Chat history is empty</p>
             </div>
             <div id="chatHistoryItems"></div>
         </div>
@@ -187,8 +195,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </a>
             <div class="tubelight-nav-item" onclick="window.openVirtualBoard()" data-tab="NewFeature">
                 <i class="ph ph-star md-hidden"></i>
-                <span class="md-inline">Новая функция</span>
+                <span class="md-inline">New Feature</span>
             </div>
+            
             <div class="tubelight-nav-item" onclick="openModal('fullscreenLayerModal')" data-tab="Explore">
                 <i class="ph ph-squares-four md-hidden"></i>
                 <span class="md-inline">Explore</span>
@@ -316,7 +325,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="animated-input-box">
         <!-- Ghost text wrapper -->
         <div class="textarea-ghost-wrapper">
-            <textarea id="userInput" class="chat-textarea" placeholder="Спросите SOLIFON AI что угодно..."></textarea>
+            <textarea id="userInput" class="chat-textarea" placeholder="Ask SOLIFON AI anything..."></textarea>
             <div id="ghostText" class="ghost-text-overlay"></div>
         </div>
         
@@ -477,7 +486,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sb.click(); }
             });
 
-            // ===== ЗАГОЛОВОК: уходит вверх при отправке =====
+            // ===== HEADER: moves up on send =====
             sb.addEventListener('click', function() {
                 const hdr = document.getElementById('animatedChatHeader');
                 if (hdr && ta.value.trim().length > 0) {
@@ -754,12 +763,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 </div>
 
-    <!-- Обновлённый блок What's New -->
+    <!-- Updated What block's New -->
     
 
 
 
-    <!-- Остальные модальные окна остаются без изменений -->
+    <!-- Other modal windows remain unchanged -->
     <div class="custom-modal" id="voiceSettingsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -767,7 +776,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button class="close-modal" onclick="closeModal('voiceSettingsModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 15px; opacity: 0.8;">Выберите голос для ElevenLabs:</p>
+                <p style="margin-bottom: 15px; opacity: 0.8;">Choose a voice for ElevenLabs:</p>
                 <div class="model-option active" onclick="setVoice('bella')">
                     <i class="ph ph-user-circle"></i> Bella (Soft & Professional)
                 </div>
@@ -799,29 +808,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button onclick="closeModal('authModal')" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;z-index:1;">✕</button>
     
     <div style="text-align:center;font-size:40px;margin-bottom:12px;">🔐</div>
-    <h2 id="authTitle" style="color:#fff;margin:0 0 6px 0;font-size:20px;text-align:center;">Войдите в аккаунт</h2>
+    <h2 id="authTitle" style="color:#fff;margin:0 0 6px 0;font-size:20px;text-align:center;">Sign in to your account</h2>
     <p style="color:rgba(255,255,255,0.4);margin:0 0 20px 0;font-size:13px;text-align:center;">Solifon AI</p>
 
     <div style="display:flex;background:rgba(255,255,255,0.06);border-radius:10px;padding:3px;margin-bottom:20px;">
-      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:#fff;color:#000;">Вход</button>
-      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:#fff;">Регистрация</button>
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:#fff;color:#000;">Log In</button>
+      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:#fff;">Sign Up</button>
     </div>
 
     <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
       style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:10px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
     
-    <input id="authPassword" type="password" placeholder="Пароль (мин. 6 символов)" autocomplete="current-password"
+    <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"
       style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
 
     <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
 
     <button id="authSubmitBtn" onclick="submitAuth()" 
       style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;">
-      Войти
+      Sign In
     </button>
   </div>
 </div>
-    <script src="script.js?v=6" charset="utf-8"></script>
+    <script src="script.js?v=11" charset="utf-8"></script>
   
 
 <!-- ── UPGRADE MODAL ── -->
@@ -846,16 +855,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <!-- Billing Toggle UI -->
             <div class="billing-toggle-wrapper">
                 <div class="billing-toggle">
-                    <button class="billing-btn active" data-period="month">1 Месяц</button>
-                    <button class="billing-btn" data-period="year">1 Год</button>
-                    <button class="billing-btn" data-period="custom">Свой выбор</button>
+                    <button class="billing-btn active" data-period="month">1 Month</button>
+                    <button class="billing-btn" data-period="year">1 Year</button>
+                    <button class="billing-btn" data-period="custom">Custom Selection</button>
                 </div>
             </div>
 
             <!-- Custom Months Slider UI -->
             <div id="custom-months-container" style="display: none; text-align: center; margin-bottom: 30px;">
                 <label for="customMonthsRange" style="color: rgba(255,255,255,0.8); font-family: 'Poppins', sans-serif;">
-                    Выбрано: <span id="customMonthsValue" style="color: #ffffff; font-weight: 600;">3 месяца</span>
+                    Selected: <span id="customMonthsValue" style="color: #ffffff; font-weight: 600;">3 moяца</span>
                 </label>
                 <input type="range" id="customMonthsRange" min="2" max="24" value="3" style="width: 80%; max-width: 300px; display: block; margin: 15px auto; accent-color: #ffffff;">
             </div>
@@ -1049,10 +1058,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__content" style="pointer-events: none; opacity: 0.6; filter: grayscale(50%);">
                             <div class="tariff__info">
                                 <div class="tariff__info-top"><span class="tariff__type fourth__tariff-type">SMM Business</span><span class="tariff__tag" style="background: #ff0050; color: white;">Coming Soon</span></div>
-                                <div class="tariff__price">???<span class="tariff__period">/мес</span></div>
-                                <p class="tariff__description">ИИ для ведения TikTok, Instagram и соцсетей</p>
+                                <div class="tariff__price">???<span class="tariff__period">/mo</span></div>
+                                <p class="tariff__description">AI for managing TikTok, Instagram and social networks</p>
                             </div>
-                            <button class="tariff__button fourth__tariff-button" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255, 255, 255, 0.1);">В разработке</button>
+                            <button class="tariff__button fourth__tariff-button" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255, 255, 255, 0.1);">In development</button>
                             <div class="tariff__list fourth__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1060,7 +1069,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Интеграция с TikTok & Instagram</p>
+                                    <p class="tariff__item-text">Integration with TikTok & Instagram</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1068,7 +1077,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Авто-постинг и генерация рилсов</p>
+                                    <p class="tariff__item-text">Auto-posting and reel generation</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1076,7 +1085,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Аналитика аудитории и трендов</p>
+                                    <p class="tariff__item-text">Audience and trend analytics</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1084,13 +1093,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">SMM стратегии от ИИ</p>
+                                    <p class="tariff__item-text">SMM AI strategies</p>
                                 </div>
                             </div>
                         </div>
                         <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 10; background: rgba(0,0,0,0.2); border-radius: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(1.5px);">
                             <div style="background: rgba(255, 0, 80, 0.9); padding: 10px 25px; border-radius: 20px; font-weight: bold; color: white; transform: rotate(-5deg); box-shadow: 0 5px 15px rgba(255,0,80,0.4); border: 1px solid rgba(255,255,255,0.2); font-family: 'Poppins', sans-serif;">
-                                СКОРО
+                                SOON
                             </div>
                         </div>
                     </div>
@@ -1106,9 +1115,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- HEADER -->
         <div class="wn-header">
-            <div class="wn-badge">v2.6 · ИЮНЬ 2026</div>
-            <h1 class="wn-title">Что нового<span class="wn-dot">.</span></h1>
-            <p class="wn-subtitle">Solifon работает на инфраструктуре мирового класса — той же, что стоит за X, Instagram и NASA.</p>
+            <div class="wn-badge">v2.6 · JUNE 2026</div>
+            <h1 class="wn-title">What's New<span class="wn-dot">.</span></h1>
+            <p class="wn-subtitle">Solifon runs on world-class infrastructure — the same one behind X, Instagram and NASA.</p>
         </div>
 
         <!-- INFRA CARDS -->
@@ -1131,22 +1140,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="wn-infra-card">
                 <div class="wn-infra-icon">₿</div>
                 <div class="wn-infra-name">Solifon Crypto</div>
-                <div class="wn-infra-desc">Новости о крипте · Децентрализация</div>
+                <div class="wn-infra-desc">Новости о крипте · Decentralization</div>
             </div>
             <div class="wn-infra-card">
                 <div class="wn-infra-icon">🎥</div>
                 <div class="wn-infra-name">Solifon Motion 2.0</div>
-                <div class="wn-infra-desc">Крутая генерация видео · Кинематографичность</div>
+                <div class="wn-infra-desc">Awesome video generation · Cinematic</div>
             </div>
             <div class="wn-infra-card">
                 <div class="wn-infra-icon">🧠</div>
-                <div class="wn-infra-name">Умные Модели</div>
-                <div class="wn-infra-desc">Высокий интеллект · Стали еще умнее</div>
+                <div class="wn-infra-name">Smart Models</div>
+                <div class="wn-infra-desc">High Intelligence · Got even smarter</div>
             </div>
             <div class="wn-infra-card">
                 <div class="wn-infra-icon">🚀</div>
-                <div class="wn-infra-name">Постоянное Развитие</div>
-                <div class="wn-infra-desc">Мы не стоим на месте · Эволюция ИИ</div>
+                <div class="wn-infra-name">Constant Development</div>
+                <div class="wn-infra-desc">We не стоим на moте · AI Evolution</div>
             </div>
         </div>
 
@@ -1159,10 +1168,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--green">NEW</span>
-                        <span class="wn-date">25 июн 2026</span>
+                        <span class="wn-date">25 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Tubelight Navigation</div>
-                    <div class="wn-item-text">Живая лампа-навигация с плавными анимациями. Menu, Clear, Model — теперь всё работает мгновенно.</div>
+                    <div class="wn-item-text">Live lamp navigation with smooth animations. Menu, Clear, Model — now everything works instantly.</div>
                 </div>
             </div>
 
@@ -1171,10 +1180,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--blue">AI</span>
-                        <span class="wn-date">20 июн 2026</span>
+                        <span class="wn-date">20 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Smart Autocomplete</div>
-                    <div class="wn-item-text">Поисковые подсказки как в Google — система предугадывает запрос пока вы печатаете.</div>
+                    <div class="wn-item-text">Search suggestions like Google — the system anticipates the query as you type.</div>
                 </div>
             </div>
 
@@ -1183,10 +1192,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--purple">MODEL</span>
-                        <span class="wn-date">15 июн 2026</span>
+                        <span class="wn-date">15 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Solifon SoulDrive</div>
-                    <div class="wn-item-text">Новая модель на базе Qwen 3. Эмоциональный интеллект нового поколения для глубоких диалогов.</div>
+                    <div class="wn-item-text">New model based on Qwen 3. Эмоциональный интеллект нового поколения для глубоких диалогов.</div>
                 </div>
             </div>
 
@@ -1195,10 +1204,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--orange">PERF</span>
-                        <span class="wn-date">10 июн 2026</span>
+                        <span class="wn-date">10 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Edge CDN · 99.97% Uptime</div>
-                    <div class="wn-item-text">Перенесли инфраструктуру на глобальную edge-сеть. Latency снижена на 40%. Работает как X и Instagram.</div>
+                    <div class="wn-item-text">Moved infrastructure to global edge-сеть. Latency reduced by 40%. Работает как X and Instagram.</div>
                 </div>
             </div>
 
@@ -1207,10 +1216,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--gray">SOON</span>
-                        <span class="wn-date">Июль 2026</span>
+                        <span class="wn-date">July 2026</span>
                     </div>
                     <div class="wn-item-title">Solifon Offline Mode</div>
-                    <div class="wn-item-text">Edge AI на устройстве без интернета. Протокол готов — идёт интеграция с партнёрами.</div>
+                    <div class="wn-item-text">Edge AI на устройстве без интерnoа. Протокол готов — integration with partners is ongoing.</div>
                 </div>
             </div>
 
@@ -1219,10 +1228,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--orange">VOICE</span>
-                        <span class="wn-date">08 июн 2026</span>
+                        <span class="wn-date">08 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Solifon RealVoice</div>
-                    <div class="wn-item-text">Реалистичный синтез речи. Модель умеет смеяться, делать паузы и передавать эмоции в голосе.</div>
+                    <div class="wn-item-text">Realistic speech synthesis. The model can laugh, pause, and convey emotions in voice.</div>
                 </div>
             </div>
 
@@ -1231,10 +1240,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--gray">DESIGN</span>
-                        <span class="wn-date">05 июн 2026</span>
+                        <span class="wn-date">05 jun 2026</span>
                     </div>
-                    <div class="wn-item-title">Темная Материя</div>
-                    <div class="wn-item-text">Ультра-черная тема интерфейса. Максимальная глубина черного для OLED дисплеев и комфорта глаз.</div>
+                    <div class="wn-item-title">Dark Matter</div>
+                    <div class="wn-item-text">Ultra-black interface theme. Maximum black depth for OLED displays and eye comfort.</div>
                 </div>
             </div>
 
@@ -1243,10 +1252,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-item-body">
                     <div class="wn-item-meta">
                         <span class="wn-tag wn-tag--green">CORE</span>
-                        <span class="wn-date">01 июн 2026</span>
+                        <span class="wn-date">01 jun 2026</span>
                     </div>
                     <div class="wn-item-title">Quantum Search</div>
-                    <div class="wn-item-text">Новый движок поиска знаний со скоростью мысли. Индексация миллиардов фактов за миллисекунды.</div>
+                    <div class="wn-item-text">New knowledge search engine at the speed of thought. Indexing billions of facts in milliseconds.</div>
                 </div>
             </div>
 
@@ -1260,7 +1269,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-premium-content">
                     <div class="wn-premium-icon"><i class="ph ph-brain"></i></div>
                     <div class="wn-premium-title">Solifon Neural Engine</div>
-                    <div class="wn-premium-desc">Основано на архитектуре трансформеров следующего поколения. Вычисления происходят на 300% быстрее благодаря динамической оптимизации весов.</div>
+                    <div class="wn-premium-desc">Based on next-generation transformer architecture. Computations happen on 300% faster thanks to dynamic weight optimization.</div>
                 </div>
             </div>
             <div class="wn-premium-card wn-premium-card--sec">
@@ -1268,7 +1277,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="wn-premium-content">
                     <div class="wn-premium-icon"><i class="ph ph-shield-check"></i></div>
                     <div class="wn-premium-title">Zero-Knowledge Cloud</div>
-                    <div class="wn-premium-desc">Абсолютная приватность. Никто, даже мы, не имеем доступа к вашим данным благодаря сквозному квантовому шифрованию.</div>
+                    <div class="wn-premium-desc">Absolute privacy. No one, not even us, has access to your data thanks to end-to-end quantum encryption.</div>
                 </div>
             </div>
         </div>
@@ -1285,119 +1294,409 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 
-<div class="custom-modal" id="aboutModal" >
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="ph ph-info"></i> About SOLIFON AI</h3>
-                <button class="close-modal" onclick="closeModal('aboutModal')">&times;</button>
+﻿<div class="custom-modal" id="aboutModal">
+    <style>
+        /* Base Modal Overrides for Premium Feel */
+        #aboutModal {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Modal Container with Animated Gradient Border */
+        #aboutModal .modal-content {
+            background: #09090b;
+            border-radius: 24px;
+            max-width: 840px;
+            width: 95%;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #ededed;
+            position: relative;
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.08);
+            transform: translateY(10px);
+            animation: modalPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes modalPop {
+            to { transform: translateY(0); }
+        }
+
+        /* Moving Glow Effect */
+        #aboutModal .modal-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0), rgba(139, 90, 43, 0.05));
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        #aboutModal .modal-header {
+            padding: 24px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(9, 9, 11, 0.7);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+        #aboutModal .modal-header h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.01em;
+        }
+        
+        .premium-badge {
+            background: linear-gradient(135deg, #ffffff, #a1a1aa);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-left: 8px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+        }
+
+        .close-premium {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #a1a1aa;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .close-premium:hover {
+            background: #fff;
+            color: #000;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        #aboutModal .modal-body {
+            padding: 40px;
+            max-height: 75vh;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+        }
+        #aboutModal .modal-body::-webkit-scrollbar { width: 6px; }
+        #aboutModal .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
+        
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .premium-gradient-text {
+            background: linear-gradient(180deg, #ffffff 0%, #71717a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin: 0 0 16px 0;
+            line-height: 1.1;
+        }
+        
+        .hero-subtitle {
+            color: #a1a1aa;
+            font-size: 1.15rem;
+            max-width: 580px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* Bento Box Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        .bento-card:nth-child(1) { animation-delay: 0.1s; }
+        .bento-card:nth-child(2) { animation-delay: 0.2s; }
+        .bento-card:nth-child(3) { animation-delay: 0.3s; grid-column: span 2; }
+        .bento-card:nth-child(4) { animation-delay: 0.4s; grid-column: span 2; }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .bento-card:hover::before {
+            opacity: 1;
+        }
+
+        .bento-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* Card Accents */
+        .card-glow-brown { background: radial-gradient(circle at top right, rgba(139, 90, 43, 0.15), transparent 60%), rgba(255, 255, 255, 0.015); }
+        .card-glow-white { background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 60%), rgba(255, 255, 255, 0.015); }
+
+        .bento-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .bento-card:hover .bento-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .bento-icon.brown-tint {
+            color: #d4a373;
+            background: rgba(212, 163, 115, 0.1);
+            border-color: rgba(212, 163, 115, 0.2);
+        }
+        .bento-icon.white-tint {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .bento-title {
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bento-text {
+            color: #a1a1aa;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .bento-text strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-top: 16px;
+            letter-spacing: 0.03em;
+            position: relative;
+            z-index: 2;
+            transition: all 0.2s;
+        }
+        .status-pill:hover {
+            transform: translateY(-2px);
+        }
+        .status-pill.removed {
+            background: rgba(255, 60, 60, 0.08);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 60, 60, 0.15);
+        }
+        .status-pill.active {
+            background: rgba(212, 163, 115, 0.1);
+            color: #d4a373;
+            border: 1px solid rgba(212, 163, 115, 0.2);
+        }
+        .status-pill.neutral {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ededed;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Abstract glowing orb in background */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-orb-1 {
+            width: 300px; height: 300px;
+            background: rgba(139, 90, 43, 0.4);
+            top: -100px; right: -100px;
+            animation: floatOrb 10s ease-in-out infinite alternate;
+        }
+        .bg-orb-2 {
+            width: 400px; height: 400px;
+            background: rgba(255,255,255,0.08);
+            bottom: -150px; left: -100px;
+            animation: floatOrb 15s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-30px, 50px) scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card:nth-child(3), .bento-card:nth-child(4) { grid-column: span 1; }
+            .premium-gradient-text { font-size: 2.5rem; }
+            #aboutModal .modal-body { padding: 24px; }
+        }
+    </style>
+
+    <div class="modal-content">
+        <!-- Abstract Background Orbs -->
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+
+        <div class="modal-header">
+            <h3><i class="ph ph-hexagon"></i> SOLIFON AI <span class="premium-badge">Vercel Edition</span></h3>
+            <button class="close-premium" onclick="closeModal('aboutModal')"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="modal-body" id="bentoContainer">
+            <div class="hero-section">
+                <h2 class="premium-gradient-text">Absolute Focus.</h2>
+                <p class="hero-subtitle">
+                    We discarded everything unnecessary to create the perfect tool. 7 moяцев эволюции привели нас к единой, мощной цели.
+                </p>
             </div>
-            <div class="modal-body">
-    <div class="mission-header" style="text-align: center; margin-bottom: 25px;">
-        <h2 style="color: #ffffff; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">SOLIFON AI</h2>
-        <p style="font-style: italic; opacity: 0.8;"> ​В современную эпоху цифрового шума и бесконечного множества инструментов, Solifon AI рождается не просто как очередное приложение, а как манифест эффективности и доступности. Это — «швейцарский нож» будущего, созданный для того, чтобы превратить хаос разрозненных нейросетей в единый, мощный поток созидания.</p>
-      <p style="text-align: center; opacity: 0.8; font-size: 1.1rem; margin-bottom: 30px;">
-        Главная боль современного пользователя — это фрагментация. Мы привыкли переключаться между вкладками для написания кода, генерации картинок и поиска информации. Solifon AI ставит этому конец, объединяя под капотом Mission Alpha лучшие «мозги» планеты: от аналитической мощи GPT-4o до творческого видения Gemini и невероятной скорости Llama 3.3. Это дает пользователю беспрецедентную гибкость: выбор модели ИИ становится не техническим ограничением, а творческим выбором. <strong>всё</strong> в одном месте.
-      </p>
-    </div>
 
-    <div class="feature-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-        <div class="skill-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #ffffff;">
-            <h4 style="margin: 0 0 5px 0; color: #ffffff;"><i class="ph ph-cpu"></i> Мульти-Ядро</h4>
-            <p style="font-size: 0.85rem; margin: 0;">GPT-4o, Gemini 2.0, Claude и Llama 3.3 в одном интерфейсе.</p>
+            <div class="bento-grid">
+                <!-- Card 1: Time & Origin -->
+                <div class="bento-card card-glow-white">
+                    <div class="bento-icon white-tint"><i class="ph ph-hourglass-high"></i></div>
+                    <h4 class="bento-title">7 Months of Development</h4>
+                    <p class="bento-text">
+                        The project was born in <strong>1 January</strong>. In this short time, we went through hundreds of iterations, mistakes, and improvements to form a premium product.
+                    </p>
+                </div>
+
+                <!-- Card 2: Optimization -->
+                <div class="bento-card card-glow-brown">
+                    <div class="bento-icon brown-tint"><i class="ph ph-cpu"></i></div>
+                    <h4 class="bento-title">Architectural Cleanup</h4>
+                    <p class="bento-text">
+                        We <strong>removed and optimized</strong> heavy models, including <em>Soul Max Pro</em>. The remaining core became more compact, faster, and significantly more intelligent.
+                    </p>
+                    <div>
+                        <span class="status-pill removed"><i class="ph ph-x-circle"></i> Max Pro</span>
+                        <span class="status-pill active"><i class="ph ph-check-circle"></i> Core AI V2</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Strategic Pivot (Full Width) -->
+                <div class="bento-card">
+                    <div class="bento-icon"><i class="ph ph-scissors"></i></div>
+                    <h4 class="bento-title">Strategic Pivot</h4>
+                    <p class="bento-text">
+                        To become the best in our niche, we had to say "no". We <strong>completely abandoned</strong> from project «Ananyn Zhuregy», as well as from all educational and medical initiatives. 
+                        We no longer <strong>do not work with the public sector</strong>, civil servants and do not support partnerships in these areas. Our independence — is a guarantee of quality.
+                    </p>
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Medicine</span>
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Education</span>
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Gov Sector</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Future Focus (Full Width) -->
+                <div class="bento-card" style="background: rgba(255,255,255,0.03); border-color: rgba(212, 163, 115, 0.3);">
+                    <div class="bento-icon brown-tint"><i class="ph ph-brain"></i></div>
+                    <h4 class="bento-title" style="color: #d4a373;">Singularity: AI Agents</h4>
+                    <p class="bento-text">
+                        Our new and <strong>the only vector of development</strong> — these are cutting-edge <strong>AI agents</strong> and specialized AI models. We focus exclusively on artificial intelligence and related technologies that need it. No more compromises. Only premium, highly targeted intelligent systems.
+                    </p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: inline-block; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, #8b5a2b, transparent); margin-bottom: 20px;"></div>
+                <p style="color: #52525b; font-size: 0.8rem; margin: 0; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;">
+                    &copy; 2026 SOLIFON AI &middot; The Future is Now
+                </p>
+            </div>
         </div>
-        <div class="skill-card" style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #a855f7;">
-            <h4 style="margin: 0 0 5px 0; color: #a855f7;"><i class="ph ph-code"></i> Code Dev</h4>
-            <p style="font-size: 0.85rem; margin: 0;">Живая среда для Python, JS и HTML с мгновенным превью.</p>
-        </div>
     </div>
-
-    <h3 style="margin-top: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Наша Цель</h3>
-    <p style="line-height: 1.6; opacity: 0.9;">
-      В мире, где технологии усложняются с каждым днем, вам больше не нужен просто набор программ. Вам нужен надежный друг, напарник и универсальный ассистент, который всегда под рукой. Solifon AI — это не просто чат-бот. Это ваш интеллектуальный «швейцарский нож», в котором собрано абсолютно всё для работы, учебы и творчества.
-​Мы создали экосистему, где каждый модуль имеет свою уникальную личность и функцию. В зависимости от вашей задачи, вам на помощь приходят специализированные ядра нашей системы:
-​🗣️ Solifon Echo (Общение и поддержка): Ваш идеальный собеседник. Echo создан для того, чтобы вести живой диалог, помогать с текстами, отвечать на вопросы и быть вашим интеллектуальным другом в режиме реального времени.
-​🎬 Solifon Motion (Визуализация и Видео): Творческое сердце системы. Когда вам нужно создать потрясающее изображение, сгенерировать видео или визуализировать концепт, Motion воплощает ваши фантазии в реальность.
-​🧠 Solifon Ultra (Глубокая аналитика): Тяжелая артиллерия. Ultra включается тогда, когда нужна максимальная точность: сложный анализ данных, научные исследования и построение логических цепочек.
-​⚡ Solifon Unbound (Нестандартные задачи): Модуль без границ. Если вам нужно что-то совершенно уникальное, безумная идея для стартапа или нестандартный код — Unbound выходит за рамки привычного мышления.
-​🛠 Всё в одном месте (Код и Симуляции)
-​Зачем переключаться между десятками вкладок? В Solifon AI вы можете не только обсуждать идеи, но и сразу их реализовывать.
-​Наш встроенный Code Workspace позволяет писать код на Python, HTML, CSS и JS, мгновенно проверяя его работу.
-​А уникальные интерактивные симуляции превращают скучную теорию по физике, химии и биологии в захватывающую виртуальную лабораторию прямо на вашем экране.
-​📈 Признание и развитие
-​Solifon AI не стоит на месте. Мы постоянно развиваемся: проект активно тестируется энтузиастами, получает ценный фидбек от экспертов IT-комьюнити и уже начинает привлекать внимание профильных медиа-изданий. Каждое замечание делает наш код чище, а интерфейс — удобнее. Удивительно, но фундамент этой мощной системы был заложен и написан буквально со смартфона — что доказывает: для настоящих инноваций нет преград.
-​🎯 Наша главная цель
-​Мы верим, что технологии должны служить людям, делая их сильнее. Наша миссия — демократизировать доступ к передовому искусственному интеллекту. Мы хотим дать каждому человеку ту самую «суперсилу» для созидания. Solifon AI — это ваш личный мост между идеей и ее воплощением.<strong>Solifon AI</strong> создан, чтобы объединить разрозненные инструменты в единую мощную экосистему. Мы делаем мир лучше, предоставляя каждому доступ к научным симуляциям, продвинутому кодингу и лучшим нейросетям планеты.
-    </p>
-
-    <div class="creator-info" style="margin-top: 30px; padding: 15px; background: linear-gradient(90deg, rgba(0,242,255,0.1), transparent); border-radius: 8px;">
-        <p style="margin: 0;">Архитектор системы: <span style="color: #ffffff; font-weight: 600;">Томанбаев Дастан</span></p>
-      
-        <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 5px;">Powered by Hugging Face, Firebase & ElevenLabs</p>
-    </div>
-              <h4 style="margin-top: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;"> Основатель проекта</h4>
-              <p style="line-height: 1.6; opacity: 0.9;"> Меня зовут Доманбаев Дастан.
-Мне 17 лет, совсем скоро — 18 лет (22 марта). Я из Казахстана, учусь в 11 классе обычной школы в Жаксы селе. Я — не отличник и никогда им не был, но у меня есть то, что для меня важнее оценок — интерес, мышление и цель.
-В школе моя учёба складывалась по-разному. Я был тройчником и честно признаю: некоторые предметы давались мне тяжело. Алгебра, физика и сложные формулы часто казались непонятными и оторванными от реальной жизни. Но при этом у меня всегда лучше получались английский язык, география и предметы, где нужно думать, анализировать и понимать мир, а не просто заучивать.
-Настоящий поворот в моей жизни произошёл в 9 классе когда мне было 15–16 лет, на уроках информатики. Именно тогда я впервые столкнулся с кодом.
-Мой первый язык — это HTML, CSS и JavaScript.
-Честно скажу: в начале всё казалось неудобным, сложным и непонятным. Код не работал, ошибки появлялись постоянно, и в тот момент я думал, что программирование — это никому не нужная вещь и просто трата времени. Тогда я не до конца понимал ценность этого пути.Сейчас я сильно жалею о тех мыслях.
-Со временем я понял: язык программирования — это не просто язык.
-Это творчество.
-Это возможность самому решать, что создать, что изменить и что убрать.
-Это свобода мышления и инструмент, с помощью которого можно влиять на реальный мир. Это затянуло.
-Со временем мой интерес только рос. Я начал понимать, что технологии — это не просто код, а инструмент для изменения жизни людей. Так я пришёл к идее искусственного интеллекта.
-Сегодня я — создатель ИИ-сайта,  Этот проект я сделал самостоятельно, шаг за шагом, через ошибки, сомнения и постоянное обучение. Это не просто сайт — это мой первый реальный шаг в будущее.
-Моя главная цель — помогать людям развиваться.
-Я хочу, чтобы ИИ:
-помогал учиться тем, кому сложно в школе
-поддерживал тех, кто не верит в себя
-давал знания, идеи и возможности
-делать технологии доступными, а не пугающими 
-В будущем я хочу развивать искусственный интеллект в Казахстане и работать вместе с крупными технологическими компаниями, такими как Google, а также с другими международными и локальными компаниями. Я понимаю, что путь сложный, и я не питаю иллюзий.
-Я даже честно скажу:
-я знаю, что создать компанию уровня Google — почти невозможно, особенно для таких, как я — обычного человека из села.
-Но я всё равно попробую.
-Потому что большие вещи начинаются не с идеальных условий, а с попытки.
-Моя мечта — создать собственную технологическую компанию, которая будет создавать сильные ИИ-продукты и сотрудничать с другими компаниями по всему миру. Я хочу учиться,
-Когда я начал создавать свой ИИ, я абсолютно не понимал, с чего начать. У меня не было чёткого плана, опыта или глубоких знаний. Я почти ничего не умел и ничего не знал — это правда. Я просто начал идти вперёд шаг за шагом.
-Со временем я начал узнавать новое, открывать для себя методы, подходы, технологии, информацию. Этот путь был очень тяжёлым.
-Около 80% всего времени ушло не на развитие, а на ошибки.
-Ошибки в коде были постоянно:
-конфликты между частями кода
-устаревшие версии библиотек
-несовместимость версий
-ошибки, которые появлялись «из ниоткуда»
-Иногда я думал, что проблема во мне, иногда — что я выбрал не ту платформу. Я пробовал много разных платформ, но почти везде сталкивался с одними и теми же ошибками. Почти везде были платные подписки, а в тот момент у меня не было денег вообще — ни копейки.
-Были моменты, когда я чувствовал одиночество в этом пути. Я смотрел обучающие видео, читал материалы, спрашивал советы, обращался даже к топовым ИИ, но часто они тоже давали решения с ошибками. Код снова не работал, и всё приходилось переделывать заново.
-Самое сложное — это то чувство, которое трудно описать словами.
-Когда ты знаешь, что делаешь, но не можешь объяснить это словами.
-Когда внутри есть понимание и желание идти дальше, но язык и мысли не успевают за этим.
-Но я не сдался.
-Я продолжал, потому что верил.
-Верил, что если я буду идти дальше, результат обязательно появится.
-И результат есть.
-Сегодня у меня есть ИИ-сайт с 7 разными искусственными интеллектами. Это не идеальный продукт, но это реальный результат пути, который начался с полного нуля, ошибок, сомнений и отсутствия денег.
-
- Были моменты, когда мне казалось, что всё против меня.
-Будто каждая попытка заканчивалась новой ошибкой, и куда бы я ни пошёл — везде одно и то же. Со временем я понял, что дело было не в мире и не в технологиях, а в том, что я сам делал что-то неправильно и принимал не те решения.
-В тот период у меня часто появлялась мысль бросить ИИ и заняться чем-то более простым — например, просто делать сайты или выбрать другой путь. Это казалось логичным и безопасным. Но каждый раз что-то внутри меня останавливало. Инстинкт, внутренний голос, постоянно говорил:
-«У тебя получится. Или уже совсем скоро получится. Просто не сворачивай.»
-И я рад, что послушал этот голос и остался на этом пути.
-Конечно, были моменты, когда я думал, что это не для меня, что из этого ничего не выйдет. Были сомнения, усталость и полное непонимание, что делать дальше. Именно тогда я вспомнил одну фразу, которая сильно на меня повлияла:
-«Если не получилось — измени путь, а не цель.»
-Эта мысль помогла мне понять главное:
-проблема не в мечте и не в цели, а в том, как ты к ней идёшь.
-Я начал менять подходы, методы, инструменты, мышление — но цель оставалась той же.
-Именно это позволило мне продолжить, не сломаться и прийти к результату.
-Этот проект — только начало моего пути.
-Я ещё многого не знаю, но я двигаюсь вперёд.
-один человек с идеей может начать большие изменения
-Этот проект — только начало.
-Я учусь, развиваюсь, ошибаюсь и иду дальше.</p>
+    
+    <script>
+        // Micro-interaction for Bento Cards (Mouse tracking glow)
+        document.getElementById('bentoContainer').addEventListener('mousemove', function(e) {
+            const cards = this.querySelectorAll('.bento-card');
+            for(const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', ${x}px);
+                card.style.setProperty('--mouse-y', ${y}px);
+            }
+        });
+    </script>
 </div>
 
-        </div>
-    </div>
 
 <div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0d0d0f; flex-direction:column; font-family:'Inter',sans-serif;">
 
@@ -1405,9 +1704,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="ide-topbar" style="background:#161618; display:flex; align-items:center; padding:0 16px; height:48px; border-bottom:1px solid #2a2a2e; flex-shrink:0; gap:12px;">
         <!-- Traffic Lights -->
         <div style="display:flex; gap:7px; align-items:center; margin-right:8px;">
-            <div onclick="closePresentation()" title="Закрыть" style="width:13px;height:13px;border-radius:50%;background:#ff5f57;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
+            <div onclick="closePresentation()" title="Close" style="width:13px;height:13px;border-radius:50%;background:#ff5f57;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
             <div style="width:13px;height:13px;border-radius:50%;background:#febc2e;">​</div>
-            <div onclick="window.setIDELayout('preview')" title="Полный экран превью" style="width:13px;height:13px;border-radius:50%;background:#28c840;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
+            <div onclick="window.setIDELayout('preview')" title="Full screen preview" style="width:13px;height:13px;border-radius:50%;background:#28c840;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">​</div>
         </div>
 
         <!-- File Tabs -->
@@ -1419,20 +1718,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <!-- Close button -->
-        <button onclick="closePresentation()" title="Выйти из редактора" style="display:flex;align-items:center;gap:7px;background:rgba(255,95,87,0.12);border:1px solid rgba(255,95,87,0.3);color:#ff5f57;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,95,87,0.25)';this.style.borderColor='#ff5f57'" onmouseout="this.style.background='rgba(255,95,87,0.12)';this.style.borderColor='rgba(255,95,87,0.3)'">
+        <button onclick="closePresentation()" title="Exit editor" style="display:flex;align-items:center;gap:7px;background:rgba(255,95,87,0.12);border:1px solid rgba(255,95,87,0.3);color:#ff5f57;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,95,87,0.25)';this.style.borderColor='#ff5f57'" onmouseout="this.style.background='rgba(255,95,87,0.12)';this.style.borderColor='rgba(255,95,87,0.3)'">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5f57" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Выйти
+            Log Out
         </button>
 
         <!-- Right controls -->
         <div style="display:flex;gap:10px;align-items:center;margin-left:auto;flex-shrink:0;">
             <div style="display:flex;background:#252529;border-radius:8px;padding:3px;gap:2px;">
-                <button id="layout-split" onclick="window.setIDELayout('split')" title="Разделённый" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
-                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Только редактор" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▣ Code</button>
-                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Только превью" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▢ Preview</button>
+                <button id="layout-split" onclick="window.setIDELayout('split')" title="Split" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
+                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Editor only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▣ Code</button>
+                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Preview only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">▢ Preview</button>
             </div>
             <div id="ide-status-pill" style="background:#1a1a1e;border:1px solid #333;border-radius:20px;padding:5px 14px;font-size:12px;color:#888;"><span id="ide-cursor-pos">Ln 1, Col 1</span></div>
-            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Запустить</button>
+            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Run</button>
         </div>
     </div>
 
@@ -1441,7 +1740,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- LEFT SIDEBAR -->
         <div id="ide-sidebar" style="width:200px;background:#141416;border-right:1px solid #222;display:flex;flex-direction:column;flex-shrink:0;">
-            <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Файлы</div>
+            <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Files</div>
             <div style="padding:6px 0;">
                 <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">📄 index.html</div>
                 <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🎨 style.css</div>
@@ -1471,8 +1770,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- PREVIEW PANE -->
         <div id="ide-preview-pane" style="flex:1;display:flex;flex-direction:column;border-left:1px solid #222;min-width:0;">
             <div style="background:#181820;padding:6px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;flex-shrink:0;">
-                <span style="font-size:12px;color:#555;">🔒 Предварительный обзор</span>
-                <button onclick="runEditorCode()" title="Обновить" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
+                <span style="font-size:12px;color:#555;">🔒 Sneak peek</span>
+                <button onclick="runEditorCode()" title="Refresh" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
             </div>
             <iframe id="editor-preview-window" style="width:100%;flex:1;border:none;"></iframe>
         </div>
@@ -1743,7 +2042,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <button onclick="closeModal('newFeatureModal')" style="position: absolute; top: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10000; transition: background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.7)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
         <i class="ph ph-x"></i>
     </button>
-    <iframe src="saasfly_hero.html?v=11" allow="camera; microphone" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 20px; z-index: 1;"></iframe>
+    <iframe src="saasfly_hero.html?v=19" allow="camera; microphone" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 20px; z-index: 1;"></iframe>
 
     
 </div>
@@ -1841,7 +2140,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             }
             </style>
             
-            <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2); text-align: center;">Настройки и Стиль</h1>
+            <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2); text-align: center;">Settings & Style</h1>
             
             <div class="settings-dashboard-v2" style="display: flex; flex-direction: column; gap: 50px; max-width: 1000px; margin: 0 auto; width: 100%; padding: 20px;">
                 
@@ -1874,15 +2173,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
                 <div style="display: flex; gap: 40px; align-items: center; justify-content: center; width: 100%;">
                     <div id="preview_square_main" class="fs-premium-card" style="TEMP_REPLACE style="flex: 0 0 320px; height: 320px; cursor: pointer; padding: 24px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal(\'fullscreenLayerModal\');"">
-                        <i class="ph-fill ph-house" style="font-size: 64px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(255,255,255,0.3));"></i><h3 style="color: #fff; font-size: 28px; font-weight: 800; margin: 0; text-align: center;">Главный экран<span style="color:#ff0050;">.</span></h3><p style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 12px; text-align: center;">Настройте базовый фон приложения.</p>
+                        <i class="ph-fill ph-house" style="font-size: 64px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(255,255,255,0.3));"></i><h3 style="color: #fff; font-size: 28px; font-weight: 800; margin: 0; text-align: center;">Main screen<span style="color:#ff0050;">.</span></h3><p style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 12px; text-align: center;">Customize the app's base background.</p>
                     </div>
 
-                    <!-- RIGHT: 5x2 Grid (Обои и фоны) -->
+                    <!-- RIGHT: 5x2 Grid (Wallpapers & Backgrounds) -->
                     <div style="flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(2, 1fr); gap: 16px;">
                         <input type="file" id="wallpaperUploadInput_main" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="window.handleWallpaperUpload(event, 'main')">
-                        <div onclick="document.getElementById('wallpaperUploadInput_main').click()" class="fs-premium-card" style="cursor: pointer; background: rgba(255,255,255,0.02); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 2px dashed rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;" title="Свой фон">
+                        <div onclick="document.getElementById('wallpaperUploadInput_main').click()" class="fs-premium-card" style="cursor: pointer; background: rgba(255,255,255,0.02); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 2px dashed rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;" title="Custom Background">
                             <i class="ph ph-plus" style="color: #fff; font-size: 32px; opacity: 0.6;"></i>
-                            <span style="color: #fff; font-size: 11px; opacity: 0.6; font-weight: 700; text-transform: uppercase;">Свой фон</span>
+                            <span style="color: #fff; font-size: 11px; opacity: 0.6; font-weight: 700; text-transform: uppercase;">Custom Background</span>
                         </div>
                         
                         <div onclick="window.setWallpaper('main', 'video:live_bg_1.mp4')" data-wp="video:live_bg_1.mp4" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: linear-gradient(45deg, #1e3c72, #2a5298); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
@@ -1919,10 +2218,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- BOTTOM ROW (Horizontal Glass Ovals) -->
                 <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px; overflow-x: auto; padding-bottom: 20px;">
                     <div style="display: flex; gap: 16px; align-items: center; flex-wrap: nowrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 12px 24px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); min-width: min-content;">
-                        <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><i class="ph-fill ph-drop"></i> Глассморфизм</button>
-                        <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-square"></i> Прозрачный</button>
-                        <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-lightning"></i> Неон</button>
-                        <button onclick="window.setTheme('dark')" data-theme="dark" class="theme-btn" style="white-space: nowrap; background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);"><i class="ph-fill ph-moon"></i> Темный</button>
+                        <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><i class="ph-fill ph-drop"></i> Glassmorphism</button>
+                        <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-square"></i> Clear</button>
+                        <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-lightning"></i> Neon</button>
+                        <button onclick="window.setTheme('dark')" data-theme="dark" class="theme-btn" style="white-space: nowrap; background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);"><i class="ph-fill ph-moon"></i> Dark</button>
                     </div>
                 </div>
                 
@@ -1944,6 +2243,16 @@ window.addEventListener('message', function(event) {
     }
 });
 </script>
+
+    
+    
+
+
+
+
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 
 
