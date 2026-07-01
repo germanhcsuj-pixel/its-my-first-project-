@@ -10,7 +10,19 @@
 
   ① Блок 1 → вставь внутрь <head>
 <meta charset="UTF-8"> ... </head>
+
+<script>
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+</script>
 </body>
+
 ═══════════════════════════════════════════════ -->
 
 
@@ -55,6 +67,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="style.css?v=20260625">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+
+    <!-- Ananyn Zhuregi MediaPipe Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
 </head>
 <body class="no-select">
@@ -169,7 +185,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="ph ph-trash md-hidden"></i>
                 <span class="md-inline">Clear</span>
             </a>
-            <div class="tubelight-nav-item" onclick="openModal('newFeatureModal')" data-tab="NewFeature">
+            <div class="tubelight-nav-item" onclick="window.openVirtualBoard()" data-tab="NewFeature">
                 <i class="ph ph-star md-hidden"></i>
                 <span class="md-inline">Новая функция</span>
             </div>
@@ -314,12 +330,113 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </button>
             </div>
 
-            <div class="right-actions">
+            <div class="right-actions" style="display: flex; align-items: center; gap: 12px;">
+                <style>
+                    .mmd-dropdown {
+                        display: none;
+                        position: absolute;
+                        bottom: calc(100% + 12px);
+                        right: 0;
+                        background: rgba(18, 18, 20, 0.65);
+                        border: 1px solid rgba(255, 255, 255, 0.08);
+                        border-top: 1px solid rgba(255, 255, 255, 0.15);
+                        border-radius: 16px;
+                        padding: 8px;
+                        width: 170px;
+                        box-shadow: 0 16px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+                        backdrop-filter: blur(24px) saturate(180%);
+                        -webkit-backdrop-filter: blur(24px) saturate(180%);
+                        z-index: 1000;
+                        transform-origin: bottom right;
+                        animation: suggestFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+                    }
+                    .mmd-dropdown.open {
+                        display: block;
+                    }
+                    .mmd-option {
+                        padding: 10px 14px;
+                        color: rgba(255,255,255,0.65);
+                        font-size: 13.5px;
+                        cursor: pointer;
+                        border-radius: 10px;
+                        transition: all 0.2s ease;
+                        text-align: left;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        border-bottom: 1px solid transparent;
+                    }
+                    .mmd-option:hover {
+                        background: rgba(255,255,255,0.08);
+                        color: #fff;
+                        padding-left: 18px;
+                    }
+                    .mmd-option.active {
+                        background: rgba(255,255,255,0.1);
+                        color: #fff;
+                        font-weight: 600;
+                        box-shadow: inset 0 1px 1px rgba(255,255,255,0.05);
+                    }
+                    .mmd-option.active::before {
+                        content: '';
+                        display: block;
+                        width: 4px;
+                        height: 4px;
+                        background: #fff;
+                        border-radius: 50%;
+                        box-shadow: 0 0 6px #fff;
+                    }
+                    #modelMiniBtn {
+                        border-radius: 14px;
+                        padding: 0 16px;
+                        height: 44px;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        background: rgba(255,255,255,0.04);
+                        color: #fff;
+                        font-size: 14px;
+                        font-weight: 500;
+                        cursor: pointer;
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+                        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+                        backdrop-filter: blur(10px);
+                    }
+                    #modelMiniBtn:hover, #modelMiniBtn.open {
+                        background: rgba(255,255,255,0.08);
+                        border-color: rgba(255,255,255,0.2);
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 16px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+                    }
+                    #modelMiniBtn i {
+                        color: rgba(255,255,255,0.7);
+                        transition: color 0.2s;
+                    }
+                    #modelMiniBtn:hover i {
+                        color: #fff;
+                    }
+                </style>
+                
+                <div style="position: relative;">
+                    <button type="button" id="modelMiniBtn" title="Select Model">
+                        <i class="ph ph-cpu"></i>
+                        <span id="modelMiniName">Solifon Air</span>
+                        <i class="ph ph-caret-down" style="font-size: 12px; margin-left: 2px;"></i>
+                    </button>
+                    <div id="modelMiniDropdown" class="mmd-dropdown">
+                        <div class="mmd-option active" data-value="gemini">Solifon Air</div>
+                        <div class="mmd-option" data-value="solifon-souldrive">Solifon SoulDrive</div>
+                        <div class="mmd-option" data-value="github">Solifon Ultra</div>
+                        <div class="mmd-option" data-value="solifon-pulse">Solifon Pulse</div>
+                    </div>
+                </div>
 
                 <button type="button" class="chat-send-btn" id="sendBtn">
                     <i class="ph ph-paper-plane-tilt"></i>
                     <span>Send</span>
                 </button>
+
             </div>
         </div>
     
@@ -704,11 +821,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 </div>
-    <script src="script.js?v=20260625-3" charset="utf-8"></script>
+    <script src="script.js?v=6" charset="utf-8"></script>
   
 
 <!-- ── UPGRADE MODAL ── -->
-<div id="upgradeModal" class="modal-overlay" style="display:none; position:fixed; inset:0; background:linear-gradient(135deg,#0a0a0f 0%,#0d0520 50%,#0a0a0f 100%); z-index:99999; align-items:center; justify-content:center;">
+<div id="upgradeModal" class="modal-overlay custom-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5) !important; backdrop-filter: blur(25px); z-index:99999; align-items:center; justify-content:center;">
   <div style="width:100% !important; max-width:100% !important; height:100% !important; max-height:100% !important; margin:0 !important; border-radius:0 !important; padding:20px 0 !important; box-sizing:border-box; position:relative; overflow-y: auto; overflow-x: hidden;">
     <button onclick="closeModal('upgradeModal')" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;width:44px;height:44px;border-radius:50%;z-index:100;">✕</button>
     <div class="preview" style="display: none;">
@@ -1417,17 +1534,218 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 
-<div class="custom-modal" id="newFeatureModal">
-    <div class="modal-content fs-layer-content">
-        <button class="close-modal" onclick="closeModal('newFeatureModal')">&times;</button>
-        <div class="fs-layer-body" style="padding: 60px 40px; width: 100%; display: flex; align-items: center; justify-content: center; height: 100%;">
-            <div style="text-align: center; background: rgba(255,255,255,0.02); padding: 60px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(20px);">
-                <i class="ph ph-star" style="font-size: 80px; color: #fff; margin-bottom: 24px; opacity: 0.9; text-shadow: 0 0 40px rgba(255,255,255,0.5);"></i>
-                <h1 style="color: #fff; font-family: 'Inter', sans-serif; font-size: 48px; margin-bottom: 16px; font-weight: 700; letter-spacing: -1px;">Новая функция</h1>
-                <p style="color: rgba(255,255,255,0.5); font-size: 18px; max-width: 400px; margin: 0 auto;">Этот раздел находится в активной разработке. Совсем скоро здесь появится мощный новый инструмент.</p>
-            </div>
-        </div>
-    </div>
+<style>
+/* Premium Modal Base */
+.premium-modal-overlay {
+    background: rgba(5, 5, 10, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 999999;
+}
+
+/* Magic Glowing Border Wrapper */
+.premium-magic-wrapper {
+    position: relative;
+    padding: 2px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.0));
+    overflow: hidden;
+    animation: modalScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    width: 90%;
+    max-width: 800px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+}
+
+.premium-magic-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(transparent, transparent, transparent, #4f46e5, #ec4899, #8b5cf6, transparent);
+    animation: rotateGlow 4s linear infinite;
+    z-index: -1;
+}
+
+@keyframes rotateGlow {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes modalScaleIn {
+    from { opacity: 0; transform: scale(0.95) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Inner Content */
+.premium-modal-content {
+    background: rgba(15, 15, 20, 0.95);
+    border-radius: 24px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.close-premium-modal {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(255,255,255,0.1);
+    border: none; color: white;
+    font-size: 24px; cursor: pointer;
+    width: 40px; height: 40px;
+    border-radius: 50%; z-index: 10;
+    transition: background 0.3s ease;
+}
+.close-premium-modal:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Typography */
+.premium-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+}
+.premium-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+/* Canvas Container */
+.premium-canvas-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+#output_canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+}
+
+/* Paywall Overlay */
+.premium-paywall-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.paywall-content {
+    text-align: center;
+    padding: 30px;
+}
+
+.paywall-icon {
+    font-size: 48px;
+    color: #ec4899;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 15px rgba(236,72,153,0.5));
+}
+
+.paywall-content h2 {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.paywall-content p {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.premium-upgrade-btn {
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(236,72,153,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.premium-upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236,72,153,0.6);
+}
+.premium-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+.premium-btn.primary {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.premium-btn.primary:hover {
+    background: rgba(255,255,255,0.2);
+}
+.premium-btn.secondary {
+    background: rgba(255,50,50,0.1);
+    color: #ffaaaa;
+    border: 1px solid rgba(255,50,50,0.2);
+}
+.premium-btn.secondary:hover {
+    background: rgba(255,50,50,0.2);
+}
+.premium-btn.glow {
+    background: linear-gradient(135deg, #4f46e5, #ec4899);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(236,72,153,0.3);
+}
+.premium-btn.glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(236,72,153,0.5);
+}
+</style>
+
+<div class="custom-modal premium-modal-overlay" id="newFeatureModal" style="background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);">
+    <button onclick="closeModal('newFeatureModal')" style="position: absolute; top: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10000; transition: background 0.3s;" onmouseover="this.style.background='rgba(0,0,0,0.7)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
+        <i class="ph ph-x"></i>
+    </button>
+    <iframe src="saasfly_hero.html?v=11" allow="camera; microphone" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 20px; z-index: 1;"></iframe>
+
+    
 </div>
 
 <div class="custom-modal" id="fullscreenLayerModal">
@@ -1525,180 +1843,109 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <h1 style="font-family: 'Inter', sans-serif; font-size: 42px; font-weight: 700; margin-bottom: 40px; color: #fff; letter-spacing: -0.03em; text-shadow: 0 4px 20px rgba(255,255,255,0.2); text-align: center;">Настройки и Стиль</h1>
             
-            <div class="settings-dashboard" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 32px;">
+            <div class="settings-dashboard-v2" style="display: flex; flex-direction: column; gap: 50px; max-width: 1000px; margin: 0 auto; width: 100%; padding: 20px;">
                 
-                <!-- LEFT COLUMN: Apple iOS Style Widget Grid -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-content: start;">
-                    
-                    <!-- What's New Card Preview (2x1 Wide Widget) -->
-                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: rgba(8, 8, 10, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 2 / 1; grid-column: span 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('whatsNewModal').classList.add('active');" title="Что нового">
-                        
-                        <!-- Crisp CSS Mini UI -->
-                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
-                            <div style="font-size: 8px; color: #aaa; background: #222; padding: 2px 8px; border-radius: 12px; margin-bottom: 8px;">v2.6 · ИЮНЬ 2026</div>
-                            <h3 style="color: #fff; font-size: 24px; font-weight: bold; margin: 0; letter-spacing: -0.5px;">Что нового<span style="color: #ff0050;">.</span></h3>
-                            <p style="color: #666; font-size: 10px; margin-top: 6px; width: 80%;">Solifon работает на инфраструктуре мирового класса.</p>
-                            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; width: 80%;">
-                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                                <div style="width: 40px; height: 25px; background: rgba(255,255,255,0.05); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- Dark Hover Overlay -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
-                        
-                        <!-- Hover Open Button -->
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
-                            <i class="ph ph-arrow-right"></i> Что нового
-                        </div>
+                <style>
+                    .wp-btn { transition: all 0.2s ease; }
+                    .wp-btn.active {
+                        border: 3px solid #fff !important;
+                        box-shadow: 0 0 25px rgba(255,255,255,0.6) !important;
+                        transform: scale(0.95) !important;
+                    }
+                    .wp-btn.active::after {
+                        content: '✓';
+                        position: absolute;
+                        top: 50%; left: 50%; transform: translate(-50%, -50%);
+                        font-size: 40px; color: #fff; font-weight: bold;
+                        text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+                        pointer-events: none;
+                        z-index: 10;
+                    }
+                    .theme-btn.active {
+                        background: rgba(255,255,255,0.25) !important;
+                        border-color: #fff !important;
+                        box-shadow: inset 0 0 20px rgba(255,255,255,0.3), 0 0 20px rgba(255,255,255,0.4) !important;
+                    }
+                    .fs-premium-card { transition: all 0.3s; }
+                    .fs-premium-card:hover .preview-overlay { opacity: 1 !important; }
+                    .fs-premium-card:hover .preview-btn { opacity: 1 !important; transform: translate(-50%, -50%) scale(1.05); }
+                </style>
+                <!-- ROWS (4 views) -->
+
+                <div style="display: flex; gap: 40px; align-items: center; justify-content: center; width: 100%;">
+                    <div id="preview_square_main" class="fs-premium-card" style="TEMP_REPLACE style="flex: 0 0 320px; height: 320px; cursor: pointer; padding: 24px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal(\'fullscreenLayerModal\');"">
+                        <i class="ph-fill ph-house" style="font-size: 64px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(255,255,255,0.3));"></i><h3 style="color: #fff; font-size: 28px; font-weight: 800; margin: 0; text-align: center;">Главный экран<span style="color:#ff0050;">.</span></h3><p style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 12px; text-align: center;">Настройте базовый фон приложения.</p>
                     </div>
 
-                    <!-- About Solifon Card Preview (1x1 Square Widget) -->
-                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: rgba(3, 3, 3, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 1 / 1; grid-column: span 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); document.getElementById('aboutModal').classList.add('active');" title="О Solifon">
-                        
-                        <!-- Crisp CSS Mini UI -->
-                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
-                            <h3 style="color: #c084fc; font-size: 26px; font-weight: bold; margin: 0; letter-spacing: 2px;">SOLIFON AI</h3>
-                            <p style="color: #666; font-size: 10px; margin-top: 8px; width: 80%; font-style: italic;">Solifon AI brings chat, search, models, voice into one platform.</p>
-                            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 16px; width: 90%;">
-                                <div style="flex: 1; height: 35px; background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></div>
-                                <div style="flex: 1; height: 35px; background: linear-gradient(135deg, rgba(192,132,252,0.1), transparent); border-radius: 8px; border: 1px solid rgba(192,132,252,0.3);"></div>
-                            </div>
+                    <!-- RIGHT: 5x2 Grid (Обои и фоны) -->
+                    <div style="flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(2, 1fr); gap: 16px;">
+                        <input type="file" id="wallpaperUploadInput_main" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="window.handleWallpaperUpload(event, 'main')">
+                        <div onclick="document.getElementById('wallpaperUploadInput_main').click()" class="fs-premium-card" style="cursor: pointer; background: rgba(255,255,255,0.02); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 2px dashed rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;" title="Свой фон">
+                            <i class="ph ph-plus" style="color: #fff; font-size: 32px; opacity: 0.6;"></i>
+                            <span style="color: #fff; font-size: 11px; opacity: 0.6; font-weight: 700; text-transform: uppercase;">Свой фон</span>
                         </div>
                         
-                        <!-- Dark Hover Overlay -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
-                        
-                        <!-- Hover Open Button -->
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
-                            <i class="ph ph-info"></i> О Solifon
+                        <div onclick="window.setWallpaper('main', 'video:live_bg_1.mp4')" data-wp="video:live_bg_1.mp4" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: linear-gradient(45deg, #1e3c72, #2a5298); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-video-camera" style="color: white; font-size: 32px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); z-index: 2;"></i>
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'live_leaves')" data-wp="live_leaves" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-wind" style="color: white; font-size: 32px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); z-index: 2;"></i>
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'live_matrix')" data-wp="live_matrix" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: #001100; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(0,255,0,0.3); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-terminal-window" style="color: #0f0; font-size: 32px; filter: drop-shadow(0 0 15px #0f0); z-index: 2;"></i>
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
                         </div>
                     </div>
-                    
-                    <!-- New Function Card Preview (1x1 Square Widget) -->
-                    <div class="fs-premium-card wp-btn" style="cursor: pointer; padding: 0; background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(192,38,211,0.15)); backdrop-filter: blur(20px); border: 1px solid rgba(192,38,211,0.25); border-radius: 32px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 10px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; aspect-ratio: 1 / 1; grid-column: span 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal'); openModal('newFeatureModal');" title="Новая функция">
-                        <div style="text-align: center; width: 100%; display: flex; flex-direction: column; align-items: center; pointer-events: none;">
-                            <i class="ph ph-star" style="font-size: 32px; color: #f0abfc; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(192,38,211,0.5));"></i>
-                            <h3 style="color: #fff; font-size: 18px; font-weight: bold; margin: 0;">Новая функция</h3>
-                            <p style="color: rgba(255,255,255,0.5); font-size: 10px; margin-top: 8px; width: 80%;">В активной разработке</p>
-                        </div>
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); transition: all 0.3s; opacity: 0;" class="preview-overlay"></div>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 12px 24px; background: rgba(0,0,0,0.6); border-radius: 100px; display: inline-flex; align-items: center; gap: 10px; width: fit-content; color: #fff; z-index: 1; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); opacity: 0; transition: all 0.3s;" class="preview-btn">
-                            <i class="ph ph-star"></i> Открыть
-                        </div>
-                    </div>
-                    
-                    <style>
-                        .fs-premium-card:hover .preview-btn {
-                            opacity: 1 !important;
-                        }
-                        .fs-premium-card:hover .preview-overlay {
-                            background: rgba(0,0,0,0.5) !important;
-                        }
-                    </style>
-                    
+    
                 </div>
 
-                <!-- RIGHT COLUMN: Settings Grids -->
-                <div style="display: flex; flex-direction: column; gap: 24px;">
-                    
-                    <!-- Avatar Upload -->
-                    <div class="fs-premium-card" style="padding: 24px;">
-                        <h3 style="color: #fff; margin-bottom: 16px; font-size: 20px; font-weight: 600;">Аватар</h3>
-                        <div style="display: flex; align-items: center; gap: 24px;">
-                            <img id="settingsAvatarPreview" src="https://ui-avatars.com/api/?name=User&background=random" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: #222; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 8px 20px rgba(0,0,0,0.5);" alt="Avatar">
-                            <div>
-                                <input type="file" id="avatarUploadInput" style="display: none;" accept="image/*" onchange="window.handleAvatarUpload(event)">
-                                <button onclick="document.getElementById('avatarUploadInput').click()" style="padding: 10px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(10px);">Выбрать фото</button>
-                            </div>
-                        </div>
+
+                
+
+
+                
+
+                <!-- BOTTOM ROW (Horizontal Glass Ovals) -->
+                <div style="width: 100%; display: flex; justify-content: center; margin-top: 20px; overflow-x: auto; padding-bottom: 20px;">
+                    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: nowrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 12px 24px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); min-width: min-content;">
+                        <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><i class="ph-fill ph-drop"></i> Глассморфизм</button>
+                        <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-square"></i> Прозрачный</button>
+                        <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.05); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.15); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><i class="ph-fill ph-lightning"></i> Неон</button>
+                        <button onclick="window.setTheme('dark')" data-theme="dark" class="theme-btn" style="white-space: nowrap; background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);"><i class="ph-fill ph-moon"></i> Темный</button>
                     </div>
-
-                    <!-- Wallpapers (Purple boxes in sketch) -->
-                    <div class="fs-premium-card" style="padding: 24px;">
-                        <h3 style="color: #fff; margin-bottom: 16px; font-size: 20px; font-weight: 600;">Обои и Живые фоны</h3>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 14px;">
-                            <div onclick="window.setWallpaper('none')" data-wp="none" style="background: #000;" class="wp-btn" title="Черный"></div>
-                            
-                            <!-- Static -->
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200); background-size: cover;" class="wp-btn" title="Абстракция"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=200); background-size: cover;" class="wp-btn" title="Земля из Космоса"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=200); background-size: cover;" class="wp-btn" title="Материнская плата"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=200); background-size: cover;" class="wp-btn" title="Темный паттерн"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=200); background-size: cover;" class="wp-btn" title="Морской пляж"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=200); background-size: cover;" class="wp-btn" title="Альпийские горы"></div>
-                            <div onclick="window.setWallpaper('url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2564)')" data-wp="url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=2564)" style="background: url(https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=200); background-size: cover;" class="wp-btn" title="Неоновый Киберпанк"></div>
-                            
-                            <!-- Live -->
-                            <div onclick="window.setWallpaper('video:live_bg_1.mp4')" data-wp="video:live_bg_1.mp4" style="background: linear-gradient(45deg, #1e3c72, #2a5298); position: relative;" class="wp-btn" title="Видео: Анимированный Фон">
-                                <i class="ph ph-video-camera" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); font-size: 20px;"></i>
-                            </div>
-                            <div onclick="window.setWallpaper('live_leaves')" data-wp="live_leaves" style="background: url(https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=200); background-size: cover; position: relative;" class="wp-btn" title="Анимация: Осенний Лес">
-                                <i class="ph ph-wind" style="position: absolute; top: 5px; right: 5px; color: white; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); font-size: 14px;"></i>
-                            </div>
-                            <div onclick="window.setWallpaper('live_matrix')" data-wp="live_matrix" style="background: #001100; position: relative;" class="wp-btn" title="Анимация: Матрица">
-                                <i class="ph ph-terminal-window" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #0f0; filter: drop-shadow(0 0 5px #0f0); font-size: 20px;"></i>
-                            </div>
-
-                            <!-- Upload -->
-                            <input type="file" id="wallpaperUploadInput" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="window.handleWallpaperUpload(event)">
-                            <div onclick="document.getElementById('wallpaperUploadInput').click()" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); color: #fff; font-size: 24px; border: 1px dashed rgba(255,255,255,0.3);" class="wp-btn" title="Загрузить свои">
-                                <i class="ph ph-plus"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fonts (Yellow boxes in sketch) -->
-                    <div class="fs-premium-card" style="padding: 24px;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                            <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Шрифт интерфейса</h3>
-                            <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-                            <button onclick="window.setFont('Inter')" data-font="Inter" class="theme-btn font-btn" style="font-family: 'Inter', sans-serif; padding: 12px; justify-content: center;">Inter</button>
-                            <button onclick="window.setFont('Roboto')" data-font="Roboto" class="theme-btn font-btn" style="font-family: 'Roboto', sans-serif; padding: 12px; justify-content: center;">Roboto</button>
-                            <button onclick="window.setFont('Montserrat')" data-font="Montserrat" class="theme-btn font-btn" style="font-family: 'Montserrat', sans-serif; padding: 12px; justify-content: center;">Montserrat</button>
-                            <button onclick="window.setFont('Courier New')" data-font="Courier New" class="theme-btn font-btn" style="font-family: 'Courier New', monospace; padding: 12px; justify-content: center;">Courier</button>
-                        </div>
-                    </div>
-
-                        </div>
-                    </div>
-
                 </div>
+                
             </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 32px; margin-top: 32px;">
-                <!-- Layout & Window Style -->
-                <div class="fs-premium-card" style="padding: 24px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-                        <h3 style="color: #fff; font-size: 20px; font-weight: 600;">Стиль системы</h3>
-                    </div>
-                    
-                    <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 12px; font-weight: 600;">Глобальный фон</p>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
-                        <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-drop"></i> Глассморфизм</button>
-                        <button onclick="window.setTheme('clear')" data-theme="clear" class="theme-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-square"></i> Прозрачный</button>
-                        <button onclick="window.setTheme('neon')" data-theme="neon" class="theme-btn neon" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-lightning"></i> Неон</button>
-                    </div>
 
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-                        <p style="color: rgba(255,255,255,0.4); font-size: 13px; margin: 0; font-weight: 600;">Стиль всплывающих окон</p>
-                        <span style="background: linear-gradient(45deg, #FFD700, #FDB931); color: #000; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;"><i class="ph-fill ph-crown"></i> Premium</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-                        <button onclick="window.setModalStyle('black')" data-modal-style="black" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-moon"></i> Темный</button>
-                        <button onclick="window.setModalStyle('glass')" data-modal-style="glass" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-drop"></i> Стеклянный</button>
-                        <button onclick="window.setModalStyle('clear')" data-modal-style="clear" class="theme-btn modal-style-btn" style="padding: 16px; justify-content: center; font-size: 14px;"><i class="ph ph-square"></i> Прозрачный</button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
+    <!-- Standalone modal removed, moved into newFeatureModal -->
+
+<script>
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+</script>
 </body>
+
 
 
 <!-- PWA Install Banner -->
