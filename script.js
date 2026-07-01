@@ -1,94 +1,3 @@
-window.addEventListener('message', function(event) {
-    if (event.data === 'toggleCamera') {
-        if (window.toggleAirCanvas) window.toggleAirCanvas();
-    }
-    if (event.data === 'closeNewFeatureModal') {
-        if (window.closeModal) window.closeModal('newFeatureModal');
-    }
-});
-
-
-(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P5MZ4C6S');
-
-
-    setTimeout(() => {
-        const ta = document.getElementById('userInput');
-        const sb = document.getElementById('sendBtn');
-        if(ta && sb) {
-            ta.addEventListener('input', function() {
-                this.style.height = '60px';
-                this.style.height = (this.scrollHeight) + 'px';
-                if(this.value.trim().length > 0) sb.classList.add('active');
-                else sb.classList.remove('active');
-            });
-            ta.addEventListener('keydown', function(e) {
-                if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sb.click(); }
-            });
-
-            // ===== ЗАГОЛОВОК: уходит вверх при отправке =====
-            sb.addEventListener('click', function() {
-                const hdr = document.getElementById('animatedChatHeader');
-                if (hdr && ta.value.trim().length > 0) {
-                    hdr.classList.add('sent-hidden');
-                    hdr.classList.remove('typing-active');
-                }
-            });
-        }
-
-        // ===== MODEL MINI BUTTON =====
-        const miniBtn = document.getElementById('modelMiniBtn');
-        const miniName = document.getElementById('modelMiniName');
-        const mmdDropdown = document.getElementById('modelMiniDropdown');
-
-        const mmdShortNames = {
-            'gemini': 'Air',
-            'solifon-pulse': 'Pulse',
-            'github': 'Ultra',
-            'solifon-souldrive': 'SoulDrive'
-        };
-
-        if (miniBtn && mmdDropdown) {
-            miniBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isOpen = mmdDropdown.classList.contains('open');
-                mmdDropdown.classList.toggle('open', !isOpen);
-                miniBtn.classList.toggle('open', !isOpen);
-            });
-
-            mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
-                opt.addEventListener('click', () => {
-                    const val = opt.getAttribute('data-value');
-                    const shortName = mmdShortNames[val] || val;
-                    if (miniName) miniName.textContent = shortName;
-
-                    // Also trigger the existing model selection logic
-                    const existingOpt = document.querySelector('.model-option[data-value="' + val + '"]');
-                    if (existingOpt) existingOpt.click();
-
-                    mmdDropdown.classList.remove('open');
-                    miniBtn.classList.remove('open');
-
-                    // Highlight active
-                    mmdDropdown.querySelectorAll('.mmd-option').forEach(o => o.classList.remove('active'));
-                    opt.classList.add('active');
-                });
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!miniBtn.contains(e.target) && !mmdDropdown.contains(e.target)) {
-                    mmdDropdown.classList.remove('open');
-                    miniBtn.classList.remove('open');
-                }
-            });
-        }
-    }, 1000);
-
-
-
 // ============================================================
 // 0. FIREBASE SETUP
 // ============================================================
@@ -671,16 +580,6 @@ window.openFilePicker = function() {
 };
 
 window.openModal = function(id) {
-    if (id === 'aboutModal') {
-        window.currentViewBg = 'about';
-        window.applyWallpaper();
-    } else if (id === 'upgradeModal') {
-        window.currentViewBg = 'sub';
-        window.applyWallpaper();
-    } else if (id === 'whatsNewModal') {
-        window.currentViewBg = 'whatsnew';
-        window.applyWallpaper();
-    }
     const navToggle = document.getElementById('nav-toggle');
     if (navToggle) {
         navToggle.checked = false;
@@ -703,16 +602,12 @@ window.openModal = function(id) {
 };
 
 window.closeModal = function(id) {
-    if (['aboutModal', 'upgradeModal', 'whatsNewModal', 'fullscreenLayerModal'].includes(id)) {
-        window.currentViewBg = 'main';
-        window.applyWallpaper('main');
-    }
     const m = document.getElementById(id);
     if (m) {
         m.classList.remove('active');
         document.body.style.overflow = '';
         setTimeout(() => {
-            m.style.setProperty('display', 'none', 'important');
+            m.style.display = 'none';
             m.style.removeProperty('opacity');
             m.style.removeProperty('pointer-events');
             m.style.removeProperty('visibility');
@@ -852,7 +747,118 @@ if (chatTrigger) {
     });
 
     const stepsHTML = `
-
+<style>
+.ai-thinking-steps {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    margin-bottom: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.thinking-step {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 0; /* starts collapsed */
+    
+    /* Initially hidden for sequential appearance */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, transform 0.5s ease, padding-bottom 0.5s ease;
+}
+.thinking-step.active {
+    opacity: 1;
+    max-height: 80px;
+    transform: translateY(0);
+    padding-bottom: 20px;
+}
+.thinking-step:last-child.active {
+    padding-bottom: 0;
+}
+.step-line {
+    position: absolute;
+    left: 8px;
+    top: 20px;
+    bottom: -4px;
+    width: 2px;
+    background-color: rgba(255,255,255,0.15);
+    z-index: 1;
+}
+.thinking-step:last-child .step-line {
+    display: none;
+}
+.step-icon-container {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    margin-top: 2px;
+}
+.step-icon {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+/* Pulsing animation while active but not completed (Claude style) */
+.thinking-step.active:not(.completed) .step-icon {
+    border-color: rgba(255,255,255,0.6);
+    animation: claudePulse 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes claudePulse {
+    0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+    100% { transform: scale(1.1); box-shadow: 0 0 8px 0 rgba(255,255,255,0.05); }
+}
+.step-icon i {
+    opacity: 0;
+    font-size: 8px;
+    color: #000;
+    transform: scale(0.5);
+    transition: all 0.3s ease;
+}
+.thinking-step.completed .step-icon {
+    background: #e5e5e5;
+    border-color: #e5e5e5;
+    box-shadow: none;
+}
+.thinking-step.completed .step-icon i {
+    opacity: 1;
+    transform: scale(1);
+    color: #000;
+}
+.step-content {
+    display: flex;
+    flex-direction: column;
+}
+.step-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    transition: color 0.3s ease;
+    line-height: 1.4;
+}
+.thinking-step.completed .step-title {
+    color: rgba(255,255,255,0.9);
+}
+</style>
 <div class="ai-thinking-steps">
   ${stepsHTMLContent}
 </div>
@@ -1793,9 +1799,9 @@ window.runEditorCode = function() {
     const previewWindow = document.getElementById("editor-preview-window");
     const preview = previewWindow.contentWindow.document;
     preview.open();
-    const baseStyle = ``;
+    const baseStyle = `<style>body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; } #output { background: #282a36; color: #f8f8f2; padding: 20px; border-radius: 8px; font-family: monospace; }</style>`;
     if (['html', 'css', 'js'].includes(currentEditorLang)) {
-        const code = codeEditors.html.getValue() + `` + `<script>${codeEditors.js.getValue()}<\/script>`;
+        const code = codeEditors.html.getValue() + `<style>${codeEditors.css.getValue()}</style>` + `<script>${codeEditors.js.getValue()}<\/script>`;
         preview.write(code);
     } else if (currentEditorLang === 'py') {
         preview.write(baseStyle + "<h3>Python Output:</h3><pre id='output'></pre>");
@@ -2630,7 +2636,7 @@ function showInstallGuide() {
     const modal = document.getElementById(id);
     if (modal) {
       modal.classList.remove('active');
-      modal.style.setProperty('display', 'none', 'important');
+      modal.style.display = 'none';
     }
     document.body.style.overflow = '';
   };
@@ -3749,12 +3755,11 @@ window.applyCustomAvatar = function() {
     }
 };
 
-window.currentViewBg = 'main';
-
-window.setWallpaper = function(view, bg) {
-    if (!view) view = 'main';
-    localStorage.setItem('solifon_custom_wallpaper_' + view, bg);
+window.setWallpaper = function(bg) {
+    localStorage.setItem('solifon_custom_wallpaper', bg);
     
+    // Automatically switch to glassmorphism if a custom wallpaper is selected 
+    // and current theme is opaque (neon or default/missing)
     if (bg && bg !== 'none') {
         const currentTheme = localStorage.getItem('solifon_custom_theme');
         if (currentTheme !== 'glass' && currentTheme !== 'clear') {
@@ -3762,11 +3767,9 @@ window.setWallpaper = function(view, bg) {
         }
     }
     
-    window.applyWallpaper(view);
-    window.applyTheme();
+    window.applyWallpaper();
+    window.applyTheme(); // Ensure theme updates immediately
 };
-
-
 
 window.handleWallpaperUpload = function(event) {
     const file = event.target.files[0];
@@ -3789,12 +3792,8 @@ window.handleWallpaperUpload = function(event) {
 
 window.liveWallpaperAnimationId = null;
 
-window.applyWallpaper = function(forceView) {
-    const viewToApply = forceView || window.currentViewBg || 'main';
-    let bg = localStorage.getItem('solifon_custom_wallpaper_' + viewToApply);
-    if (!bg && viewToApply === 'main') {
-        bg = localStorage.getItem('solifon_custom_wallpaper'); // fallback
-    }
+window.applyWallpaper = function() {
+    const bg = localStorage.getItem('solifon_custom_wallpaper');
     
     // Stop any existing animation and remove canvas or video
     if (window.liveWallpaperAnimationId) {
@@ -3806,43 +3805,17 @@ window.applyWallpaper = function(forceView) {
     const oldVideo = document.getElementById('live-wallpaper-video');
     if (oldVideo) oldVideo.remove();
 
-    // Create modal bg layer if not exists
-    let modalBgLayer = document.getElementById('solifon_modal_bg_layer');
-    if (!modalBgLayer) {
-        modalBgLayer = document.createElement('div');
-        modalBgLayer.id = 'solifon_modal_bg_layer';
-        modalBgLayer.style.position = 'fixed';
-        modalBgLayer.style.top = '0';
-        modalBgLayer.style.left = '0';
-        modalBgLayer.style.width = '100vw';
-        modalBgLayer.style.height = '100vh';
-        modalBgLayer.style.zIndex = '9998'; // Just behind modals (9999)
-        modalBgLayer.style.pointerEvents = 'none';
-        document.body.appendChild(modalBgLayer);
-    }
-    
-    // Determine target container based on view
-    const targetElement = (viewToApply === 'main') ? document.body : modalBgLayer;
-    
-    if (viewToApply === 'main' || !bg || bg === 'none') {
-        modalBgLayer.style.display = 'none';
-    } else {
-        modalBgLayer.style.display = 'block';
-        modalBgLayer.style.backgroundImage = 'none';
-        modalBgLayer.style.backgroundColor = 'transparent';
-    }
-
     if (bg && bg.startsWith('video:')) {
         const videoSrc = bg.replace('video:', '');
-        targetElement.style.backgroundImage = 'none';
-        targetElement.style.backgroundColor = '#000';
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#000';
         
         const video = document.createElement('video');
         video.id = 'live-wallpaper-video';
         video.src = videoSrc;
         video.autoplay = true;
         video.loop = true;
-        video.muted = true;
+        video.muted = true; // Required for auto-play
         video.playsInline = true;
         video.style.position = 'fixed';
         video.style.top = '0';
@@ -3850,59 +3823,32 @@ window.applyWallpaper = function(forceView) {
         video.style.width = '100vw';
         video.style.height = '100vh';
         video.style.objectFit = 'cover';
-        video.style.zIndex = (viewToApply === 'main') ? '-2' : '9998';
+        video.style.zIndex = '-2'; // Behind UI and backdrop
         video.style.pointerEvents = 'none';
-        
-        // Append to the appropriate layer
-        if (viewToApply === 'main') {
-            document.body.appendChild(video);
-        } else {
-            modalBgLayer.appendChild(video);
-        }
+        document.body.appendChild(video);
     } else if (bg === 'live_leaves') {
-        targetElement.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=2564")'; // Autumn forest
-        targetElement.style.backgroundSize = 'cover';
-        targetElement.style.backgroundPosition = 'center';
-        targetElement.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=2564")'; // Autumn forest
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
         startFallingLeaves();
     } else if (bg === 'live_matrix') {
-        targetElement.style.backgroundImage = 'none';
-        targetElement.style.backgroundColor = '#050505';
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#050505';
         startMatrixRain();
     } else if (bg && bg !== 'none') {
-        targetElement.style.backgroundImage = bg;
-        targetElement.style.backgroundSize = 'cover';
-        targetElement.style.backgroundPosition = 'center';
-        targetElement.style.backgroundAttachment = 'fixed';
+        document.body.style.backgroundImage = bg;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
     } else {
-        targetElement.style.backgroundImage = 'none';
-        targetElement.style.backgroundColor = (viewToApply === 'main') ? '#000' : 'transparent';
+        document.body.style.backgroundImage = 'none';
+        document.body.style.backgroundColor = '#000'; // fallback
     }
-    
-    // Update preview squares in settings dashboard
-    ['main', 'whatsnew', 'about', 'sub'].forEach(v => {
-        const sq = document.getElementById('preview_square_' + v);
-        if (sq) {
-            const vbg = localStorage.getItem('solifon_custom_wallpaper_' + v) || (v === 'main' ? localStorage.getItem('solifon_custom_wallpaper') : null);
-            if (vbg && vbg.startsWith('url')) {
-                sq.style.background = vbg + ' center/cover';
-            } else if (vbg && vbg.startsWith('video:')) {
-                sq.style.background = 'linear-gradient(45deg, #1e3c72, #2a5298)';
-            } else if (vbg === 'live_leaves') {
-                sq.style.background = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400") center/cover';
-            } else if (vbg === 'live_matrix') {
-                sq.style.background = '#001100';
-            } else {
-                sq.style.background = '#0a0a0a';
-            }
-        }
-    });
     
     // Update UI active states
     document.querySelectorAll('.wp-btn').forEach(btn => {
-        const btnView = btn.dataset.view || 'main';
-        const viewBg = localStorage.getItem('solifon_custom_wallpaper_' + btnView) || (btnView === 'main' ? localStorage.getItem('solifon_custom_wallpaper') : null);
-        if (btn.dataset.wp === viewBg || (!viewBg && btn.dataset.wp === 'none')) {
+        if (btn.dataset.wp === bg || (!bg && btn.dataset.wp === 'none')) {
             btn.classList.add('active');
         } else {
             btn.classList.remove('active');
@@ -4176,295 +4122,4 @@ document.addEventListener('DOMContentLoaded', () => {
     window.applyTheme();
     window.applyModalStyle();
     window.applyFont();
-});
-
-// ============================================================
-// ВИРТУАЛЬНАЯ ДОСКА И ПРОВЕРКА ПОДПИСКИ
-// ============================================================
-let videoElement = document.getElementById('input_video');
-let canvasElement = document.getElementById('output_canvas');
-let canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
-
-let prevX = 0; 
-let prevY = 0;
-let isPremiumUser = false;
-
-// 1. ПРОВЕРКА ПОДПИСКИ (Связь с твоим app (2).py)
-async function verifySubscription() {
-    try {
-        const response = await fetch('/api/check-premium', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: 'user_001', token: 'secret_paid_token_123' })
-        });
-        
-        if (response.ok) {
-            isPremiumUser = true;
-            // Скрываем paywall, но камеру запускаем только по кнопке "Включить камеру"
-            const paywallMsg = document.getElementById('premium-paywall');
-            if (paywallMsg) paywallMsg.style.display = 'none';
-        } else {
-            const paywallMsg = document.getElementById('premium-paywall');
-            if (paywallMsg) paywallMsg.style.display = 'flex';
-        }
-    } catch (e) {
-        console.error("Ошибка проверки подписки");
-    }
-}
-
-let drawCtx = null;
-let cameraStarted = false;
-
-function initDrawingCanvas() {
-    const dCanvas = document.getElementById('drawing_canvas');
-    if (dCanvas) {
-        drawCtx = dCanvas.getContext('2d');
-        // Настраиваем кисть
-        drawCtx.lineCap = 'round';
-        drawCtx.lineJoin = 'round';
-    }
-}
-
-function startAirCanvas() {
-    if (!videoElement) videoElement = document.getElementById('input_video');
-    if (!canvasElement) {
-        canvasElement = document.getElementById('output_canvas');
-        canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
-    }
-    if (!videoElement || !canvasElement) return;
-    if (cameraStarted) return; // Защита от повторного запуска
-
-    cameraStarted = true;
-        let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'none';
-    initDrawingCanvas();
-    
-    // Show the container over iframe
-    let container = document.getElementById('camera-overlay-container');
-    if (container) {
-        container.style.display = 'block';
-        container.style.width = '640px';
-        container.style.height = '480px';
-    }
-        videoElement.style.width = '640px';
-    videoElement.style.height = '480px';
-    videoElement.width = 640;
-    videoElement.height = 480;
-    canvasElement.style.width = '640px';
-    canvasElement.style.height = '480px';
-    canvasElement.width = 640;
-    canvasElement.height = 480;
-    const dCanvas = document.getElementById('drawing_canvas');
-    if (dCanvas) { dCanvas.width = window.innerWidth; dCanvas.height = window.innerHeight; }
-
-
-    const hands = new Hands({locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-    }});
-
-    hands.setOptions({
-        maxNumHands: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7
-    });
-
-    hands.onResults(onResults);
-
-    window.mpCamera = null;
-    const camera = new Camera(videoElement, {
-        onFrame: async () => { await hands.send({image: videoElement}); },
-        width: 640, height: 480
-    });
-    window.mpCamera = camera;
-    camera.start();
-}
-
-function onResults(results) {
-    if (!canvasCtx) return;
-
-    // 1. Отрисовка видео с камеры на заднем слое (output_canvas)
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    
-    // Зеркальное отображение камеры для удобства пользователя
-    canvasCtx.scale(-1, 1);
-    canvasCtx.translate(-canvasElement.width, 0);
-    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-    canvasCtx.restore();
-
-    // 2. Логика рисования жестами
-    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && drawCtx) {
-        const landmarks = results.multiHandLandmarks[0];
-        
-        // Координаты указательного пальца (с учетом зеркальности)
-        const x = canvasElement.width - (landmarks[8].x * canvasElement.width);
-        const y = landmarks[8].y * canvasElement.height;
-
-        // Рисуем красный прицел (указатель) на слое камеры
-        canvasCtx.beginPath();
-        canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = '#ec4899'; // Неоновый розовый
-        canvasCtx.fill();
-
-        // Если палец поднят (рисуем линию на слое рисования)
-        if (prevX !== 0 && prevY !== 0) {
-            // Расстояние между точками (простейшая защита от резких скачков)
-            const dist = Math.sqrt(Math.pow(x - prevX, 2) + Math.pow(y - prevY, 2));
-            if (dist < 100) {
-                drawCtx.beginPath();
-                drawCtx.moveTo(prevX, prevY);
-                drawCtx.lineTo(x, y);
-                drawCtx.strokeStyle = '#a5b4fc'; // Красивый светлый фиолетовый
-                drawCtx.lineWidth = 6;
-                drawCtx.stroke();
-                
-                // Добавляем свечение кисти
-                drawCtx.shadowColor = '#4f46e5';
-                drawCtx.shadowBlur = 10;
-                drawCtx.stroke();
-                drawCtx.shadowBlur = 0; // Сбрасываем тень для производительности
-            }
-        }
-        prevX = x; prevY = y;
-    } else {
-        prevX = 0; prevY = 0;
-    }
-}
-
-// Функция для открытия виртуальной доски и проверки
-window.openVirtualBoard = function() {
-    if (typeof openModal === 'function') {
-        openModal('newFeatureModal');
-    }
-    verifySubscription();
-};
-
-// Подключение обработчиков для кнопок управления
-document.addEventListener('DOMContentLoaded', () => {
-    const btnStart = document.getElementById('btn-start-camera');
-    const btnClear = document.getElementById('btn-clear-canvas');
-    const btnAnalyze = document.getElementById('btn-analyze');
-
-    if (btnStart) {
-        btnStart.addEventListener('click', () => {
-            if (isPremiumUser) {
-                startAirCanvas();
-                btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
-                btnStart.style.opacity = '0.5';
-                btnStart.disabled = true;
-            } else {
-                alert("Пожалуйста, разблокируйте Premium.");
-            }
-        });
-    }
-
-    if (btnClear) {
-        btnClear.addEventListener('click', () => {
-            if (drawCtx) {
-                const dCanvas = document.getElementById('drawing_canvas');
-                drawCtx.clearRect(0, 0, dCanvas.width, dCanvas.height);
-            }
-        });
-    }
-
-    if (btnAnalyze) {
-        btnAnalyze.addEventListener('click', async () => {
-            if (!isPremiumUser) return;
-            const dCanvas = document.getElementById('drawing_canvas');
-            if (!dCanvas) return;
-            
-            // Анимация кнопки
-            const originalText = btnAnalyze.innerHTML;
-            btnAnalyze.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Анализируем...';
-            
-            // Получаем рисунок в base64
-            const imageBase64 = dCanvas.toDataURL('image/png');
-            
-            try {
-                const formData = new FormData();
-                formData.append('image_base64', imageBase64);
-                formData.append('is_premium', 'true');
-                
-                const response = await fetch('/api/analyze-canvas', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                alert("Solifon Visionary: " + (data.reply || "Анализ завершен."));
-            } catch (err) {
-                alert("Ошибка при анализе рисунка.");
-            } finally {
-                btnAnalyze.innerHTML = originalText;
-            }
-        });
-    }
-});
-
-
-window.toggleAirCanvas = function() {
-    let container = document.getElementById('camera-overlay-container');
-    if (!container) return;
-    
-    if (typeof cameraStarted === 'undefined' || !cameraStarted) {
-        // Start it for the first time
-        if (typeof startAirCanvas === 'function') {
-            startAirCanvas();
-        }
-    } else {
-        // Toggle visibility
-        if (container.style.display === 'none' || container.style.display === '') {
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
-        }
-    }
-};
-
-
-window.stopAirCanvas = function() {
-    let container = document.getElementById('camera-overlay-container');
-    if (container) container.style.display = 'none';
-    
-    if (window.mpCamera) {
-        window.mpCamera.stop();
-        window.mpCamera = null;
-    }
-    
-    let video = document.getElementById('input_video');
-    if (video && video.srcObject) {
-        let stream = video.srcObject;
-        let tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-        video.srcObject = null;
-    }
-    
-    let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'inline-block';
-    
-    cameraStarted = false;
-};
-
-
-
-
-
-// Spotlight effect tracking
-document.querySelectorAll('.dev21-card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-    });
-});
-
-
-
-window.addEventListener('message', function(event) {
-    if (event.data === 'toggleCamera') {
-        if (window.toggleAirCanvas) window.toggleAirCanvas();
-    }
-    if (event.data === 'closeNewFeatureModal') {
-        if (window.closeModal) window.closeModal('newFeatureModal');
-    }
 });
