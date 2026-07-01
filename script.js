@@ -34,12 +34,12 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
         });
 }
 
-// Обработка возврата после Google redirect (мобильные)
+// РћР±СЂР°Р±РѕС‚РєР° РІРѕР·РІСЂР°С‚Р° РїРѕСЃР»Рµ Google redirect (РјРѕР±РёР»СЊРЅС‹Рµ)
 if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
         if (user) {
-            // Закрываем модалку при любом способе входа
+            // Р—Р°РєСЂС‹РІР°РµРј РјРѕРґР°Р»РєСѓ РїСЂРё Р»СЋР±РѕРј СЃРїРѕСЃРѕР±Рµ РІС…РѕРґР°
             const m = document.getElementById('authModal');
             if (m) {
                 m.style.display = 'none';
@@ -54,8 +54,8 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
         }
     });
 }
-// в”Ђв”Ђ AUTH: Email + Password в”Ђв”Ђ
-let authMode = 'login'; // 'login' или 'register'
+// РІвЂќР‚РІвЂќР‚ AUTH: Email + Password РІвЂќР‚РІвЂќР‚
+let authMode = 'login'; // 'login' РёР»Рё 'register'
 
 window.switchAuthTab = function(mode) {
     authMode = mode;
@@ -69,15 +69,15 @@ window.switchAuthTab = function(mode) {
         btnLogin.style.color = '#000';
         btnReg.style.background = 'transparent';
         btnReg.style.color = '#fff';
-        submitBtn.textContent = 'Войти';
-        title.textContent = 'Войдите в аккаунт';
+        submitBtn.textContent = 'Р’РѕР№С‚Рё';
+        title.textContent = 'Р’РѕР№РґРёС‚Рµ РІ Р°РєРєР°СѓРЅС‚';
     } else {
         btnReg.style.background = '#fff';
         btnReg.style.color = '#000';
         btnLogin.style.background = 'transparent';
         btnLogin.style.color = '#fff';
-        submitBtn.textContent = 'Создать аккаунт';
-        title.textContent = 'Регистрация';
+        submitBtn.textContent = 'РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚';
+        title.textContent = 'Р РµРіРёСЃС‚СЂР°С†РёСЏ';
     }
     document.getElementById('authError').textContent = '';
 };
@@ -90,13 +90,13 @@ window.submitAuth = function() {
     const errorEl = document.getElementById('authError');
     const btn = document.getElementById('authSubmitBtn');
     
-    // Валидация
+    // Р’Р°Р»РёРґР°С†РёСЏ
     if (!email || !password) {
-        errorEl.textContent = 'Заполните все поля';
+        errorEl.textContent = 'Р—Р°РїРѕР»РЅРёС‚Рµ РІСЃРµ РїРѕР»СЏ';
         return;
     }
     if (password.length < 6) {
-        errorEl.textContent = 'Пароль минимум 6 символов';
+        errorEl.textContent = 'РџР°СЂРѕР»СЊ РјРёРЅРёРјСѓРј 6 СЃРёРјРІРѕР»РѕРІ';
         return;
     }
     
@@ -117,23 +117,23 @@ window.submitAuth = function() {
         })
         .catch((err) => {
             const msgs = {
-                'auth/user-not-found': 'Пользователь не найден',
-                'auth/wrong-password': 'Неверный пароль',
-                'auth/email-already-in-use': 'Email уже используется',
-                'auth/invalid-email': 'Неверный формат email',
-                'auth/weak-password': 'Пароль слишком слабый',
-                'auth/invalid-credential': 'Неверный email или пароль',
+                'auth/user-not-found': 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ',
+                'auth/wrong-password': 'РќРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ',
+                'auth/email-already-in-use': 'Email СѓР¶Рµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ',
+                'auth/invalid-email': 'РќРµРІРµСЂРЅС‹Р№ С„РѕСЂРјР°С‚ email',
+                'auth/weak-password': 'РџР°СЂРѕР»СЊ СЃР»РёС€РєРѕРј СЃР»Р°Р±С‹Р№',
+                'auth/invalid-credential': 'РќРµРІРµСЂРЅС‹Р№ email РёР»Рё РїР°СЂРѕР»СЊ',
             };
-            errorEl.textContent = msgs[err.code] || 'Ошибка: ' + err.message;
+            errorEl.textContent = msgs[err.code] || 'РћС€РёР±РєР°: ' + err.message;
         })
         .finally(() => {
-            btn.textContent = authMode === 'login' ? 'Войти' : 'Создать аккаунт';
+            btn.textContent = authMode === 'login' ? 'Р’РѕР№С‚Рё' : 'РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚';
             btn.disabled = false;
         });
 };
 
 // ============================================================
-// FIX 1: saveToFirebase вЂ” путь привязан к uid пользователя
+// FIX 1: saveToFirebase РІР‚вЂќ РїСѓС‚СЊ РїСЂРёРІСЏР·Р°РЅ Рє uid РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 // ============================================================
 function saveToFirebase(role, content) {
     if (database && currentUser) {
@@ -150,14 +150,14 @@ function saveToFirebase(role, content) {
 }
 
 // ============================================================
-// FIX 2: loadChatHistory вЂ” только данные текущего пользователя
+// FIX 2: loadChatHistory РІР‚вЂќ С‚РѕР»СЊРєРѕ РґР°РЅРЅС‹Рµ С‚РµРєСѓС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 // ============================================================
 function loadChatHistory() {
     if (!database || !currentUser) return;
     const historyContainer = document.getElementById('chatHistoryItems');
     if (!historyContainer) return;
 
-    // Скрываем статичный "пустой" блок пока грузим
+    // РЎРєСЂС‹РІР°РµРј СЃС‚Р°С‚РёС‡РЅС‹Р№ "РїСѓСЃС‚РѕР№" Р±Р»РѕРє РїРѕРєР° РіСЂСѓР·РёРј
     const emptyEl = document.querySelector('#chatPanel .empty-library');
     if (emptyEl) emptyEl.style.display = 'none';
 
@@ -168,7 +168,7 @@ function loadChatHistory() {
         historyContainer.innerHTML = '';
 
         if (!snapshot.exists()) {
-            // Нет сообщений вЂ” показываем пустой блок обратно
+            // РќРµС‚ СЃРѕРѕР±С‰РµРЅРёР№ РІР‚вЂќ РїРѕРєР°Р·С‹РІР°РµРј РїСѓСЃС‚РѕР№ Р±Р»РѕРє РѕР±СЂР°С‚РЅРѕ
             if (emptyEl) emptyEl.style.display = 'flex';
             return;
         }
@@ -177,7 +177,7 @@ function loadChatHistory() {
             const data = childSnapshot.val();
             const item = document.createElement('div');
             item.className = 'history-item';
-            const icon = data.role === 'user' ? 'рџ‘¤' : 'рџ¤–';
+            const icon = data.role === 'user' ? 'СЂСџвЂВ¤' : 'СЂСџВ¤вЂ“';
             const isFav = data.isFavorite ? 'ph-star-fill' : 'ph-star';
             const favColor = data.isFavorite ? '#ffcf33' : 'rgba(255,255,255,0.2)';
             item.innerHTML = `
@@ -198,7 +198,7 @@ function loadChatHistory() {
 }
 
 // ============================================================
-// FIX 3: toggleFavorite вЂ” путь привязан к uid пользователя
+// FIX 3: toggleFavorite РІР‚вЂќ РїСѓС‚СЊ РїСЂРёРІСЏР·Р°РЅ Рє uid РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 // ============================================================
 window.toggleFavorite = function(msgId, btnElement) {
     if (!database || !currentUser) return;
@@ -215,7 +215,7 @@ window.toggleFavorite = function(msgId, btnElement) {
 };
 
 // ============================================================
-// FIX 4: loadLibrary вЂ” uid + правильный контейнер #savedItemsContainer
+// FIX 4: loadLibrary РІР‚вЂќ uid + РїСЂР°РІРёР»СЊРЅС‹Р№ РєРѕРЅС‚РµР№РЅРµСЂ #savedItemsContainer
 // ============================================================
 function loadLibrary() {
     if (!database || !currentUser) return;
@@ -226,7 +226,7 @@ function loadLibrary() {
     database.ref(`users/${uid}/chat_history`).orderByChild('isFavorite').equalTo(true).once('value', (snapshot) => {
         libraryContainer.innerHTML = '';
         if (!snapshot.exists()) {
-            libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Ваша библиотека пуста.<br>Отметьте важные сообщения звездочкой в чате.</div>';
+            libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Р’Р°С€Р° Р±РёР±Р»РёРѕС‚РµРєР° РїСѓСЃС‚Р°.<br>РћС‚РјРµС‚СЊС‚Рµ РІР°Р¶РЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ Р·РІРµР·РґРѕС‡РєРѕР№ РІ С‡Р°С‚Рµ.</div>';
             return;
         }
         snapshot.forEach((childSnapshot) => {
@@ -246,7 +246,7 @@ function loadLibrary() {
 }
 
 // ============================================================
-// 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+// 1. Р“Р›РћР‘РђР›Р¬РќР«Р• РџР•Р Р•РњР•РќРќР«Р•
 // ============================================================
 let isLiveMode = false;
 let liveRecognition = null;
@@ -256,8 +256,8 @@ const MAX_IMAGES = 5;
 let selectedProvider = 'gemini';
 let lumifexActive = false;
 
-// FIX: Correct comment syntax (was "/ в”Ђв”Ђ" causing JS parse error)
-// в”Ђв”Ђ DEEP MODE СРСТЕМА в”Ђв”Ђ
+// FIX: Correct comment syntax (was "/ РІвЂќР‚РІвЂќР‚" causing JS parse error)
+// РІвЂќР‚РІвЂќР‚ DEEP MODE РЎР ВРЎРўР•РњРђ РІвЂќР‚РІвЂќР‚
 let deepRequestsToday = 0;
 const DEEP_LIMIT = 5;
 
@@ -278,7 +278,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('ai', 'рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!');
+        addMessageToUI('ai', 'СЂСџвЂќВ¬ Р›РёРјРёС‚ Deep Mode РёСЃС‡РµСЂРїР°РЅ. РЈ РІР°СЃ РµСЃС‚СЊ 5 Р·Р°РїСЂРѕСЃРѕРІ РІ РґРµРЅСЊ. РџРѕРїСЂРѕР±СѓР№С‚Рµ Р·Р°РІС‚СЂР°!');
         return false;
     }
     return true;
@@ -313,7 +313,7 @@ const modelMap = {
 };
 
 // ============================================================
-// 2. ВСПОМОГАТЕЛЬНЫЕ UI ФУНКЦРР
+// 2. Р’РЎРџРћРњРћР“РђРўР•Р›Р¬РќР«Р• UI Р¤РЈРќРљР¦Р ВР В
 // ============================================================
 function typeEffect(element, text) {
     const textContainer = element.querySelector('.text');
@@ -324,7 +324,7 @@ function typeEffect(element, text) {
     const interval = setInterval(() => {
         if (i < cleanText.length) {
             i++;
-            // Показываем накопленный текст с форматированием
+            // РџРѕРєР°Р·С‹РІР°РµРј РЅР°РєРѕРїР»РµРЅРЅС‹Р№ С‚РµРєСЃС‚ СЃ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёРµРј
             const partial = cleanText.slice(0, i);
             textContainer.innerHTML = partial
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -365,59 +365,59 @@ function addMessageToUI(role, content = "") {
 }
 
 // ============================================================
-// QUICK QUESTIONS вЂ” 40 вопросов, 4 случайных
+// QUICK QUESTIONS РІР‚вЂќ 40 РІРѕРїСЂРѕСЃРѕРІ, 4 СЃР»СѓС‡Р°Р№РЅС‹С…
 // ============================================================
 const ALL_QUESTIONS = [
-  { icon: "ph ph-brain", text: "Что такое нейронная сеть?" },
-  { icon: "ph ph-atom", text: "Объясни квантовую механику" },
-  { icon: "ph ph-rocket-launch", text: "Как написать бизнес-план?" },
-  { icon: "ph ph-lightning", text: "Что такое машинное обучение?" },
-  { icon: "ph ph-globe", text: "Как работает интернет?" },
-  { icon: "ph ph-dna", text: "Что такое ДНК и как она работает?" },
-  { icon: "ph ph-star", text: "Что такое чёрная дыра?" },
-  { icon: "ph ph-code", text: "Как начать программировать с нуля?" },
-  { icon: "ph ph-currency-dollar", text: "Как начать инвестировать?" },
-  { icon: "ph ph-heartbeat", text: "Как работает иммунная система?" },
-  { icon: "ph ph-cpu", text: "Что такое искусственный интеллект?" },
-  { icon: "ph ph-currency-bitcoin", text: "Что такое криптовалюта?" },
-  { icon: "ph ph-leaf", text: "Что такое фотосинтез?" },
-  { icon: "ph ph-map-pin", text: "Как работает GPS?" },
-  { icon: "ph ph-shield-check", text: "Как работает вакцина?" },
-  { icon: "ph ph-robot", text: "Что такое ChatGPT?" },
-  { icon: "ph ph-books", text: "Как выучить английский быстро?" },
-  { icon: "ph ph-wave-sine", text: "Как работает лазер?" },
-  { icon: "ph ph-planet", text: "Что такое параллельные вселенные?" },
-  { icon: "ph ph-thermometer-hot", text: "Что такое термоядерный синтез?" },
-  { icon: "ph ph-users", text: "Как работают социальные сети?" },
-  { icon: "ph ph-desktop", text: "Что такое метавселенная?" },
-  { icon: "ph ph-paint-brush", text: "Как создать своё приложение?" },
-  { icon: "ph ph-recycle", text: "Что такое климатические изменения?" },
-  { icon: "ph ph-chart-line-up", text: "Как работает экономика?" },
-  { icon: "ph ph-smiley", text: "Как справиться со стрессом?" },
-  { icon: "ph ph-magnifying-glass", text: "Что такое нанотехнологии?" },
-  { icon: "ph ph-flask", text: "Что такое генетическая инженерия?" },
-  { icon: "ph ph-infinity", text: "Объясни теорию относительности" },
-  { icon: "ph ph-timer", text: "Как улучшить память?" },
-  { icon: "ph ph-notebook", text: "Как написать резюме?" },
-  { icon: "ph ph-sun", text: "Как медитация влияет на мозг?" },
-  { icon: "ph ph-graph", text: "Как изучить Python за месяц?" },
-  { icon: "ph ph-eye", text: "Что такое философия сознания?" },
-  { icon: "ph ph-fire", text: "Что такое антиматерия?" },
-  { icon: "ph ph-sparkle", text: "Как устроен человеческий мозг?" },
-  { icon: "ph ph-robot", text: "Что такое робототехника?" },
-  { icon: "ph ph-cloud", text: "Что такое большой взрыв?" },
-  { icon: "ph ph-hand-coins", text: "Как работает блокчейн?" },
-  { icon: "ph ph-monitor-play", text: "Как создать сайт с нуля?" }
+  { icon: "ph ph-brain", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РЅРµР№СЂРѕРЅРЅР°СЏ СЃРµС‚СЊ?" },
+  { icon: "ph ph-atom", text: "РћР±СЉСЏСЃРЅРё РєРІР°РЅС‚РѕРІСѓСЋ РјРµС…Р°РЅРёРєСѓ" },
+  { icon: "ph ph-rocket-launch", text: "РљР°Рє РЅР°РїРёСЃР°С‚СЊ Р±РёР·РЅРµСЃ-РїР»Р°РЅ?" },
+  { icon: "ph ph-lightning", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РјР°С€РёРЅРЅРѕРµ РѕР±СѓС‡РµРЅРёРµ?" },
+  { icon: "ph ph-globe", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ РёРЅС‚РµСЂРЅРµС‚?" },
+  { icon: "ph ph-dna", text: "Р§С‚Рѕ С‚Р°РєРѕРµ Р”РќРљ Рё РєР°Рє РѕРЅР° СЂР°Р±РѕС‚Р°РµС‚?" },
+  { icon: "ph ph-star", text: "Р§С‚Рѕ С‚Р°РєРѕРµ С‡С‘СЂРЅР°СЏ РґС‹СЂР°?" },
+  { icon: "ph ph-code", text: "РљР°Рє РЅР°С‡Р°С‚СЊ РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°С‚СЊ СЃ РЅСѓР»СЏ?" },
+  { icon: "ph ph-currency-dollar", text: "РљР°Рє РЅР°С‡Р°С‚СЊ РёРЅРІРµСЃС‚РёСЂРѕРІР°С‚СЊ?" },
+  { icon: "ph ph-heartbeat", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ РёРјРјСѓРЅРЅР°СЏ СЃРёСЃС‚РµРјР°?" },
+  { icon: "ph ph-cpu", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РёСЃРєСѓСЃСЃС‚РІРµРЅРЅС‹Р№ РёРЅС‚РµР»Р»РµРєС‚?" },
+  { icon: "ph ph-currency-bitcoin", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РєСЂРёРїС‚РѕРІР°Р»СЋС‚Р°?" },
+  { icon: "ph ph-leaf", text: "Р§С‚Рѕ С‚Р°РєРѕРµ С„РѕС‚РѕСЃРёРЅС‚РµР·?" },
+  { icon: "ph ph-map-pin", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ GPS?" },
+  { icon: "ph ph-shield-check", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ РІР°РєС†РёРЅР°?" },
+  { icon: "ph ph-robot", text: "Р§С‚Рѕ С‚Р°РєРѕРµ ChatGPT?" },
+  { icon: "ph ph-books", text: "РљР°Рє РІС‹СѓС‡РёС‚СЊ Р°РЅРіР»РёР№СЃРєРёР№ Р±С‹СЃС‚СЂРѕ?" },
+  { icon: "ph ph-wave-sine", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ Р»Р°Р·РµСЂ?" },
+  { icon: "ph ph-planet", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РїР°СЂР°Р»Р»РµР»СЊРЅС‹Рµ РІСЃРµР»РµРЅРЅС‹Рµ?" },
+  { icon: "ph ph-thermometer-hot", text: "Р§С‚Рѕ С‚Р°РєРѕРµ С‚РµСЂРјРѕСЏРґРµСЂРЅС‹Р№ СЃРёРЅС‚РµР·?" },
+  { icon: "ph ph-users", text: "РљР°Рє СЂР°Р±РѕС‚Р°СЋС‚ СЃРѕС†РёР°Р»СЊРЅС‹Рµ СЃРµС‚Рё?" },
+  { icon: "ph ph-desktop", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РјРµС‚Р°РІСЃРµР»РµРЅРЅР°СЏ?" },
+  { icon: "ph ph-paint-brush", text: "РљР°Рє СЃРѕР·РґР°С‚СЊ СЃРІРѕС‘ РїСЂРёР»РѕР¶РµРЅРёРµ?" },
+  { icon: "ph ph-recycle", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РєР»РёРјР°С‚РёС‡РµСЃРєРёРµ РёР·РјРµРЅРµРЅРёСЏ?" },
+  { icon: "ph ph-chart-line-up", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ СЌРєРѕРЅРѕРјРёРєР°?" },
+  { icon: "ph ph-smiley", text: "РљР°Рє СЃРїСЂР°РІРёС‚СЊСЃСЏ СЃРѕ СЃС‚СЂРµСЃСЃРѕРј?" },
+  { icon: "ph ph-magnifying-glass", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РЅР°РЅРѕС‚РµС…РЅРѕР»РѕРіРёРё?" },
+  { icon: "ph ph-flask", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РіРµРЅРµС‚РёС‡РµСЃРєР°СЏ РёРЅР¶РµРЅРµСЂРёСЏ?" },
+  { icon: "ph ph-infinity", text: "РћР±СЉСЏСЃРЅРё С‚РµРѕСЂРёСЋ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕСЃС‚Рё" },
+  { icon: "ph ph-timer", text: "РљР°Рє СѓР»СѓС‡С€РёС‚СЊ РїР°РјСЏС‚СЊ?" },
+  { icon: "ph ph-notebook", text: "РљР°Рє РЅР°РїРёСЃР°С‚СЊ СЂРµР·СЋРјРµ?" },
+  { icon: "ph ph-sun", text: "РљР°Рє РјРµРґРёС‚Р°С†РёСЏ РІР»РёСЏРµС‚ РЅР° РјРѕР·Рі?" },
+  { icon: "ph ph-graph", text: "РљР°Рє РёР·СѓС‡РёС‚СЊ Python Р·Р° РјРµСЃСЏС†?" },
+  { icon: "ph ph-eye", text: "Р§С‚Рѕ С‚Р°РєРѕРµ С„РёР»РѕСЃРѕС„РёСЏ СЃРѕР·РЅР°РЅРёСЏ?" },
+  { icon: "ph ph-fire", text: "Р§С‚Рѕ С‚Р°РєРѕРµ Р°РЅС‚РёРјР°С‚РµСЂРёСЏ?" },
+  { icon: "ph ph-sparkle", text: "РљР°Рє СѓСЃС‚СЂРѕРµРЅ С‡РµР»РѕРІРµС‡РµСЃРєРёР№ РјРѕР·Рі?" },
+  { icon: "ph ph-robot", text: "Р§С‚Рѕ С‚Р°РєРѕРµ СЂРѕР±РѕС‚РѕС‚РµС…РЅРёРєР°?" },
+  { icon: "ph ph-cloud", text: "Р§С‚Рѕ С‚Р°РєРѕРµ Р±РѕР»СЊС€РѕР№ РІР·СЂС‹РІ?" },
+  { icon: "ph ph-hand-coins", text: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ Р±Р»РѕРєС‡РµР№РЅ?" },
+  { icon: "ph ph-monitor-play", text: "РљР°Рє СЃРѕР·РґР°С‚СЊ СЃР°Р№С‚ СЃ РЅСѓР»СЏ?" }
 ];
 
 function renderQuickPills() {
   const container = document.getElementById('quickPills');
   if (!container) return;
   const selected = [
-    { icon: "ph ph-cpu", text: "Что такое искусственный интеллект?" },
-    { icon: "ph ph-desktop", text: "Что такое метавселенная?" },
-    { icon: "ph ph-fire", text: "Что такое антиматерия?" },
-    { icon: "ph ph-lightning", text: "Что такое машинное обучение?" }
+    { icon: "ph ph-cpu", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РёСЃРєСѓСЃСЃС‚РІРµРЅРЅС‹Р№ РёРЅС‚РµР»Р»РµРєС‚?" },
+    { icon: "ph ph-desktop", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РјРµС‚Р°РІСЃРµР»РµРЅРЅР°СЏ?" },
+    { icon: "ph ph-fire", text: "Р§С‚Рѕ С‚Р°РєРѕРµ Р°РЅС‚РёРјР°С‚РµСЂРёСЏ?" },
+    { icon: "ph ph-lightning", text: "Р§С‚Рѕ С‚Р°РєРѕРµ РјР°С€РёРЅРЅРѕРµ РѕР±СѓС‡РµРЅРёРµ?" }
   ];
   container.innerHTML = '';
   selected.forEach((q, i) => {
@@ -484,7 +484,7 @@ function initModelSelector() {
 }
 
 // ============================================================
-// 3. ГЛОБАЛЬНЫЕ ФУНКЦРР ОКНО Р ФАЙЛОВ
+// 3. Р“Р›РћР‘РђР›Р¬РќР«Р• Р¤РЈРќРљР¦Р ВР В РћРљРќРћ Р В Р¤РђР™Р›РћР’
 // ============================================================
 function ensureAttachmentPreviewInComposer() {
     const preview = document.getElementById('imagePreviewContainer');
@@ -522,7 +522,7 @@ window.handleFileSelect = function(input) {
             div.style.position = 'relative';
             div.innerHTML = `
                 <img src="${e.target.result}" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid #00f2ff; margin-right: 5px;">
-                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">вњ•</div>
+                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">РІСљвЂў</div>
             `;
             container.appendChild(div);
         };
@@ -631,7 +631,7 @@ window.closeModal = function(id) {
 
 
 // ============================================================
-// 4. ОСНОВНАЯ ЛОГИКА (DOMContentLoaded)
+// 4. РћРЎРќРћР’РќРђРЇ Р›РћР“РРљРђ (DOMContentLoaded)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
@@ -644,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainAppLayout = document.getElementById('mainAppLayout');
     const chatTrigger = document.getElementById('chatTrigger');
 
-    // FIX 5: New Chat кнопка
+    // FIX 5: New Chat РєРЅРѕРїРєР°
     const newChatBtn = document.getElementById('newChatBtn');
     if (newChatBtn) {
         newChatBtn.addEventListener('click', () => {
@@ -684,8 +684,8 @@ if (chatTrigger) {
     const filesToSend = [...selectedFiles];
     if (!text && filesToSend.length === 0) return;
 
-    if (text.toLowerCase().startsWith("браузер:")) {
-        let task = text.replace(/браузер:/i, '').trim();
+    if (text.toLowerCase().startsWith("Р±СЂР°СѓР·РµСЂ:")) {
+        let task = text.replace(/Р±СЂР°СѓР·РµСЂ:/i, '').trim();
         const userMsg = document.createElement('div');
         userMsg.className = 'message user-message';
         userMsg.innerHTML = `<div class="text">${text}</div>`;
@@ -730,10 +730,10 @@ if (chatTrigger) {
         totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
     }
 
-    const stage1 = ["Разбор семантической структуры запроса...", "Извлечение ключевых сущностей и намерений...", "Определение контекстной глубины...", "Построение карты логических связей...", "Классификация интента пользователя...", "Распознавание скрытых паттернов в тексте...", "Оценка тональности входных данных...", "Инициализация векторов внимания..."];
-    const stage2 = ["Сканирование многомерных баз данных...", "Извлечение релевантных контекстных блоков...", "Обращение к модулям долгосрочной памяти...", "Синхронизация информационных потоков...", "Фильтрация избыточного шума...", "Поиск пересечений в векторном пространстве...", "Извлечение ассоциативных паттернов...", "Сбор верифицированных фактов..."];
-    const stage3 = ["Кросс-верификация найденных источников...", "Устранение логических противоречий...", "Проверка контекста на безопасность (Safety Check)...", "Каскадная валидация аргументов...", "Оценка достоверности метаданных...", "Взвешивание вероятностных исходов...", "Оптимизация цепочки рассуждений..."];
-    const stage4 = ["Запуск процессов языкового синтеза...", "Формирование структуры финальных тезисов...", "Адаптация стилистики под контекст беседы...", "Подбор точных лингвистических формулировок...", "Калибровка параметров вывода текста...", "Финальный рендеринг ответа модели...", "Проверка грамматических паттернов..."];
+    const stage1 = ["Р Р°Р·Р±РѕСЂ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹ Р·Р°РїСЂРѕСЃР°...", "РР·РІР»РµС‡РµРЅРёРµ РєР»СЋС‡РµРІС‹С… СЃСѓС‰РЅРѕСЃС‚РµР№ Рё РЅР°РјРµСЂРµРЅРёР№...", "РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕРЅС‚РµРєСЃС‚РЅРѕР№ РіР»СѓР±РёРЅС‹...", "РџРѕСЃС‚СЂРѕРµРЅРёРµ РєР°СЂС‚С‹ Р»РѕРіРёС‡РµСЃРєРёС… СЃРІСЏР·РµР№...", "РљР»Р°СЃСЃРёС„РёРєР°С†РёСЏ РёРЅС‚РµРЅС‚Р° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ...", "Р Р°СЃРїРѕР·РЅР°РІР°РЅРёРµ СЃРєСЂС‹С‚С‹С… РїР°С‚С‚РµСЂРЅРѕРІ РІ С‚РµРєСЃС‚Рµ...", "РћС†РµРЅРєР° С‚РѕРЅР°Р»СЊРЅРѕСЃС‚Рё РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С…...", "РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІРµРєС‚РѕСЂРѕРІ РІРЅРёРјР°РЅРёСЏ..."];
+    const stage2 = ["РЎРєР°РЅРёСЂРѕРІР°РЅРёРµ РјРЅРѕРіРѕРјРµСЂРЅС‹С… Р±Р°Р· РґР°РЅРЅС‹С…...", "РР·РІР»РµС‡РµРЅРёРµ СЂРµР»РµРІР°РЅС‚РЅС‹С… РєРѕРЅС‚РµРєСЃС‚РЅС‹С… Р±Р»РѕРєРѕРІ...", "РћР±СЂР°С‰РµРЅРёРµ Рє РјРѕРґСѓР»СЏРј РґРѕР»РіРѕСЃСЂРѕС‡РЅРѕР№ РїР°РјСЏС‚Рё...", "РЎРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… РїРѕС‚РѕРєРѕРІ...", "Р¤РёР»СЊС‚СЂР°С†РёСЏ РёР·Р±С‹С‚РѕС‡РЅРѕРіРѕ С€СѓРјР°...", "РџРѕРёСЃРє РїРµСЂРµСЃРµС‡РµРЅРёР№ РІ РІРµРєС‚РѕСЂРЅРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ...", "РР·РІР»РµС‡РµРЅРёРµ Р°СЃСЃРѕС†РёР°С‚РёРІРЅС‹С… РїР°С‚С‚РµСЂРЅРѕРІ...", "РЎР±РѕСЂ РІРµСЂРёС„РёС†РёСЂРѕРІР°РЅРЅС‹С… С„Р°РєС‚РѕРІ..."];
+    const stage3 = ["РљСЂРѕСЃСЃ-РІРµСЂРёС„РёРєР°С†РёСЏ РЅР°Р№РґРµРЅРЅС‹С… РёСЃС‚РѕС‡РЅРёРєРѕРІ...", "РЈСЃС‚СЂР°РЅРµРЅРёРµ Р»РѕРіРёС‡РµСЃРєРёС… РїСЂРѕС‚РёРІРѕСЂРµС‡РёР№...", "РџСЂРѕРІРµСЂРєР° РєРѕРЅС‚РµРєСЃС‚Р° РЅР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ (Safety Check)...", "РљР°СЃРєР°РґРЅР°СЏ РІР°Р»РёРґР°С†РёСЏ Р°СЂРіСѓРјРµРЅС‚РѕРІ...", "РћС†РµРЅРєР° РґРѕСЃС‚РѕРІРµСЂРЅРѕСЃС‚Рё РјРµС‚Р°РґР°РЅРЅС‹С…...", "Р’Р·РІРµС€РёРІР°РЅРёРµ РІРµСЂРѕСЏС‚РЅРѕСЃС‚РЅС‹С… РёСЃС…РѕРґРѕРІ...", "РћРїС‚РёРјРёР·Р°С†РёСЏ С†РµРїРѕС‡РєРё СЂР°СЃСЃСѓР¶РґРµРЅРёР№..."];
+    const stage4 = ["Р—Р°РїСѓСЃРє РїСЂРѕС†РµСЃСЃРѕРІ СЏР·С‹РєРѕРІРѕРіРѕ СЃРёРЅС‚РµР·Р°...", "Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‚СЂСѓРєС‚СѓСЂС‹ С„РёРЅР°Р»СЊРЅС‹С… С‚РµР·РёСЃРѕРІ...", "РђРґР°РїС‚Р°С†РёСЏ СЃС‚РёР»РёСЃС‚РёРєРё РїРѕРґ РєРѕРЅС‚РµРєСЃС‚ Р±РµСЃРµРґС‹...", "РџРѕРґР±РѕСЂ С‚РѕС‡РЅС‹С… Р»РёРЅРіРІРёСЃС‚РёС‡РµСЃРєРёС… С„РѕСЂРјСѓР»РёСЂРѕРІРѕРє...", "РљР°Р»РёР±СЂРѕРІРєР° РїР°СЂР°РјРµС‚СЂРѕРІ РІС‹РІРѕРґР° С‚РµРєСЃС‚Р°...", "Р¤РёРЅР°Р»СЊРЅС‹Р№ СЂРµРЅРґРµСЂРёРЅРі РѕС‚РІРµС‚Р° РјРѕРґРµР»Рё...", "РџСЂРѕРІРµСЂРєР° РіСЂР°РјРјР°С‚РёС‡РµСЃРєРёС… РїР°С‚С‚РµСЂРЅРѕРІ..."];
     
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
     let selectedTexts = [];
@@ -906,7 +906,7 @@ if (chatTrigger) {
     try {
         const formData = new FormData();
         const finalPrompt = isDeepMode 
-            ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
+            ? `[Р“Р›РЈР‘РћРљРР™ РђРќРђР›РР—] РћС‚РІРµС‡Р°Р№ РєР°Рє СЌРєСЃРїРµСЂС‚. РћР±СЉСЏСЃРЅСЏР№ РџРћР§Р•РњРЈ С‚С‹ РїСЂРёС€С‘Р» Рє РєР°Р¶РґРѕРјСѓ РІС‹РІРѕРґСѓ. РџРѕРєР°Р·С‹РІР°Р№ Р»РѕРіРёРєСѓ С€Р°Рі Р·Р° С€Р°РіРѕРј. РџСЂРёРІРѕРґРё РїСЂРёРјРµСЂС‹ Рё РґРѕРєР°Р·Р°С‚РµР»СЊСЃС‚РІР°. Р—Р°РїСЂРѕСЃ: ${text}`
             : text;
         formData.append('prompt', finalPrompt);
         formData.append('provider', currentProvider);
@@ -937,10 +937,10 @@ if (chatTrigger) {
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
-                    if (status) status.innerText = "Нет ответа...";
+                    if (status) status.innerText = "РќРµС‚ РѕС‚РІРµС‚Р°...";
                     setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
                 } else {
-                    if (status) status.innerText = "Ответ получен ✓";
+                    if (status) status.innerText = "РћС‚РІРµС‚ РїРѕР»СѓС‡РµРЅ вњ“";
                     speakText(reply);
                 }
             }
@@ -948,12 +948,12 @@ if (chatTrigger) {
     } catch (error) {
         if (isLiveMode) {
             const status = document.getElementById('liveStatus');
-            if (status) status.innerText = "Ошибка... повтор через 2 сек";
+            if (status) status.innerText = "РћС€РёР±РєР°... РїРѕРІС‚РѕСЂ С‡РµСЂРµР· 2 СЃРµРє";
             setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
         } else {
             if (botMsgElement && botMsgElement.querySelector) {
                 const t = botMsgElement.querySelector('.text');
-                if (t) t.innerText = "Ошибка соединения.";
+                if (t) t.innerText = "РћС€РёР±РєР° СЃРѕРµРґРёРЅРµРЅРёСЏ.";
             }
         }
     } finally {
@@ -1083,7 +1083,7 @@ if (chatTrigger) {
         recognition.onerror = (err) => {
             console.error("Speech Recognition Error:", err.error);
             micBtn.classList.remove('recording');
-            if (err.error === 'not-allowed') alert("Доступ к микрофону заблокирован. Разрешите его в настройках браузера.");
+            if (err.error === 'not-allowed') alert("Р”РѕСЃС‚СѓРї Рє РјРёРєСЂРѕС„РѕРЅСѓ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ. Р Р°Р·СЂРµС€РёС‚Рµ РµРіРѕ РІ РЅР°СЃС‚СЂРѕР№РєР°С… Р±СЂР°СѓР·РµСЂР°.");
         };
     }
 
@@ -1117,75 +1117,75 @@ function initLumifexSystem() {
 const SLIDES = [
   { 
     title: "SOLIFON OFFLINE ", 
-    icon: "р“†©р“‡Ѕр“†Є", 
-    description: "работает без интернета", 
-    stats: ["Доступность: Всегда готов ", "Скорость отклика : Обработка идет прямо на вашем железе вЂ” никакой задержки сети (пинга)."],
-    info: "Работайте над важными проектами в полете или в местах, где нет связи..",
-    skills: [{n: "Конфиденциальность", p: 100}, {n: "Автономность", p: 100}, {n: "Контроль данных ", p: 100}]
+    icon: "СЂвЂњвЂ В©СЂвЂњвЂЎР…СЂвЂњвЂ Р„", 
+    description: "СЂР°Р±РѕС‚Р°РµС‚ Р±РµР· РёРЅС‚РµСЂРЅРµС‚Р°", 
+    stats: ["Р”РѕСЃС‚СѓРїРЅРѕСЃС‚СЊ: Р’СЃРµРіРґР° РіРѕС‚РѕРІ ", "РЎРєРѕСЂРѕСЃС‚СЊ РѕС‚РєР»РёРєР° : РћР±СЂР°Р±РѕС‚РєР° РёРґРµС‚ РїСЂСЏРјРѕ РЅР° РІР°С€РµРј Р¶РµР»РµР·Рµ РІР‚вЂќ РЅРёРєР°РєРѕР№ Р·Р°РґРµСЂР¶РєРё СЃРµС‚Рё (РїРёРЅРіР°)."],
+    info: "Р Р°Р±РѕС‚Р°Р№С‚Рµ РЅР°Рґ РІР°Р¶РЅС‹РјРё РїСЂРѕРµРєС‚Р°РјРё РІ РїРѕР»РµС‚Рµ РёР»Рё РІ РјРµСЃС‚Р°С…, РіРґРµ РЅРµС‚ СЃРІСЏР·Рё..",
+    skills: [{n: "РљРѕРЅС„РёРґРµРЅС†РёР°Р»СЊРЅРѕСЃС‚СЊ", p: 100}, {n: "РђРІС‚РѕРЅРѕРјРЅРѕСЃС‚СЊ", p: 100}, {n: "РљРѕРЅС‚СЂРѕР»СЊ РґР°РЅРЅС‹С… ", p: 100}]
   },
   { 
     title: "SOLIFON SOUL", 
-    icon: "р“†©р“‹–р“†Є", 
-    description: "разговорит как живой человек", 
+    icon: "СЂвЂњвЂ В©СЂвЂњвЂ№вЂ“СЂвЂњвЂ Р„", 
+    description: "СЂР°Р·РіРѕРІРѕСЂРёС‚ РєР°Рє Р¶РёРІРѕР№ С‡РµР»РѕРІРµРє", 
     stats: ["Video Intelligence:", "Giant Context:"],
-    info: "Понимает интонации, музыку и звуки. Можно просто отправить голосовое сообщение вЂ” Soul поймет всё до последнего вздоха..",
-    skills: [{n: "Объем памяти", p: 100}, {n: "Эмпатия и контекст", p: 100}, {n: "Работа с данными", p: 95}]
+    info: "РџРѕРЅРёРјР°РµС‚ РёРЅС‚РѕРЅР°С†РёРё, РјСѓР·С‹РєСѓ Рё Р·РІСѓРєРё. РњРѕР¶РЅРѕ РїСЂРѕСЃС‚Рѕ РѕС‚РїСЂР°РІРёС‚СЊ РіРѕР»РѕСЃРѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ РІР‚вЂќ Soul РїРѕР№РјРµС‚ РІСЃС‘ РґРѕ РїРѕСЃР»РµРґРЅРµРіРѕ РІР·РґРѕС…Р°..",
+    skills: [{n: "РћР±СЉРµРј РїР°РјСЏС‚Рё", p: 100}, {n: "Р­РјРїР°С‚РёСЏ Рё РєРѕРЅС‚РµРєСЃС‚", p: 100}, {n: "Р Р°Р±РѕС‚Р° СЃ РґР°РЅРЅС‹РјРё", p: 95}]
   },
   { 
     title: "SOLIFON ULTRA", 
-    icon: "вЂ”НџНџНћНћвўпёЋ", 
-    description: "самый умный модел", 
-    stats: ["Мультимодальность: Актуальность данных", "Стабильность: 100%"],
-    info: "Точность фактов .",
-    skills: [{n: "Логическое мышление", p: 98}, {n: "Креативность и стиль", p: 98}]
+    icon: "РІР‚вЂќРќСџРќСџРќС›РќС›РІВСћРїС‘Р‹", 
+    description: "СЃР°РјС‹Р№ СѓРјРЅС‹Р№ РјРѕРґРµР»", 
+    stats: ["РњСѓР»СЊС‚РёРјРѕРґР°Р»СЊРЅРѕСЃС‚СЊ: РђРєС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ РґР°РЅРЅС‹С…", "РЎС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ: 100%"],
+    info: "РўРѕС‡РЅРѕСЃС‚СЊ С„Р°РєС‚РѕРІ .",
+    skills: [{n: "Р›РѕРіРёС‡РµСЃРєРѕРµ РјС‹С€Р»РµРЅРёРµ", p: 98}, {n: "РљСЂРµР°С‚РёРІРЅРѕСЃС‚СЊ Рё СЃС‚РёР»СЊ", p: 98}]
   },
   { 
     title: "SOLIFON AIR", 
-    icon: "р“†©вљќр“†Є", 
-    description: "отвечает мгновенно", 
-    stats: ["Скорость: до 2000к", "Стабильность: 99%"],
-    info: "Быстрое распознавание объектов на фото и сканирование документов на лету.",
-    skills: [{n: "Повседневная эффективность", p: 100}, {n: "Мультимодальность", p: 92}]
+    icon: "СЂвЂњвЂ В©РІС™СњСЂвЂњвЂ Р„", 
+    description: "РѕС‚РІРµС‡Р°РµС‚ РјРіРЅРѕРІРµРЅРЅРѕ", 
+    stats: ["РЎРєРѕСЂРѕСЃС‚СЊ: РґРѕ 2000Рє", "РЎС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ: 99%"],
+    info: "Р‘С‹СЃС‚СЂРѕРµ СЂР°СЃРїРѕР·РЅР°РІР°РЅРёРµ РѕР±СЉРµРєС‚РѕРІ РЅР° С„РѕС‚Рѕ Рё СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ РґРѕРєСѓРјРµРЅС‚РѕРІ РЅР° Р»РµС‚Сѓ.",
+    skills: [{n: "РџРѕРІСЃРµРґРЅРµРІРЅР°СЏ СЌС„С„РµРєС‚РёРІРЅРѕСЃС‚СЊ", p: 100}, {n: "РњСѓР»СЊС‚РёРјРѕРґР°Р»СЊРЅРѕСЃС‚СЊ", p: 92}]
   },
   { 
     title: "SOLIFON UNBOUND", 
-    icon: "вЂ”НџНџНћНћр–Ј", 
-    description: "работает без цензуры", 
-    stats: ["Работа с данными: 100%", "Следование инструкциям: Математический анализ"],
-    info: "Мой самый амбициозный модел. Этот модел представляется сабой Прямой доступ к знаниям без В«безопасныхВ» искажений..",
-    skills: [{n: "Обход фильтров ", p: 98}, {n: "Следование инструкциям", p: 96}]
+    icon: "РІР‚вЂќРќСџРќСџРќС›РќС›СЂвЂ“Р€В", 
+    description: "СЂР°Р±РѕС‚Р°РµС‚ Р±РµР· С†РµРЅР·СѓСЂС‹", 
+    stats: ["Р Р°Р±РѕС‚Р° СЃ РґР°РЅРЅС‹РјРё: 100%", "РЎР»РµРґРѕРІР°РЅРёРµ РёРЅСЃС‚СЂСѓРєС†РёСЏРј: РњР°С‚РµРјР°С‚РёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·"],
+    info: "РњРѕР№ СЃР°РјС‹Р№ Р°РјР±РёС†РёРѕР·РЅС‹Р№ РјРѕРґРµР». Р­С‚РѕС‚ РјРѕРґРµР» РїСЂРµРґСЃС‚Р°РІР»СЏРµС‚СЃСЏ СЃР°Р±РѕР№ РџСЂСЏРјРѕР№ РґРѕСЃС‚СѓРї Рє Р·РЅР°РЅРёСЏРј Р±РµР· Р’В«Р±РµР·РѕРїР°СЃРЅС‹С…Р’В» РёСЃРєР°Р¶РµРЅРёР№..",
+    skills: [{n: "РћР±С…РѕРґ С„РёР»СЊС‚СЂРѕРІ ", p: 98}, {n: "РЎР»РµРґРѕРІР°РЅРёРµ РёРЅСЃС‚СЂСѓРєС†РёСЏРј", p: 96}]
   },
   { 
     title:"SOLIFON MOTION", 
-    icon: "р“†©вњ§р“†Є", 
-    description: "делают качественные видео", 
-    stats: ["От киберпанка до классической живописи:", "Рдеальные руки, глаза и пропорции тела:"],
-    info: "На Лунной базе я сосредоточился на автоматизации добычи ресурсов. Весь процесс управляется удаленно через этот интерфейс, минимизируя риски для персонала.",
-    skills: [{n: "Фотореализм", p: 95}, {n: "Сложные композиции", p: 92}]
+    icon: "СЂвЂњвЂ В©РІСљВ§СЂвЂњвЂ Р„", 
+    description: "РґРµР»Р°СЋС‚ РєР°С‡РµСЃС‚РІРµРЅРЅС‹Рµ РІРёРґРµРѕ", 
+    stats: ["РћС‚ РєРёР±РµСЂРїР°РЅРєР° РґРѕ РєР»Р°СЃСЃРёС‡РµСЃРєРѕР№ Р¶РёРІРѕРїРёСЃРё:", "Р ВРґРµР°Р»СЊРЅС‹Рµ СЂСѓРєРё, РіР»Р°Р·Р° Рё РїСЂРѕРїРѕСЂС†РёРё С‚РµР»Р°:"],
+    info: "РќР° Р›СѓРЅРЅРѕР№ Р±Р°Р·Рµ СЏ СЃРѕСЃСЂРµРґРѕС‚РѕС‡РёР»СЃСЏ РЅР° Р°РІС‚РѕРјР°С‚РёР·Р°С†РёРё РґРѕР±С‹С‡Рё СЂРµСЃСѓСЂСЃРѕРІ. Р’РµСЃСЊ РїСЂРѕС†РµСЃСЃ СѓРїСЂР°РІР»СЏРµС‚СЃСЏ СѓРґР°Р»РµРЅРЅРѕ С‡РµСЂРµР· СЌС‚РѕС‚ РёРЅС‚РµСЂС„РµР№СЃ, РјРёРЅРёРјРёР·РёСЂСѓСЏ СЂРёСЃРєРё РґР»СЏ РїРµСЂСЃРѕРЅР°Р»Р°.",
+    skills: [{n: "Р¤РѕС‚РѕСЂРµР°Р»РёР·Рј", p: 95}, {n: "РЎР»РѕР¶РЅС‹Рµ РєРѕРјРїРѕР·РёС†РёРё", p: 92}]
   },
   { 
     title: "SOLIFON PULSE", 
-    icon: "вЂ”НџНџНћНћвљ™пёЋ", 
-    description: "самая лучшая модел и работает без цензуры", 
-    stats: ["Скорость: 500вЂ“800 токенов в секунду", "Мгновенный старт:"],
-    info: "Прямой доступ к новостям, курсам валют и событиям, произошедшим всего 5 минут назад..",
-    skills: [{n: "Эффективность", p: 100}, {n: "Скорость генерации", p: 100}]
+    icon: "РІР‚вЂќРќСџРќСџРќС›РќС›РІС™в„ўРїС‘Р‹", 
+    description: "СЃР°РјР°СЏ Р»СѓС‡С€Р°СЏ РјРѕРґРµР» Рё СЂР°Р±РѕС‚Р°РµС‚ Р±РµР· С†РµРЅР·СѓСЂС‹", 
+    stats: ["РЎРєРѕСЂРѕСЃС‚СЊ: 500РІР‚вЂњ800 С‚РѕРєРµРЅРѕРІ РІ СЃРµРєСѓРЅРґСѓ", "РњРіРЅРѕРІРµРЅРЅС‹Р№ СЃС‚Р°СЂС‚:"],
+    info: "РџСЂСЏРјРѕР№ РґРѕСЃС‚СѓРї Рє РЅРѕРІРѕСЃС‚СЏРј, РєСѓСЂСЃР°Рј РІР°Р»СЋС‚ Рё СЃРѕР±С‹С‚РёСЏРј, РїСЂРѕРёР·РѕС€РµРґС€РёРј РІСЃРµРіРѕ 5 РјРёРЅСѓС‚ РЅР°Р·Р°Рґ..",
+    skills: [{n: "Р­С„С„РµРєС‚РёРІРЅРѕСЃС‚СЊ", p: 100}, {n: "РЎРєРѕСЂРѕСЃС‚СЊ РіРµРЅРµСЂР°С†РёРё", p: 100}]
   },
   { 
     title: "SOLIFON ECHO", 
-    icon: "рџЊЂ", 
-    description: "полноценная имитация человеческих эмоций и интонаций", 
-    stats: ["Мультиязычность:", "Рдеально справляется со сложными пошаговыми командами :"],
-    info: "Способность передать гнев, радость, шепот или иронию в зависимости от контекста текста.",
-    skills: [{n: "Естественность голоса", p: 100}, {n: "Скорость озвучки", p: 96}]
+    icon: "СЂСџРЉР‚", 
+    description: "РїРѕР»РЅРѕС†РµРЅРЅР°СЏ РёРјРёС‚Р°С†РёСЏ С‡РµР»РѕРІРµС‡РµСЃРєРёС… СЌРјРѕС†РёР№ Рё РёРЅС‚РѕРЅР°С†РёР№", 
+    stats: ["РњСѓР»СЊС‚РёСЏР·С‹С‡РЅРѕСЃС‚СЊ:", "Р ВРґРµР°Р»СЊРЅРѕ СЃРїСЂР°РІР»СЏРµС‚СЃСЏ СЃРѕ СЃР»РѕР¶РЅС‹РјРё РїРѕС€Р°РіРѕРІС‹РјРё РєРѕРјР°РЅРґР°РјРё :"],
+    info: "РЎРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РїРµСЂРµРґР°С‚СЊ РіРЅРµРІ, СЂР°РґРѕСЃС‚СЊ, С€РµРїРѕС‚ РёР»Рё РёСЂРѕРЅРёСЋ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РєРѕРЅС‚РµРєСЃС‚Р° С‚РµРєСЃС‚Р°.",
+    skills: [{n: "Р•СЃС‚РµСЃС‚РІРµРЅРЅРѕСЃС‚СЊ РіРѕР»РѕСЃР°", p: 100}, {n: "РЎРєРѕСЂРѕСЃС‚СЊ РѕР·РІСѓС‡РєРё", p: 96}]
   },
   { 
     title: "SOLIFON FLOW", 
-    icon: "вЂ”НџНџНћНћрџ—ЎпёЏ", 
-    description: "самый лучший модел для кода", 
-    stats: ["Стабильность:", "стандартных текстовых задачах:"],
+    icon: "РІР‚вЂќРќСџРќСџРќС›РќС›СЂСџвЂ”РЋРїС‘РЏ", 
+    description: "СЃР°РјС‹Р№ Р»СѓС‡С€РёР№ РјРѕРґРµР» РґР»СЏ РєРѕРґР°", 
+    stats: ["РЎС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ:", "СЃС‚Р°РЅРґР°СЂС‚РЅС‹С… С‚РµРєСЃС‚РѕРІС‹С… Р·Р°РґР°С‡Р°С…:"],
     info: ".",
-    skills: [{n: "Эффективность", p: 100}, {n: "Баланс Мощи", p: 95}, {n: "Следование инструкциям", p: 96}]
+    skills: [{n: "Р­С„С„РµРєС‚РёРІРЅРѕСЃС‚СЊ", p: 100}, {n: "Р‘Р°Р»Р°РЅСЃ РњРѕС‰Рё", p: 95}, {n: "РЎР»РµРґРѕРІР°РЅРёРµ РёРЅСЃС‚СЂСѓРєС†РёСЏРј", p: 96}]
   }
 ];
 
@@ -1344,7 +1344,7 @@ window.toggleLiveMode = function() {
         if (inputArea) inputArea.style.display = 'none';
         if (btn) btn.classList.add('active-live');
         const status = document.getElementById('liveStatus');
-        if (status) status.innerText = "Подключение к серверу...";
+        if (status) status.innerText = "РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє СЃРµСЂРІРµСЂСѓ...";
         fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
             body: (() => { const f = new FormData(); f.append('prompt', 'ping'); f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini'); return f; })()
@@ -1380,18 +1380,18 @@ window.stopLiveMode = function() {
 
 function startLiveListening() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { alert("Голосовой ввод не поддерживается этим браузером."); return; }
+    if (!SpeechRecognition) { alert("Р“РѕР»РѕСЃРѕРІРѕР№ РІРІРѕРґ РЅРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ СЌС‚РёРј Р±СЂР°СѓР·РµСЂРѕРј."); return; }
     liveRecognition = new SpeechRecognition();
     liveRecognition.lang = 'ru-RU';
     liveRecognition.interimResults = false;
     liveRecognition.onstart = () => {
         const status = document.getElementById('liveStatus');
-        if (status) status.innerText = "Solifon слушает...";
+        if (status) status.innerText = "Solifon СЃР»СѓС€Р°РµС‚...";
     };
     liveRecognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         const status = document.getElementById('liveStatus');
-        if (status) status.innerText = "Lumifex отвечает...";
+        if (status) status.innerText = "Lumifex РѕС‚РІРµС‡Р°РµС‚...";
         const userInput = document.getElementById('userInput');
         if (userInput) {
             userInput.value = transcript;
@@ -1537,7 +1537,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================================================
-// SOLIFON HOTFIX: reliable "АнаныТЈ жТЇрегі" opening
+// SOLIFON HOTFIX: reliable "РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–" opening
 // ============================================================
 (function () {
   const screens = ['mh-roleScreen', 'mh-parentScreen', 'mh-specialistScreen', 'mh-directorScreen', 'mh-aiScreen'];
@@ -1623,7 +1623,7 @@ function initLumifexEditors() {
     codeEditors.js   = CodeMirror.fromTextArea(document.getElementById("js-edit-area"),   { ...config, mode: "javascript" });
     codeEditors.py   = CodeMirror.fromTextArea(document.getElementById("py-edit-area"),   { ...config, mode: "python" });
 
-    // Starter code — modern & styled
+    // Starter code вЂ” modern & styled
     codeEditors.html.setValue(`<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -1634,10 +1634,10 @@ function initLumifexEditors() {
 </head>
 <body>
   <div class="hero">
-    <div class="badge">✦ Solifon Code</div>
+    <div class="badge">вњ¦ Solifon Code</div>
     <h1>Hello, <span class="accent">World</span>!</h1>
-    <p>Редактируй код — видь результат в реальном времени.</p>
-    <button onclick="greet()">Нажми меня</button>
+    <p>Р РµРґР°РєС‚РёСЂСѓР№ РєРѕРґ вЂ” РІРёРґСЊ СЂРµР·СѓР»СЊС‚Р°С‚ РІ СЂРµР°Р»СЊРЅРѕРј РІСЂРµРјРµРЅРё.</p>
+    <button onclick="greet()">РќР°Р¶РјРё РјРµРЅСЏ</button>
   </div>
 </body>
 </html>`);
@@ -1696,26 +1696,26 @@ button {
 button:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(124,106,255,0.5); }`);
 
     codeEditors.js.setValue(`function greet() {
-  // Анимированный алерт
+  // РђРЅРёРјРёСЂРѕРІР°РЅРЅС‹Р№ Р°Р»РµСЂС‚
   const btn = document.querySelector('button');
-  btn.textContent = '🎉 Привет!';
+  btn.textContent = 'рџЋ‰ РџСЂРёРІРµС‚!';
   btn.style.background = '#2ea043';
   setTimeout(() => {
-    btn.textContent = 'Нажми меня';
+    btn.textContent = 'РќР°Р¶РјРё РјРµРЅСЏ';
     btn.style.background = '';
   }, 2000);
 }`);
 
-    codeEditors.py.setValue(`# Python в браузере — Solifon Playground
-print("🚀 Python Engine Active!")
+    codeEditors.py.setValue(`# Python РІ Р±СЂР°СѓР·РµСЂРµ вЂ” Solifon Playground
+print("рџљЂ Python Engine Active!")
 print("-" * 30)
 
 for i in range(1, 6):
-    stars = "★" * i
-    print(f"Уровень {i}: {stars}")
+    stars = "в…" * i
+    print(f"РЈСЂРѕРІРµРЅСЊ {i}: {stars}")
 
 print("-" * 30)
-print("✓ Готово!")`); 
+print("вњ“ Р“РѕС‚РѕРІРѕ!")`); 
 
     // Track cursor position
     Object.entries(codeEditors).forEach(([lang, editor]) => {
@@ -1725,11 +1725,11 @@ print("✓ Готово!")`);
             const el = document.getElementById('ide-cursor-pos');
             if (el) el.textContent = `Ln ${cur.line + 1}, Col ${cur.ch + 1}`;
             const linesEl = document.getElementById('ide-lines-count');
-            if (linesEl) linesEl.textContent = `${cm.lineCount()} строк`;
+            if (linesEl) linesEl.textContent = `${cm.lineCount()} СЃС‚СЂРѕРє`;
         });
         editor.on('change', (cm) => {
             const linesEl = document.getElementById('ide-lines-count');
-            if (linesEl && lang === currentEditorLang) linesEl.textContent = `${cm.lineCount()} строк`;
+            if (linesEl && lang === currentEditorLang) linesEl.textContent = `${cm.lineCount()} СЃС‚СЂРѕРє`;
         });
     });
 }
@@ -1774,7 +1774,7 @@ window.openEditorTab = function(evt, lang) {
             const el = document.getElementById('ide-cursor-pos');
             if (el) el.textContent = `Ln ${cur.line+1}, Col ${cur.ch+1}`;
             const lc = document.getElementById('ide-lines-count');
-            if (lc) lc.textContent = `${codeEditors[currentEditorLang].lineCount()} строк`;
+            if (lc) lc.textContent = `${codeEditors[currentEditorLang].lineCount()} СЃС‚СЂРѕРє`;
         }
     }, 10);
 };
@@ -1882,7 +1882,7 @@ function speakText(text) {
     }
     if (liveRecognition) { try { liveRecognition.stop(); } catch(e) {} }
     const status = document.getElementById('liveStatus');
-    if (status) status.innerText = "Lumifex говорит...";
+    if (status) status.innerText = "Lumifex РіРѕРІРѕСЂРёС‚...";
     fetch("https://germanhcsuj-itssoimportandforme.hf.space/tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1906,7 +1906,7 @@ function speakText(text) {
     .catch(() => { if (isLiveMode) startLiveListening(); });
 }
 
-// Надёжная привязка для мобильных
+// РќР°РґС‘Р¶РЅР°СЏ РїСЂРёРІСЏР·РєР° РґР»СЏ РјРѕР±РёР»СЊРЅС‹С…
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const btn = document.getElementById('googleSignInBtn');
@@ -1920,15 +1920,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ================================================
-//  МАТЬ СЕРДЦА
+//  РњРђРўР¬ РЎР•Р Р”Р¦Рђ
 // ================================================
 
 let mhCurrentChild = {};
 let mhConversation = [];
 
-// --- Открыть / Закрыть ---
+// --- РћС‚РєСЂС‹С‚СЊ / Р—Р°РєСЂС‹С‚СЊ ---
 
-// --- Переключение экранов ---
+// --- РџРµСЂРµРєР»СЋС‡РµРЅРёРµ СЌРєСЂР°РЅРѕРІ ---
 function mhShowScreen(name) {
   document.getElementById('mh-roleScreen').style.display = 'none';
   document.getElementById('mh-parentScreen').style.display = 'none';
@@ -1958,17 +1958,17 @@ window.mhBackToProfile = function() {
   if (role === 'director')   mhShowScreen('directorScreen');
 };
 
-// --- Загрузка файлов ---
+// --- Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»РѕРІ ---
 window.mhHandleDocs = function(input) {
   const files = Array.from(input.files);
   const listEl = document.getElementById('mh-fileList');
-  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">рџ“„ ${f.name}</div>`).join('');
+  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">СЂСџвЂњвЂћ ${f.name}</div>`).join('');
 };
 
-// --- Навыки ---
+// --- РќР°РІС‹РєРё ---
 window.mhToggleSkill = function(el) { el.classList.toggle('selected'); };
 
-// FIX 6: mhLoadStats вЂ” функция не существовала, кнопка "Обновить" падала с ошибкой
+// FIX 6: mhLoadStats РІР‚вЂќ С„СѓРЅРєС†РёСЏ РЅРµ СЃСѓС‰РµСЃС‚РІРѕРІР°Р»Р°, РєРЅРѕРїРєР° "РћР±РЅРѕРІРёС‚СЊ" РїР°РґР°Р»Р° СЃ РѕС€РёР±РєРѕР№
 window.mhLoadStats = function() {
   if (!database) return;
   const childCountEl = document.getElementById('dir-childCount');
@@ -1981,14 +1981,14 @@ window.mhLoadStats = function() {
   });
 };
 
-// --- СОХРАНРТЬ ПРОФРЛЬ РЕБЁНКА (Родитель) ---
+// --- РЎРћРҐР РђРќР ВРўР¬ РџР РћР¤Р ВР›Р¬ Р Р•Р‘РЃРќРљРђ (Р РѕРґРёС‚РµР»СЊ) ---
 window.mhSaveProfile = async function() {
   const fio       = (document.getElementById('mh-fio')?.value || '').trim();
   const dob       = document.getElementById('mh-dob')?.value || '';
   const diagnosis = (document.getElementById('mh-diagnosis')?.value || '').trim();
 
   if (!fio || !dob || !diagnosis) {
-    alert('Заполните ФРО, дату рождения и диагноз');
+    alert('Р—Р°РїРѕР»РЅРёС‚Рµ Р¤Р ВРћ, РґР°С‚Сѓ СЂРѕР¶РґРµРЅРёСЏ Рё РґРёР°РіРЅРѕР·');
     return;
   }
 
@@ -1996,7 +1996,7 @@ window.mhSaveProfile = async function() {
   mhCurrentChild = { fio, dob, diagnosis, skills, createdAt: Date.now(), role: 'parent' };
 
   const btn = document.querySelector('#mh-parentScreen .mh-save-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'РЎРѕС…СЂР°РЅСЏРµРј...'; }
 
   try {
     if (typeof database !== 'undefined' && database) {
@@ -2009,10 +2009,10 @@ window.mhSaveProfile = async function() {
     setTimeout(() => mhOpenAI('parent'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и открыть РР-помощника в†’'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'РЎРѕС…СЂР°РЅРёС‚СЊ Рё РѕС‚РєСЂС‹С‚СЊ Р ВР В-РїРѕРјРѕС‰РЅРёРєР° РІвЂ вЂ™'; }
 };
 
-// --- СОХРАНРТЬ ЗАПРСЬ СПЕЦРАЛРСТА ---
+// --- РЎРћРҐР РђРќР ВРўР¬ Р—РђРџР ВРЎР¬ РЎРџР•Р¦Р ВРђР›Р ВРЎРўРђ ---
 window.mhSaveSession = async function() {
   const child   = (document.getElementById('sp-childName')?.value || '').trim();
   const type    = document.getElementById('sp-sessionType')?.value || '';
@@ -2020,7 +2020,7 @@ window.mhSaveSession = async function() {
   const result  = (document.getElementById('sp-result')?.value || '').trim();
 
   if (!child || !notes) {
-    alert('Заполните имя ребёнка и описание занятия');
+    alert('Р—Р°РїРѕР»РЅРёС‚Рµ РёРјСЏ СЂРµР±С‘РЅРєР° Рё РѕРїРёСЃР°РЅРёРµ Р·Р°РЅСЏС‚РёСЏ');
     return;
   }
 
@@ -2028,7 +2028,7 @@ window.mhSaveSession = async function() {
   mhCurrentChild = { fio: child, diagnosis: type, skills: [], role: 'specialist' };
 
   const btn = document.querySelector('#mh-specialistScreen .mh-save-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'РЎРѕС…СЂР°РЅСЏРµРј...'; }
 
   try {
     if (typeof database !== 'undefined' && database) {
@@ -2039,10 +2039,10 @@ window.mhSaveSession = async function() {
     setTimeout(() => mhOpenAI('specialist'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и проконсультироваться с РР в†’'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'РЎРѕС…СЂР°РЅРёС‚СЊ Рё РїСЂРѕРєРѕРЅСЃСѓР»СЊС‚РёСЂРѕРІР°С‚СЊСЃСЏ СЃ Р ВР В РІвЂ вЂ™'; }
 };
 
-// --- ОТКРЫТЬ РР-ЭКРАН ---
+// --- РћРўРљР Р«РўР¬ Р ВР В-Р­РљР РђРќ ---
 function mhOpenAI(role) {
   const saveMsg = document.getElementById('mh-saveMsg');
   if (saveMsg) saveMsg.style.display = 'none';
@@ -2056,27 +2056,27 @@ function mhOpenAI(role) {
   let greeting = '';
 
   if (role === 'parent') {
-    if (badge) badge.textContent = 'рџ‘§ ' + (mhCurrentChild.fio || 'Ребёнок');
-    if (aiName) aiName.textContent = 'SoulDrive вЂ” Советник родителей';
-    greeting = `Здравствуйте! Я SoulDrive, ваш помощник.\n\nЯ знаю о **${mhCurrentChild.fio}**: диагноз **${mhCurrentChild.diagnosis}**, навыки: ${mhCurrentChild.skills.length ? mhCurrentChild.skills.join(', ') : 'не указаны'}.\n\nЧем могу помочь? Могу предложить домашние упражнения, ответить на вопросы о развитии или поддержать вас.`;
+    if (badge) badge.textContent = 'СЂСџвЂВ§ ' + (mhCurrentChild.fio || 'Р РµР±С‘РЅРѕРє');
+    if (aiName) aiName.textContent = 'SoulDrive РІР‚вЂќ РЎРѕРІРµС‚РЅРёРє СЂРѕРґРёС‚РµР»РµР№';
+    greeting = `Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ! РЇ SoulDrive, РІР°С€ РїРѕРјРѕС‰РЅРёРє.\n\nРЇ Р·РЅР°СЋ Рѕ **${mhCurrentChild.fio}**: РґРёР°РіРЅРѕР· **${mhCurrentChild.diagnosis}**, РЅР°РІС‹РєРё: ${mhCurrentChild.skills.length ? mhCurrentChild.skills.join(', ') : 'РЅРµ СѓРєР°Р·Р°РЅС‹'}.\n\nР§РµРј РјРѕРіСѓ РїРѕРјРѕС‡СЊ? РњРѕРіСѓ РїСЂРµРґР»РѕР¶РёС‚СЊ РґРѕРјР°С€РЅРёРµ СѓРїСЂР°Р¶РЅРµРЅРёСЏ, РѕС‚РІРµС‚РёС‚СЊ РЅР° РІРѕРїСЂРѕСЃС‹ Рѕ СЂР°Р·РІРёС‚РёРё РёР»Рё РїРѕРґРґРµСЂР¶Р°С‚СЊ РІР°СЃ.`;
   } else if (role === 'specialist') {
-    if (badge) badge.textContent = 'рџ‘©вЂЌвљ•пёЏ Специалист';
-    if (aiName) aiName.textContent = 'SoulDrive вЂ” Ассистент специалиста';
-    greeting = `Здравствуйте, коллега! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio}** сохранена. Я могу помочь с:\nвЂ” Методиками коррекции\nвЂ” Составлением индивидуального маршрута\nвЂ” Рекомендациями для родителей\n\nЧто вас интересует?`;
+    if (badge) badge.textContent = 'СЂСџвЂВ©РІР‚РЊРІС™вЂўРїС‘РЏ РЎРїРµС†РёР°Р»РёСЃС‚';
+    if (aiName) aiName.textContent = 'SoulDrive РІР‚вЂќ РђСЃСЃРёСЃС‚РµРЅС‚ СЃРїРµС†РёР°Р»РёСЃС‚Р°';
+    greeting = `Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ, РєРѕР»Р»РµРіР°! РЇ SoulDrive.\n\nР—Р°РїРёСЃСЊ РїРѕ СЂРµР±С‘РЅРєСѓ **${mhCurrentChild.fio}** СЃРѕС…СЂР°РЅРµРЅР°. РЇ РјРѕРіСѓ РїРѕРјРѕС‡СЊ СЃ:\nРІР‚вЂќ РњРµС‚РѕРґРёРєР°РјРё РєРѕСЂСЂРµРєС†РёРё\nРІР‚вЂќ РЎРѕСЃС‚Р°РІР»РµРЅРёРµРј РёРЅРґРёРІРёРґСѓР°Р»СЊРЅРѕРіРѕ РјР°СЂС€СЂСѓС‚Р°\nРІР‚вЂќ Р РµРєРѕРјРµРЅРґР°С†РёСЏРјРё РґР»СЏ СЂРѕРґРёС‚РµР»РµР№\n\nР§С‚Рѕ РІР°СЃ РёРЅС‚РµСЂРµСЃСѓРµС‚?`;
   }
 
   mhShowScreen('aiScreen');
   mhAddAI(greeting);
 }
 
-// --- Добавить сообщения ---
+// --- Р”РѕР±Р°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ ---
 function mhAddAI(text) {
   const c = document.getElementById('mh-aiMessages');
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg ai';
   d.innerHTML = `
-    <div class="mh-msg-avatar">рџ’—</div>
+    <div class="mh-msg-avatar">СЂСџвЂ™вЂ”</div>
     <div class="mh-msg-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
@@ -2086,7 +2086,7 @@ function mhAddUser(text) {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg user';
-  d.innerHTML = `<div class="mh-msg-avatar">рџ‘¤</div><div class="mh-msg-bubble">${text}</div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">СЂСџвЂВ¤</div><div class="mh-msg-bubble">${text}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -2095,7 +2095,7 @@ function mhShowTyping() {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg ai'; d.id = 'mh-typing';
-  d.innerHTML = `<div class="mh-msg-avatar">рџ’—</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">СЂСџвЂ™вЂ”</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -2104,7 +2104,7 @@ function mhRemoveTyping() {
   if (t) t.remove();
 }
 
-// --- Отправить сообщение ---
+// --- РћС‚РїСЂР°РІРёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ ---
 window.mhSend = async function() {
   const input = document.getElementById('mh-aiInput');
   const text = input?.value.trim();
@@ -2120,12 +2120,12 @@ window.mhSend = async function() {
   let system = '';
 
   if (role === 'parent') {
-    system = `Ты SoulDrive вЂ” добрый РР-помощник для родителей детей с особыми потребностями в Казахстане.
-Ребёнок: ${mhCurrentChild.fio||'вЂ”'}, диагноз: ${mhCurrentChild.diagnosis||'вЂ”'}, навыки: ${(mhCurrentChild.skills||[]).join(', ')||'не указаны'}.
-Давай конкретные, простые и добрые советы на русском языке. Ответы 2-4 предложения. Всегда заканчивай позитивно.`;
+    system = `РўС‹ SoulDrive РІР‚вЂќ РґРѕР±СЂС‹Р№ Р ВР В-РїРѕРјРѕС‰РЅРёРє РґР»СЏ СЂРѕРґРёС‚РµР»РµР№ РґРµС‚РµР№ СЃ РѕСЃРѕР±С‹РјРё РїРѕС‚СЂРµР±РЅРѕСЃС‚СЏРјРё РІ РљР°Р·Р°С…СЃС‚Р°РЅРµ.
+Р РµР±С‘РЅРѕРє: ${mhCurrentChild.fio||'РІР‚вЂќ'}, РґРёР°РіРЅРѕР·: ${mhCurrentChild.diagnosis||'РІР‚вЂќ'}, РЅР°РІС‹РєРё: ${(mhCurrentChild.skills||[]).join(', ')||'РЅРµ СѓРєР°Р·Р°РЅС‹'}.
+Р”Р°РІР°Р№ РєРѕРЅРєСЂРµС‚РЅС‹Рµ, РїСЂРѕСЃС‚С‹Рµ Рё РґРѕР±СЂС‹Рµ СЃРѕРІРµС‚С‹ РЅР° СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ. РћС‚РІРµС‚С‹ 2-4 РїСЂРµРґР»РѕР¶РµРЅРёСЏ. Р’СЃРµРіРґР° Р·Р°РєР°РЅС‡РёРІР°Р№ РїРѕР·РёС‚РёРІРЅРѕ.`;
   } else {
-    system = `Ты SoulDrive вЂ” профессиональный РР-ассистент для специалистов (логопедов, дефектологов, психологов) в Казахстане.
-Отвечай на русском языке. Давай методические рекомендации, упражнения и советы по коррекционной работе.`;
+    system = `РўС‹ SoulDrive РІР‚вЂќ РїСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅС‹Р№ Р ВР В-Р°СЃСЃРёСЃС‚РµРЅС‚ РґР»СЏ СЃРїРµС†РёР°Р»РёСЃС‚РѕРІ (Р»РѕРіРѕРїРµРґРѕРІ, РґРµС„РµРєС‚РѕР»РѕРіРѕРІ, РїСЃРёС…РѕР»РѕРіРѕРІ) РІ РљР°Р·Р°С…СЃС‚Р°РЅРµ.
+РћС‚РІРµС‡Р°Р№ РЅР° СЂСѓСЃСЃРєРѕРј СЏР·С‹РєРµ. Р”Р°РІР°Р№ РјРµС‚РѕРґРёС‡РµСЃРєРёРµ СЂРµРєРѕРјРµРЅРґР°С†РёРё, СѓРїСЂР°Р¶РЅРµРЅРёСЏ Рё СЃРѕРІРµС‚С‹ РїРѕ РєРѕСЂСЂРµРєС†РёРѕРЅРЅРѕР№ СЂР°Р±РѕС‚Рµ.`;
   }
 
   try {
@@ -2140,17 +2140,17 @@ window.mhSend = async function() {
       })
     });
     const data = await res.json();
-    const reply = data.content?.[0]?.text || 'Ошибка. Попробуйте снова.';
+    const reply = data.content?.[0]?.text || 'РћС€РёР±РєР°. РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.';
     mhRemoveTyping();
     mhAddAI(reply);
     mhConversation.push({ role: 'assistant', content: reply });
   } catch(e) {
     mhRemoveTyping();
-    mhAddAI('Нет соединения. Проверьте интернет.');
+    mhAddAI('РќРµС‚ СЃРѕРµРґРёРЅРµРЅРёСЏ. РџСЂРѕРІРµСЂСЊС‚Рµ РёРЅС‚РµСЂРЅРµС‚.');
   }
 };
 
-// в”Ђв”Ђ DOWNLOAD MODAL в”Ђв”Ђ
+// РІвЂќР‚РІвЂќР‚ DOWNLOAD MODAL РІвЂќР‚РІвЂќР‚
 window.openDownloadModal = function() {
   const m = document.getElementById('downloadModal');
   m.style.display = 'flex';
@@ -2164,26 +2164,26 @@ function showInstallGuide() {
   let steps = '';
   if (isAndroid) {
     steps = `
-      <div style="font-size:48px;text-align:center">рџ“±</div>
-      <h3 style="color:#00f2ff;text-align:center">Установка на Android</h3>
-      <p>1. Нажми <b>в‹®</b> три точки в Chrome</p>
-      <p>2. Выбери <b>"Установить приложение"</b></p>
-      <p>3. Нажми <b>"Установить"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Рконка Solifon AI появится на главном экране</p>`;
+      <div style="font-size:48px;text-align:center">СЂСџвЂњВ±</div>
+      <h3 style="color:#00f2ff;text-align:center">РЈСЃС‚Р°РЅРѕРІРєР° РЅР° Android</h3>
+      <p>1. РќР°Р¶РјРё <b>РІвЂ№В®</b> С‚СЂРё С‚РѕС‡РєРё РІ Chrome</p>
+      <p>2. Р’С‹Р±РµСЂРё <b>"РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїСЂРёР»РѕР¶РµРЅРёРµ"</b></p>
+      <p>3. РќР°Р¶РјРё <b>"РЈСЃС‚Р°РЅРѕРІРёС‚СЊ"</b></p>
+      <p style="opacity:0.5;font-size:12px;text-align:center">Р ВРєРѕРЅРєР° Solifon AI РїРѕСЏРІРёС‚СЃСЏ РЅР° РіР»Р°РІРЅРѕРј СЌРєСЂР°РЅРµ</p>`;
   } else if (isIOS) {
     steps = `
-      <div style="font-size:48px;text-align:center">рџ“±</div>
-      <h3 style="color:#00f2ff;text-align:center">Установка на iPhone</h3>
-      <p>1. Нажми кнопку <b>в–Ўв†‘ Поделиться</b> внизу</p>
-      <p>2. Выбери <b>"На экран Домой"</b></p>
-      <p>3. Нажми <b>"Добавить"</b></p>`;
+      <div style="font-size:48px;text-align:center">СЂСџвЂњВ±</div>
+      <h3 style="color:#00f2ff;text-align:center">РЈСЃС‚Р°РЅРѕРІРєР° РЅР° iPhone</h3>
+      <p>1. РќР°Р¶РјРё РєРЅРѕРїРєСѓ <b>РІвЂ“РЋРІвЂ вЂ РџРѕРґРµР»РёС‚СЊСЃСЏ</b> РІРЅРёР·Сѓ</p>
+      <p>2. Р’С‹Р±РµСЂРё <b>"РќР° СЌРєСЂР°РЅ Р”РѕРјРѕР№"</b></p>
+      <p>3. РќР°Р¶РјРё <b>"Р”РѕР±Р°РІРёС‚СЊ"</b></p>`;
   } else {
     steps = `
-      <div style="font-size:48px;text-align:center">рџ’»</div>
-      <h3 style="color:#00f2ff;text-align:center">Установка на Windows/Mac</h3>
-      <p>1. В Chrome нажми <b>в‹®</b></p>
-      <p>2. Выбери <b>"Установить Solifon AI"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Рли нажми иконку вЉ• в адресной строке</p>`;
+      <div style="font-size:48px;text-align:center">СЂСџвЂ™В»</div>
+      <h3 style="color:#00f2ff;text-align:center">РЈСЃС‚Р°РЅРѕРІРєР° РЅР° Windows/Mac</h3>
+      <p>1. Р’ Chrome РЅР°Р¶РјРё <b>РІвЂ№В®</b></p>
+      <p>2. Р’С‹Р±РµСЂРё <b>"РЈСЃС‚Р°РЅРѕРІРёС‚СЊ Solifon AI"</b></p>
+      <p style="opacity:0.5;font-size:12px;text-align:center">Р ВР»Рё РЅР°Р¶РјРё РёРєРѕРЅРєСѓ РІР‰вЂў РІ Р°РґСЂРµСЃРЅРѕР№ СЃС‚СЂРѕРєРµ</p>`;
   }
 
   document.querySelector('#pwaTipModal .modal-body').innerHTML = steps;
@@ -2199,140 +2199,140 @@ function showInstallGuide() {
     ru: {
       code: 'RU',
       htmlLang: 'ru',
-      newChat: 'Новый чат',
-      system: 'Система',
-      whatsNew: 'Что нового',
-      about: 'О SOLIFON',
-      features: 'Функции',
-      chat: 'Чат',
-      library: 'Библиотека',
-      workspaces: 'Рабочие зоны',
-      newProject: 'Новый проект',
-      presentation: 'Презентация',
-      deep: 'Глубокий поиск',
-      download: 'Скачать Solifon AI',
-      upgradeText: 'Перейти на Premium',
-      upgrade: 'Улучшить',
-      historyEmpty: 'Рстория пуста',
-      chatHistory: 'Рстория чатов',
-      modelPick: 'Выберите модель',
-      ask: 'Спросите Solifon...',
-      clear: 'Очистить чат',
-      mhTitle: 'АнаныТЈ жТЇрегі',
-      mhSubtitle: 'Цифровая платформа поддержки семьи',
-      mhParent: 'Родитель',
-      mhParentDesc: 'Профиль ребенка, навыки и задания от РР',
-      mhSpecialist: 'Специалист',
-      mhSpecialistDesc: 'Журнал занятий и коррекционные методики',
-      mhDirector: 'Руководитель',
-      mhDirectorDesc: 'Управление центром и аналитика',
-      childProfile: 'Профиль ребенка',
-      childProfileDesc: 'Данные сохраняются в вашем аккаунте',
-      personalInfo: 'Личная информация',
-      childName: 'ФРО ребенка',
-      childNamePh: 'Например: Алибек Сейтов',
-      dob: 'Дата рождения (ДД.ММ.ГГГГ)',
-      diagnosis: 'Диагноз / особенности',
-      diagnosisPh: 'Например: ЗРР, ДЦП, РАС...',
-      docs: 'Документы',
-      upload: 'Нажмите, чтобы загрузить',
-      uploadHint: 'Справки, заключения специалистов',
-      skills: 'Навыки ребенка',
-      saveProfile: 'Сохранить и открыть РР-помощника',
-      sessionJournal: 'Журнал занятия',
-      sessionDesc: 'Единая цифровая база вместо бумажных тетрадей',
-      whyTitle: 'Зачем это?',
-      whyText: 'Все специалисты центра видят общую базу. Один профиль на каждого ребенка, без бумажной путаницы.',
-      sessionInfo: 'Рнформация о занятии',
-      sessionType: 'Тип занятия',
-      chooseType: 'Выберите тип...',
-      notes: 'Что делали на занятии',
-      notesPh: 'Опишите упражнения, активности, методики...',
-      result: 'Результат / наблюдения',
-      resultPh: 'Как ребенок справился? Что улучшилось?',
-      rating: 'Оценка занятия',
-      saveSession: 'Сохранить и проконсультироваться с РР',
-      directorPanel: 'Панель руководителя',
-      overview: 'Центр В«АнаныТЈ жТЇрегіВ» вЂ” обзор',
-      stats: 'Статистика',
-      children: 'Детей в базе',
-      sessions: 'Занятий',
-      villages: 'Сел в охвате',
-      specialists: 'Специалиста',
-      refresh: 'Обновить',
-      exportReport: 'Экспорт отчета',
-      team: 'Специалисты',
-      aiReady: 'Готов помочь',
-      aiInput: 'Напишите вопрос...'
+      newChat: 'New Chat',
+      system: 'РЎРёСЃС‚РµРјР°',
+      whatsNew: "What's New",
+      about: 'About SOLIFON',
+      features: 'Р¤СѓРЅРєС†РёРё',
+      chat: 'Chat',
+      library: 'Library',
+      workspaces: 'Р Р°Р±РѕС‡РёРµ Р·РѕРЅС‹',
+      newProject: 'New Project',
+      presentation: 'Solifon AI Code',
+      deep: 'Р“Р»СѓР±РѕРєРёР№ РїРѕРёСЃРє',
+      download: 'РЎРєР°С‡Р°С‚СЊ Solifon AI',
+      upgradeText: 'РџРµСЂРµР№С‚Рё РЅР° Premium',
+      upgrade: 'РЈР»СѓС‡С€РёС‚СЊ',
+      historyEmpty: 'Р ВСЃС‚РѕСЂРёСЏ РїСѓСЃС‚Р°',
+      chatHistory: 'Р ВСЃС‚РѕСЂРёСЏ С‡Р°С‚РѕРІ',
+      modelPick: 'Select Model',
+      ask: 'РЎРїСЂРѕСЃРёС‚Рµ Solifon...',
+      clear: 'РћС‡РёСЃС‚РёС‚СЊ С‡Р°С‚',
+      mhTitle: 'РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–',
+      mhSubtitle: 'Р¦РёС„СЂРѕРІР°СЏ РїР»Р°С‚С„РѕСЂРјР° РїРѕРґРґРµСЂР¶РєРё СЃРµРјСЊРё',
+      mhParent: 'Р РѕРґРёС‚РµР»СЊ',
+      mhParentDesc: 'РџСЂРѕС„РёР»СЊ СЂРµР±РµРЅРєР°, РЅР°РІС‹РєРё Рё Р·Р°РґР°РЅРёСЏ РѕС‚ Р ВР В',
+      mhSpecialist: 'РЎРїРµС†РёР°Р»РёСЃС‚',
+      mhSpecialistDesc: 'Р–СѓСЂРЅР°Р» Р·Р°РЅСЏС‚РёР№ Рё РєРѕСЂСЂРµРєС†РёРѕРЅРЅС‹Рµ РјРµС‚РѕРґРёРєРё',
+      mhDirector: 'Р СѓРєРѕРІРѕРґРёС‚РµР»СЊ',
+      mhDirectorDesc: 'РЈРїСЂР°РІР»РµРЅРёРµ С†РµРЅС‚СЂРѕРј Рё Р°РЅР°Р»РёС‚РёРєР°',
+      childProfile: 'РџСЂРѕС„РёР»СЊ СЂРµР±РµРЅРєР°',
+      childProfileDesc: 'Р”Р°РЅРЅС‹Рµ СЃРѕС…СЂР°РЅСЏСЋС‚СЃСЏ РІ РІР°С€РµРј Р°РєРєР°СѓРЅС‚Рµ',
+      personalInfo: 'Р›РёС‡РЅР°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ',
+      childName: 'Р¤Р ВРћ СЂРµР±РµРЅРєР°',
+      childNamePh: 'РќР°РїСЂРёРјРµСЂ: РђР»РёР±РµРє РЎРµР№С‚РѕРІ',
+      dob: 'Р”Р°С‚Р° СЂРѕР¶РґРµРЅРёСЏ (Р”Р”.РњРњ.Р“Р“Р“Р“)',
+      diagnosis: 'Р”РёР°РіРЅРѕР· / РѕСЃРѕР±РµРЅРЅРѕСЃС‚Рё',
+      diagnosisPh: 'РќР°РїСЂРёРјРµСЂ: Р—Р Р , Р”Р¦Рџ, Р РђРЎ...',
+      docs: 'Р”РѕРєСѓРјРµРЅС‚С‹',
+      upload: 'РќР°Р¶РјРёС‚Рµ, С‡С‚РѕР±С‹ Р·Р°РіСЂСѓР·РёС‚СЊ',
+      uploadHint: 'РЎРїСЂР°РІРєРё, Р·Р°РєР»СЋС‡РµРЅРёСЏ СЃРїРµС†РёР°Р»РёСЃС‚РѕРІ',
+      skills: 'РќР°РІС‹РєРё СЂРµР±РµРЅРєР°',
+      saveProfile: 'РЎРѕС…СЂР°РЅРёС‚СЊ Рё РѕС‚РєСЂС‹С‚СЊ Р ВР В-РїРѕРјРѕС‰РЅРёРєР°',
+      sessionJournal: 'Р–СѓСЂРЅР°Р» Р·Р°РЅСЏС‚РёСЏ',
+      sessionDesc: 'Р•РґРёРЅР°СЏ С†РёС„СЂРѕРІР°СЏ Р±Р°Р·Р° РІРјРµСЃС‚Рѕ Р±СѓРјР°Р¶РЅС‹С… С‚РµС‚СЂР°РґРµР№',
+      whyTitle: 'Р—Р°С‡РµРј СЌС‚Рѕ?',
+      whyText: 'Р’СЃРµ СЃРїРµС†РёР°Р»РёСЃС‚С‹ С†РµРЅС‚СЂР° РІРёРґСЏС‚ РѕР±С‰СѓСЋ Р±Р°Р·Сѓ. РћРґРёРЅ РїСЂРѕС„РёР»СЊ РЅР° РєР°Р¶РґРѕРіРѕ СЂРµР±РµРЅРєР°, Р±РµР· Р±СѓРјР°Р¶РЅРѕР№ РїСѓС‚Р°РЅРёС†С‹.',
+      sessionInfo: 'Р ВРЅС„РѕСЂРјР°С†РёСЏ Рѕ Р·Р°РЅСЏС‚РёРё',
+      sessionType: 'РўРёРї Р·Р°РЅСЏС‚РёСЏ',
+      chooseType: 'Р’С‹Р±РµСЂРёС‚Рµ С‚РёРї...',
+      notes: 'Р§С‚Рѕ РґРµР»Р°Р»Рё РЅР° Р·Р°РЅСЏС‚РёРё',
+      notesPh: 'РћРїРёС€РёС‚Рµ СѓРїСЂР°Р¶РЅРµРЅРёСЏ, Р°РєС‚РёРІРЅРѕСЃС‚Рё, РјРµС‚РѕРґРёРєРё...',
+      result: 'Р РµР·СѓР»СЊС‚Р°С‚ / РЅР°Р±Р»СЋРґРµРЅРёСЏ',
+      resultPh: 'РљР°Рє СЂРµР±РµРЅРѕРє СЃРїСЂР°РІРёР»СЃСЏ? Р§С‚Рѕ СѓР»СѓС‡С€РёР»РѕСЃСЊ?',
+      rating: 'РћС†РµРЅРєР° Р·Р°РЅСЏС‚РёСЏ',
+      saveSession: 'РЎРѕС…СЂР°РЅРёС‚СЊ Рё РїСЂРѕРєРѕРЅСЃСѓР»СЊС‚РёСЂРѕРІР°С‚СЊСЃСЏ СЃ Р ВР В',
+      directorPanel: 'РџР°РЅРµР»СЊ СЂСѓРєРѕРІРѕРґРёС‚РµР»СЏ',
+      overview: 'Р¦РµРЅС‚СЂ Р’В«РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–Р’В» РІР‚вЂќ РѕР±Р·РѕСЂ',
+      stats: 'РЎС‚Р°С‚РёСЃС‚РёРєР°',
+      children: 'Р”РµС‚РµР№ РІ Р±Р°Р·Рµ',
+      sessions: 'Р—Р°РЅСЏС‚РёР№',
+      villages: 'РЎРµР» РІ РѕС…РІР°С‚Рµ',
+      specialists: 'РЎРїРµС†РёР°Р»РёСЃС‚Р°',
+      refresh: 'РћР±РЅРѕРІРёС‚СЊ',
+      exportReport: 'Р­РєСЃРїРѕСЂС‚ РѕС‚С‡РµС‚Р°',
+      team: 'РЎРїРµС†РёР°Р»РёСЃС‚С‹',
+      aiReady: 'Р“РѕС‚РѕРІ РїРѕРјРѕС‡СЊ',
+      aiInput: 'РќР°РїРёС€РёС‚Рµ РІРѕРїСЂРѕСЃ...'
     },
     kk: {
       code: 'KZ',
       htmlLang: 'kk',
-      newChat: 'ЖаТЈа чат',
-      system: 'ЖТЇйе',
-      whatsNew: 'ЖаТЈалыТ›тар',
-      about: 'SOLIFON туралы',
-      features: 'МТЇмкіндіктер',
-      chat: 'Чат',
-      library: 'Кітапхана',
-      workspaces: 'ЖТ±мыс аймаТ›тары',
-      newProject: 'ЖаТЈа жоба',
-      presentation: 'Презентация',
-      deep: 'ТереТЈ зерттеу',
-      download: 'Solifon AI жТЇктеу',
-      upgradeText: 'Premium-Т“а У©ту',
-      upgrade: 'ЖаТ›сарту',
-      historyEmpty: 'Тарих бос',
-      chatHistory: 'Чат тарихы',
-      modelPick: 'Модель таТЈдаТЈыз',
-      ask: 'Solifon-нан сТ±раТЈыз...',
-      clear: 'Чатты тазалау',
-      mhTitle: 'АнаныТЈ жТЇрегі',
-      mhSubtitle: 'Отбасын Т›олдауТ“а арналТ“ан цифрлыТ› платформа',
-      mhParent: 'Ата-ана',
-      mhParentDesc: 'БаланыТЈ профилі, даТ“дылары жУ™не РР тапсырмалары',
-      mhSpecialist: 'Маман',
-      mhSpecialistDesc: 'СабаТ› журналы жУ™не тТЇзету У™дістемелері',
-      mhDirector: 'Жетекші',
-      mhDirectorDesc: 'ОрталыТ›ты басТ›ару жУ™не аналитика',
-      childProfile: 'БаланыТЈ профилі',
-      childProfileDesc: 'Деректер аккаунтыТЈызда саТ›талады',
-      personalInfo: 'Жеке аТ›парат',
-      childName: 'БаланыТЈ толыТ› аты-жУ©ні',
-      childNamePh: 'Мысалы: Улібек Сейтов',
-      dob: 'ТуТ“ан кТЇні (КК.АА.ЖЖЖЖ)',
-      diagnosis: 'Диагноз / ерекшеліктер',
-      diagnosisPh: 'Мысалы: сУ©йлеу дамуыныТЈ кешігуі, БЦП, аутизм...',
-      docs: 'ТљТ±жаттар',
-      upload: 'ЖТЇктеу ТЇшін басыТЈыз',
-      uploadHint: 'АныТ›тамалар, мамандар Т›орытындылары',
-      skills: 'БаланыТЈ даТ“дылары',
-      saveProfile: 'СаТ›тап, РР-кУ©мекшіні ашу',
-      sessionJournal: 'СабаТ› журналы',
-      sessionDesc: 'ТљаТ“аз дУ™птердіТЈ орнына ортаТ› цифрлыТ› база',
-      whyTitle: 'БТ±л не ТЇшін?',
-      whyText: 'ОрталыТ› мамандары ортаТ› базаны кУ©реді. Ур балаТ“а бір профиль, Т›аТ“аз шатасуы жоТ›.',
-      sessionInfo: 'СабаТ› туралы аТ›парат',
-      sessionType: 'СабаТ› тТЇрі',
-      chooseType: 'ТТЇрін таТЈдаТЈыз...',
-      notes: 'СабаТ›та не істелді',
-      notesPh: 'ЖаттыТ“уларды, белсенділіктерді, У™дістемелерді жазыТЈыз...',
-      result: 'НУ™тиже / баТ›ылау',
-      resultPh: 'Бала Т›алай орындады? Не жаТ›сарды?',
-      rating: 'СабаТ›ты баТ“алау',
-      saveSession: 'СаТ›тап, РР-мен кеТЈесу',
-      directorPanel: 'Жетекші панелі',
-      overview: 'В«АнаныТЈ жТЇрегіВ» орталыТ“ы вЂ” шолу',
-      stats: 'Статистика',
-      children: 'БазадаТ“ы балалар',
-      sessions: 'СабаТ›тар',
-      villages: 'ТљамтылТ“ан ауылдар',
-      specialists: 'Маман',
-      refresh: 'ЖаТЈарту',
-      exportReport: 'Есепті экспорттау',
-      team: 'Мамандар',
-      aiReady: 'КУ©мектесуге дайын',
-      aiInput: 'СТ±раТ“ыТЈызды жазыТЈыз...'
+      newChat: 'Р–Р°РўР€Р° С‡Р°С‚',
+      system: 'Р–РўР‡Р№Рµ',
+      whatsNew: 'Р–Р°РўР€Р°Р»С‹РўвЂєС‚Р°СЂ',
+      about: 'SOLIFON С‚СѓСЂР°Р»С‹',
+      features: 'РњРўР‡РјРєС–РЅРґС–РєС‚РµСЂ',
+      chat: 'Chat',
+      library: 'РљС–С‚Р°РїС…Р°РЅР°',
+      workspaces: 'Р–РўВ±РјС‹СЃ Р°Р№РјР°РўвЂєС‚Р°СЂС‹',
+      newProject: 'Р–Р°РўР€Р° Р¶РѕР±Р°',
+      presentation: 'Solifon AI Code',
+      deep: 'РўРµСЂРµРўР€ Р·РµСЂС‚С‚РµСѓ',
+      download: 'Solifon AI Р¶РўР‡РєС‚РµСѓ',
+      upgradeText: 'Premium-РўвЂњР° РЈВ©С‚Сѓ',
+      upgrade: 'Р–Р°РўвЂєСЃР°СЂС‚Сѓ',
+      historyEmpty: 'РўР°СЂРёС… Р±РѕСЃ',
+      chatHistory: 'Р§Р°С‚ С‚Р°СЂРёС…С‹',
+      modelPick: 'РњРѕРґРµР»СЊ С‚Р°РўР€РґР°РўР€С‹Р·',
+      ask: 'Solifon-РЅР°РЅ СЃРўВ±СЂР°РўР€С‹Р·...',
+      clear: 'Р§Р°С‚С‚С‹ С‚Р°Р·Р°Р»Р°Сѓ',
+      mhTitle: 'РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–',
+      mhSubtitle: 'РћС‚Р±Р°СЃС‹РЅ РўвЂєРѕР»РґР°СѓРўвЂњР° Р°СЂРЅР°Р»РўвЂњР°РЅ С†РёС„СЂР»С‹РўвЂє РїР»Р°С‚С„РѕСЂРјР°',
+      mhParent: 'РђС‚Р°-Р°РЅР°',
+      mhParentDesc: 'Р‘Р°Р»Р°РЅС‹РўР€ РїСЂРѕС„РёР»С–, РґР°РўвЂњРґС‹Р»Р°СЂС‹ Р¶РЈв„ўРЅРµ Р ВР В С‚Р°РїСЃС‹СЂРјР°Р»Р°СЂС‹',
+      mhSpecialist: 'РњР°РјР°РЅ',
+      mhSpecialistDesc: 'РЎР°Р±Р°РўвЂє Р¶СѓСЂРЅР°Р»С‹ Р¶РЈв„ўРЅРµ С‚РўР‡Р·РµС‚Сѓ РЈв„ўРґС–СЃС‚РµРјРµР»РµСЂС–',
+      mhDirector: 'Р–РµС‚РµРєС€С–',
+      mhDirectorDesc: 'РћСЂС‚Р°Р»С‹РўвЂєС‚С‹ Р±Р°СЃРўвЂєР°СЂСѓ Р¶РЈв„ўРЅРµ Р°РЅР°Р»РёС‚РёРєР°',
+      childProfile: 'Р‘Р°Р»Р°РЅС‹РўР€ РїСЂРѕС„РёР»С–',
+      childProfileDesc: 'Р”РµСЂРµРєС‚РµСЂ Р°РєРєР°СѓРЅС‚С‹РўР€С‹Р·РґР° СЃР°РўвЂєС‚Р°Р»Р°РґС‹',
+      personalInfo: 'Р–РµРєРµ Р°РўвЂєРїР°СЂР°С‚',
+      childName: 'Р‘Р°Р»Р°РЅС‹РўР€ С‚РѕР»С‹РўвЂє Р°С‚С‹-Р¶РЈВ©РЅС–',
+      childNamePh: 'РњС‹СЃР°Р»С‹: РЈВР»С–Р±РµРє РЎРµР№С‚РѕРІ',
+      dob: 'РўСѓРўвЂњР°РЅ РєРўР‡РЅС– (РљРљ.РђРђ.Р–Р–Р–Р–)',
+      diagnosis: 'Р”РёР°РіРЅРѕР· / РµСЂРµРєС€РµР»С–РєС‚РµСЂ',
+      diagnosisPh: 'РњС‹СЃР°Р»С‹: СЃРЈВ©Р№Р»РµСѓ РґР°РјСѓС‹РЅС‹РўР€ РєРµС€С–РіСѓС–, Р‘Р¦Рџ, Р°СѓС‚РёР·Рј...',
+      docs: 'РўС™РўВ±Р¶Р°С‚С‚Р°СЂ',
+      upload: 'Р–РўР‡РєС‚РµСѓ РўР‡С€С–РЅ Р±Р°СЃС‹РўР€С‹Р·',
+      uploadHint: 'РђРЅС‹РўвЂєС‚Р°РјР°Р»Р°СЂ, РјР°РјР°РЅРґР°СЂ РўвЂєРѕСЂС‹С‚С‹РЅРґС‹Р»Р°СЂС‹',
+      skills: 'Р‘Р°Р»Р°РЅС‹РўР€ РґР°РўвЂњРґС‹Р»Р°СЂС‹',
+      saveProfile: 'РЎР°РўвЂєС‚Р°Рї, Р ВР В-РєРЈВ©РјРµРєС€С–РЅС– Р°С€Сѓ',
+      sessionJournal: 'РЎР°Р±Р°РўвЂє Р¶СѓСЂРЅР°Р»С‹',
+      sessionDesc: 'РўС™Р°РўвЂњР°Р· РґРЈв„ўРїС‚РµСЂРґС–РўР€ РѕСЂРЅС‹РЅР° РѕСЂС‚Р°РўвЂє С†РёС„СЂР»С‹РўвЂє Р±Р°Р·Р°',
+      whyTitle: 'Р‘РўВ±Р» РЅРµ РўР‡С€С–РЅ?',
+      whyText: 'РћСЂС‚Р°Р»С‹РўвЂє РјР°РјР°РЅРґР°СЂС‹ РѕСЂС‚Р°РўвЂє Р±Р°Р·Р°РЅС‹ РєРЈВ©СЂРµРґС–. РЈВСЂ Р±Р°Р»Р°РўвЂњР° Р±С–СЂ РїСЂРѕС„РёР»СЊ, РўвЂєР°РўвЂњР°Р· С€Р°С‚Р°СЃСѓС‹ Р¶РѕРўвЂє.',
+      sessionInfo: 'РЎР°Р±Р°РўвЂє С‚СѓСЂР°Р»С‹ Р°РўвЂєРїР°СЂР°С‚',
+      sessionType: 'РЎР°Р±Р°РўвЂє С‚РўР‡СЂС–',
+      chooseType: 'РўРўР‡СЂС–РЅ С‚Р°РўР€РґР°РўР€С‹Р·...',
+      notes: 'РЎР°Р±Р°РўвЂєС‚Р° РЅРµ С–СЃС‚РµР»РґС–',
+      notesPh: 'Р–Р°С‚С‚С‹РўвЂњСѓР»Р°СЂРґС‹, Р±РµР»СЃРµРЅРґС–Р»С–РєС‚РµСЂРґС–, РЈв„ўРґС–СЃС‚РµРјРµР»РµСЂРґС– Р¶Р°Р·С‹РўР€С‹Р·...',
+      result: 'РќРЈв„ўС‚РёР¶Рµ / Р±Р°РўвЂєС‹Р»Р°Сѓ',
+      resultPh: 'Р‘Р°Р»Р° РўвЂєР°Р»Р°Р№ РѕСЂС‹РЅРґР°РґС‹? РќРµ Р¶Р°РўвЂєСЃР°СЂРґС‹?',
+      rating: 'РЎР°Р±Р°РўвЂєС‚С‹ Р±Р°РўвЂњР°Р»Р°Сѓ',
+      saveSession: 'РЎР°РўвЂєС‚Р°Рї, Р ВР В-РјРµРЅ РєРµРўР€РµСЃСѓ',
+      directorPanel: 'Р–РµС‚РµРєС€С– РїР°РЅРµР»С–',
+      overview: 'Р’В«РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–Р’В» РѕСЂС‚Р°Р»С‹РўвЂњС‹ РІР‚вЂќ С€РѕР»Сѓ',
+      stats: 'РЎС‚Р°С‚РёСЃС‚РёРєР°',
+      children: 'Р‘Р°Р·Р°РґР°РўвЂњС‹ Р±Р°Р»Р°Р»Р°СЂ',
+      sessions: 'РЎР°Р±Р°РўвЂєС‚Р°СЂ',
+      villages: 'РўС™Р°РјС‚С‹Р»РўвЂњР°РЅ Р°СѓС‹Р»РґР°СЂ',
+      specialists: 'РњР°РјР°РЅ',
+      refresh: 'Р–Р°РўР€Р°СЂС‚Сѓ',
+      exportReport: 'Р•СЃРµРїС‚С– СЌРєСЃРїРѕСЂС‚С‚Р°Сѓ',
+      team: 'РњР°РјР°РЅРґР°СЂ',
+      aiReady: 'РљРЈВ©РјРµРєС‚РµСЃСѓРіРµ РґР°Р№С‹РЅ',
+      aiInput: 'РЎРўВ±СЂР°РўвЂњС‹РўР€С‹Р·РґС‹ Р¶Р°Р·С‹РўР€С‹Р·...'
     },
     en: {
       code: 'EN',
@@ -2391,7 +2391,7 @@ function showInstallGuide() {
       rating: 'Session rating',
       saveSession: 'Save and consult with AI',
       directorPanel: 'Director Dashboard',
-      overview: 'вЂњMotherвЂ™s HeartвЂќ center overview',
+      overview: 'РІР‚СљMotherРІР‚в„ўs HeartРІР‚Сњ center overview',
       stats: 'Statistics',
       children: 'Children in database',
       sessions: 'Sessions',
@@ -2404,22 +2404,26 @@ function showInstallGuide() {
       aiInput: 'Write a question...'
     }
   };
+  packs.ru = packs.en;
+  packs.kz = packs.en;
 
   const skillTexts = {
-    ru: ['Говорит слова', 'Говорит предложения', 'Понимает речь', 'Самообслуживание', 'Рисует', 'Читает', 'Счет', 'Социальные навыки', 'Моторика рук', 'Внимание'],
-    kk: ['СУ©з айтады', 'СУ©йлем Т›Т±райды', 'СУ©зді тТЇсінеді', 'УЁзін-У©зі кТЇту', 'Сурет салады', 'ОТ›иды', 'Санайды', 'Улеуметтік даТ“дылар', 'Тљол моторикасы', 'Зейін'],
+    ru: ['Р“РѕРІРѕСЂРёС‚ СЃР»РѕРІР°', 'Р“РѕРІРѕСЂРёС‚ РїСЂРµРґР»РѕР¶РµРЅРёСЏ', 'РџРѕРЅРёРјР°РµС‚ СЂРµС‡СЊ', 'РЎР°РјРѕРѕР±СЃР»СѓР¶РёРІР°РЅРёРµ', 'Р РёСЃСѓРµС‚', 'Р§РёС‚Р°РµС‚', 'РЎС‡РµС‚', 'РЎРѕС†РёР°Р»СЊРЅС‹Рµ РЅР°РІС‹РєРё', 'РњРѕС‚РѕСЂРёРєР° СЂСѓРє', 'Р’РЅРёРјР°РЅРёРµ'],
+    kk: ['РЎРЈВ©Р· Р°Р№С‚Р°РґС‹', 'РЎРЈВ©Р№Р»РµРј РўвЂєРўВ±СЂР°Р№РґС‹', 'РЎРЈВ©Р·РґС– С‚РўР‡СЃС–РЅРµРґС–', 'РЈРЃР·С–РЅ-РЈВ©Р·С– РєРўР‡С‚Сѓ', 'РЎСѓСЂРµС‚ СЃР°Р»Р°РґС‹', 'РћРўвЂєРёРґС‹', 'РЎР°РЅР°Р№РґС‹', 'РЈВР»РµСѓРјРµС‚С‚С–Рє РґР°РўвЂњРґС‹Р»Р°СЂ', 'РўС™РѕР» РјРѕС‚РѕСЂРёРєР°СЃС‹', 'Р—РµР№С–РЅ'],
     en: ['Says words', 'Uses sentences', 'Understands speech', 'Self-care', 'Draws', 'Reads', 'Counting', 'Social skills', 'Hand motor skills', 'Attention']
   };
+  skillTexts.ru = skillTexts.en;
+  skillTexts.kz = skillTexts.en;
 
   const sessionSkillTexts = {
-    ru: ['Активно участвовал', 'Был сосредоточен', 'Есть прогресс', 'Был капризным', 'Устал быстро', 'Требует повтора'],
-    kk: ['Белсенді Т›атысты', 'Зейіні тТ±раТ›ты болды', 'Ілгерілеу бар', 'ТљыТЈырлыТ› болды', 'Тез шаршады', 'Тљайталау Т›ажет'],
+    ru: ['РђРєС‚РёРІРЅРѕ СѓС‡Р°СЃС‚РІРѕРІР°Р»', 'Р‘С‹Р» СЃРѕСЃСЂРµРґРѕС‚РѕС‡РµРЅ', 'Р•СЃС‚СЊ РїСЂРѕРіСЂРµСЃСЃ', 'Р‘С‹Р» РєР°РїСЂРёР·РЅС‹Рј', 'РЈСЃС‚Р°Р» Р±С‹СЃС‚СЂРѕ', 'РўСЂРµР±СѓРµС‚ РїРѕРІС‚РѕСЂР°'],
+    kk: ['Р‘РµР»СЃРµРЅРґС– РўвЂєР°С‚С‹СЃС‚С‹', 'Р—РµР№С–РЅС– С‚РўВ±СЂР°РўвЂєС‚С‹ Р±РѕР»РґС‹', 'Р†Р»РіРµСЂС–Р»РµСѓ Р±Р°СЂ', 'РўС™С‹РўР€С‹СЂР»С‹РўвЂє Р±РѕР»РґС‹', 'РўРµР· С€Р°СЂС€Р°РґС‹', 'РўС™Р°Р№С‚Р°Р»Р°Сѓ РўвЂєР°Р¶РµС‚'],
     en: ['Participated actively', 'Stayed focused', 'Progress noticed', 'Was upset', 'Got tired quickly', 'Needs repetition']
   };
 
   const sessionTypes = {
-    ru: ['Логопедическое занятие', 'Дефектологическое занятие', 'Психологическое занятие', 'Арт-терапия', 'ЛФК', 'Сенсорная интеграция', 'Другое'],
-    kk: ['Логопед сабаТ“ы', 'Дефектолог сабаТ“ы', 'Психолог сабаТ“ы', 'Арт-терапия', 'Емдік дене шыныТ›тыру', 'СенсорлыТ› интеграция', 'БасТ›а'],
+    ru: ['Р›РѕРіРѕРїРµРґРёС‡РµСЃРєРѕРµ Р·Р°РЅСЏС‚РёРµ', 'Р”РµС„РµРєС‚РѕР»РѕРіРёС‡РµСЃРєРѕРµ Р·Р°РЅСЏС‚РёРµ', 'РџСЃРёС…РѕР»РѕРіРёС‡РµСЃРєРѕРµ Р·Р°РЅСЏС‚РёРµ', 'РђСЂС‚-С‚РµСЂР°РїРёСЏ', 'Р›Р¤Рљ', 'РЎРµРЅСЃРѕСЂРЅР°СЏ РёРЅС‚РµРіСЂР°С†РёСЏ', 'Р”СЂСѓРіРѕРµ'],
+    kk: ['Р›РѕРіРѕРїРµРґ СЃР°Р±Р°РўвЂњС‹', 'Р”РµС„РµРєС‚РѕР»РѕРі СЃР°Р±Р°РўвЂњС‹', 'РџСЃРёС…РѕР»РѕРі СЃР°Р±Р°РўвЂњС‹', 'РђСЂС‚-С‚РµСЂР°РїРёСЏ', 'Р•РјРґС–Рє РґРµРЅРµ С€С‹РЅС‹РўвЂєС‚С‹СЂСѓ', 'РЎРµРЅСЃРѕСЂР»С‹РўвЂє РёРЅС‚РµРіСЂР°С†РёСЏ', 'Р‘Р°СЃРўвЂєР°'],
     en: ['Speech therapy', 'Special education session', 'Psychology session', 'Art therapy', 'Therapeutic exercise', 'Sensory integration', 'Other']
   };
 
@@ -2500,7 +2504,7 @@ function showInstallGuide() {
 })();
 
 // ============================================================
-// SOLIFON FINAL HOTFIX: keep "АнаныТЈ жТЇрегі" above old handlers
+// SOLIFON FINAL HOTFIX: keep "РђРЅР°РЅС‹РўР€ Р¶РўР‡СЂРµРіС–" above old handlers
 // ============================================================
 (function () {
   const screenIds = ['mh-roleScreen', 'mh-parentScreen', 'mh-specialistScreen', 'mh-directorScreen', 'mh-aiScreen'];
@@ -2529,7 +2533,7 @@ function showInstallGuide() {
     if (!content.querySelector('.live-hints')) {
       const hints = document.createElement('div');
       hints.className = 'live-hints';
-      hints.innerHTML = '<span>Голос</span><span>РР говорит</span><span>Live</span>';
+      hints.innerHTML = '<span>Р“РѕР»РѕСЃ</span><span>Р ВР В РіРѕРІРѕСЂРёС‚</span><span>Live</span>';
       const stop = content.querySelector('.stop-live-btn');
       content.insertBefore(hints, stop || null);
     }
@@ -2543,7 +2547,7 @@ function showInstallGuide() {
   function startLiveSpeechSafe() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setLiveStatus('Голосовой ввод в этом браузере недоступен. Live-экран работает, можно закрыть и писать в чат.');
+      setLiveStatus('Р“РѕР»РѕСЃРѕРІРѕР№ РІРІРѕРґ РІ СЌС‚РѕРј Р±СЂР°СѓР·РµСЂРµ РЅРµРґРѕСЃС‚СѓРїРµРЅ. Live-СЌРєСЂР°РЅ СЂР°Р±РѕС‚Р°РµС‚, РјРѕР¶РЅРѕ Р·Р°РєСЂС‹С‚СЊ Рё РїРёСЃР°С‚СЊ РІ С‡Р°С‚.');
       return;
     }
 
@@ -2554,10 +2558,10 @@ function showInstallGuide() {
       liveRecognition = new SpeechRecognition();
       liveRecognition.lang = (document.documentElement.lang === 'kk') ? 'kk-KZ' : (document.documentElement.lang === 'en' ? 'en-US' : 'ru-RU');
       liveRecognition.interimResults = true;
-      liveRecognition.onstart = () => setLiveStatus('Слушаю вас... скажите вопрос для Solifon.');
+      liveRecognition.onstart = () => setLiveStatus('РЎР»СѓС€Р°СЋ РІР°СЃ... СЃРєР°Р¶РёС‚Рµ РІРѕРїСЂРѕСЃ РґР»СЏ Solifon.');
       liveRecognition.onresult = event => {
         const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ').trim();
-        setLiveStatus(transcript ? `Услышал: ${transcript}` : 'Слушаю...');
+        setLiveStatus(transcript ? `РЈСЃР»С‹С€Р°Р»: ${transcript}` : 'РЎР»СѓС€Р°СЋ...');
         const last = event.results[event.results.length - 1];
         if (last && last.isFinal) {
           const input = document.getElementById('userInput');
@@ -2568,8 +2572,8 @@ function showInstallGuide() {
       };
       liveRecognition.onerror = event => {
         const msg = event.error === 'not-allowed'
-          ? 'Разрешите микрофон в браузере, чтобы Live мог слушать голос.'
-          : 'Не удалось запустить микрофон. Можно закрыть Live и написать вопрос текстом.';
+          ? 'Р Р°Р·СЂРµС€РёС‚Рµ РјРёРєСЂРѕС„РѕРЅ РІ Р±СЂР°СѓР·РµСЂРµ, С‡С‚РѕР±С‹ Live РјРѕРі СЃР»СѓС€Р°С‚СЊ РіРѕР»РѕСЃ.'
+          : 'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РїСѓСЃС‚РёС‚СЊ РјРёРєСЂРѕС„РѕРЅ. РњРѕР¶РЅРѕ Р·Р°РєСЂС‹С‚СЊ Live Рё РЅР°РїРёСЃР°С‚СЊ РІРѕРїСЂРѕСЃ С‚РµРєСЃС‚РѕРј.';
         setLiveStatus(msg);
       };
       liveRecognition.onend = () => {
@@ -2581,7 +2585,7 @@ function showInstallGuide() {
       };
       liveRecognition.start();
     } catch (error) {
-      setLiveStatus('Live открыт. Если микрофон не запустился, проверьте разрешение браузера.');
+      setLiveStatus('Live РѕС‚РєСЂС‹С‚. Р•СЃР»Рё РјРёРєСЂРѕС„РѕРЅ РЅРµ Р·Р°РїСѓСЃС‚РёР»СЃСЏ, РїСЂРѕРІРµСЂСЊС‚Рµ СЂР°Р·СЂРµС€РµРЅРёРµ Р±СЂР°СѓР·РµСЂР°.');
     }
   }
 
@@ -2604,7 +2608,7 @@ function showInstallGuide() {
     }
     if (inputArea) inputArea.style.display = 'none';
     if (btn) btn.classList.add('active-live');
-    setLiveStatus('Слушаю... когда РР отвечает, здесь будет анимация голоса.');
+    setLiveStatus('РЎР»СѓС€Р°СЋ... РєРѕРіРґР° Р ВР В РѕС‚РІРµС‡Р°РµС‚, Р·РґРµСЃСЊ Р±СѓРґРµС‚ Р°РЅРёРјР°С†РёСЏ РіРѕР»РѕСЃР°.');
     startLiveSpeechSafe();
   };
 
@@ -2754,45 +2758,45 @@ function showInstallGuide() {
   const LANG_KEY = 'solifon-language';
   const dict = {
     ru: {
-      download: 'Скачать Solifon AI',
-      upgradeText: 'Перейти на Premium',
-      upgrade: 'Улучшить',
+      download: 'РЎРєР°С‡Р°С‚СЊ Solifon AI',
+      upgradeText: 'РџРµСЂРµР№С‚Рё РЅР° Premium',
+      upgrade: 'РЈР»СѓС‡С€РёС‚СЊ',
       premiumTitle: 'Solifon Premium',
-      premiumSub: 'Безлимитный доступ ко всем моделям',
-      premium1: 'Все модели без ограничений',
-      premium2: 'Приоритетный доступ',
-      premium3: 'Рстория чатов',
-      premium4: 'Голосовые ответы',
-      premiumSoon: 'Скоро доступно',
-      deep: 'Глубокий поиск',
-      modelPick: 'Выберите модель',
-      ask: 'Спросите SOLIFON AI что угодно...',
+      premiumSub: 'Р‘РµР·Р»РёРјРёС‚РЅС‹Р№ РґРѕСЃС‚СѓРї РєРѕ РІСЃРµРј РјРѕРґРµР»СЏРј',
+      premium1: 'Р’СЃРµ РјРѕРґРµР»Рё Р±РµР· РѕРіСЂР°РЅРёС‡РµРЅРёР№',
+      premium2: 'РџСЂРёРѕСЂРёС‚РµС‚РЅС‹Р№ РґРѕСЃС‚СѓРї',
+      premium3: 'Р ВСЃС‚РѕСЂРёСЏ С‡Р°С‚РѕРІ',
+      premium4: 'Р“РѕР»РѕСЃРѕРІС‹Рµ РѕС‚РІРµС‚С‹',
+      premiumSoon: 'РЎРєРѕСЂРѕ РґРѕСЃС‚СѓРїРЅРѕ',
+      deep: 'Р“Р»СѓР±РѕРєРёР№ РїРѕРёСЃРє',
+      modelPick: 'Select Model',
+      ask: 'РЎРїСЂРѕСЃРёС‚Рµ SOLIFON AI С‡С‚Рѕ СѓРіРѕРґРЅРѕ...',
       questions: [
-        ['ph ph-cpu', 'Что такое искусственный интеллект?'],
-        ['ph ph-desktop', 'Что такое метавселенная?'],
-        ['ph ph-fire', 'Что такое антиматерия?'],
-        ['ph ph-lightning', 'Что такое машинное обучение?']
+        ['ph ph-cpu', 'Р§С‚Рѕ С‚Р°РєРѕРµ РёСЃРєСѓСЃСЃС‚РІРµРЅРЅС‹Р№ РёРЅС‚РµР»Р»РµРєС‚?'],
+        ['ph ph-desktop', 'Р§С‚Рѕ С‚Р°РєРѕРµ РјРµС‚Р°РІСЃРµР»РµРЅРЅР°СЏ?'],
+        ['ph ph-fire', 'Р§С‚Рѕ С‚Р°РєРѕРµ Р°РЅС‚РёРјР°С‚РµСЂРёСЏ?'],
+        ['ph ph-lightning', 'Р§С‚Рѕ С‚Р°РєРѕРµ РјР°С€РёРЅРЅРѕРµ РѕР±СѓС‡РµРЅРёРµ?']
       ]
     },
     kk: {
-      download: 'Solifon AI жТЇктеу',
-      upgradeText: 'Premium-Т“а У©ту',
-      upgrade: 'ЖаТ›сарту',
+      download: 'Solifon AI Р¶РўР‡РєС‚РµСѓ',
+      upgradeText: 'Premium-РўвЂњР° РЈВ©С‚Сѓ',
+      upgrade: 'Р–Р°РўвЂєСЃР°СЂС‚Сѓ',
       premiumTitle: 'Solifon Premium',
-      premiumSub: 'БарлыТ› модельдерге шексіз Т›олжетімділік',
-      premium1: 'БарлыТ› модельдер шектеусіз',
-      premium2: 'Басым Т›олжетімділік',
-      premium3: 'Чат тарихы',
-      premium4: 'ДауыстыТ› жауаптар',
-      premiumSoon: 'ЖаТ›ында Т›олжетімді',
-      deep: 'ТереТЈ іздеу',
-      modelPick: 'Модель таТЈдаТЈыз',
-      ask: 'SOLIFON AI-дан кез келген нУ™рсе сТ±раТЈыз...',
+      premiumSub: 'Р‘Р°СЂР»С‹РўвЂє РјРѕРґРµР»СЊРґРµСЂРіРµ С€РµРєСЃС–Р· РўвЂєРѕР»Р¶РµС‚С–РјРґС–Р»С–Рє',
+      premium1: 'Р‘Р°СЂР»С‹РўвЂє РјРѕРґРµР»СЊРґРµСЂ С€РµРєС‚РµСѓСЃС–Р·',
+      premium2: 'Р‘Р°СЃС‹Рј РўвЂєРѕР»Р¶РµС‚С–РјРґС–Р»С–Рє',
+      premium3: 'Р§Р°С‚ С‚Р°СЂРёС…С‹',
+      premium4: 'Р”Р°СѓС‹СЃС‚С‹РўвЂє Р¶Р°СѓР°РїС‚Р°СЂ',
+      premiumSoon: 'Р–Р°РўвЂєС‹РЅРґР° РўвЂєРѕР»Р¶РµС‚С–РјРґС–',
+      deep: 'РўРµСЂРµРўР€ С–Р·РґРµСѓ',
+      modelPick: 'РњРѕРґРµР»СЊ С‚Р°РўР€РґР°РўР€С‹Р·',
+      ask: 'SOLIFON AI-РґР°РЅ РєРµР· РєРµР»РіРµРЅ РЅРЈв„ўСЂСЃРµ СЃРўВ±СЂР°РўР€С‹Р·...',
       questions: [
-        ['ph ph-cpu', 'Жасанды интеллект деген не?'],
-        ['ph ph-desktop', 'Метаверс деген не?'],
-        ['ph ph-fire', 'Антиматерия деген не?'],
-        ['ph ph-lightning', 'МашиналыТ› оТ›ыту деген не?']
+        ['ph ph-cpu', 'Р–Р°СЃР°РЅРґС‹ РёРЅС‚РµР»Р»РµРєС‚ РґРµРіРµРЅ РЅРµ?'],
+        ['ph ph-desktop', 'РњРµС‚Р°РІРµСЂСЃ РґРµРіРµРЅ РЅРµ?'],
+        ['ph ph-fire', 'РђРЅС‚РёРјР°С‚РµСЂРёСЏ РґРµРіРµРЅ РЅРµ?'],
+        ['ph ph-lightning', 'РњР°С€РёРЅР°Р»С‹РўвЂє РѕРўвЂєС‹С‚Сѓ РґРµРіРµРЅ РЅРµ?']
       ]
     },
     en: {
@@ -2817,6 +2821,8 @@ function showInstallGuide() {
       ]
     }
   };
+  dict.ru = dict.en;
+  dict.kz = dict.en;
 
   function lang() {
     return localStorage.getItem(LANG_KEY) || document.documentElement.lang || 'ru';
@@ -2834,7 +2840,7 @@ function showInstallGuide() {
     if (ps[1]) ps[1].textContent = t.premiumSoon;
     const items = Array.from(document.querySelectorAll('#upgradeModal div[style*="font-size:15px"]'));
     [t.premium1, t.premium2, t.premium3, t.premium4].forEach((text, index) => {
-      if (items[index]) items[index].textContent = `вњ“  ${text}`;
+      if (items[index]) items[index].textContent = `РІСљвЂњ  ${text}`;
     });
   }
 
@@ -2917,34 +2923,34 @@ function showInstallGuide() {
   const LANG_KEY = 'solifon-language';
   const modalText = {
     ru: {
-      whatsTitle: 'Что нового',
-      whats01: '01 < Системные навыки />',
-      whats02: '02 < Скоро />',
-      whats03: '03 < Новости />',
-      aboutTitle: 'О SOLIFON AI',
+      whatsTitle: "What's New",
+      whats01: '01 < РЎРёСЃС‚РµРјРЅС‹Рµ РЅР°РІС‹РєРё />',
+      whats02: '02 < РЎРєРѕСЂРѕ />',
+      whats03: '03 < РќРѕРІРѕСЃС‚Рё />',
+      aboutTitle: 'Рћ SOLIFON AI',
       aboutHero: 'SOLIFON AI',
-      aboutLead: 'Solifon AI объединяет чат, поиск, модели, голос, визуальные инструменты и рабочие пространства в одной платформе.',
-      aboutGoal: 'Наша цель',
-      aboutGoalText: 'Мы создаём удобную AI-платформу, где пользователь может учиться, работать, исследовать идеи и запускать разные инструменты без лишних вкладок.',
-      card1: 'Мульти-ядро',
-      card1Text: 'Несколько AI-моделей в одном интерфейсе.',
+      aboutLead: 'Solifon AI РѕР±СЉРµРґРёРЅСЏРµС‚ С‡Р°С‚, РїРѕРёСЃРє, РјРѕРґРµР»Рё, РіРѕР»РѕСЃ, РІРёР·СѓР°Р»СЊРЅС‹Рµ РёРЅСЃС‚СЂСѓРјРµРЅС‚С‹ Рё СЂР°Р±РѕС‡РёРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РІ РѕРґРЅРѕР№ РїР»Р°С‚С„РѕСЂРјРµ.',
+      aboutGoal: 'РќР°С€Р° С†РµР»СЊ',
+      aboutGoalText: 'РњС‹ СЃРѕР·РґР°С‘Рј СѓРґРѕР±РЅСѓСЋ AI-РїР»Р°С‚С„РѕСЂРјСѓ, РіРґРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РјРѕР¶РµС‚ СѓС‡РёС‚СЊСЃСЏ, СЂР°Р±РѕС‚Р°С‚СЊ, РёСЃСЃР»РµРґРѕРІР°С‚СЊ РёРґРµРё Рё Р·Р°РїСѓСЃРєР°С‚СЊ СЂР°Р·РЅС‹Рµ РёРЅСЃС‚СЂСѓРјРµРЅС‚С‹ Р±РµР· Р»РёС€РЅРёС… РІРєР»Р°РґРѕРє.',
+      card1: 'РњСѓР»СЊС‚Рё-СЏРґСЂРѕ',
+      card1Text: 'РќРµСЃРєРѕР»СЊРєРѕ AI-РјРѕРґРµР»РµР№ РІ РѕРґРЅРѕРј РёРЅС‚РµСЂС„РµР№СЃРµ.',
       card2: 'Code Dev',
-      card2Text: 'Рабочее пространство для кода и экспериментов.'
+      card2Text: 'Р Р°Р±РѕС‡РµРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РґР»СЏ РєРѕРґР° Рё СЌРєСЃРїРµСЂРёРјРµРЅС‚РѕРІ.'
     },
     kk: {
-      whatsTitle: 'ЖаТЈалыТ›тар',
-      whats01: '01 < ЖТЇйелік даТ“дылар />',
-      whats02: '02 < ЖаТ›ында />',
-      whats03: '03 < ЖаТЈалыТ› />',
-      aboutTitle: 'SOLIFON AI туралы',
+      whatsTitle: 'Р–Р°РўР€Р°Р»С‹РўвЂєС‚Р°СЂ',
+      whats01: '01 < Р–РўР‡Р№РµР»С–Рє РґР°РўвЂњРґС‹Р»Р°СЂ />',
+      whats02: '02 < Р–Р°РўвЂєС‹РЅРґР° />',
+      whats03: '03 < Р–Р°РўР€Р°Р»С‹РўвЂє />',
+      aboutTitle: 'SOLIFON AI С‚СѓСЂР°Р»С‹',
       aboutHero: 'SOLIFON AI',
-      aboutLead: 'Solifon AI чат, іздеу, модельдер, дауыс, визуалды Т›Т±ралдар жУ™не жТ±мыс кеТЈістіктерін бір платформаТ“а біріктіреді.',
-      aboutGoal: 'БіздіТЈ маТ›сат',
-      aboutGoalText: 'Біз оТ›уТ“а, жТ±мыс істеуге, идеяларды зерттеуге жУ™не У™ртТЇрлі Т›Т±ралдарды артыТ› беттерсіз іске Т›осуТ“а ыТЈТ“айлы AI-платформа жасаймыз.',
-      card1: 'КУ©п ядро',
-      card1Text: 'Бір интерфейсте бірнеше AI моделі.',
+      aboutLead: 'Solifon AI С‡Р°С‚, С–Р·РґРµСѓ, РјРѕРґРµР»СЊРґРµСЂ, РґР°СѓС‹СЃ, РІРёР·СѓР°Р»РґС‹ РўвЂєРўВ±СЂР°Р»РґР°СЂ Р¶РЈв„ўРЅРµ Р¶РўВ±РјС‹СЃ РєРµРўР€С–СЃС‚С–РєС‚РµСЂС–РЅ Р±С–СЂ РїР»Р°С‚С„РѕСЂРјР°РўвЂњР° Р±С–СЂС–РєС‚С–СЂРµРґС–.',
+      aboutGoal: 'Р‘С–Р·РґС–РўР€ РјР°РўвЂєСЃР°С‚',
+      aboutGoalText: 'Р‘С–Р· РѕРўвЂєСѓРўвЂњР°, Р¶РўВ±РјС‹СЃ С–СЃС‚РµСѓРіРµ, РёРґРµСЏР»Р°СЂРґС‹ Р·РµСЂС‚С‚РµСѓРіРµ Р¶РЈв„ўРЅРµ РЈв„ўСЂС‚РўР‡СЂР»С– РўвЂєРўВ±СЂР°Р»РґР°СЂРґС‹ Р°СЂС‚С‹РўвЂє Р±РµС‚С‚РµСЂСЃС–Р· С–СЃРєРµ РўвЂєРѕСЃСѓРўвЂњР° С‹РўР€РўвЂњР°Р№Р»С‹ AI-РїР»Р°С‚С„РѕСЂРјР° Р¶Р°СЃР°Р№РјС‹Р·.',
+      card1: 'РљРЈВ©Рї СЏРґСЂРѕ',
+      card1Text: 'Р‘С–СЂ РёРЅС‚РµСЂС„РµР№СЃС‚Рµ Р±С–СЂРЅРµС€Рµ AI РјРѕРґРµР»С–.',
       card2: 'Code Dev',
-      card2Text: 'Код пен тУ™жірибелерге арналТ“ан жТ±мыс кеТЈістігі.'
+      card2Text: 'РљРѕРґ РїРµРЅ С‚РЈв„ўР¶С–СЂРёР±РµР»РµСЂРіРµ Р°СЂРЅР°Р»РўвЂњР°РЅ Р¶РўВ±РјС‹СЃ РєРµРўР€С–СЃС‚С–РіС–.'
     },
     en: {
       whatsTitle: "What's New",
@@ -3020,48 +3026,48 @@ function showInstallGuide() {
 // --- LANGUAGE TRANSLATION SYSTEM ---
 const langDict = {
   ru: {
-    select_model: "Выберите модель",
-    new_chat: "Новый чат",
-    system_whatsnew: "Что нового",
-    system_about: "О SOLIFON",
-    menu_chat: "Чат",
-    menu_library: "Библиотека",
-    menu_new_project: "Новый проект",
-    menu_presentation: "Презентация",
+    select_model: "Select Model",
+    new_chat: "New Chat",
+    system_whatsnew: "What's New",
+    system_about: "About SOLIFON",
+    menu_chat: "Chat",
+    menu_library: "Library",
+    menu_new_project: "New Project",
+    menu_presentation: "Solifon AI Code",
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
-    upgrade_subtitle: "Раскройте весь потенциал нейросетей",
+    upgrade_subtitle: "Unleash the full potential of AI",
     tariff1_type: "Basic",
-    tariff1_desc: "Лучший выбор для повседневных задач",
-    tariff1_btn: "Выбрать Basic",
+    tariff1_desc: "Best choice for daily tasks",
+    tariff1_btn: "Choose Basic",
     tariff2_type: "Pro",
-    tariff2_desc: "Для профессионалов и разработчиков",
-    tariff2_btn: "Выбрать Pro",
+    tariff2_desc: "For professionals and developers",
+    tariff2_btn: "Choose Pro",
     tariff3_type: "Ultra",
-    tariff3_desc: "Максимальная мощь без ограничений",
-    tariff3_btn: "Выбрать Ultra",
+    tariff3_desc: "Maximum power without limits",
+    tariff3_btn: "Choose Ultra",
   },
   kz: {
-    select_model: "Модель таТЈдаТЈыз",
-    new_chat: "ЖаТЈа чат",
-    system_whatsnew: "ЖаТЈалыТ›тар",
-    system_about: "SOLIFON туралы",
-    menu_chat: "Чат",
-    menu_library: "Кітапхана",
-    menu_new_project: "ЖаТЈа жоба",
-    menu_presentation: "Презентация",
-    upgrade: "Premium-Т“а У©ту",
+    select_model: "РњРѕРґРµР»СЊ С‚Р°РўР€РґР°РўР€С‹Р·",
+    new_chat: "Р–Р°РўР€Р° С‡Р°С‚",
+    system_whatsnew: "Р–Р°РўР€Р°Р»С‹РўвЂєС‚Р°СЂ",
+    system_about: "SOLIFON С‚СѓСЂР°Р»С‹",
+    menu_chat: "Chat",
+    menu_library: "РљС–С‚Р°РїС…Р°РЅР°",
+    menu_new_project: "Р–Р°РўР€Р° Р¶РѕР±Р°",
+    menu_presentation: "Solifon AI Code",
+    upgrade: "Premium-РўвЂњР° РЈВ©С‚Сѓ",
     upgrade_title: "Solifon Premium",
-    upgrade_subtitle: "НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз",
+    upgrade_subtitle: "РќРµР№СЂРѕР¶РµР»С–Р»РµСЂРґС–РўР€ Р±Р°СЂР»С‹РўвЂє РјРўР‡РјРєС–РЅРґС–РіС–РЅ Р°С€С‹РўР€С‹Р·",
     tariff1_type: "Basic",
-    tariff1_desc: "КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау",
-    tariff1_btn: "Basic таТЈдау",
+    tariff1_desc: "РљРўР‡РЅРґРµР»С–РєС‚С– С‚Р°РїСЃС‹СЂРјР°Р»Р°СЂ РўР‡С€С–РЅ РµРўР€ Р¶Р°РўвЂєСЃС‹ С‚Р°РўР€РґР°Сѓ",
+    tariff1_btn: "Basic С‚Р°РўР€РґР°Сѓ",
     tariff2_type: "Pro",
-    tariff2_desc: "КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін",
-    tariff2_btn: "Pro таТЈдау",
+    tariff2_desc: "РљРЈв„ўСЃС–РїРўвЂєРѕР№Р»Р°СЂ РјРµРЅ РЈв„ўР·С–СЂР»РµСѓС€С–Р»РµСЂ РўР‡С€С–РЅ",
+    tariff2_btn: "Pro С‚Р°РўР€РґР°Сѓ",
     tariff3_type: "Ultra",
-    tariff3_desc: "ЕшТ›андай шектеусіз максималды кТЇш",
-    tariff3_btn: "Ultra таТЈдау",
+    tariff3_desc: "Р•С€РўвЂєР°РЅРґР°Р№ С€РµРєС‚РµСѓСЃС–Р· РјР°РєСЃРёРјР°Р»РґС‹ РєРўР‡С€",
+    tariff3_btn: "Ultra С‚Р°РўР€РґР°Сѓ",
   },
   en: {
     select_model: "Select Model",
@@ -3086,6 +3092,8 @@ const langDict = {
     tariff3_btn: "Choose Ultra",
   }
 };
+langDict.ru = langDict.en;
+langDict.kz = langDict.en;
 
 window.changeLang = function(lang, btnElement) {
   // Update buttons state
@@ -3170,18 +3178,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const updatePrices = (period, months = 1) => {
         let multiplier = 1;
-        let suffix = '/мес';
+        let suffix = '/РјРµСЃ';
         
         if (period === 'year') {
             multiplier = 12 * 0.8; // 20% discount
-            suffix = '/год';
+            suffix = '/РіРѕРґ';
         } else if (period === 'custom') {
             multiplier = months;
             // Pluralization for Russian
-            let monthLabel = 'месяцев';
-            if (months % 10 === 1 && months % 100 !== 11) monthLabel = 'месяц';
-            else if ([2,3,4].includes(months % 10) && ![12,13,14].includes(months % 100)) monthLabel = 'месяца';
-            suffix = `/за ${months} ${monthLabel}`;
+            let monthLabel = 'РјРµСЃСЏС†РµРІ';
+            if (months % 10 === 1 && months % 100 !== 11) monthLabel = 'РјРµСЃСЏС†';
+            else if ([2,3,4].includes(months % 10) && ![12,13,14].includes(months % 100)) monthLabel = 'РјРµСЃСЏС†Р°';
+            suffix = `/Р·Р° ${months} ${monthLabel}`;
             customValueDisplay.textContent = `${months} ${monthLabel}`;
         }
         
@@ -3236,22 +3244,22 @@ document.addEventListener('DOMContentLoaded', () => {
 // SOLIFON CLOUD BROWSER AGENT
 // ============================================================
 window.startCloudBrowser = function(task) {
-    // ВАЖНО: Замени ссылку на URL твоего Space на Hugging Face!
-    const wsUrl = "wss://ТВОЙ-СЕРВЕР.hf.space/ws/browser"; 
+    // Р’РђР–РќРћ: Р—Р°РјРµРЅРё СЃСЃС‹Р»РєСѓ РЅР° URL С‚РІРѕРµРіРѕ Space РЅР° Hugging Face!
+    const wsUrl = "wss://РўР’РћР™-РЎР•Р Р’Р•Р .hf.space/ws/browser"; 
     
-    // Создаем сообщение в чате от имени РР с черным экраном
+    // РЎРѕР·РґР°РµРј СЃРѕРѕР±С‰РµРЅРёРµ РІ С‡Р°С‚Рµ РѕС‚ РёРјРµРЅРё Р ВР В СЃ С‡РµСЂРЅС‹Рј СЌРєСЂР°РЅРѕРј
     const msgId = "browser-" + Date.now();
     const uiHtml = `
         <div style="font-size: 13px; color: #00f2ff; margin-bottom: 8px;">
-            <i class="ph ph-globe"></i> Solifon Agent подключен к интернету...
+            <i class="ph ph-globe"></i> Solifon Agent РїРѕРґРєР»СЋС‡РµРЅ Рє РёРЅС‚РµСЂРЅРµС‚Сѓ...
         </div>
-        <div style="font-size: 14px; margin-bottom: 10px;"><b>Цель:</b> ${task}</div>
-        <img id="${msgId}" src="" style="width: 100%; border-radius: 12px; border: 1px solid #00f2ff; background: #050505; min-height: 200px;" alt="Загрузка облачного браузера...">
+        <div style="font-size: 14px; margin-bottom: 10px;"><b>Р¦РµР»СЊ:</b> ${task}</div>
+        <img id="${msgId}" src="" style="width: 100%; border-radius: 12px; border: 1px solid #00f2ff; background: #050505; min-height: 200px;" alt="Р—Р°РіСЂСѓР·РєР° РѕР±Р»Р°С‡РЅРѕРіРѕ Р±СЂР°СѓР·РµСЂР°...">
         <div id="btn-${msgId}" style="display: none; margin-top: 10px;"></div>
     `;
     
-    // Рспользуем твою готовую функцию добавления сообщений (если она называется так)
-    // Либо просто создай div и добавь его в #messagesContainer
+    // Р ВСЃРїРѕР»СЊР·СѓРµРј С‚РІРѕСЋ РіРѕС‚РѕРІСѓСЋ С„СѓРЅРєС†РёСЋ РґРѕР±Р°РІР»РµРЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№ (РµСЃР»Рё РѕРЅР° РЅР°Р·С‹РІР°РµС‚СЃСЏ С‚Р°Рє)
+    // Р›РёР±Рѕ РїСЂРѕСЃС‚Рѕ СЃРѕР·РґР°Р№ div Рё РґРѕР±Р°РІСЊ РµРіРѕ РІ #messagesContainer
     const container = document.getElementById('messagesContainer');
     const msgDiv = document.createElement('div');
     msgDiv.className = 'message ai-message';
@@ -3259,7 +3267,7 @@ window.startCloudBrowser = function(task) {
     container.appendChild(msgDiv);
     container.scrollTop = container.scrollHeight;
 
-    // Запускаем WebSocket
+    // Р—Р°РїСѓСЃРєР°РµРј WebSocket
     const ws = new WebSocket(wsUrl);
     const screen = document.getElementById(msgId);
     const btnContainer = document.getElementById(`btn-${msgId}`);
@@ -3269,18 +3277,18 @@ window.startCloudBrowser = function(task) {
     ws.onmessage = (event) => {
         const data = event.data;
         if (data.startsWith("data:image")) {
-            screen.src = data; // Показываем трансляцию
+            screen.src = data; // РџРѕРєР°Р·С‹РІР°РµРј С‚СЂР°РЅСЃР»СЏС†РёСЋ
             container.scrollTop = container.scrollHeight;
         } 
         else if (data.startsWith("LINK:")) {
             const link = data.split("LINK:")[1];
             btnContainer.style.display = "block";
-            btnContainer.innerHTML = `<a href="${link}" target="_blank" style="padding: 10px 20px; background: #00f2ff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">рџ“Ґ Скачать результат</a>`;
+            btnContainer.innerHTML = `<a href="${link}" target="_blank" style="padding: 10px 20px; background: #00f2ff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">СЂСџвЂњТђ РЎРєР°С‡Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚</a>`;
         } 
         else if (data === "DONE") {
-            console.log("Задача в браузере завершена");
+            console.log("Р—Р°РґР°С‡Р° РІ Р±СЂР°СѓР·РµСЂРµ Р·Р°РІРµСЂС€РµРЅР°");
         } 
-        else if (data.startsWith("Ошибка")) {
+        else if (data.startsWith("РћС€РёР±РєР°")) {
             alert(data);
         }
     };
@@ -3312,47 +3320,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     setTimeout(updateLamp, 100);
+    setTimeout(updateLamp, 500);
+    setTimeout(updateLamp, 1500);
     window.addEventListener('resize', updateLamp);
+    window.addEventListener('load', updateLamp);
+    if (document.fonts) {
+        document.fonts.ready.then(updateLamp);
+    }
 });
 
 
 // ============================================================
-// AUTOCOMPLETE SYSTEM — Ghost Text + Dropdown Suggestions
+// AUTOCOMPLETE SYSTEM вЂ” Ghost Text + Dropdown Suggestions
 // Based on cleaned_data.json (ru + en + kz)
 // ============================================================
 (function() {
-    // ---- База данных из cleaned_data.json ----
+    // ---- Р‘Р°Р·Р° РґР°РЅРЅС‹С… РёР· cleaned_data.json ----
     const generatedData = {
         "ru": [
-            "что такое API","что такое циклы","что такое лоукод","что такое облако",
-            "как быстро читать","как улучшить речь","как развить память","основы базы данных",
-            "основы кодирования","что такое алгоритм","что такое блокчейн","что такое протокол",
-            "что такое процессы","как стать увереннее","что такое нейросеть","что такое фреймворк",
-            "как найти ментора ит","как развить внимание","как развить слушание","как создать веб-сайт",
-            "что такое переменные","что такое чистый код","как говорить публично","как научиться учиться",
-            "как улучшить внимание","основы веб-разработки","упражнения для голоса","упражнения для дикции",
-            "что такое база данных","как развить творчество","как учиться эффективно","методы развития памяти",
-            "упражнения для дыхания","что такое микросервисы","что такое сетевой слой","как быстро выучить стих",
-            "как улучшить пунктуацию","что такое виртуализация","как развить коммуникацию","методы spaced repetition",
-            "основы бэкенд разработки","основы паттернов дизайна","основы тестирования кода","что такое большие данные",
-            "что такое интернет вещей","что такое нейронная сеть","что такое парсинг данных","как избавиться от акцента",
-            "как научиться презентации","как улучшить концентрацию","методы активного обучения","методы глубокого обучения",
-            "основы компьютерных сетей","что такое версионирование","что такое контейнеризация","что такое машинное зрение",
-            "как настроить голос дикцию","как улучшить скорость речи","основы дизайна интерфейсов","основы защиты от кибератак",
-            "основы фронтенд разработки","подготовка к школе логопед","упражнения для артикуляции","упражнения для беглой речи",
-            "упражнения для уверенности","что такое микроархитектура","что такое облачные сервисы","заикание у взрослых лечение",
-            "как организовать свое время","методы адаптивного обучения","методы проблемного обучения","основы мобильной разработки",
-            "что такое кибербезопасность","что такое машинное обучение","что такое облако вычислений","дизартрия симптомы и лечение",
-            "как научиться говорить четко","как преодолеть застенчивость","как развить уверенность речи","как улучшить звучание голоса",
-            "как улучшить письменную речь","как улучшить словарный запас","как улучшить чувство времени","методы геймификации обучения",
-            "методы развивающего обучения","основы вычислительной теории","как выучить таблицу умножения","как научиться импровизировать",
-            "методы запоминания информации","основы архитектуры приложений","основы джава программирования","основы программирования питон",
-            "что такое нативное приложение","что такое облачные технологии","как преодолеть языковой барьер","как структурировать информацию",
-            "методы интерактивного обучения","развитие критического мышления","что такое квантовые компьютеры","упражнения для речевого дыхания",
-            "что такое виртуальная реальность","что такое графические процессоры","как развить ораторское мастерство","обучение детей иностранному языку",
-            "что такое искусственный интеллект","методы повествовательного обучения","коррекция нарушений письменной речи","основы системного администрирования",
-            "техники запоминания английских слов","нарушения голоса причины профилактика","как развивать пространственное мышление",
-            "упражнения для правильного произношения","что такое тестирование программного обеспечения"
+            "С‡С‚Рѕ С‚Р°РєРѕРµ API","С‡С‚Рѕ С‚Р°РєРѕРµ С†РёРєР»С‹","С‡С‚Рѕ С‚Р°РєРѕРµ Р»РѕСѓРєРѕРґ","С‡С‚Рѕ С‚Р°РєРѕРµ РѕР±Р»Р°РєРѕ",
+            "РєР°Рє Р±С‹СЃС‚СЂРѕ С‡РёС‚Р°С‚СЊ","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ СЂРµС‡СЊ","РєР°Рє СЂР°Р·РІРёС‚СЊ РїР°РјСЏС‚СЊ","РѕСЃРЅРѕРІС‹ Р±Р°Р·С‹ РґР°РЅРЅС‹С…",
+            "РѕСЃРЅРѕРІС‹ РєРѕРґРёСЂРѕРІР°РЅРёСЏ","С‡С‚Рѕ С‚Р°РєРѕРµ Р°Р»РіРѕСЂРёС‚Рј","С‡С‚Рѕ С‚Р°РєРѕРµ Р±Р»РѕРєС‡РµР№РЅ","С‡С‚Рѕ С‚Р°РєРѕРµ РїСЂРѕС‚РѕРєРѕР»",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РїСЂРѕС†РµСЃСЃС‹","РєР°Рє СЃС‚Р°С‚СЊ СѓРІРµСЂРµРЅРЅРµРµ","С‡С‚Рѕ С‚Р°РєРѕРµ РЅРµР№СЂРѕСЃРµС‚СЊ","С‡С‚Рѕ С‚Р°РєРѕРµ С„СЂРµР№РјРІРѕСЂРє",
+            "РєР°Рє РЅР°Р№С‚Рё РјРµРЅС‚РѕСЂР° РёС‚","РєР°Рє СЂР°Р·РІРёС‚СЊ РІРЅРёРјР°РЅРёРµ","РєР°Рє СЂР°Р·РІРёС‚СЊ СЃР»СѓС€Р°РЅРёРµ","РєР°Рє СЃРѕР·РґР°С‚СЊ РІРµР±-СЃР°Р№С‚",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РїРµСЂРµРјРµРЅРЅС‹Рµ","С‡С‚Рѕ С‚Р°РєРѕРµ С‡РёСЃС‚С‹Р№ РєРѕРґ","РєР°Рє РіРѕРІРѕСЂРёС‚СЊ РїСѓР±Р»РёС‡РЅРѕ","РєР°Рє РЅР°СѓС‡РёС‚СЊСЃСЏ СѓС‡РёС‚СЊСЃСЏ",
+            "РєР°Рє СѓР»СѓС‡С€РёС‚СЊ РІРЅРёРјР°РЅРёРµ","РѕСЃРЅРѕРІС‹ РІРµР±-СЂР°Р·СЂР°Р±РѕС‚РєРё","СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ РіРѕР»РѕСЃР°","СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ РґРёРєС†РёРё",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ Р±Р°Р·Р° РґР°РЅРЅС‹С…","РєР°Рє СЂР°Р·РІРёС‚СЊ С‚РІРѕСЂС‡РµСЃС‚РІРѕ","РєР°Рє СѓС‡РёС‚СЊСЃСЏ СЌС„С„РµРєС‚РёРІРЅРѕ","РјРµС‚РѕРґС‹ СЂР°Р·РІРёС‚РёСЏ РїР°РјСЏС‚Рё",
+            "СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ РґС‹С…Р°РЅРёСЏ","С‡С‚Рѕ С‚Р°РєРѕРµ РјРёРєСЂРѕСЃРµСЂРІРёСЃС‹","С‡С‚Рѕ С‚Р°РєРѕРµ СЃРµС‚РµРІРѕР№ СЃР»РѕР№","РєР°Рє Р±С‹СЃС‚СЂРѕ РІС‹СѓС‡РёС‚СЊ СЃС‚РёС…",
+            "РєР°Рє СѓР»СѓС‡С€РёС‚СЊ РїСѓРЅРєС‚СѓР°С†РёСЋ","С‡С‚Рѕ С‚Р°РєРѕРµ РІРёСЂС‚СѓР°Р»РёР·Р°С†РёСЏ","РєР°Рє СЂР°Р·РІРёС‚СЊ РєРѕРјРјСѓРЅРёРєР°С†РёСЋ","РјРµС‚РѕРґС‹ spaced repetition",
+            "РѕСЃРЅРѕРІС‹ Р±СЌРєРµРЅРґ СЂР°Р·СЂР°Р±РѕС‚РєРё","РѕСЃРЅРѕРІС‹ РїР°С‚С‚РµСЂРЅРѕРІ РґРёР·Р°Р№РЅР°","РѕСЃРЅРѕРІС‹ С‚РµСЃС‚РёСЂРѕРІР°РЅРёСЏ РєРѕРґР°","С‡С‚Рѕ С‚Р°РєРѕРµ Р±РѕР»СЊС€РёРµ РґР°РЅРЅС‹Рµ",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РёРЅС‚РµСЂРЅРµС‚ РІРµС‰РµР№","С‡С‚Рѕ С‚Р°РєРѕРµ РЅРµР№СЂРѕРЅРЅР°СЏ СЃРµС‚СЊ","С‡С‚Рѕ С‚Р°РєРѕРµ РїР°СЂСЃРёРЅРі РґР°РЅРЅС‹С…","РєР°Рє РёР·Р±Р°РІРёС‚СЊСЃСЏ РѕС‚ Р°РєС†РµРЅС‚Р°",
+            "РєР°Рє РЅР°СѓС‡РёС‚СЊСЃСЏ РїСЂРµР·РµРЅС‚Р°С†РёРё","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ РєРѕРЅС†РµРЅС‚СЂР°С†РёСЋ","РјРµС‚РѕРґС‹ Р°РєС‚РёРІРЅРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ","РјРµС‚РѕРґС‹ РіР»СѓР±РѕРєРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ",
+            "РѕСЃРЅРѕРІС‹ РєРѕРјРїСЊСЋС‚РµСЂРЅС‹С… СЃРµС‚РµР№","С‡С‚Рѕ С‚Р°РєРѕРµ РІРµСЂСЃРёРѕРЅРёСЂРѕРІР°РЅРёРµ","С‡С‚Рѕ С‚Р°РєРѕРµ РєРѕРЅС‚РµР№РЅРµСЂРёР·Р°С†РёСЏ","С‡С‚Рѕ С‚Р°РєРѕРµ РјР°С€РёРЅРЅРѕРµ Р·СЂРµРЅРёРµ",
+            "РєР°Рє РЅР°СЃС‚СЂРѕРёС‚СЊ РіРѕР»РѕСЃ РґРёРєС†РёСЋ","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ СЃРєРѕСЂРѕСЃС‚СЊ СЂРµС‡Рё","РѕСЃРЅРѕРІС‹ РґРёР·Р°Р№РЅР° РёРЅС‚РµСЂС„РµР№СЃРѕРІ","РѕСЃРЅРѕРІС‹ Р·Р°С‰РёС‚С‹ РѕС‚ РєРёР±РµСЂР°С‚Р°Рє",
+            "РѕСЃРЅРѕРІС‹ С„СЂРѕРЅС‚РµРЅРґ СЂР°Р·СЂР°Р±РѕС‚РєРё","РїРѕРґРіРѕС‚РѕРІРєР° Рє С€РєРѕР»Рµ Р»РѕРіРѕРїРµРґ","СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ Р°СЂС‚РёРєСѓР»СЏС†РёРё","СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ Р±РµРіР»РѕР№ СЂРµС‡Рё",
+            "СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ СѓРІРµСЂРµРЅРЅРѕСЃС‚Рё","С‡С‚Рѕ С‚Р°РєРѕРµ РјРёРєСЂРѕР°СЂС…РёС‚РµРєС‚СѓСЂР°","С‡С‚Рѕ С‚Р°РєРѕРµ РѕР±Р»Р°С‡РЅС‹Рµ СЃРµСЂРІРёСЃС‹","Р·Р°РёРєР°РЅРёРµ Сѓ РІР·СЂРѕСЃР»С‹С… Р»РµС‡РµРЅРёРµ",
+            "РєР°Рє РѕСЂРіР°РЅРёР·РѕРІР°С‚СЊ СЃРІРѕРµ РІСЂРµРјСЏ","РјРµС‚РѕРґС‹ Р°РґР°РїС‚РёРІРЅРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ","РјРµС‚РѕРґС‹ РїСЂРѕР±Р»РµРјРЅРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ","РѕСЃРЅРѕРІС‹ РјРѕР±РёР»СЊРЅРѕР№ СЂР°Р·СЂР°Р±РѕС‚РєРё",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РєРёР±РµСЂР±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ","С‡С‚Рѕ С‚Р°РєРѕРµ РјР°С€РёРЅРЅРѕРµ РѕР±СѓС‡РµРЅРёРµ","С‡С‚Рѕ С‚Р°РєРѕРµ РѕР±Р»Р°РєРѕ РІС‹С‡РёСЃР»РµРЅРёР№","РґРёР·Р°СЂС‚СЂРёСЏ СЃРёРјРїС‚РѕРјС‹ Рё Р»РµС‡РµРЅРёРµ",
+            "РєР°Рє РЅР°СѓС‡РёС‚СЊСЃСЏ РіРѕРІРѕСЂРёС‚СЊ С‡РµС‚РєРѕ","РєР°Рє РїСЂРµРѕРґРѕР»РµС‚СЊ Р·Р°СЃС‚РµРЅС‡РёРІРѕСЃС‚СЊ","РєР°Рє СЂР°Р·РІРёС‚СЊ СѓРІРµСЂРµРЅРЅРѕСЃС‚СЊ СЂРµС‡Рё","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ Р·РІСѓС‡Р°РЅРёРµ РіРѕР»РѕСЃР°",
+            "РєР°Рє СѓР»СѓС‡С€РёС‚СЊ РїРёСЃСЊРјРµРЅРЅСѓСЋ СЂРµС‡СЊ","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ СЃР»РѕРІР°СЂРЅС‹Р№ Р·Р°РїР°СЃ","РєР°Рє СѓР»СѓС‡С€РёС‚СЊ С‡СѓРІСЃС‚РІРѕ РІСЂРµРјРµРЅРё","РјРµС‚РѕРґС‹ РіРµР№РјРёС„РёРєР°С†РёРё РѕР±СѓС‡РµРЅРёСЏ",
+            "РјРµС‚РѕРґС‹ СЂР°Р·РІРёРІР°СЋС‰РµРіРѕ РѕР±СѓС‡РµРЅРёСЏ","РѕСЃРЅРѕРІС‹ РІС‹С‡РёСЃР»РёС‚РµР»СЊРЅРѕР№ С‚РµРѕСЂРёРё","РєР°Рє РІС‹СѓС‡РёС‚СЊ С‚Р°Р±Р»РёС†Сѓ СѓРјРЅРѕР¶РµРЅРёСЏ","РєР°Рє РЅР°СѓС‡РёС‚СЊСЃСЏ РёРјРїСЂРѕРІРёР·РёСЂРѕРІР°С‚СЊ",
+            "РјРµС‚РѕРґС‹ Р·Р°РїРѕРјРёРЅР°РЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРё","РѕСЃРЅРѕРІС‹ Р°СЂС…РёС‚РµРєС‚СѓСЂС‹ РїСЂРёР»РѕР¶РµРЅРёР№","РѕСЃРЅРѕРІС‹ РґР¶Р°РІР° РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёСЏ","РѕСЃРЅРѕРІС‹ РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёСЏ РїРёС‚РѕРЅ",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РЅР°С‚РёРІРЅРѕРµ РїСЂРёР»РѕР¶РµРЅРёРµ","С‡С‚Рѕ С‚Р°РєРѕРµ РѕР±Р»Р°С‡РЅС‹Рµ С‚РµС…РЅРѕР»РѕРіРёРё","РєР°Рє РїСЂРµРѕРґРѕР»РµС‚СЊ СЏР·С‹РєРѕРІРѕР№ Р±Р°СЂСЊРµСЂ","РєР°Рє СЃС‚СЂСѓРєС‚СѓСЂРёСЂРѕРІР°С‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ",
+            "РјРµС‚РѕРґС‹ РёРЅС‚РµСЂР°РєС‚РёРІРЅРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ","СЂР°Р·РІРёС‚РёРµ РєСЂРёС‚РёС‡РµСЃРєРѕРіРѕ РјС‹С€Р»РµРЅРёСЏ","С‡С‚Рѕ С‚Р°РєРѕРµ РєРІР°РЅС‚РѕРІС‹Рµ РєРѕРјРїСЊСЋС‚РµСЂС‹","СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ СЂРµС‡РµРІРѕРіРѕ РґС‹С…Р°РЅРёСЏ",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РІРёСЂС‚СѓР°Р»СЊРЅР°СЏ СЂРµР°Р»СЊРЅРѕСЃС‚СЊ","С‡С‚Рѕ С‚Р°РєРѕРµ РіСЂР°С„РёС‡РµСЃРєРёРµ РїСЂРѕС†РµСЃСЃРѕСЂС‹","РєР°Рє СЂР°Р·РІРёС‚СЊ РѕСЂР°С‚РѕСЂСЃРєРѕРµ РјР°СЃС‚РµСЂСЃС‚РІРѕ","РѕР±СѓС‡РµРЅРёРµ РґРµС‚РµР№ РёРЅРѕСЃС‚СЂР°РЅРЅРѕРјСѓ СЏР·С‹РєСѓ",
+            "С‡С‚Рѕ С‚Р°РєРѕРµ РёСЃРєСѓСЃСЃС‚РІРµРЅРЅС‹Р№ РёРЅС‚РµР»Р»РµРєС‚","РјРµС‚РѕРґС‹ РїРѕРІРµСЃС‚РІРѕРІР°С‚РµР»СЊРЅРѕРіРѕ РѕР±СѓС‡РµРЅРёСЏ","РєРѕСЂСЂРµРєС†РёСЏ РЅР°СЂСѓС€РµРЅРёР№ РїРёСЃСЊРјРµРЅРЅРѕР№ СЂРµС‡Рё","РѕСЃРЅРѕРІС‹ СЃРёСЃС‚РµРјРЅРѕРіРѕ Р°РґРјРёРЅРёСЃС‚СЂРёСЂРѕРІР°РЅРёСЏ",
+            "С‚РµС…РЅРёРєРё Р·Р°РїРѕРјРёРЅР°РЅРёСЏ Р°РЅРіР»РёР№СЃРєРёС… СЃР»РѕРІ","РЅР°СЂСѓС€РµРЅРёСЏ РіРѕР»РѕСЃР° РїСЂРёС‡РёРЅС‹ РїСЂРѕС„РёР»Р°РєС‚РёРєР°","РєР°Рє СЂР°Р·РІРёРІР°С‚СЊ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµРЅРЅРѕРµ РјС‹С€Р»РµРЅРёРµ",
+            "СѓРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ РїСЂРѕРёР·РЅРѕС€РµРЅРёСЏ","С‡С‚Рѕ С‚Р°РєРѕРµ С‚РµСЃС‚РёСЂРѕРІР°РЅРёРµ РїСЂРѕРіСЂР°РјРјРЅРѕРіРѕ РѕР±РµСЃРїРµС‡РµРЅРёСЏ"
         ],
         "en": [
             "DL methods","what is AI","what is DL","what is ML","what is API","what are loops",
@@ -3396,49 +3410,49 @@ document.addEventListener("DOMContentLoaded", () => {
             "preschool speech development activities","fine motor skills development activities","phonological awareness activities for kids"
         ],
         "kz": [
-            "айқын сөйлеу","жадыны дамыту","назарды дамыту","API дегеніміз не","кодтау негіздері",
-            "дауыс жаттығулары","оқуды оқуды үйрену","UI дизайн негіздері","жылдам оқу әдістері",
-            "айтылымын жұмсап ету","сын тұрғысынан ойлау","сөздік қорын кеңейту","таз код дегеніміз не",
-            "терең оқыту әдістері","циклдар дегеніміз не","алгоритм дегеніміз не","блокчейн дегеніміз не",
-            "веб-әзірлеу негіздері","дауыс сапасын арттыру","есті дамыту техникасы","облақ сервистері шолу",
-            "протокол дегеніміз не","пунктуацияны жақсарту","сөйлеу сенімін дамыту","терең машиналық оқыту",
-            "тыныс алу жаттығулары","акцентті жоюу әдістері","веб-сайт құру әдістері","нейрожелі дегеніміз не",
-            "сахарау қатынасын жеңу","тиімді оқытың әдістері","тіл барьеріне түс болу","уақытты тиімді басқару",
-            "фреймворк дегеніміз не","ұсыну дағдыларын оқыту","spaced repetition әдісі","айнымалысы дегеніміз не",
-            "ит саласында жұмыс табу","ойын қозғау техникалары","процесстер дегеніміз не","тегін код жазуды үйрену",
-            "өлеңді қалай жаттап алу","алғашқы кодты қалай жазу","беглі сөйлеу жаттығулары","бэкенд әзірлеу негіздері",
-            "жазба қатынасын жақсарту","желі қабаты дегеніміз не","жүргіндік оқыту әдістері","импровизе істеуді үйрену",
-            "микросервис дегеніміз не","мобильді қосымша әзірлеу","мәліметтерді ұйымдастыру","сөйлеу қарқынын жақсарту",
-            "терең оқыту дегеніміз не","тыңдау дағдыларын дамыту","үйде логопед жаттығулары","ауысынды сөйлеу кеңестері",
-            "бэкенд разработка оқулығы","дауыс тыныс алу техникасы","креативтік ойлауды дамыту","мектепке дайындық логопед",
-            "мәліметті сақтау әдістері","мәселенің негізінде оқыту","түндігін беру жаттығулары","уақыт басқарысын жақсарту",
-            "веб скрейпинг дегеніміз не","виртуализация дегеніміз не","есептеу теориясы негіздері","жадыны арттыру техникалары",
-            "ит мамандығын қалай таңдау","киберқауіпсіздік негіздері","сөйлеу сенімді жаттығулары","сөйлеу сенімділігін дамыту",
-            "сөйлеуді жақсарту әдістері","фронтенд әзірлеу негіздері","эмпирикалық оқыту әдістері","Java программалау негіздері",
-            "аналитикалық ойлауды дамыту","ағылшын тілін жылдам үйрену","бейімді оқыту стратегиялары","дауыс бұзылуларын алдын алу",
-            "дизайн шаблондары негіздері","интерактивті оқыту әдістері","компьютерлік желі негіздері","облақ есептеуі дегеніміз не",
-            "сахна қорқынышын қалай жеңу","смарт контракт дегеніміз не","сөйлеу кешігуінің себептері","үлкен деректер дегеніміз не",
-            "айқын сөйлеу үшін жаттығулар","баланың сөздік қорын кеңейту","бұлттық есептеу дегеніміз не","гит және гитхаб дегеніміз не",
-            "девопс инженері дегеніміз не","конструктивті оқыту әдістері","контейнеризация дегеніміз не","машиналық оқыту дегеніміз не",
-            "менторды қалай табуға болады","нативті қосымша дегеніміз не","р және л дыбыстарын дұрыстау","сөйлеу айқындығы жаттығулары",
-            "түйілуруді қалай емдеу керек","Python программалау негіздері","балаларға екінші тілді үйрету","виртуалды шындық дегеніміз не",
-            "жылдам оқу техникасы әдістері","жұмыс орнын қалай ұйымдастыру","заттар интернеті дегеніміз не","киберқауіпсіздік дегеніміз не",
-            "код жазуды қалай бастау керек","көбейту кестесін қалай үйрену","мектепке дейінгі сөйлеу дамуы","микроархитектура дегеніміз не",
-            "нұсқасын басқару дегеніміз не","питонды қалай үйренуге болады","сөйлеу қателерін қалай түзету","фронтенд разработка негіздері",
-            "қалай жылдамырақ оқуға болады","дизартрия белгілері және емдеу","жазбаша тіл бұзылуларын түзету","жазудағы грамматиканы жақсарту",
-            "жасанды интеллект дегеніміз не","зейінді қалай арттыруға болады","кибер қауіпсіздік дегеніміз не","коммуникация дағдыларын дамыту",
-            "компьютерлік көру дегеніміз не","креативті ойлауды қалай дамыту","лоукод разработка дегеніміз не","мәліметтер базасы дегеніміз не"
+            "Р°Р№Т›С‹РЅ СЃУ©Р№Р»РµСѓ","Р¶Р°РґС‹РЅС‹ РґР°РјС‹С‚Сѓ","РЅР°Р·Р°СЂРґС‹ РґР°РјС‹С‚Сѓ","API РґРµРіРµРЅС–РјС–Р· РЅРµ","РєРѕРґС‚Р°Сѓ РЅРµРіС–Р·РґРµСЂС–",
+            "РґР°СѓС‹СЃ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","РѕТ›СѓРґС‹ РѕТ›СѓРґС‹ ТЇР№СЂРµРЅСѓ","UI РґРёР·Р°Р№РЅ РЅРµРіС–Р·РґРµСЂС–","Р¶С‹Р»РґР°Рј РѕТ›Сѓ У™РґС–СЃС‚РµСЂС–",
+            "Р°Р№С‚С‹Р»С‹РјС‹РЅ Р¶Т±РјСЃР°Рї РµС‚Сѓ","СЃС‹РЅ С‚Т±СЂТ“С‹СЃС‹РЅР°РЅ РѕР№Р»Р°Сѓ","СЃУ©Р·РґС–Рє Т›РѕСЂС‹РЅ РєРµТЈРµР№С‚Сѓ","С‚Р°Р· РєРѕРґ РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "С‚РµСЂРµТЈ РѕТ›С‹С‚Сѓ У™РґС–СЃС‚РµСЂС–","С†РёРєР»РґР°СЂ РґРµРіРµРЅС–РјС–Р· РЅРµ","Р°Р»РіРѕСЂРёС‚Рј РґРµРіРµРЅС–РјС–Р· РЅРµ","Р±Р»РѕРєС‡РµР№РЅ РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РІРµР±-У™Р·С–СЂР»РµСѓ РЅРµРіС–Р·РґРµСЂС–","РґР°СѓС‹СЃ СЃР°РїР°СЃС‹РЅ Р°СЂС‚С‚С‹СЂСѓ","РµСЃС‚С– РґР°РјС‹С‚Сѓ С‚РµС…РЅРёРєР°СЃС‹","РѕР±Р»Р°Т› СЃРµСЂРІРёСЃС‚РµСЂС– С€РѕР»Сѓ",
+            "РїСЂРѕС‚РѕРєРѕР» РґРµРіРµРЅС–РјС–Р· РЅРµ","РїСѓРЅРєС‚СѓР°С†РёСЏРЅС‹ Р¶Р°Т›СЃР°СЂС‚Сѓ","СЃУ©Р№Р»РµСѓ СЃРµРЅС–РјС–РЅ РґР°РјС‹С‚Сѓ","С‚РµСЂРµТЈ РјР°С€РёРЅР°Р»С‹Т› РѕТ›С‹С‚Сѓ",
+            "С‚С‹РЅС‹СЃ Р°Р»Сѓ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","Р°РєС†РµРЅС‚С‚С– Р¶РѕСЋСѓ У™РґС–СЃС‚РµСЂС–","РІРµР±-СЃР°Р№С‚ Т›Т±СЂСѓ У™РґС–СЃС‚РµСЂС–","РЅРµР№СЂРѕР¶РµР»С– РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "СЃР°С…Р°СЂР°Сѓ Т›Р°С‚С‹РЅР°СЃС‹РЅ Р¶РµТЈСѓ","С‚РёС–РјРґС– РѕТ›С‹С‚С‹ТЈ У™РґС–СЃС‚РµСЂС–","С‚С–Р» Р±Р°СЂСЊРµСЂС–РЅРµ С‚ТЇСЃ Р±РѕР»Сѓ","СѓР°Т›С‹С‚С‚С‹ С‚РёС–РјРґС– Р±Р°СЃТ›Р°СЂСѓ",
+            "С„СЂРµР№РјРІРѕСЂРє РґРµРіРµРЅС–РјС–Р· РЅРµ","Т±СЃС‹РЅСѓ РґР°Т“РґС‹Р»Р°СЂС‹РЅ РѕТ›С‹С‚Сѓ","spaced repetition У™РґС–СЃС–","Р°Р№РЅС‹РјР°Р»С‹СЃС‹ РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РёС‚ СЃР°Р»Р°СЃС‹РЅРґР° Р¶Т±РјС‹СЃ С‚Р°Р±Сѓ","РѕР№С‹РЅ Т›РѕР·Т“Р°Сѓ С‚РµС…РЅРёРєР°Р»Р°СЂС‹","РїСЂРѕС†РµСЃСЃС‚РµСЂ РґРµРіРµРЅС–РјС–Р· РЅРµ","С‚РµРіС–РЅ РєРѕРґ Р¶Р°Р·СѓРґС‹ ТЇР№СЂРµРЅСѓ",
+            "У©Р»РµТЈРґС– Т›Р°Р»Р°Р№ Р¶Р°С‚С‚Р°Рї Р°Р»Сѓ","Р°Р»Т“Р°С€Т›С‹ РєРѕРґС‚С‹ Т›Р°Р»Р°Р№ Р¶Р°Р·Сѓ","Р±РµРіР»С– СЃУ©Р№Р»РµСѓ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","Р±СЌРєРµРЅРґ У™Р·С–СЂР»РµСѓ РЅРµРіС–Р·РґРµСЂС–",
+            "Р¶Р°Р·Р±Р° Т›Р°С‚С‹РЅР°СЃС‹РЅ Р¶Р°Т›СЃР°СЂС‚Сѓ","Р¶РµР»С– Т›Р°Р±Р°С‚С‹ РґРµРіРµРЅС–РјС–Р· РЅРµ","Р¶ТЇСЂРіС–РЅРґС–Рє РѕТ›С‹С‚Сѓ У™РґС–СЃС‚РµСЂС–","РёРјРїСЂРѕРІРёР·Рµ С–СЃС‚РµСѓРґС– ТЇР№СЂРµРЅСѓ",
+            "РјРёРєСЂРѕСЃРµСЂРІРёСЃ РґРµРіРµРЅС–РјС–Р· РЅРµ","РјРѕР±РёР»СЊРґС– Т›РѕСЃС‹РјС€Р° У™Р·С–СЂР»РµСѓ","РјУ™Р»С–РјРµС‚С‚РµСЂРґС– Т±Р№С‹РјРґР°СЃС‚С‹СЂСѓ","СЃУ©Р№Р»РµСѓ Т›Р°СЂТ›С‹РЅС‹РЅ Р¶Р°Т›СЃР°СЂС‚Сѓ",
+            "С‚РµСЂРµТЈ РѕТ›С‹С‚Сѓ РґРµРіРµРЅС–РјС–Р· РЅРµ","С‚С‹ТЈРґР°Сѓ РґР°Т“РґС‹Р»Р°СЂС‹РЅ РґР°РјС‹С‚Сѓ","ТЇР№РґРµ Р»РѕРіРѕРїРµРґ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","Р°СѓС‹СЃС‹РЅРґС‹ СЃУ©Р№Р»РµСѓ РєРµТЈРµСЃС‚РµСЂС–",
+            "Р±СЌРєРµРЅРґ СЂР°Р·СЂР°Р±РѕС‚РєР° РѕТ›СѓР»С‹Т“С‹","РґР°СѓС‹СЃ С‚С‹РЅС‹СЃ Р°Р»Сѓ С‚РµС…РЅРёРєР°СЃС‹","РєСЂРµР°С‚РёРІС‚С–Рє РѕР№Р»Р°СѓРґС‹ РґР°РјС‹С‚Сѓ","РјРµРєС‚РµРїРєРµ РґР°Р№С‹РЅРґС‹Т› Р»РѕРіРѕРїРµРґ",
+            "РјУ™Р»С–РјРµС‚С‚С– СЃР°Т›С‚Р°Сѓ У™РґС–СЃС‚РµСЂС–","РјУ™СЃРµР»РµРЅС–ТЈ РЅРµРіС–Р·С–РЅРґРµ РѕТ›С‹С‚Сѓ","С‚ТЇРЅРґС–РіС–РЅ Р±РµСЂСѓ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","СѓР°Т›С‹С‚ Р±Р°СЃТ›Р°СЂС‹СЃС‹РЅ Р¶Р°Т›СЃР°СЂС‚Сѓ",
+            "РІРµР± СЃРєСЂРµР№РїРёРЅРі РґРµРіРµРЅС–РјС–Р· РЅРµ","РІРёСЂС‚СѓР°Р»РёР·Р°С†РёСЏ РґРµРіРµРЅС–РјС–Р· РЅРµ","РµСЃРµРїС‚РµСѓ С‚РµРѕСЂРёСЏСЃС‹ РЅРµРіС–Р·РґРµСЂС–","Р¶Р°РґС‹РЅС‹ Р°СЂС‚С‚С‹СЂСѓ С‚РµС…РЅРёРєР°Р»Р°СЂС‹",
+            "РёС‚ РјР°РјР°РЅРґС‹Т“С‹РЅ Т›Р°Р»Р°Р№ С‚Р°ТЈРґР°Сѓ","РєРёР±РµСЂТ›Р°СѓС–РїСЃС–Р·РґС–Рє РЅРµРіС–Р·РґРµСЂС–","СЃУ©Р№Р»РµСѓ СЃРµРЅС–РјРґС– Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹","СЃУ©Р№Р»РµСѓ СЃРµРЅС–РјРґС–Р»С–РіС–РЅ РґР°РјС‹С‚Сѓ",
+            "СЃУ©Р№Р»РµСѓРґС– Р¶Р°Т›СЃР°СЂС‚Сѓ У™РґС–СЃС‚РµСЂС–","С„СЂРѕРЅС‚РµРЅРґ У™Р·С–СЂР»РµСѓ РЅРµРіС–Р·РґРµСЂС–","СЌРјРїРёСЂРёРєР°Р»С‹Т› РѕТ›С‹С‚Сѓ У™РґС–СЃС‚РµСЂС–","Java РїСЂРѕРіСЂР°РјРјР°Р»Р°Сѓ РЅРµРіС–Р·РґРµСЂС–",
+            "Р°РЅР°Р»РёС‚РёРєР°Р»С‹Т› РѕР№Р»Р°СѓРґС‹ РґР°РјС‹С‚Сѓ","Р°Т“С‹Р»С€С‹РЅ С‚С–Р»С–РЅ Р¶С‹Р»РґР°Рј ТЇР№СЂРµРЅСѓ","Р±РµР№С–РјРґС– РѕТ›С‹С‚Сѓ СЃС‚СЂР°С‚РµРіРёСЏР»Р°СЂС‹","РґР°СѓС‹СЃ Р±Т±Р·С‹Р»СѓР»Р°СЂС‹РЅ Р°Р»РґС‹РЅ Р°Р»Сѓ",
+            "РґРёР·Р°Р№РЅ С€Р°Р±Р»РѕРЅРґР°СЂС‹ РЅРµРіС–Р·РґРµСЂС–","РёРЅС‚РµСЂР°РєС‚РёРІС‚С– РѕТ›С‹С‚Сѓ У™РґС–СЃС‚РµСЂС–","РєРѕРјРїСЊСЋС‚РµСЂР»С–Рє Р¶РµР»С– РЅРµРіС–Р·РґРµСЂС–","РѕР±Р»Р°Т› РµСЃРµРїС‚РµСѓС– РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "СЃР°С…РЅР° Т›РѕСЂТ›С‹РЅС‹С€С‹РЅ Т›Р°Р»Р°Р№ Р¶РµТЈСѓ","СЃРјР°СЂС‚ РєРѕРЅС‚СЂР°РєС‚ РґРµРіРµРЅС–РјС–Р· РЅРµ","СЃУ©Р№Р»РµСѓ РєРµС€С–РіСѓС–РЅС–ТЈ СЃРµР±РµРїС‚РµСЂС–","ТЇР»РєРµРЅ РґРµСЂРµРєС‚РµСЂ РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "Р°Р№Т›С‹РЅ СЃУ©Р№Р»РµСѓ ТЇС€С–РЅ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂ","Р±Р°Р»Р°РЅС‹ТЈ СЃУ©Р·РґС–Рє Т›РѕСЂС‹РЅ РєРµТЈРµР№С‚Сѓ","Р±Т±Р»С‚С‚С‹Т› РµСЃРµРїС‚РµСѓ РґРµРіРµРЅС–РјС–Р· РЅРµ","РіРёС‚ Р¶У™РЅРµ РіРёС‚С…Р°Р± РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РґРµРІРѕРїСЃ РёРЅР¶РµРЅРµСЂС– РґРµРіРµРЅС–РјС–Р· РЅРµ","РєРѕРЅСЃС‚СЂСѓРєС‚РёРІС‚С– РѕТ›С‹С‚Сѓ У™РґС–СЃС‚РµСЂС–","РєРѕРЅС‚РµР№РЅРµСЂРёР·Р°С†РёСЏ РґРµРіРµРЅС–РјС–Р· РЅРµ","РјР°С€РёРЅР°Р»С‹Т› РѕТ›С‹С‚Сѓ РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РјРµРЅС‚РѕСЂРґС‹ Т›Р°Р»Р°Р№ С‚Р°Р±СѓТ“Р° Р±РѕР»Р°РґС‹","РЅР°С‚РёРІС‚С– Т›РѕСЃС‹РјС€Р° РґРµРіРµРЅС–РјС–Р· РЅРµ","СЂ Р¶У™РЅРµ Р» РґС‹Р±С‹СЃС‚Р°СЂС‹РЅ РґТ±СЂС‹СЃС‚Р°Сѓ","СЃУ©Р№Р»РµСѓ Р°Р№Т›С‹РЅРґС‹Т“С‹ Р¶Р°С‚С‚С‹Т“СѓР»Р°СЂС‹",
+            "С‚ТЇР№С–Р»СѓСЂСѓРґС– Т›Р°Р»Р°Р№ РµРјРґРµСѓ РєРµСЂРµРє","Python РїСЂРѕРіСЂР°РјРјР°Р»Р°Сѓ РЅРµРіС–Р·РґРµСЂС–","Р±Р°Р»Р°Р»Р°СЂТ“Р° РµРєС–РЅС€С– С‚С–Р»РґС– ТЇР№СЂРµС‚Сѓ","РІРёСЂС‚СѓР°Р»РґС‹ С€С‹РЅРґС‹Т› РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "Р¶С‹Р»РґР°Рј РѕТ›Сѓ С‚РµС…РЅРёРєР°СЃС‹ У™РґС–СЃС‚РµСЂС–","Р¶Т±РјС‹СЃ РѕСЂРЅС‹РЅ Т›Р°Р»Р°Р№ Т±Р№С‹РјРґР°СЃС‚С‹СЂСѓ","Р·Р°С‚С‚Р°СЂ РёРЅС‚РµСЂРЅРµС‚С– РґРµРіРµРЅС–РјС–Р· РЅРµ","РєРёР±РµСЂТ›Р°СѓС–РїСЃС–Р·РґС–Рє РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РєРѕРґ Р¶Р°Р·СѓРґС‹ Т›Р°Р»Р°Р№ Р±Р°СЃС‚Р°Сѓ РєРµСЂРµРє","РєУ©Р±РµР№С‚Сѓ РєРµСЃС‚РµСЃС–РЅ Т›Р°Р»Р°Р№ ТЇР№СЂРµРЅСѓ","РјРµРєС‚РµРїРєРµ РґРµР№С–РЅРіС– СЃУ©Р№Р»РµСѓ РґР°РјСѓС‹","РјРёРєСЂРѕР°СЂС…РёС‚РµРєС‚СѓСЂР° РґРµРіРµРЅС–РјС–Р· РЅРµ",
+            "РЅТ±СЃТ›Р°СЃС‹РЅ Р±Р°СЃТ›Р°СЂСѓ РґРµРіРµРЅС–РјС–Р· РЅРµ","РїРёС‚РѕРЅРґС‹ Т›Р°Р»Р°Р№ ТЇР№СЂРµРЅСѓРіРµ Р±РѕР»Р°РґС‹","СЃУ©Р№Р»РµСѓ Т›Р°С‚РµР»РµСЂС–РЅ Т›Р°Р»Р°Р№ С‚ТЇР·РµС‚Сѓ","С„СЂРѕРЅС‚РµРЅРґ СЂР°Р·СЂР°Р±РѕС‚РєР° РЅРµРіС–Р·РґРµСЂС–",
+            "Т›Р°Р»Р°Р№ Р¶С‹Р»РґР°РјС‹СЂР°Т› РѕТ›СѓТ“Р° Р±РѕР»Р°РґС‹","РґРёР·Р°СЂС‚СЂРёСЏ Р±РµР»РіС–Р»РµСЂС– Р¶У™РЅРµ РµРјРґРµСѓ","Р¶Р°Р·Р±Р°С€Р° С‚С–Р» Р±Т±Р·С‹Р»СѓР»Р°СЂС‹РЅ С‚ТЇР·РµС‚Сѓ","Р¶Р°Р·СѓРґР°Т“С‹ РіСЂР°РјРјР°С‚РёРєР°РЅС‹ Р¶Р°Т›СЃР°СЂС‚Сѓ",
+            "Р¶Р°СЃР°РЅРґС‹ РёРЅС‚РµР»Р»РµРєС‚ РґРµРіРµРЅС–РјС–Р· РЅРµ","Р·РµР№С–РЅРґС– Т›Р°Р»Р°Р№ Р°СЂС‚С‚С‹СЂСѓТ“Р° Р±РѕР»Р°РґС‹","РєРёР±РµСЂ Т›Р°СѓС–РїСЃС–Р·РґС–Рє РґРµРіРµРЅС–РјС–Р· РЅРµ","РєРѕРјРјСѓРЅРёРєР°С†РёСЏ РґР°Т“РґС‹Р»Р°СЂС‹РЅ РґР°РјС‹С‚Сѓ",
+            "РєРѕРјРїСЊСЋС‚РµСЂР»С–Рє РєУ©СЂСѓ РґРµРіРµРЅС–РјС–Р· РЅРµ","РєСЂРµР°С‚РёРІС‚С– РѕР№Р»Р°СѓРґС‹ Т›Р°Р»Р°Р№ РґР°РјС‹С‚Сѓ","Р»РѕСѓРєРѕРґ СЂР°Р·СЂР°Р±РѕС‚РєР° РґРµРіРµРЅС–РјС–Р· РЅРµ","РјУ™Р»С–РјРµС‚С‚РµСЂ Р±Р°Р·Р°СЃС‹ РґРµРіРµРЅС–РјС–Р· РЅРµ"
         ]
     };
 
-    // Объединяем все три языка в один массив
+    // РћР±СЉРµРґРёРЅСЏРµРј РІСЃРµ С‚СЂРё СЏР·С‹РєР° РІ РѕРґРёРЅ РјР°СЃСЃРёРІ
     const autocompleteDB = [
         ...generatedData.ru,
         ...generatedData.en,
         ...generatedData.kz
     ];
 
-    // ---- DOM элементы ----
+    // ---- DOM СЌР»РµРјРµРЅС‚С‹ ----
     const userInput = document.getElementById('userInput');
     const ghostText = document.getElementById('ghostText');
     const dropdown = document.getElementById('suggestionsDropdown');
@@ -3446,22 +3460,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatHeader = document.getElementById('animatedChatHeader');
     const welcomeScreen = document.getElementById('welcomeScreen');
 
-    if (!userInput) return; // Безопасный выход если элемент не найден
+    if (!userInput) return; // Р‘РµР·РѕРїР°СЃРЅС‹Р№ РІС‹С…РѕРґ РµСЃР»Рё СЌР»РµРјРµРЅС‚ РЅРµ РЅР°Р№РґРµРЅ
 
     let currentGhostSuggestion = '';
     let activeIndex = -1;
     let lastMatches = [];
 
-    // ---- Поиск совпадений ----
+    // ---- РџРѕРёСЃРє СЃРѕРІРїР°РґРµРЅРёР№ ----
     function findMatches(query) {
         if (!query || query.trim().length < 2) return [];
         const q = query.toLowerCase().trim();
         return autocompleteDB
             .filter(item => item.toLowerCase().startsWith(q))
-            .slice(0, 2); // Максимум 2 подсказки
+            .slice(0, 2); // РњР°РєСЃРёРјСѓРј 2 РїРѕРґСЃРєР°Р·РєРё
     }
 
-    // ---- Обновить ghost text ----
+    // ---- РћР±РЅРѕРІРёС‚СЊ ghost text ----
     function updateGhostText(typed, suggestion) {
         if (!ghostText) return;
         if (suggestion && suggestion.toLowerCase().startsWith(typed.toLowerCase()) && typed.length > 0) {
@@ -3476,7 +3490,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ---- Рендер dropdown ----
+    // ---- Р РµРЅРґРµСЂ dropdown ----
     function renderDropdown(matches, typed) {
         if (!dropdown || !suggestionsList) return;
         if (matches.length === 0) {
@@ -3492,7 +3506,7 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = 'suggestion-item';
             div.setAttribute('data-index', idx);
 
-            // Подсвечиваем совпавшую часть
+            // РџРѕРґСЃРІРµС‡РёРІР°РµРј СЃРѕРІРїР°РІС€СѓСЋ С‡Р°СЃС‚СЊ
             const matchLen = typed.length;
             const matchPart = item.slice(0, matchLen);
             const restPart = item.slice(matchLen);
@@ -3502,11 +3516,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span>
                     <span class="suggestion-text-match">${escapeHtml(matchPart)}</span><span class="suggestion-text-rest">${escapeHtml(restPart)}</span>
                 </span>
-                <span class="tab-hint">Tab ↹</span>
+                <span class="tab-hint">Tab в†№</span>
             `;
 
             div.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // Не снимаем фокус с textarea
+                e.preventDefault(); // РќРµ СЃРЅРёРјР°РµРј С„РѕРєСѓСЃ СЃ textarea
                 selectSuggestion(item);
             });
 
@@ -3516,7 +3530,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.add('visible');
     }
 
-    // ---- Применить выбранную подсказку ----
+    // ---- РџСЂРёРјРµРЅРёС‚СЊ РІС‹Р±СЂР°РЅРЅСѓСЋ РїРѕРґСЃРєР°Р·РєСѓ ----
     function selectSuggestion(text) {
         if (!userInput) return;
         userInput.value = text;
@@ -3524,18 +3538,18 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.remove('visible');
         userInput.focus();
 
-        // Ставим курсор в конец
+        // РЎС‚Р°РІРёРј РєСѓСЂСЃРѕСЂ РІ РєРѕРЅРµС†
         userInput.setSelectionRange(text.length, text.length);
 
-        // Активируем кнопку Send
+        // РђРєС‚РёРІРёСЂСѓРµРј РєРЅРѕРїРєСѓ Send
         const sendBtn = document.getElementById('sendBtn');
         if (sendBtn) sendBtn.classList.add('active');
 
-        // Триггерим resize textarea
+        // РўСЂРёРіРіРµСЂРёРј resize textarea
         userInput.dispatchEvent(new Event('input'));
     }
 
-    // ---- Анимация заголовка ----
+    // ---- РђРЅРёРјР°С†РёСЏ Р·Р°РіРѕР»РѕРІРєР° ----
     function setHeaderTyping(isTyping) {
         if (!chatHeader) return;
         if (isTyping) {
@@ -3545,7 +3559,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ---- Безопасное экранирование HTML ----
+    // ---- Р‘РµР·РѕРїР°СЃРЅРѕРµ СЌРєСЂР°РЅРёСЂРѕРІР°РЅРёРµ HTML ----
     function escapeHtml(str) {
         return str
             .replace(/&/g, '&amp;')
@@ -3554,7 +3568,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/"/g, '&quot;');
     }
 
-    // ---- Навигация по dropdown с клавиатуры ----
+    // ---- РќР°РІРёРіР°С†РёСЏ РїРѕ dropdown СЃ РєР»Р°РІРёР°С‚СѓСЂС‹ ----
     function updateActiveItem() {
         const items = suggestionsList ? suggestionsList.querySelectorAll('.suggestion-item') : [];
         items.forEach((el, i) => {
@@ -3562,12 +3576,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ---- Основной обработчик ввода ----
+    // ---- РћСЃРЅРѕРІРЅРѕР№ РѕР±СЂР°Р±РѕС‚С‡РёРє РІРІРѕРґР° ----
     userInput.addEventListener('input', function() {
         const val = this.value;
         const isTyping = val.trim().length > 0;
 
-        // Анимация заголовка
+        // РђРЅРёРјР°С†РёСЏ Р·Р°РіРѕР»РѕРІРєР°
         setHeaderTyping(isTyping && welcomeScreen && welcomeScreen.style.display !== 'none');
 
         if (!isTyping) {
@@ -3576,11 +3590,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Ищем совпадения
+        // РС‰РµРј СЃРѕРІРїР°РґРµРЅРёСЏ
         const matches = findMatches(val);
         lastMatches = matches;
 
-        // Ghost text - первое совпадение
+        // Ghost text - РїРµСЂРІРѕРµ СЃРѕРІРїР°РґРµРЅРёРµ
         if (matches.length > 0) {
             updateGhostText(val, matches[0]);
         } else {
@@ -3596,7 +3610,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isDropdownVisible = dropdown && dropdown.classList.contains('visible');
 
         if (e.key === 'Tab') {
-            // Tab - принять ghost suggestion
+            // Tab - РїСЂРёРЅСЏС‚СЊ ghost suggestion
             if (currentGhostSuggestion) {
                 e.preventDefault();
                 selectSuggestion(currentGhostSuggestion);
@@ -3637,7 +3651,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (e.key === 'ArrowRight') {
-            // → стрелка вправо - принять ghost suggestion (как в браузере)
+            // в†’ СЃС‚СЂРµР»РєР° РІРїСЂР°РІРѕ - РїСЂРёРЅСЏС‚СЊ ghost suggestion (РєР°Рє РІ Р±СЂР°СѓР·РµСЂРµ)
             if (currentGhostSuggestion && this.selectionStart === this.value.length) {
                 e.preventDefault();
                 selectSuggestion(currentGhostSuggestion);
@@ -3645,7 +3659,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ---- Закрываем dropdown при клике вне его ----
+    // ---- Р—Р°РєСЂС‹РІР°РµРј dropdown РїСЂРё РєР»РёРєРµ РІРЅРµ РµРіРѕ ----
     document.addEventListener('click', function(e) {
         if (!dropdown) return;
         if (!dropdown.contains(e.target) && e.target !== userInput) {
@@ -3654,7 +3668,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ---- Сброс при очистке чата ----
+    // ---- РЎР±СЂРѕСЃ РїСЂРё РѕС‡РёСЃС‚РєРµ С‡Р°С‚Р° ----
     const origClearChat = window.clearChat;
     window.clearChat = function() {
         if (origClearChat) origClearChat();
@@ -3663,12 +3677,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (chatHeader) chatHeader.classList.remove('typing-active');
     };
 
-    console.log('[SOLIFON] Autocomplete system loaded — ' + autocompleteDB.length + ' entries');
+    console.log('[SOLIFON] Autocomplete system loaded вЂ” ' + autocompleteDB.length + ' entries');
 })();
 
 
 // ============================================================
-// MENU FIX v4 — document capture, no stopPropagation → лампа работает
+// MENU FIX v4 вЂ” document capture, no stopPropagation в†’ Р»Р°РјРїР° СЂР°Р±РѕС‚Р°РµС‚
 // ============================================================
 (function() {
     var _open = false;
@@ -3700,19 +3714,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (nt) nt.checked = false;
     }
 
-    // Capture на document — срабатывает ДО всех listeners на элементе
-    // НЕ вызываем stopPropagation → tubelight handler работает → лампа работает ✓
+    // Capture РЅР° document вЂ” СЃСЂР°Р±Р°С‚С‹РІР°РµС‚ Р”Рћ РІСЃРµС… listeners РЅР° СЌР»РµРјРµРЅС‚Рµ
+    // РќР• РІС‹Р·С‹РІР°РµРј stopPropagation в†’ tubelight handler СЂР°Р±РѕС‚Р°РµС‚ в†’ Р»Р°РјРїР° СЂР°Р±РѕС‚Р°РµС‚ вњ“
     document.addEventListener('click', function(e) {
         var lbl = document.querySelector('label[for="nav-toggle"]');
         if (!lbl) return;
         if (e.target === lbl || lbl.contains(e.target)) {
-            // Даём событию пройти дальше (туbelight обновит лампу)
-            // Мы только управляем видимостью sidebar
+            // Р”Р°С‘Рј СЃРѕР±С‹С‚РёСЋ РїСЂРѕР№С‚Рё РґР°Р»СЊС€Рµ (С‚Сѓbelight РѕР±РЅРѕРІРёС‚ Р»Р°РјРїСѓ)
+            // РњС‹ С‚РѕР»СЊРєРѕ СѓРїСЂР°РІР»СЏРµРј РІРёРґРёРјРѕСЃС‚СЊСЋ sidebar
             if (_open) { _hide(); } else { _show(); }
         }
-    }, true); // capture = true, но БЕЗ stopPropagation
+    }, true); // capture = true, РЅРѕ Р‘Р•Р— stopPropagation
 
-    // Синхронизация: когда openModal() сбрасывает checkbox → закрываем sidebar
+    // РЎРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ: РєРѕРіРґР° openModal() СЃР±СЂР°СЃС‹РІР°РµС‚ checkbox в†’ Р·Р°РєСЂС‹РІР°РµРј sidebar
     document.addEventListener('DOMContentLoaded', function() {
         var nt = document.getElementById('nav-toggle');
         if (nt) {
@@ -3795,7 +3809,7 @@ window.handleWallpaperUpload = function(event) {
             const videoUrl = URL.createObjectURL(file);
             // We set it but warn the user if they want since blob URLs don't survive refresh
             window.setWallpaper(`video:${videoUrl}`);
-            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы. Для постоянного видеофона поместите файл рядом с index.html.');
+            alert('РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјР°РЅРёРµ: Р·Р°РіСЂСѓР¶РµРЅРЅРѕРµ РІРёРґРµРѕ Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ С‚РѕР»СЊРєРѕ РґРѕ РїРµСЂРµР·Р°РіСЂСѓР·РєРё СЃС‚СЂР°РЅРёС†С‹. Р”Р»СЏ РїРѕСЃС‚РѕСЏРЅРЅРѕРіРѕ РІРёРґРµРѕС„РѕРЅР° РїРѕРјРµСЃС‚РёС‚Рµ С„Р°Р№Р» СЂСЏРґРѕРј СЃ index.html.');
         } else {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -4199,7 +4213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// ВИРТУАЛЬНАЯ ДОСКА И ПРОВЕРКА ПОДПИСКИ
+// Р’РР РўРЈРђР›Р¬РќРђРЇ Р”РћРЎРљРђ Р РџР РћР’Р•Р РљРђ РџРћР”РџРРЎРљР
 // ============================================================
 let videoElement = document.getElementById('input_video');
 let canvasElement = document.getElementById('output_canvas');
@@ -4209,7 +4223,7 @@ let prevX = 0;
 let prevY = 0;
 let isPremiumUser = false;
 
-// 1. ПРОВЕРКА ПОДПИСКИ (Связь с твоим app (2).py)
+// 1. РџР РћР’Р•Р РљРђ РџРћР”РџРРЎРљР (РЎРІСЏР·СЊ СЃ С‚РІРѕРёРј app (2).py)
 async function verifySubscription() {
     try {
         const response = await fetch('/api/check-premium', {
@@ -4220,7 +4234,7 @@ async function verifySubscription() {
         
         if (response.ok) {
             isPremiumUser = true;
-            // Скрываем paywall, но камеру запускаем только по кнопке "Включить камеру"
+            // РЎРєСЂС‹РІР°РµРј paywall, РЅРѕ РєР°РјРµСЂСѓ Р·Р°РїСѓСЃРєР°РµРј С‚РѕР»СЊРєРѕ РїРѕ РєРЅРѕРїРєРµ "Р’РєР»СЋС‡РёС‚СЊ РєР°РјРµСЂСѓ"
             const paywallMsg = document.getElementById('premium-paywall');
             if (paywallMsg) paywallMsg.style.display = 'none';
         } else {
@@ -4228,7 +4242,7 @@ async function verifySubscription() {
             if (paywallMsg) paywallMsg.style.display = 'flex';
         }
     } catch (e) {
-        console.error("Ошибка проверки подписки");
+        console.error("РћС€РёР±РєР° РїСЂРѕРІРµСЂРєРё РїРѕРґРїРёСЃРєРё");
     }
 }
 
@@ -4239,7 +4253,7 @@ function initDrawingCanvas() {
     const dCanvas = document.getElementById('drawing_canvas');
     if (dCanvas) {
         drawCtx = dCanvas.getContext('2d');
-        // Настраиваем кисть
+        // РќР°СЃС‚СЂР°РёРІР°РµРј РєРёСЃС‚СЊ
         drawCtx.lineCap = 'round';
         drawCtx.lineJoin = 'round';
     }
@@ -4252,7 +4266,7 @@ function startAirCanvas() {
         canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
     }
     if (!videoElement || !canvasElement) return;
-    if (cameraStarted) return; // Защита от повторного запуска
+    if (cameraStarted) return; // Р—Р°С‰РёС‚Р° РѕС‚ РїРѕРІС‚РѕСЂРЅРѕРіРѕ Р·Р°РїСѓСЃРєР°
 
     cameraStarted = true;
         let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'none';
@@ -4301,47 +4315,47 @@ function startAirCanvas() {
 function onResults(results) {
     if (!canvasCtx) return;
 
-    // 1. Отрисовка видео с камеры на заднем слое (output_canvas)
+    // 1. РћС‚СЂРёСЃРѕРІРєР° РІРёРґРµРѕ СЃ РєР°РјРµСЂС‹ РЅР° Р·Р°РґРЅРµРј СЃР»РѕРµ (output_canvas)
     canvasCtx.save();
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     
-    // Зеркальное отображение камеры для удобства пользователя
+    // Р—РµСЂРєР°Р»СЊРЅРѕРµ РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РєР°РјРµСЂС‹ РґР»СЏ СѓРґРѕР±СЃС‚РІР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     canvasCtx.scale(-1, 1);
     canvasCtx.translate(-canvasElement.width, 0);
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
     canvasCtx.restore();
 
-    // 2. Логика рисования жестами
+    // 2. Р›РѕРіРёРєР° СЂРёСЃРѕРІР°РЅРёСЏ Р¶РµСЃС‚Р°РјРё
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && drawCtx) {
         const landmarks = results.multiHandLandmarks[0];
         
-        // Координаты указательного пальца (с учетом зеркальности)
+        // РљРѕРѕСЂРґРёРЅР°С‚С‹ СѓРєР°Р·Р°С‚РµР»СЊРЅРѕРіРѕ РїР°Р»СЊС†Р° (СЃ СѓС‡РµС‚РѕРј Р·РµСЂРєР°Р»СЊРЅРѕСЃС‚Рё)
         const x = canvasElement.width - (landmarks[8].x * canvasElement.width);
         const y = landmarks[8].y * canvasElement.height;
 
-        // Рисуем красный прицел (указатель) на слое камеры
+        // Р РёСЃСѓРµРј РєСЂР°СЃРЅС‹Р№ РїСЂРёС†РµР» (СѓРєР°Р·Р°С‚РµР»СЊ) РЅР° СЃР»РѕРµ РєР°РјРµСЂС‹
         canvasCtx.beginPath();
         canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = '#ec4899'; // Неоновый розовый
+        canvasCtx.fillStyle = '#ec4899'; // РќРµРѕРЅРѕРІС‹Р№ СЂРѕР·РѕРІС‹Р№
         canvasCtx.fill();
 
-        // Если палец поднят (рисуем линию на слое рисования)
+        // Р•СЃР»Рё РїР°Р»РµС† РїРѕРґРЅСЏС‚ (СЂРёСЃСѓРµРј Р»РёРЅРёСЋ РЅР° СЃР»РѕРµ СЂРёСЃРѕРІР°РЅРёСЏ)
         if (prevX !== 0 && prevY !== 0) {
-            // Расстояние между точками (простейшая защита от резких скачков)
+            // Р Р°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ С‚РѕС‡РєР°РјРё (РїСЂРѕСЃС‚РµР№С€Р°СЏ Р·Р°С‰РёС‚Р° РѕС‚ СЂРµР·РєРёС… СЃРєР°С‡РєРѕРІ)
             const dist = Math.sqrt(Math.pow(x - prevX, 2) + Math.pow(y - prevY, 2));
             if (dist < 100) {
                 drawCtx.beginPath();
                 drawCtx.moveTo(prevX, prevY);
                 drawCtx.lineTo(x, y);
-                drawCtx.strokeStyle = '#a5b4fc'; // Красивый светлый фиолетовый
+                drawCtx.strokeStyle = '#a5b4fc'; // РљСЂР°СЃРёРІС‹Р№ СЃРІРµС‚Р»С‹Р№ С„РёРѕР»РµС‚РѕРІС‹Р№
                 drawCtx.lineWidth = 6;
                 drawCtx.stroke();
                 
-                // Добавляем свечение кисти
+                // Р”РѕР±Р°РІР»СЏРµРј СЃРІРµС‡РµРЅРёРµ РєРёСЃС‚Рё
                 drawCtx.shadowColor = '#4f46e5';
                 drawCtx.shadowBlur = 10;
                 drawCtx.stroke();
-                drawCtx.shadowBlur = 0; // Сбрасываем тень для производительности
+                drawCtx.shadowBlur = 0; // РЎР±СЂР°СЃС‹РІР°РµРј С‚РµРЅСЊ РґР»СЏ РїСЂРѕРёР·РІРѕРґРёС‚РµР»СЊРЅРѕСЃС‚Рё
             }
         }
         prevX = x; prevY = y;
@@ -4350,7 +4364,7 @@ function onResults(results) {
     }
 }
 
-// Функция для открытия виртуальной доски и проверки
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕС‚РєСЂС‹С‚РёСЏ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ РґРѕСЃРєРё Рё РїСЂРѕРІРµСЂРєРё
 window.openVirtualBoard = function() {
     if (typeof openModal === 'function') {
         openModal('newFeatureModal');
@@ -4358,7 +4372,7 @@ window.openVirtualBoard = function() {
     verifySubscription();
 };
 
-// Подключение обработчиков для кнопок управления
+// РџРѕРґРєР»СЋС‡РµРЅРёРµ РѕР±СЂР°Р±РѕС‚С‡РёРєРѕРІ РґР»СЏ РєРЅРѕРїРѕРє СѓРїСЂР°РІР»РµРЅРёСЏ
 document.addEventListener('DOMContentLoaded', () => {
     const btnStart = document.getElementById('btn-start-camera');
     const btnClear = document.getElementById('btn-clear-canvas');
@@ -4368,11 +4382,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btnStart.addEventListener('click', () => {
             if (isPremiumUser) {
                 startAirCanvas();
-                btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
+                btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> РљР°РјРµСЂР° Р·Р°РїСѓС‰РµРЅР°';
                 btnStart.style.opacity = '0.5';
                 btnStart.disabled = true;
             } else {
-                alert("Пожалуйста, разблокируйте Premium.");
+                alert("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, СЂР°Р·Р±Р»РѕРєРёСЂСѓР№С‚Рµ Premium.");
             }
         });
     }
@@ -4392,11 +4406,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const dCanvas = document.getElementById('drawing_canvas');
             if (!dCanvas) return;
             
-            // Анимация кнопки
+            // РђРЅРёРјР°С†РёСЏ РєРЅРѕРїРєРё
             const originalText = btnAnalyze.innerHTML;
-            btnAnalyze.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Анализируем...';
+            btnAnalyze.innerHTML = '<i class="ph ph-spinner ph-spin"></i> РђРЅР°Р»РёР·РёСЂСѓРµРј...';
             
-            // Получаем рисунок в base64
+            // РџРѕР»СѓС‡Р°РµРј СЂРёСЃСѓРЅРѕРє РІ base64
             const imageBase64 = dCanvas.toDataURL('image/png');
             
             try {
@@ -4410,9 +4424,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 const data = await response.json();
-                alert("Solifon Visionary: " + (data.reply || "Анализ завершен."));
+                alert("Solifon Visionary: " + (data.reply || "РђРЅР°Р»РёР· Р·Р°РІРµСЂС€РµРЅ."));
             } catch (err) {
-                alert("Ошибка при анализе рисунка.");
+                alert("РћС€РёР±РєР° РїСЂРё Р°РЅР°Р»РёР·Рµ СЂРёСЃСѓРЅРєР°.");
             } finally {
                 btnAnalyze.innerHTML = originalText;
             }
@@ -4462,3 +4476,4 @@ window.stopAirCanvas = function() {
     
     cameraStarted = false;
 };
+
