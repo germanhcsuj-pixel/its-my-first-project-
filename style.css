@@ -2136,7 +2136,7 @@ input:focus, .input-main-wrapper:focus-within {
   }
 
   .card {
-    background: #000000 !important;
+    background: transparent !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 14px !important;
     overflow: hidden;
@@ -2147,7 +2147,7 @@ input:focus, .input-main-wrapper:focus-within {
 
   .card-info {
     padding: 10px !important;
-    background: #000000 !important;
+    background: transparent !important;
   }
   .card-title {
     font-size: 0.85rem !important;
@@ -2173,8 +2173,7 @@ input:focus, .input-main-wrapper:focus-within {
   }
 
   .modal-header {
-    position: sticky;
-    top: 0;
+    position: relative;
     background: var(--bg);
     z-index: 10;
     padding: 16px 0 !important;
@@ -2194,7 +2193,7 @@ input:focus, .input-main-wrapper:focus-within {
 
   /* ===== 4. PRESENTATION / CODE EDITOR ===== */
   #presentationScreen, .presentation-screen, .code-editor-screen {
-    background: #000000 !important;
+    background: transparent !important;
   }
 
   /* Убираем белый фон у CodeMirror */
@@ -2248,7 +2247,7 @@ input:focus, .input-main-wrapper:focus-within {
 
   /* Preview iframe */
   iframe, .preview-frame {
-    background: #000000 !important;
+    background: transparent !important;
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 12px !important;
   }
@@ -3243,7 +3242,7 @@ input:focus, .input-main-wrapper:focus-within {
     left: 0 !important;
     width: 100vw !important;
     height: 100dvh !important;
-    background: #000000 !important;
+    background: transparent !important;
     display: none !important;
     align-items: center !important;
     justify-content: center !important;
@@ -3265,7 +3264,7 @@ input:focus, .input-main-wrapper:focus-within {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    background: #000000 !important;
+    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     overflow: hidden !important;
@@ -3274,7 +3273,7 @@ input:focus, .input-main-wrapper:focus-within {
 /* Убираем лишние отступы внутри */
 #whatsNewModal .modal-header {
     padding: 20px 30px !important;
-    background: #000000 !important;
+    background: transparent !important;
     border-bottom: 1px solid transparent !important;
 }
 
@@ -3293,7 +3292,7 @@ input:focus, .input-main-wrapper:focus-within {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    background: #000000 !important;
+    background: transparent !important;
     overflow: hidden !important;
 }
 
@@ -3324,7 +3323,7 @@ input:focus, .input-main-wrapper:focus-within {
 /* ============================================= */
 
 #aboutModal.custom-modal {
-    background: #000000 !important;
+    background: transparent !important;
 }
 
 #aboutModal .modal-content {
@@ -3335,7 +3334,7 @@ input:focus, .input-main-wrapper:focus-within {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 0 !important;
-    background: #000000 !important;
+    background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     display: flex !important;
@@ -3346,7 +3345,7 @@ input:focus, .input-main-wrapper:focus-within {
 /* Шапка модалки */
 #aboutModal .modal-header {
     padding: 25px 30px !important;
-    background: #000000 !important;
+    background: transparent !important;
     border-bottom: 1px solid transparent !important;
     flex-shrink: 0 !important;
 }
@@ -4620,10 +4619,10 @@ body::before { display: none; content: none; }
 }
 
 .billing-btn.active {
-    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-    color: #fff;
-    box-shadow: 0 4px 15px transparent;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    color: #000000;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    text-shadow: none;
 }
 
 @media (max-width: 575px) {
@@ -4959,7 +4958,7 @@ body.chat-started .suggestion-btn {
     height: 100dvh !important;
     max-width: none !important;
     max-height: none !important;
-    background: #000000 !important;
+    background: transparent !important;
     border: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
@@ -5135,7 +5134,7 @@ body.chat-started .suggestion-btn {
     height: 100dvh !important;
     max-width: none !important;
     max-height: none !important;
-    background: #000000 !important;
+    background: transparent !important;
     border: none !important;
     border-radius: 0 !important;
     padding: 0 !important;
@@ -5158,4 +5157,3 @@ body.chat-started .suggestion-btn {
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
 }
-
