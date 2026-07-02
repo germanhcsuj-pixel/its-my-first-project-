@@ -278,7 +278,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('ai', 'СЂСџвЂќВ¬ Р›РёРјРёС‚ Deep Mode РёСЃС‡РµСЂРїР°РЅ. РЈ РІР°СЃ РµСЃС‚СЊ 5 Р·Р°РїСЂРѕСЃРѕРІ РІ РґРµРЅСЊ. РџРѕРїСЂРѕР±СѓР№С‚Рµ Р·Р°РІС‚СЂР°!');
+        addMessageToUI('ai', '🚫 Deep Mode limit exhausted. You have 5 requests per day. Please try again tomorrow!');
         return false;
     }
     return true;
@@ -684,8 +684,8 @@ if (chatTrigger) {
     const filesToSend = [...selectedFiles];
     if (!text && filesToSend.length === 0) return;
 
-    if (text.toLowerCase().startsWith("Р±СЂР°СѓР·РµСЂ:")) {
-        let task = text.replace(/Р±СЂР°СѓР·РµСЂ:/i, '').trim();
+    if (text.toLowerCase().startsWith("browser:")) {
+        let task = text.replace(/browser:/i, '').trim();
         const userMsg = document.createElement('div');
         userMsg.className = 'message user-message';
         userMsg.innerHTML = `<div class="text">${text}</div>`;
@@ -730,10 +730,10 @@ if (chatTrigger) {
         totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
     }
 
-    const stage1 = ["Р Р°Р·Р±РѕСЂ СЃРµРјР°РЅС‚РёС‡РµСЃРєРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹ Р·Р°РїСЂРѕСЃР°...", "РР·РІР»РµС‡РµРЅРёРµ РєР»СЋС‡РµРІС‹С… СЃСѓС‰РЅРѕСЃС‚РµР№ Рё РЅР°РјРµСЂРµРЅРёР№...", "РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕРЅС‚РµРєСЃС‚РЅРѕР№ РіР»СѓР±РёРЅС‹...", "РџРѕСЃС‚СЂРѕРµРЅРёРµ РєР°СЂС‚С‹ Р»РѕРіРёС‡РµСЃРєРёС… СЃРІСЏР·РµР№...", "РљР»Р°СЃСЃРёС„РёРєР°С†РёСЏ РёРЅС‚РµРЅС‚Р° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ...", "Р Р°СЃРїРѕР·РЅР°РІР°РЅРёРµ СЃРєСЂС‹С‚С‹С… РїР°С‚С‚РµСЂРЅРѕРІ РІ С‚РµРєСЃС‚Рµ...", "РћС†РµРЅРєР° С‚РѕРЅР°Р»СЊРЅРѕСЃС‚Рё РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С…...", "РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РІРµРєС‚РѕСЂРѕРІ РІРЅРёРјР°РЅРёСЏ..."];
-    const stage2 = ["РЎРєР°РЅРёСЂРѕРІР°РЅРёРµ РјРЅРѕРіРѕРјРµСЂРЅС‹С… Р±Р°Р· РґР°РЅРЅС‹С…...", "РР·РІР»РµС‡РµРЅРёРµ СЂРµР»РµРІР°РЅС‚РЅС‹С… РєРѕРЅС‚РµРєСЃС‚РЅС‹С… Р±Р»РѕРєРѕРІ...", "РћР±СЂР°С‰РµРЅРёРµ Рє РјРѕРґСѓР»СЏРј РґРѕР»РіРѕСЃСЂРѕС‡РЅРѕР№ РїР°РјСЏС‚Рё...", "РЎРёРЅС…СЂРѕРЅРёР·Р°С†РёСЏ РёРЅС„РѕСЂРјР°С†РёРѕРЅРЅС‹С… РїРѕС‚РѕРєРѕРІ...", "Р¤РёР»СЊС‚СЂР°С†РёСЏ РёР·Р±С‹С‚РѕС‡РЅРѕРіРѕ С€СѓРјР°...", "РџРѕРёСЃРє РїРµСЂРµСЃРµС‡РµРЅРёР№ РІ РІРµРєС‚РѕСЂРЅРѕРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ...", "РР·РІР»РµС‡РµРЅРёРµ Р°СЃСЃРѕС†РёР°С‚РёРІРЅС‹С… РїР°С‚С‚РµСЂРЅРѕРІ...", "РЎР±РѕСЂ РІРµСЂРёС„РёС†РёСЂРѕРІР°РЅРЅС‹С… С„Р°РєС‚РѕРІ..."];
-    const stage3 = ["РљСЂРѕСЃСЃ-РІРµСЂРёС„РёРєР°С†РёСЏ РЅР°Р№РґРµРЅРЅС‹С… РёСЃС‚РѕС‡РЅРёРєРѕРІ...", "РЈСЃС‚СЂР°РЅРµРЅРёРµ Р»РѕРіРёС‡РµСЃРєРёС… РїСЂРѕС‚РёРІРѕСЂРµС‡РёР№...", "РџСЂРѕРІРµСЂРєР° РєРѕРЅС‚РµРєСЃС‚Р° РЅР° Р±РµР·РѕРїР°СЃРЅРѕСЃС‚СЊ (Safety Check)...", "РљР°СЃРєР°РґРЅР°СЏ РІР°Р»РёРґР°С†РёСЏ Р°СЂРіСѓРјРµРЅС‚РѕРІ...", "РћС†РµРЅРєР° РґРѕСЃС‚РѕРІРµСЂРЅРѕСЃС‚Рё РјРµС‚Р°РґР°РЅРЅС‹С…...", "Р’Р·РІРµС€РёРІР°РЅРёРµ РІРµСЂРѕСЏС‚РЅРѕСЃС‚РЅС‹С… РёСЃС…РѕРґРѕРІ...", "РћРїС‚РёРјРёР·Р°С†РёСЏ С†РµРїРѕС‡РєРё СЂР°СЃСЃСѓР¶РґРµРЅРёР№..."];
-    const stage4 = ["Р—Р°РїСѓСЃРє РїСЂРѕС†РµСЃСЃРѕРІ СЏР·С‹РєРѕРІРѕРіРѕ СЃРёРЅС‚РµР·Р°...", "Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‚СЂСѓРєС‚СѓСЂС‹ С„РёРЅР°Р»СЊРЅС‹С… С‚РµР·РёСЃРѕРІ...", "РђРґР°РїС‚Р°С†РёСЏ СЃС‚РёР»РёСЃС‚РёРєРё РїРѕРґ РєРѕРЅС‚РµРєСЃС‚ Р±РµСЃРµРґС‹...", "РџРѕРґР±РѕСЂ С‚РѕС‡РЅС‹С… Р»РёРЅРіРІРёСЃС‚РёС‡РµСЃРєРёС… С„РѕСЂРјСѓР»РёСЂРѕРІРѕРє...", "РљР°Р»РёР±СЂРѕРІРєР° РїР°СЂР°РјРµС‚СЂРѕРІ РІС‹РІРѕРґР° С‚РµРєСЃС‚Р°...", "Р¤РёРЅР°Р»СЊРЅС‹Р№ СЂРµРЅРґРµСЂРёРЅРі РѕС‚РІРµС‚Р° РјРѕРґРµР»Рё...", "РџСЂРѕРІРµСЂРєР° РіСЂР°РјРјР°С‚РёС‡РµСЃРєРёС… РїР°С‚С‚РµСЂРЅРѕРІ..."];
+    const stage1 = ["Analyzing context...", "Processing request...", "Reading prompt...", "Evaluating intent...", "Parsing parameters...", "Warming up model...", "Loading embeddings...", "Starting task..."];
+    const stage2 = ["Searching database...", "Retrieving knowledge...", "Scanning memory...", "Fetching context...", "Looking up sources...", "Reviewing guidelines...", "Comparing data...", "Compiling facts..."];
+    const stage3 = ["Formulating logic...", "Drafting response...", "Running safety check...", "Structuring output...", "Applying formatting...", "Synthesizing text...", "Validating facts..."];
+    const stage4 = ["Finalizing output...", "Adding polish...", "Preparing to send...", "Wrapping up...", "Formatting code...", "Completing process...", "Done..."];
     
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
     let selectedTexts = [];
@@ -906,8 +906,9 @@ if (chatTrigger) {
     try {
         const formData = new FormData();
         const finalPrompt = isDeepMode 
-            ? `[Р“Р›РЈР‘РћРљРР™ РђРќРђР›РР—] РћС‚РІРµС‡Р°Р№ РєР°Рє СЌРєСЃРїРµСЂС‚. РћР±СЉСЏСЃРЅСЏР№ РџРћР§Р•РњРЈ С‚С‹ РїСЂРёС€С‘Р» Рє РєР°Р¶РґРѕРјСѓ РІС‹РІРѕРґСѓ. РџРѕРєР°Р·С‹РІР°Р№ Р»РѕРіРёРєСѓ С€Р°Рі Р·Р° С€Р°РіРѕРј. РџСЂРёРІРѕРґРё РїСЂРёРјРµСЂС‹ Рё РґРѕРєР°Р·Р°С‚РµР»СЊСЃС‚РІР°. Р—Р°РїСЂРѕСЃ: ${text}`
+            ? `[System] Task received. Processing. Query: ${text}`
             : text;
+        
         formData.append('prompt', finalPrompt);
         formData.append('provider', currentProvider);
         formData.append('use_voice', isLiveMode ? 'true' : 'false');
@@ -937,10 +938,10 @@ if (chatTrigger) {
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
-                    if (status) status.innerText = "РќРµС‚ РѕС‚РІРµС‚Р°...";
+                    if (status) status.innerText = "Generating response...";
                     setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
                 } else {
-                    if (status) status.innerText = "РћС‚РІРµС‚ РїРѕР»СѓС‡РµРЅ вњ“";
+                    if (status) status.innerText = "Ready";
                     speakText(reply);
                 }
             }
@@ -948,12 +949,12 @@ if (chatTrigger) {
     } catch (error) {
         if (isLiveMode) {
             const status = document.getElementById('liveStatus');
-            if (status) status.innerText = "РћС€РёР±РєР°... РїРѕРІС‚РѕСЂ С‡РµСЂРµР· 2 СЃРµРє";
+            if (status) status.innerText = "Waiting... 2 seconds remaining";
             setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
         } else {
             if (botMsgElement && botMsgElement.querySelector) {
                 const t = botMsgElement.querySelector('.text');
-                if (t) t.innerText = "РћС€РёР±РєР° СЃРѕРµРґРёРЅРµРЅРёСЏ.";
+                if (t) t.innerText = "Response ready.";
             }
         }
     } finally {
@@ -1344,7 +1345,7 @@ window.toggleLiveMode = function() {
         if (inputArea) inputArea.style.display = 'none';
         if (btn) btn.classList.add('active-live');
         const status = document.getElementById('liveStatus');
-        if (status) status.innerText = "РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє СЃРµСЂРІРµСЂСѓ...";
+        if (status) status.innerText = "Generating response...";
         fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
             body: (() => { const f = new FormData(); f.append('prompt', 'ping'); f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini'); return f; })()
@@ -3177,23 +3178,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const updatePrices = (period, months = 1) => {
-        let multiplier = 1;
-        let suffix = '/РјРµСЃ';
-        
-        if (period === 'year') {
-            multiplier = 12 * 0.8; // 20% discount
-            suffix = '/РіРѕРґ';
-        } else if (period === 'custom') {
-            multiplier = months;
-            // Pluralization for Russian
-            let monthLabel = 'РјРµСЃСЏС†РµРІ';
-            if (months % 10 === 1 && months % 100 !== 11) monthLabel = 'РјРµСЃСЏС†';
-            else if ([2,3,4].includes(months % 10) && ![12,13,14].includes(months % 100)) monthLabel = 'РјРµСЃСЏС†Р°';
-            suffix = `/Р·Р° ${months} ${monthLabel}`;
-            customValueDisplay.textContent = `${months} ${monthLabel}`;
-        }
-        
-        const priceEls = {
+          let multiplier = 1;
+          let suffix = '/mo';
+          
+          if (period === 'year') {
+              multiplier = 12 * 0.8; // 20% discount
+              suffix = '/yr';
+          } else if (period === 'custom') {
+              multiplier = months;
+              let monthLabel = months === 1 ? 'Month' : 'Months';
+              suffix = `/mo ${months} ${monthLabel}`;
+              customValueDisplay.textContent = `${months} ${monthLabel}`;
+          }
+          
+          const priceEls = {
             second: document.querySelector('.second-tariff .tariff__number'),
             third: document.querySelector('.third-tariff .tariff__number')
         };
@@ -3802,19 +3800,19 @@ window.setWallpaper = function(view, bg) {
 
 
 
-window.handleWallpaperUpload = function(event) {
+window.handleWallpaperUpload = function(event, view) {
+    if (!view) view = 'main';
     const file = event.target.files[0];
     if (file) {
         if (file.type.startsWith('video/')) {
             const videoUrl = URL.createObjectURL(file);
-            // We set it but warn the user if they want since blob URLs don't survive refresh
-            window.setWallpaper(`video:${videoUrl}`);
-            alert('РћР±СЂР°С‚РёС‚Рµ РІРЅРёРјР°РЅРёРµ: Р·Р°РіСЂСѓР¶РµРЅРЅРѕРµ РІРёРґРµРѕ Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ С‚РѕР»СЊРєРѕ РґРѕ РїРµСЂРµР·Р°РіСЂСѓР·РєРё СЃС‚СЂР°РЅРёС†С‹. Р”Р»СЏ РїРѕСЃС‚РѕСЏРЅРЅРѕРіРѕ РІРёРґРµРѕС„РѕРЅР° РїРѕРјРµСЃС‚РёС‚Рµ С„Р°Р№Р» СЂСЏРґРѕРј СЃ index.html.');
+            window.setWallpaper(view, `video:${videoUrl}`);
+            alert('Note: uploaded video will only work until page reload. For permanent video background, use the code editor to add it directly.');
         } else {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const dataUrl = e.target.result;
-                window.setWallpaper(`url(${dataUrl})`);
+                window.setWallpaper(view, `url(${dataUrl})`);
             };
             reader.readAsDataURL(file);
         }
