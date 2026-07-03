@@ -3197,18 +3197,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const updatePrices = (period, months = 1) => {
         let multiplier = 1;
-        let suffix = '/мес';
+        let suffix = '/mo';
         
         if (period === 'year') {
             multiplier = 12 * 0.8; // 20% discount
-            suffix = '/год';
+            suffix = '/yr';
         } else if (period === 'custom') {
             multiplier = months;
-            // Pluralization for Russian
-            let monthLabel = 'месяцев';
-            if (months % 10 === 1 && months % 100 !== 11) monthLabel = 'месяц';
-            else if ([2,3,4].includes(months % 10) && ![12,13,14].includes(months % 100)) monthLabel = 'месяца';
-            suffix = `/за ${months} ${monthLabel}`;
+            // Pluralization for English
+            let monthLabel = months === 1 ? 'month' : 'months';
+            suffix = `/per ${months} ${monthLabel}`;
             customValueDisplay.textContent = `${months} ${monthLabel}`;
         }
         
@@ -3815,19 +3813,20 @@ window.setWallpaper = function(view, bg) {
 
 
 
-window.handleWallpaperUpload = function(event) {
+window.handleWallpaperUpload = function(event, view) {
+    if (!view) view = 'main';
     const file = event.target.files[0];
     if (file) {
         if (file.type.startsWith('video/')) {
             const videoUrl = URL.createObjectURL(file);
             // We set it but warn the user if they want since blob URLs don't survive refresh
-            window.setWallpaper(`video:${videoUrl}`);
-            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы. Для постоянного видеофона поместите файл рядом с index.html.');
+            window.setWallpaper(view, `video:${videoUrl}`);
+            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы (ограничения браузера). Для постоянного видеофона поместите файл рядом с index.html.');
         } else {
             const reader = new FileReader();
             reader.onload = function(e) {
                 const dataUrl = e.target.result;
-                window.setWallpaper(`url(${dataUrl})`);
+                window.setWallpaper(view, `url(${dataUrl})`);
             };
             reader.readAsDataURL(file);
         }
