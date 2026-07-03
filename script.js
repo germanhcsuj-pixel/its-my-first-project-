@@ -4392,14 +4392,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnStart) {
         btnStart.addEventListener('click', () => {
-            if (isPremiumUser) {
-                startAirCanvas();
-                btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
-                btnStart.style.opacity = '0.5';
-                btnStart.disabled = true;
-            } else {
-                alert("Пожалуйста, разблокируйте Premium.");
-            }
+            // TEST MODE: Premium check disabled
+            startAirCanvas();
+            btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
+            btnStart.style.opacity = '0.5';
+            btnStart.disabled = true;
         });
     }
 
@@ -4414,7 +4411,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnAnalyze) {
         btnAnalyze.addEventListener('click', async () => {
-            if (!isPremiumUser) return;
+            // TEST MODE: Premium check disabled
             const dCanvas = document.getElementById('drawing_canvas');
             if (!dCanvas) return;
             
