@@ -887,9 +887,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;">
       Sign In
     </button>
-  </div>
-</div>
-    <script src="script (1).js?v=25" charset="utf-8"></script>
+    <!-- Main JS -->
+    <script src="script.js?v=25" charset="utf-8"></script>
   
 
 <!-- ── UPGRADE MODAL ── -->
@@ -1814,8 +1813,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', ${x}px);
-                card.style.setProperty('--mouse-y', ${y}px);
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
             }
         });
     </script>
