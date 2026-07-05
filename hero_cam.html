@@ -120,7 +120,7 @@
   </style>
 
   <!-- Строго отделенный JS для рисования -->
-  <script src="air_canvas.js?v=11" defer></script>
+  <script src="air_canvas.js?v=10" defer></script>
 </head>
 <body>
 
@@ -160,7 +160,14 @@
       </div>
 
       <!-- Экран проверки подписки -->
-
+      <div id="premiumLock">
+        <div class="lock-icon">🔒</div>
+        <h3>Air Canvas</h3>
+        <p>Air Canvas requires a subscription. Enter access token:</p>
+        <input id="tokenInput" type="password" placeholder="Token (secret_paid_token_123)"/>
+        <div id="lockError">Invalid token</div>
+        <button id="authBtn">Activate camera</button>
+      </div>
 
       <!-- Подсказка -->
       <div id="hint"></div>
