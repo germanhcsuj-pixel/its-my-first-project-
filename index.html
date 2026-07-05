@@ -72,68 +72,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=202607025">
+    <link rel="stylesheet" href="style.css?v=202607021">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-<style id="chat-layout-fix">
-  /* === CHAT LAYOUT FIX — NO LAYERS, FULL WIDTH === */
-  #messagesContainer {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    max-width: 100% !important; /* FULL SCREEN MAXIMUM */
-    margin: 0 !important;
-    gap: 32px !important;
-    padding: 24px 20px 80px 20px !important;
-    box-sizing: border-box !important;
-  }
-
-  /* User message — NO BACKGROUND, full width */
-  #messagesContainer .user-message,
-  body .user-message {
-    align-self: flex-end !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    background: transparent !important; /* NO LAYER */
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-  }
-
-  /* AI message — NO BACKGROUND, full width */
-  #messagesContainer .ai-message,
-  body .ai-message {
-    align-self: flex-start !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    background: transparent !important; /* NO LAYER */
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-  }
-
-  /* Text formatting */
-  #messagesContainer .ai-message .text,
-  #messagesContainer .user-message .text {
-    width: 100% !important;
-    max-width: 100% !important;
-    white-space: pre-wrap !important;
-    word-break: break-word !important;
-    line-height: 1.65 !important;
-    color: #ececec !important;
-    box-sizing: border-box !important;
-    font-family: 'Inter', sans-serif !important;
-  }
-
-  /* User text to the right */
-  #messagesContainer .user-message .text {
-    text-align: right !important;
-  }
-</style>
 
     <!-- Ananyn Zhuregi MediaPipe Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -887,8 +828,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;">
       Sign In
     </button>
-    <!-- Main JS -->
-    <script src="script.js?v=25" charset="utf-8"></script>
+  </div>
+</div>
+    <script src="script.js?v=22" charset="utf-8"></script>
   
 
 <!-- ── UPGRADE MODAL ── -->
@@ -1813,8 +1755,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
+                card.style.setProperty('--mouse-x', ${x}px);
+                card.style.setProperty('--mouse-y', ${y}px);
             }
         });
     </script>
@@ -2447,5 +2389,3 @@ window.addEventListener('message', function(event) {
 <!-- PWA Install Banner -->
 
                       
-
-    
