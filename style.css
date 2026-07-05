@@ -1697,7 +1697,7 @@ input:focus, .input-main-wrapper:focus-within {
 .app-header {
     pointer-events: none; /* Пропускаем клики сквозь пустые места шапки */
 }
-.top-controls-pill, .icon-btn, .model-selector-container, .tubelight-navbar {
+.top-controls-pill, .icon-btn, .model-selector-container, .tubelight-navbar { pointer-events: auto !important; z-index: 9999 !important;
     pointer-events: auto; /* Возвращаем кликабельность элементам управления */
 }
 /* Мобильный фикс: убираем тонкие синие/голубые линии и упрощаем визуал */
@@ -4792,7 +4792,7 @@ body.chat-started .suggestion-btn {
 
 
 /* === TUBELIGHT NAVBAR === */
-.tubelight-navbar {
+.tubelight-navbar { pointer-events: auto !important; z-index: 9999 !important;
     position: relative;
     display: flex;
     justify-content: center;
@@ -4918,7 +4918,7 @@ body.chat-started .suggestion-btn {
     background: #ffffff;
     border-radius: 10px;
 }
-.tubelight-navbar {
+.tubelight-navbar { pointer-events: auto !important; z-index: 9999 !important;
     position: absolute !important;
     top: 5px !important;
     margin-top: 0 !important;
@@ -5157,3 +5157,4 @@ body.chat-started .suggestion-btn {
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0px); }
 }
+
