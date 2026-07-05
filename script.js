@@ -535,13 +535,18 @@ function initModelSelector() {
 // ============================================================
 function ensureAttachmentPreviewInComposer() {
     const preview = document.getElementById('imagePreviewContainer');
-    const composer = document.querySelector('.input-main-wrapper');
-    const glass = document.querySelector('.input-glass-container');
+    const composer = document.querySelector('.animated-input-box');
+    const glass = document.querySelector('.textarea-ghost-wrapper');
     if (!preview || !composer || !glass) return;
     if (preview.parentElement !== composer) {
         composer.insertBefore(preview, glass);
     }
     preview.removeAttribute('style');
+    preview.style.padding = '12px 16px 0px 16px';
+    preview.style.width = '100%';
+    preview.style.boxSizing = 'border-box';
+    preview.style.flexWrap = 'wrap';
+    preview.style.gap = '8px';
     if (selectedFiles.length === 0 && preview.children.length === 0) {
         preview.style.display = 'none';
     }
@@ -549,7 +554,7 @@ function ensureAttachmentPreviewInComposer() {
 
 document.addEventListener('DOMContentLoaded', ensureAttachmentPreviewInComposer);
 
-window.handleFileSelect = function(input) {
+window.handleFileSelect = async function(input) {
     ensureAttachmentPreviewInComposer();
     const files = Array.from(input.files);
     const container = document.getElementById('imagePreviewContainer');
@@ -560,21 +565,52 @@ window.handleFileSelect = function(input) {
         return;
     }
     container.style.display = 'flex';
-    files.forEach((file) => {
+    for (const file of files) {
         selectedFiles.push(file); 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.className = 'attachment-preview-item';
-            div.style.position = 'relative';
-            div.innerHTML = `
-                <img src="${e.target.result}" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid #00f2ff; margin-right: 5px;">
-                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">вњ•</div>
+        let dataUrl = '';
+        if (file.type.startsWith('image/')) {
+            dataUrl = await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        } else {
+            dataUrl = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>";
+        }
+        if (!document.getElementById('preview-btn-style')) {
+            const style = document.createElement('style');
+            style.id = 'preview-btn-style';
+            style.textContent = `
+                .preview-remove-btn {
+                    position: absolute; top: -6px; right: -2px;
+                    background: rgba(40,40,40,0.6);
+                    backdrop-filter: blur(8px);
+                    -webkit-backdrop-filter: blur(8px);
+                    color: #fff; border-radius: 50%; width: 22px; height: 22px;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 11px; cursor: pointer;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    z-index: 10;
+                    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                }
+                .preview-remove-btn:hover {
+                    background: rgba(255,255,255,0.2);
+                    transform: scale(1.15) rotate(90deg);
+                    border-color: rgba(255,255,255,0.5);
+                }
             `;
-            container.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
+            document.head.appendChild(style);
+        }
+        const div = document.createElement('div');
+        div.className = 'attachment-preview-item';
+        div.style.position = 'relative';
+        div.innerHTML = `
+            <img src="${dataUrl}" alt="" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); margin-right: 5px; ${file.type.startsWith('image/') ? '' : 'padding: 12px; box-sizing: border-box; background: rgba(255,255,255,0.05);'}">
+            <div onclick="removeImage(this)" class="preview-remove-btn">&#10005;</div>
+        `;
+        container.appendChild(div);
+    }
     input.value = "";
 };
 
@@ -593,8 +629,27 @@ window.openAttachmentPreview = function(src) {
         modal = document.createElement('div');
         modal.id = 'attachmentLightbox';
         modal.innerHTML = `
+            <style>
+            #attachmentLightbox {
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center;
+                z-index: 999999; backdrop-filter: blur(10px);
+            }
+            #attachmentLightbox.active { display: flex; }
+            .attachment-lightbox-image {
+                max-width: 90%; max-height: 90%; border-radius: 12px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.5); object-fit: contain;
+            }
+            .attachment-lightbox-close {
+                position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1);
+                color: white; border: none; border-radius: 50%; width: 40px; height: 40px;
+                font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+                transition: 0.2s;
+            }
+            .attachment-lightbox-close:hover { background: rgba(255,255,255,0.2); }
+            </style>
             <button type="button" class="attachment-lightbox-close" aria-label="Close preview">x</button>
-            <img class="attachment-lightbox-image" alt="Selected image preview">
+            <img class="attachment-lightbox-image" alt="">
         `;
         document.body.appendChild(modal);
         modal.addEventListener('click', (event) => {
@@ -738,7 +793,7 @@ if (chatTrigger) {
         userMsg.className = 'message user-message';
         userMsg.innerHTML = `<div class="text">${text}</div>`;
         document.getElementById('messagesContainer').appendChild(userMsg);
-        if (userInput) userInput.value = "";
+        if (userInput) { userInput.value = ""; userInput.style.height = 'auto'; }
         window.startCloudBrowser(task);
         return;
     }
@@ -746,21 +801,42 @@ if (chatTrigger) {
     window.isHandlingAI = true;
 
     const currentProvider = selectedProvider;
-    if (!isLiveMode) {
-        let userContent = text || '';
-        if (filesToSend.length > 0) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                addMessageToUI('user', `${userContent ? userContent + '<br>' : ''}<img src="${e.target.result}" style="max-width:200px;border-radius:10px;margin-top:6px;display:block;">`);
-            };
-            reader.readAsDataURL(filesToSend[0]);
-        } else {
-            addMessageToUI('user', userContent);
+    let userContentForSave = text || '';
+    if (filesToSend.length > 0) {
+        let attachmentsHTML = '<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">';
+        for (const file of filesToSend) {
+            let dataUrl = '';
+            if (file.type.startsWith('image/')) {
+                dataUrl = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                dataUrl = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'></path><polyline points='14 2 14 8 20 8'></polyline><line x1='16' y1='13' x2='8' y2='13'></line><line x1='16' y1='17' x2='8' y2='17'></line><polyline points='10 9 9 9 8 9'></polyline></svg>";
+            }
+            const isImg = file.type.startsWith('image/');
+            if (isImg) {
+                attachmentsHTML += `<img src="${dataUrl}" onclick="window.openAttachmentPreview(this.src)" style="max-width:200px; max-height:200px; border-radius:10px; display:block; cursor:pointer; object-fit: cover;">`;
+            } else {
+                attachmentsHTML += `
+                    <div style="display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 10px; max-width: 250px; overflow: hidden;">
+                        <img src="${dataUrl}" style="width: 24px; height: 24px; margin-right: 10px; flex-shrink: 0;">
+                        <div style="font-size: 13px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1;">${file.name}</div>
+                    </div>
+                `;
+            }
         }
+        attachmentsHTML += '</div>';
+        userContentForSave = `${attachmentsHTML}${userContentForSave}`;
     }
-    saveToFirebase('user', text, targetSessionId);
 
-    if (userInput) userInput.value = "";
+    if (!isLiveMode) {
+        addMessageToUI('user', userContentForSave);
+    }
+    saveToFirebase('user', userContentForSave, targetSessionId);
+
+    if (userInput) { userInput.value = ""; userInput.style.height = 'auto'; }
     selectedFiles = [];
     const preview = document.getElementById('imagePreviewContainer');
     if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
@@ -951,14 +1027,30 @@ if (chatTrigger) {
     }
   
     try {
+        let appendedFileText = "";
+        let firstImageFile = null;
+        for (const file of filesToSend) {
+            if (file.type.startsWith('image/')) {
+                if (!firstImageFile) firstImageFile = file;
+            } else {
+                const textContent = await new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = () => resolve('');
+                    reader.readAsText(file);
+                });
+                if (textContent) appendedFileText += `\n\n[Содержимое прикрепленного файла "${file.name}"]:\n${textContent.substring(0, 5000)}`;
+            }
+        }
+        
         const formData = new FormData();
         const finalPrompt = isDeepMode 
-            ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
-            : text;
+            ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}${appendedFileText}`
+            : text + appendedFileText;
         formData.append('prompt', finalPrompt);
         formData.append('provider', currentProvider);
         formData.append('use_voice', isLiveMode ? 'true' : 'false');
-        if (filesToSend.length > 0) formData.append('file', filesToSend[0]);
+        if (firstImageFile) formData.append('file', firstImageFile);
 
         const fetchPromise = fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
@@ -3591,6 +3683,10 @@ document.addEventListener("DOMContentLoaded", () => {
     userInput.addEventListener('input', function() {
         const val = this.value;
         const isTyping = val.trim().length > 0;
+
+        // Auto-resize textarea
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 
         // Анимация заголовка
         setHeaderTyping(isTyping && welcomeScreen && welcomeScreen.style.display !== 'none');
