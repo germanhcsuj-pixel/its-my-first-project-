@@ -31,17 +31,17 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
         })
         .catch((err) => {
             if (err.code !== 'auth/no-auth-event') {
-                console.error('Redirect auth error:', err);
+                console.error('Ошибка проверки подписки', err);
             }
         });
 }
 
-// Обработка возврата после Google redirect (мобильные)
+// Р С›Р В±РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р В° Р Р†Р С•Р В·Р Р†РЎР‚Р В°РЎвЂљР В° Р С—Р С•РЎРѓР »Р Вµ Google redirect (Р СР С•Р В±Р С‘Р »РЎРЉР Р…РЎвЂ№Р Вµ)
 if (typeof firebase !== 'undefined' && firebase.auth) {
     firebase.auth().onAuthStateChanged((user) => {
         currentUser = user;
         if (user) {
-            // Закрываем модалку при любом способе входа
+            // Р —Р В°Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµР С Р СР С•Р Т‘Р В°Р »Р С”РЎС“ Р С—РЎР‚Р С‘ Р »РЎР‹Р В±Р С•Р С РЎРѓР С—Р С•РЎРѓР С•Р В±Р Вµ Р Р†РЎвЂ¦Р С•Р Т‘Р В°
             const m = document.getElementById('authModal');
             if (m) {
                 m.style.display = 'none';
@@ -57,7 +57,7 @@ if (typeof firebase !== 'undefined' && firebase.auth) {
     });
 }
 // в”Ђв”Ђ AUTH: Email + Password в”Ђв”Ђ
-let authMode = 'login'; // 'login' или 'register'
+let authMode = ' или '; // 'login' Р С‘Р »Р С‘ 'register'
 
 window.switchAuthTab = function(mode) {
     authMode = mode;
@@ -71,8 +71,8 @@ window.switchAuthTab = function(mode) {
         btnLogin.style.color = '#000';
         btnReg.style.background = 'transparent';
         btnReg.style.color = '#fff';
-        submitBtn.textContent = 'Войти';
-        title.textContent = 'Войдите в аккаунт';
+        submitBtn.textContent = 'Создать аккаунт';
+        title.textContent = 'Регистрация';
     } else {
         btnReg.style.background = '#fff';
         btnReg.style.color = '#000';
@@ -94,15 +94,15 @@ window.submitAuth = function() {
     
     // Валидация
     if (!email || !password) {
-        errorEl.textContent = 'Заполните все поля';
-        return;
-    }
-    if (password.length < 6) {
         errorEl.textContent = 'Пароль минимум 6 символов';
         return;
     }
+    if (password.length < 6) {
+        errorEl.textContent = 'Р СџР В°РЎР‚Р С•Р »РЎРЉ Р СР С‘Р Р…Р С‘Р СРЎС“Р С 6 РЎРѓР С‘Р СР Р†Р С•Р »Р С•Р Р†';
+        return;
+    }
     
-    btn.textContent = '...';
+    btn.textContent = 'Нажми меня';
     btn.disabled = true;
     errorEl.textContent = '';
     
@@ -119,17 +119,17 @@ window.submitAuth = function() {
         })
         .catch((err) => {
             const msgs = {
-                'auth/user-not-found': 'Пользователь не найден',
-                'auth/wrong-password': 'Неверный пароль',
-                'auth/email-already-in-use': 'Email уже используется',
-                'auth/invalid-email': 'Неверный формат email',
-                'auth/weak-password': 'Пароль слишком слабый',
-                'auth/invalid-credential': 'Неверный email или пароль',
+                'Пользователь не найден': 'Р СџР С•Р »РЎРЉР В·Р С•Р Р†Р В°РЎвЂљР ВµР »РЎРЉ Р Р…Р Вµ Р Р…Р В°Р в„–Р Т‘Р ВµР Р…',
+                'Неверный пароль': 'Р СњР ВµР Р†Р ВµРЎР‚Р Р…РЎвЂ№Р в„– Р С—Р В°РЎР‚Р С•Р »РЎРЉ',
+                'Email уже используется': 'Email РЎС“Р В¶Р Вµ Р С‘РЎРѓР С—Р С•Р »РЎРЉР В·РЎС“Р ВµРЎвЂљРЎРѓРЎРЏ',
+                'Неверный формат email': 'Р СњР ВµР Р†Р ВµРЎР‚Р Р…РЎвЂ№Р в„– РЎвЂћР С•РЎР‚Р СР В°РЎвЂљ email',
+                'Пароль слишком слабый': 'Р СџР В°РЎР‚Р С•Р »РЎРЉ РЎРѓР »Р С‘РЎв‚¬Р С”Р С•Р С РЎРѓР »Р В°Р В±РЎвЂ№Р в„–',
+                'Неверный email или пароль': 'Р СњР ВµР Р†Р ВµРЎР‚Р Р…РЎвЂ№Р в„– email Р С‘Р »Р С‘ Р С—Р В°РЎР‚Р С•Р »РЎРЉ',
             };
             errorEl.textContent = msgs[err.code] || 'Ошибка: ' + err.message;
         })
         .finally(() => {
-            btn.textContent = authMode === 'login' ? 'Войти' : 'Создать аккаунт';
+            btn.textContent = authMode === 'Войти' ? 'Р вЂ™Р С•Р в„–РЎвЂљР С‘' : 'Р РЋР С•Р В·Р Т‘Р В°РЎвЂљРЎРЉ Р В°Р С”Р С”Р В°РЎС“Р Р…РЎвЂљ';
             btn.disabled = false;
         });
 };
@@ -273,7 +273,7 @@ function loadLibrary() {
     const favorites = history.filter(m => m.isFavorite);
     
     if (favorites.length === 0) {
-        libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Library is empty.<br>Save messages to Favorites to see them here.</div>';
+        libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Ваша библиотека пуста.<br>Отметьте важные сообщения звездочкой в чате.</div>';
         return;
     }
     
@@ -293,7 +293,7 @@ function loadLibrary() {
 }
 
 // ============================================================
-// 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+// 1. Р вЂњР вЂєР С›Р вЂР С’Р вЂєР В¬Р СњР «Р вЂў Р СџР вЂўР В Р вЂўР СљР вЂўР СњР СњР «Р вЂў
 // ============================================================
 let isLiveMode = false;
 let liveRecognition = null;
@@ -303,8 +303,8 @@ const MAX_IMAGES = 5;
 let selectedProvider = 'gemini';
 let lumifexActive = false;
 
-// FIX: Correct comment syntax (was "/ в”Ђв”Ђ" causing JS parse error)
-// в”Ђв”Ђ DEEP MODE СРСТЕМА в”Ђв”Ђ
+// FIX: Correct comment syntax (was '/ в”Ђв”Ђ' causing JS parse error)
+// Р Р†РІР‚СњР вЂљР Р†РІР‚СњР вЂљ DEEP MODE Р РЋР В Р’ВР РЋР СћР вЂўР СљР С’ Р Р†РІР‚СњР вЂљР Р†РІР‚СњР вЂљ
 let deepRequestsToday = 0;
 const DEEP_LIMIT = 5;
 
@@ -325,7 +325,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('ai', 'рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!');
+        addMessageToUI('рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!', 'РЎР‚РЎСџРІР‚СњР’В¬ Р вЂєР С‘Р СР С‘РЎвЂљ Deep Mode Р С‘РЎРѓРЎвЂЎР ВµРЎР‚Р С—Р В°Р Р…. Р Р€ Р Р†Р В°РЎРѓ Р ВµРЎРѓРЎвЂљРЎРЉ 5 Р В·Р В°Р С—РЎР‚Р С•РЎРѓР С•Р Р† Р Р† Р Т‘Р ВµР Р…РЎРЉ. Р СџР С•Р С—РЎР‚Р С•Р В±РЎС“Р в„–РЎвЂљР Вµ Р В·Р В°Р Р†РЎвЂљРЎР‚Р В°!');
         return false;
     }
     return true;
@@ -360,20 +360,28 @@ const modelMap = {
 };
 
 // ============================================================
-// 2. ВСПОМОГАТЕЛЬНЫЕ UI ФУНКЦРР
+// 2. Р вЂ™Р РЋР СџР С›Р СљР С›Р вЂњР С’Р СћР вЂўР вЂєР В¬Р СњР «Р вЂў UI Р В¤Р Р€Р СњР С™Р В¦Р В Р’ВР В Р’В
 // ============================================================
 function typeEffect(element, text) {
     const textContainer = element.querySelector('.text');
     if (!textContainer) return;
     const cleanText = (text || "").trim();
-    textContainer.innerHTML = '';
+    
+    let typeSpan = textContainer.querySelector('.typed-content');
+    if (!typeSpan) {
+        typeSpan = document.createElement('div');
+        typeSpan.className = 'typed-content';
+        typeSpan.style.marginTop = '12px';
+        textContainer.appendChild(typeSpan);
+    }
+    
     let i = 0;
     const interval = setInterval(() => {
         if (i < cleanText.length) {
             i++;
-            // Показываем накопленный текст с форматированием
+            // Р СџР С•Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµР С Р Р…Р В°Р С”Р С•Р С—Р »Р ВµР Р…Р Р…РЎвЂ№Р в„– РЎвЂљР ВµР С”РЎРѓРЎвЂљ РЎРѓ РЎвЂћР С•РЎР‚Р СР В°РЎвЂљР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р ВµР С
             const partial = cleanText.slice(0, i);
-            textContainer.innerHTML = partial
+            typeSpan.innerHTML = partial
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\n/g, '<br>');
             const container = document.getElementById('messagesContainer');
@@ -412,59 +420,31 @@ function addMessageToUI(role, content = "") {
 }
 
 // ============================================================
-// QUICK QUESTIONS вЂ” 40 вопросов, 4 случайных
+// QUICK QUESTIONS — 40 вопросов, 4 случайных
 // ============================================================
 const ALL_QUESTIONS = [
-  { icon: "ph ph-brain", text: "Что такое нейронная сеть?" },
-  { icon: "ph ph-atom", text: "Объясни квантовую механику" },
-  { icon: "ph ph-rocket-launch", text: "Как написать бизнес-план?" },
-  { icon: "ph ph-lightning", text: "Что такое машинное обучение?" },
-  { icon: "ph ph-globe", text: "Как работает интернет?" },
-  { icon: "ph ph-dna", text: "Что такое ДНК и как она работает?" },
-  { icon: "ph ph-star", text: "Что такое чёрная дыра?" },
-  { icon: "ph ph-code", text: "Как начать программировать с нуля?" },
-  { icon: "ph ph-currency-dollar", text: "Как начать инвестировать?" },
-  { icon: "ph ph-heartbeat", text: "Как работает иммунная система?" },
-  { icon: "ph ph-cpu", text: "Что такое искусственный интеллект?" },
-  { icon: "ph ph-currency-bitcoin", text: "Что такое криптовалюта?" },
-  { icon: "ph ph-leaf", text: "Что такое фотосинтез?" },
-  { icon: "ph ph-map-pin", text: "Как работает GPS?" },
-  { icon: "ph ph-shield-check", text: "Как работает вакцина?" },
-  { icon: "ph ph-robot", text: "Что такое ChatGPT?" },
-  { icon: "ph ph-books", text: "Как выучить английский быстро?" },
-  { icon: "ph ph-wave-sine", text: "Как работает лазер?" },
-  { icon: "ph ph-planet", text: "Что такое параллельные вселенные?" },
-  { icon: "ph ph-thermometer-hot", text: "Что такое термоядерный синтез?" },
-  { icon: "ph ph-users", text: "Как работают социальные сети?" },
-  { icon: "ph ph-desktop", text: "Что такое метавселенная?" },
-  { icon: "ph ph-paint-brush", text: "Как создать своё приложение?" },
-  { icon: "ph ph-recycle", text: "Что такое климатические изменения?" },
-  { icon: "ph ph-chart-line-up", text: "Как работает экономика?" },
-  { icon: "ph ph-smiley", text: "Как справиться со стрессом?" },
-  { icon: "ph ph-magnifying-glass", text: "Что такое нанотехнологии?" },
-  { icon: "ph ph-flask", text: "Что такое генетическая инженерия?" },
-  { icon: "ph ph-infinity", text: "Объясни теорию относительности" },
-  { icon: "ph ph-timer", text: "Как улучшить память?" },
-  { icon: "ph ph-notebook", text: "Как написать резюме?" },
-  { icon: "ph ph-sun", text: "Как медитация влияет на мозг?" },
-  { icon: "ph ph-graph", text: "Как изучить Python за месяц?" },
-  { icon: "ph ph-eye", text: "Что такое философия сознания?" },
-  { icon: "ph ph-fire", text: "Что такое антиматерия?" },
-  { icon: "ph ph-sparkle", text: "Как устроен человеческий мозг?" },
-  { icon: "ph ph-robot", text: "Что такое робототехника?" },
-  { icon: "ph ph-cloud", text: "Что такое большой взрыв?" },
-  { icon: "ph ph-hand-coins", text: "Как работает блокчейн?" },
-  { icon: "ph ph-monitor-play", text: "Как создать сайт с нуля?" }
+  { icon: 'Что такое нейронная сеть?', text: "Что такое нейронная сеть?" },
+  { icon: 'Объясни квантовую механику', text: "Объясни квантовую механику" },
+  { icon: 'Как написать бизнес-план?', text: "Как написать бизнес-план?" },
+  { icon: 'Что такое машинное обучение?', text: "Что такое машинное обучение?" },
+  { icon: 'Как работает интернет?', text: "Как работает интернет?" },
+  { icon: 'Что такое ДНК и как она работает?', text: "Что такое ДНК и как она работает?" },
+  { icon: 'Что такое чёрная дыра?', text: "Что такое чёрная дыра?" },
+  { icon: 'Как начать программировать с нуля?', text: "Как начать программировать с нуля?" },
+  { icon: 'Как начать инвестировать?', text: "Как начать инвестировать?" },
+  { icon: 'Как работает иммунная система?', text: "Как работает иммунная система?" },
+  { icon: 'Что такое искусственный интеллект?', text: "Что такое искусственный интеллект?" },
+  { icon: 'Что такое криптовалюта?', text: "Что такое криптовалюта?" },
 ];
 
 function renderQuickPills() {
   const container = document.getElementById('quickPills');
   if (!container) return;
   const selected = [
-    { icon: "ph ph-cpu", text: "Что такое искусственный интеллект?" },
-    { icon: "ph ph-desktop", text: "Что такое метавселенная?" },
-    { icon: "ph ph-fire", text: "Что такое антиматерия?" },
-    { icon: "ph ph-lightning", text: "Что такое машинное обучение?" }
+    { icon: 'Что такое искусственный интеллект?', text: "Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С‘РЎРѓР С”РЎС“РЎРѓРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№Р в„– Р С‘Р Р…РЎвЂљР ВµР »Р »Р ВµР С”РЎвЂљ?" },
+    { icon: 'Что такое метавселенная?', text: "Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР ВµРЎвЂљР В°Р Р†РЎРѓР ВµР »Р ВµР Р…Р Р…Р В°РЎРЏ?" },
+    { icon: 'Что такое антиматерия?', text: "Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р В°Р Р…РЎвЂљР С‘Р СР В°РЎвЂљР ВµРЎР‚Р С‘РЎРЏ?" },
+    { icon: 'Что такое машинное обучение?', text: "Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР В°РЎв‚¬Р С‘Р Р…Р Р…Р С•Р Вµ Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘Р Вµ?" }
   ];
   container.innerHTML = '';
   selected.forEach((q, i) => {
@@ -531,7 +511,7 @@ function initModelSelector() {
 }
 
 // ============================================================
-// 3. ГЛОБАЛЬНЫЕ ФУНКЦРР ОКНО Р ФАЙЛОВ
+// 3. Р вЂњР вЂєР С›Р вЂР С’Р вЂєР В¬Р СњР «Р вЂў Р В¤Р Р€Р СњР С™Р В¦Р В Р›СљР В Р›Сљ Р С›Р С™Р СњР С› Р В Р›Сљ Р В¤Р С’Р в„ўР вЂєР С›Р вЂ™
 // ============================================================
 function ensureAttachmentPreviewInComposer() {
     const preview = document.getElementById('imagePreviewContainer');
@@ -541,7 +521,7 @@ function ensureAttachmentPreviewInComposer() {
     if (preview.parentElement !== composer) {
         composer.insertBefore(preview, glass);
     }
-    preview.removeAttribute('style');
+    preview.style.display = '';
     if (selectedFiles.length === 0 && preview.children.length === 0) {
         preview.style.display = 'none';
     }
@@ -555,21 +535,35 @@ window.handleFileSelect = function(input) {
     const container = document.getElementById('imagePreviewContainer');
     if (!container) return;
     if (selectedFiles.length + files.length > MAX_IMAGES) {
-        alert(`Limit: ${MAX_IMAGES} images.`);
+        alert('Ошибка при анализе рисунка.');
         input.value = "";
         return;
     }
     container.style.display = 'flex';
     files.forEach((file) => {
         selectedFiles.push(file); 
+        const isImage = file.type.startsWith('image/');
         const reader = new FileReader();
         reader.onload = function(e) {
             const div = document.createElement('div');
             div.className = 'attachment-preview-item';
             div.style.position = 'relative';
+            div.style.display = 'inline-block';
+            
+            let previewHTML = '';
+            if (isImage) {
+                previewHTML = `<img src="${e.target.result}" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); margin-right: 5px;">`;
+            } else {
+                previewHTML = `
+                <div style="width: 55px; height: 55px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; margin-right: 5px; flex-direction: column; overflow: hidden; position: relative;">
+                    <i class="ph ph-file-text" style="font-size: 24px; color: #fff;"></i>
+                    <span style="font-size: 8px; color: #aaa; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; position: absolute; bottom: 4px;">${file.name}</span>
+                </div>`;
+            }
+            
             div.innerHTML = `
-                <img src="${e.target.result}" style="width: 55px; height: 55px; border-radius: 10px; object-fit: cover; border: 1px solid #00f2ff; margin-right: 5px;">
-                <div onclick="removeImage(this)" style="position: absolute; top: -5px; right: 0px; background: #ff0000; color: white; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; border: 1px solid #fff; z-index: 10;">вњ•</div>
+                ${previewHTML}
+                <div onclick="removeImage(this)" style="position: absolute; top: -6px; right: -2px; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); color: #ffffff; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 10; transition: all 0.2s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">&#10005;</div>
             `;
             container.appendChild(div);
         };
@@ -643,7 +637,7 @@ window.openModal = function(id) {
         navToggle.dispatchEvent(new Event('change'));
     }
     const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.style.transform = 'translateX(0px)';
+    if (sidebar) sidebar.style.transform = '';
     const bd = document.getElementById('__sbd__');
     if (bd) bd.style.display = 'none';
 
@@ -678,7 +672,7 @@ window.closeModal = function(id) {
 
 
 // ============================================================
-// 4. ОСНОВНАЯ ЛОГИКА (DOMContentLoaded)
+// 4. Р С›Р РЋР СњР С›Р вЂ™Р СњР С’Р Р‡ Р вЂєР С›Р вЂњР ВР С™Р С’ (DOMContentLoaded)
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
     const userInput = document.getElementById('userInput');
@@ -732,7 +726,7 @@ if (chatTrigger) {
     const filesToSend = [...selectedFiles];
     if (!text && filesToSend.length === 0) return;
 
-    if (text.toLowerCase().startsWith("браузер:")) {
+    if (text.toLowerCase().startsWith('браузер:')) {
         let task = text.replace(/браузер:/i, '').trim();
         const userMsg = document.createElement('div');
         userMsg.className = 'message user-message';
@@ -748,17 +742,42 @@ if (chatTrigger) {
     const currentProvider = selectedProvider;
     if (!isLiveMode) {
         let userContent = text || '';
+        let attachmentHTML = '';
+        
         if (filesToSend.length > 0) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                addMessageToUI('user', `${userContent ? userContent + '<br>' : ''}<img src="${e.target.result}" style="max-width:200px;border-radius:10px;margin-top:6px;display:block;">`);
-            };
-            reader.readAsDataURL(filesToSend[0]);
+            await Promise.all(filesToSend.map(file => {
+                return new Promise((resolve) => {
+                    const isImage = file.type.startsWith('image/');
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (isImage) {
+                            attachmentHTML += `<img src="${e.target.result}" style="max-width:200px; max-height:200px; border-radius:12px; margin: 4px 8px 4px 0; display:inline-block; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.3);">`;
+                        } else {
+                            attachmentHTML += `
+                            <div style="display: inline-flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.15); border-radius: 14px; margin: 4px 8px 4px 0; max-width: 260px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);">
+                                <i class="ph ph-file-text" style="font-size: 26px; color: #fff; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));"></i>
+                                <div style="display: flex; flex-direction: column; overflow: hidden;">
+                                    <span style="font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;">${file.name}</span>
+                                    <span style="font-size: 11px; color: rgba(255,255,255,0.6);">${(file.size / 1024).toFixed(1)} KB</span>
+                                </div>
+                            </div>`;
+                        }
+                        resolve();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }));
+            const finalContent = `<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 8px;">${attachmentHTML}</div><div style="font-size: 15px;">${userContent.replace(/\n/g, '<br>')}</div>`;
+            addMessageToUI('user', finalContent);
+            saveToFirebase('user', finalContent, targetSessionId);
         } else {
-            addMessageToUI('user', userContent);
+            addMessageToUI('user', userContent.replace(/\n/g, '<br>'));
+            saveToFirebase('user', userContent.replace(/\n/g, '<br>'), targetSessionId);
         }
+    } else {
+        saveToFirebase('user', text, targetSessionId);
     }
-    saveToFirebase('user', text, targetSessionId);
+    
 
     if (userInput) userInput.value = "";
     selectedFiles = [];
@@ -777,10 +796,10 @@ if (chatTrigger) {
     } else {
         totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
     }
-    const stage1 = ["Разбор семантической структуры запроса...", "Извлечение ключевых сущностей и намерений...", "Определение контекстной глубины...", "Построение карты логических связей...", "Классификация интента пользователя...", "Распознавание скрытых паттернов в тексте...", "Оценка тональности входных данных...", "Инициализация векторов внимания..."];
-    const stage2 = ["Сканирование многомерных баз данных...", "Извлечение релевантных контекстных блоков...", "Обращение к модулям долгосрочной памяти...", "Синхронизация информационных потоков...", "Фильтрация избыточного шума...", "Поиск пересечений в векторном пространстве...", "Извлечение ассоциативных паттернов...", "Сбор верифицированных фактов..."];
-    const stage3 = ["Кросс-верификация найденных источников...", "Устранение логических противоречий...", "Проверка контекста на безопасность (Safety Check)...", "Каскадная валидация аргументов...", "Оценка достоверности метаданных...", "Взвешивание вероятностных исходов...", "Оптимизация цепочки рассуждений..."];
-    const stage4 = ["Запуск процессов языкового синтеза...", "Формирование структуры финальных тезисов...", "Адаптация стилистики под контекст беседы...", "Подбор точных лингвистических формулировок...", "Калибровка параметров вывода текста...", "Финальный рендеринг ответа модели...", "Проверка грамматических паттернов..."];
+        const stage1 = ['Инициализация нейросетевых ядер...', 'Загрузка контекстных модулей...', 'Анализ пользовательского запроса...'];
+    const stage2 = ['Сканирование многомерных баз данных...', 'Извлечение релевантных контекстных блоков...', 'Обращение к модулям долгосрочной памяти...', 'Синхронизация информационных потоков...', 'Фильтрация избыточного шума...', 'Поиск пересечений в векторном пространстве...', 'Извлечение ассоциативных паттернов...', 'Сбор верифицированных фактов...'];
+    const stage3 = ['Кросс-верификация найденных источников...', 'Установка логических противоречий...', 'Проверка контекста на безопасность (Safety Check)...', 'Каскадная валидация аргументов...', 'Оценка достоверности метаданных...', 'Взвешивание вероятностных исходов...', 'Оптимизация цепочки рассуждений...'];
+    const stage4 = ['Запуск процессов языкового синтеза...', 'Формирование структурных финальных тезисов...', 'Адаптация стилистики под контекст беседы...', 'Подбор точных лингвистических формулировок...', 'Калибровка параметров вывода текста...', 'Финальный рендеринг ответа модели...', 'Проверка грамматических паттернов...'];
     
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
     let selectedTexts = [];
@@ -953,7 +972,7 @@ if (chatTrigger) {
     try {
         const formData = new FormData();
         const finalPrompt = isDeepMode 
-            ? `[ГЛУБОКИЙ АНАЛИЗ] Отвечай как эксперт. Объясняй ПОЧЕМУ ты пришёл к каждому выводу. Показывай логику шаг за шагом. Приводи примеры и доказательства. Запрос: ${text}`
+            ? `[Р вЂњР вЂєР Р€Р вЂР С›Р С™Р ВР в„ў Р С’Р СњР С’Р вЂєР ВР —] Р С›РЎвЂљР Р†Р ВµРЎвЂЎР В°Р в„– Р С”Р В°Р С” РЎРЊР С”РЎРѓР С—Р ВµРЎР‚РЎвЂљ. Р С›Р В±РЎР‰РЎРЏРЎРѓР Р…РЎРЏР в„– Р СџР С›Р В§Р вЂўР СљР Р€ РЎвЂљРЎвЂ№ Р С—РЎР‚Р С‘РЎв‚¬РЎвЂР » Р С” Р С”Р В°Р В¶Р Т‘Р С•Р СРЎС“ Р Р†РЎвЂ№Р Р†Р С•Р Т‘РЎС“. Р СџР С•Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р в„– Р »Р С•Р С–Р С‘Р С”РЎС“ РЎв‚¬Р В°Р С– Р В·Р В° РЎв‚¬Р В°Р С–Р С•Р С. Р СџРЎР‚Р С‘Р Р†Р С•Р Т‘Р С‘ Р С—РЎР‚Р С‘Р СР ВµРЎР‚РЎвЂ№ Р С‘ Р Т‘Р С•Р С”Р В°Р В·Р В°РЎвЂљР ВµР »РЎРЉРЎРѓРЎвЂљР Р†Р В°. Р —Р В°Р С—РЎР‚Р С•РЎРѓ: ${text}`
             : text;
         formData.append('prompt', finalPrompt);
         formData.append('provider', currentProvider);
@@ -984,7 +1003,7 @@ if (chatTrigger) {
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
-                    if (status) status.innerText = "Нет ответа...";
+                    if (status) status.innerText = 'Lumifex говорит...';
                     setTimeout(() => { if (isLiveMode) startLiveListening(); }, 1000);
                 } else {
                     if (status) status.innerText = "Ответ получен ✓";
@@ -1000,7 +1019,7 @@ if (chatTrigger) {
         } else {
             if (botMsgElement && botMsgElement.querySelector) {
                 const t = botMsgElement.querySelector('.text');
-                if (t) t.innerText = "Ошибка соединения.";
+                if (t) t.innerText = 'Ошибка соединения.';
             }
         }
     } finally {
@@ -1130,7 +1149,7 @@ if (chatTrigger) {
         recognition.onerror = (err) => {
             console.error("Speech Recognition Error:", err.error);
             micBtn.classList.remove('recording');
-            if (err.error === 'not-allowed') alert("Доступ к микрофону заблокирован. Разрешите его в настройках браузера.");
+            if (err.error === 'Доступ к микрофону заблокирован. Разрешите его в настройках браузера.') alert("Р вЂќР С•РЎРѓРЎвЂљРЎС“Р С— Р С” Р СР С‘Р С”РЎР‚Р С•РЎвЂћР С•Р Р…РЎС“ Р В·Р В°Р В±Р »Р С•Р С”Р С‘РЎР‚Р С•Р Р†Р В°Р Р…. Р В Р В°Р В·РЎР‚Р ВµРЎв‚¬Р С‘РЎвЂљР Вµ Р ВµР С–Р С• Р Р† Р Р…Р В°РЎРѓРЎвЂљРЎР‚Р С•Р в„–Р С”Р В°РЎвЂ¦ Р В±РЎР‚Р В°РЎС“Р В·Р ВµРЎР‚Р В°.");
         };
     }
 
@@ -1146,7 +1165,7 @@ if (chatTrigger) {
 // 5. LUMIFEX SYSTEM INIT
 // ============================================================
 function initLumifexSystem() {
-    console.log("Solifon Engine: Start Initialization...");
+    console.log('Задача в браузере завершена');
     if (typeof StellarCarousel !== 'undefined') {
         const carousel = new StellarCarousel();
         setTimeout(() => carousel.update(), 100);
@@ -1165,74 +1184,74 @@ const SLIDES = [
   { 
     title: "SOLIFON OFFLINE ", 
     icon: "р“†©р“‡Ѕр“†Є", 
-    description: "работает без интернета", 
-    stats: ["Доступность: Всегда готов ", "Скорость отклика : Обработка идет прямо на вашем железе вЂ” никакой задержки сети (пинга)."],
-    info: "Работайте над важными проектами в полете или в местах, где нет связи..",
-    skills: [{n: "Конфиденциальность", p: 100}, {n: "Автономность", p: 100}, {n: "Контроль данных ", p: 100}]
+    description: 'самый лучший модел для кода', 
+    stats: ['Статистика', "Р РЋР С”Р С•РЎР‚Р С•РЎРѓРЎвЂљРЎРЉ Р С•РЎвЂљР С”Р »Р С‘Р С”Р В° : Р С›Р В±РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р В° Р С‘Р Т‘Р ВµРЎвЂљ Р С—РЎР‚РЎРЏР СР С• Р Р…Р В° Р Р†Р В°РЎв‚¬Р ВµР С Р В¶Р ВµР »Р ВµР В·Р Вµ Р Р†Р вЂљРІР‚Сњ Р Р…Р С‘Р С”Р В°Р С”Р С•Р в„– Р В·Р В°Р Т‘Р ВµРЎР‚Р В¶Р С”Р С‘ РЎРѓР ВµРЎвЂљР С‘ (Р С—Р С‘Р Р…Р С–Р В°)."],
+    info: "Р В Р В°Р В±Р С•РЎвЂљР В°Р в„–РЎвЂљР Вµ Р Р…Р В°Р Т‘ Р Р†Р В°Р В¶Р Р…РЎвЂ№Р СР С‘ Р С—РЎР‚Р С•Р ВµР С”РЎвЂљР В°Р СР С‘ Р Р† Р С—Р С•Р »Р ВµРЎвЂљР Вµ Р С‘Р »Р С‘ Р Р† Р СР ВµРЎРѓРЎвЂљР В°РЎвЂ¦, Р С–Р Т‘Р Вµ Р Р…Р ВµРЎвЂљ РЎРѓР Р†РЎРЏР В·Р С‘..",
+    skills: [{n: 'БаланыТЈ даТ“дылары', p: 100}, {n: "Р С’Р Р†РЎвЂљР С•Р Р…Р С•Р СР Р…Р С•РЎРѓРЎвЂљРЎРЉ", p: 100}, {n: "Р С™Р С•Р Р…РЎвЂљРЎР‚Р С•Р »РЎРЉ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ ", p: 100}]
   },
   { 
     title: "SOLIFON SOUL", 
     icon: "р“†©р“‹–р“†Є", 
     description: "разговорит как живой человек", 
     stats: ["Video Intelligence:", "Giant Context:"],
-    info: "Понимает интонации, музыку и звуки. Можно просто отправить голосовое сообщение вЂ” Soul поймет всё до последнего вздоха..",
-    skills: [{n: "Объем памяти", p: 100}, {n: "Эмпатия и контекст", p: 100}, {n: "Работа с данными", p: 95}]
+    info: "Р СџР С•Р Р…Р С‘Р СР В°Р ВµРЎвЂљ Р С‘Р Р…РЎвЂљР С•Р Р…Р В°РЎвЂ Р С‘Р С‘, Р СРЎС“Р В·РЎвЂ№Р С”РЎС“ Р С‘ Р В·Р Р†РЎС“Р С”Р С‘. Р СљР С•Р В¶Р Р…Р С• Р С—РЎР‚Р С•РЎРѓРЎвЂљР С• Р С•РЎвЂљР С—РЎР‚Р В°Р Р†Р С‘РЎвЂљРЎРЉ Р С–Р С•Р »Р С•РЎРѓР С•Р Р†Р С•Р Вµ РЎРѓР С•Р С•Р В±РЎвЂ°Р ВµР Р…Р С‘Р Вµ Р Р†Р вЂљРІР‚Сњ Soul Р С—Р С•Р в„–Р СР ВµРЎвЂљ Р Р†РЎРѓРЎвЂ Р Т‘Р С• Р С—Р С•РЎРѓР »Р ВµР Т‘Р Р…Р ВµР С–Р С• Р Р†Р В·Р Т‘Р С•РЎвЂ¦Р В°..",
+    skills: [{n: "Р С›Р В±РЎР‰Р ВµР С Р С—Р В°Р СРЎРЏРЎвЂљР С‘", p: 100}, {n: "Р В­Р СР С—Р В°РЎвЂљР С‘РЎРЏ Р С‘ Р С”Р С•Р Р…РЎвЂљР ВµР С”РЎРѓРЎвЂљ", p: 100}, {n: "Р В Р В°Р В±Р С•РЎвЂљР В° РЎРѓ Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р СР С‘", p: 95}]
   },
   { 
     title: "SOLIFON ULTRA", 
-    icon: "вЂ”НџНџНћНћвўпёЋ", 
-    description: "самый умный модел", 
-    stats: ["Мультимодальность: Актуальность данных", "Стабильность: 100%"],
+    icon: "Р Р†Р вЂљРІР‚СњР СњРЎСџР СњРЎСџР СњРЎвЂєР СњРЎвЂєР Р†Р’ВРЎС›Р С—РЎвЂР вЂ№", 
+    description: "РЎРѓР В°Р СРЎвЂ№Р в„– РЎС“Р СР Р…РЎвЂ№Р в„– Р СР С•Р Т‘Р ВµР »", 
+    stats: ["Р СљРЎС“Р »РЎРЉРЎвЂљР С‘Р СР С•Р Т‘Р В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ: Р С’Р С”РЎвЂљРЎС“Р В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦", "Р РЋРЎвЂљР В°Р В±Р С‘Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ: 100%"],
     info: "Точность фактов .",
-    skills: [{n: "Логическое мышление", p: 98}, {n: "Креативность и стиль", p: 98}]
+    skills: [{n: "Р вЂєР С•Р С–Р С‘РЎвЂЎР ВµРЎРѓР С”Р С•Р Вµ Р СРЎвЂ№РЎв‚¬Р »Р ВµР Р…Р С‘Р Вµ", p: 98}, {n: "Р С™РЎР‚Р ВµР В°РЎвЂљР С‘Р Р†Р Р…Р С•РЎРѓРЎвЂљРЎРЉ Р С‘ РЎРѓРЎвЂљР С‘Р »РЎРЉ", p: 98}]
   },
   { 
     title: "SOLIFON AIR", 
     icon: "р“†©вљќр“†Є", 
-    description: "отвечает мгновенно", 
+    description: "Р С•РЎвЂљР Р†Р ВµРЎвЂЎР В°Р ВµРЎвЂљ Р СР С–Р Р…Р С•Р Р†Р ВµР Р…Р Р…Р С•", 
     stats: ["Скорость: до 2000к", "Стабильность: 99%"],
-    info: "Быстрое распознавание объектов на фото и сканирование документов на лету.",
-    skills: [{n: "Повседневная эффективность", p: 100}, {n: "Мультимодальность", p: 92}]
+    info: "Р вЂРЎвЂ№РЎРѓРЎвЂљРЎР‚Р С•Р Вµ РЎР‚Р В°РЎРѓР С—Р С•Р В·Р Р…Р В°Р Р†Р В°Р Р…Р С‘Р Вµ Р С•Р В±РЎР‰Р ВµР С”РЎвЂљР С•Р Р† Р Р…Р В° РЎвЂћР С•РЎвЂљР С• Р С‘ РЎРѓР С”Р В°Р Р…Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р Вµ Р Т‘Р С•Р С”РЎС“Р СР ВµР Р…РЎвЂљР С•Р Р† Р Р…Р В° Р »Р ВµРЎвЂљРЎС“.",
+    skills: [{n: "Р СџР С•Р Р†РЎРѓР ВµР Т‘Р Р…Р ВµР Р†Р Р…Р В°РЎРЏ РЎРЊРЎвЂћРЎвЂћР ВµР С”РЎвЂљР С‘Р Р†Р Р…Р С•РЎРѓРЎвЂљРЎРЉ", p: 100}, {n: "Р СљРЎС“Р »РЎРЉРЎвЂљР С‘Р СР С•Р Т‘Р В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ", p: 92}]
   },
   { 
     title: "SOLIFON UNBOUND", 
-    icon: "вЂ”НџНџНћНћр–Ј", 
+    icon: "Р Р†Р вЂљРІР‚СњР СњРЎСџР СњРЎСџР СњРЎвЂєР СњРЎвЂєРЎР‚РІР‚вЂњР в‚¬Р’В", 
     description: "работает без цензуры", 
-    stats: ["Работа с данными: 100%", "Следование инструкциям: Математический анализ"],
-    info: "Мой самый амбициозный модел. Этот модел представляется сабой Прямой доступ к знаниям без В«безопасныхВ» искажений..",
-    skills: [{n: "Обход фильтров ", p: 98}, {n: "Следование инструкциям", p: 96}]
+    stats: ["Р В Р В°Р В±Р С•РЎвЂљР В° РЎРѓ Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р СР С‘: 100%", "Р РЋР »Р ВµР Т‘Р С•Р Р†Р В°Р Р…Р С‘Р Вµ Р С‘Р Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂ Р С‘РЎРЏР С: Р СљР В°РЎвЂљР ВµР СР В°РЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р в„– Р В°Р Р…Р В°Р »Р С‘Р В·"],
+    info: "Р СљР С•Р в„– РЎРѓР В°Р СРЎвЂ№Р в„– Р В°Р СР В±Р С‘РЎвЂ Р С‘Р С•Р В·Р Р…РЎвЂ№Р в„– Р СР С•Р Т‘Р ВµР ». Р В­РЎвЂљР С•РЎвЂљ Р СР С•Р Т‘Р ВµР » Р С—РЎР‚Р ВµР Т‘РЎРѓРЎвЂљР В°Р Р†Р »РЎРЏР ВµРЎвЂљРЎРѓРЎРЏ РЎРѓР В°Р В±Р С•Р в„– Р СџРЎР‚РЎРЏР СР С•Р в„– Р Т‘Р С•РЎРѓРЎвЂљРЎС“Р С— Р С” Р В·Р Р…Р В°Р Р…Р С‘РЎРЏР С Р В±Р ВµР В· Р вЂ™Р’«Р В±Р ВµР В·Р С•Р С—Р В°РЎРѓР Р…РЎвЂ№РЎвЂ¦Р вЂ™Р’» Р С‘РЎРѓР С”Р В°Р В¶Р ВµР Р…Р С‘Р в„–..",
+    skills: [{n: "Р С›Р В±РЎвЂ¦Р С•Р Т‘ РЎвЂћР С‘Р »РЎРЉРЎвЂљРЎР‚Р С•Р Р† ", p: 98}, {n: "Р РЋР »Р ВµР Т‘Р С•Р Р†Р В°Р Р…Р С‘Р Вµ Р С‘Р Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂ Р С‘РЎРЏР С", p: 96}]
   },
   { 
     title:"SOLIFON MOTION", 
     icon: "р“†©вњ§р“†Є", 
     description: "делают качественные видео", 
-    stats: ["От киберпанка до классической живописи:", "Рдеальные руки, глаза и пропорции тела:"],
-    info: "На Лунной базе я сосредоточился на автоматизации добычи ресурсов. Весь процесс управляется удаленно через этот интерфейс, минимизируя риски для персонала.",
-    skills: [{n: "Фотореализм", p: 95}, {n: "Сложные композиции", p: 92}]
+    stats: ["Р С›РЎвЂљ Р С”Р С‘Р В±Р ВµРЎР‚Р С—Р В°Р Р…Р С”Р В° Р Т‘Р С• Р С”Р »Р В°РЎРѓРЎРѓР С‘РЎвЂЎР ВµРЎРѓР С”Р С•Р в„– Р В¶Р С‘Р Р†Р С•Р С—Р С‘РЎРѓР С‘:", "Р В Р’ВР Т‘Р ВµР В°Р »РЎРЉР Р…РЎвЂ№Р Вµ РЎР‚РЎС“Р С”Р С‘, Р С–Р »Р В°Р В·Р В° Р С‘ Р С—РЎР‚Р С•Р С—Р С•РЎР‚РЎвЂ Р С‘Р С‘ РЎвЂљР ВµР »Р В°:"],
+    info: "Р СњР В° Р вЂєРЎС“Р Р…Р Р…Р С•Р в„– Р В±Р В°Р В·Р Вµ РЎРЏ РЎРѓР С•РЎРѓРЎР‚Р ВµР Т‘Р С•РЎвЂљР С•РЎвЂЎР С‘Р »РЎРѓРЎРЏ Р Р…Р В° Р В°Р Р†РЎвЂљР С•Р СР В°РЎвЂљР С‘Р В·Р В°РЎвЂ Р С‘Р С‘ Р Т‘Р С•Р В±РЎвЂ№РЎвЂЎР С‘ РЎР‚Р ВµРЎРѓРЎС“РЎР‚РЎРѓР С•Р Р†. Р вЂ™Р ВµРЎРѓРЎРЉ Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓ РЎС“Р С—РЎР‚Р В°Р Р†Р »РЎРЏР ВµРЎвЂљРЎРѓРЎРЏ РЎС“Р Т‘Р В°Р »Р ВµР Р…Р Р…Р С• РЎвЂЎР ВµРЎР‚Р ВµР В· РЎРЊРЎвЂљР С•РЎвЂљ Р С‘Р Р…РЎвЂљР ВµРЎР‚РЎвЂћР ВµР в„–РЎРѓ, Р СР С‘Р Р…Р С‘Р СР С‘Р В·Р С‘РЎР‚РЎС“РЎРЏ РЎР‚Р С‘РЎРѓР С”Р С‘ Р Т‘Р »РЎРЏ Р С—Р ВµРЎР‚РЎРѓР С•Р Р…Р В°Р »Р В°.",
+    skills: [{n: "Р В¤Р С•РЎвЂљР С•РЎР‚Р ВµР В°Р »Р С‘Р В·Р С", p: 95}, {n: "Р РЋР »Р С•Р В¶Р Р…РЎвЂ№Р Вµ Р С”Р С•Р СР С—Р С•Р В·Р С‘РЎвЂ Р С‘Р С‘", p: 92}]
   },
   { 
     title: "SOLIFON PULSE", 
-    icon: "вЂ”НџНџНћНћвљ™пёЋ", 
-    description: "самая лучшая модел и работает без цензуры", 
+    icon: "Р Р†Р вЂљРІР‚СњР СњРЎСџР СњРЎСџР СњРЎвЂєР СњРЎвЂєР Р†РЎв„ўРІвЂћСћР С—РЎвЂР вЂ№", 
+    description: "РЎРѓР В°Р СР В°РЎРЏ Р »РЎС“РЎвЂЎРЎв‚¬Р В°РЎРЏ Р СР С•Р Т‘Р ВµР » Р С‘ РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ Р В±Р ВµР В· РЎвЂ Р ВµР Р…Р В·РЎС“РЎР‚РЎвЂ№", 
     stats: ["Скорость: 500вЂ“800 токенов в секунду", "Мгновенный старт:"],
-    info: "Прямой доступ к новостям, курсам валют и событиям, произошедшим всего 5 минут назад..",
+    info: "Р СџРЎР‚РЎРЏР СР С•Р в„– Р Т‘Р С•РЎРѓРЎвЂљРЎС“Р С— Р С” Р Р…Р С•Р Р†Р С•РЎРѓРЎвЂљРЎРЏР С, Р С”РЎС“РЎР‚РЎРѓР В°Р С Р Р†Р В°Р »РЎР‹РЎвЂљ Р С‘ РЎРѓР С•Р В±РЎвЂ№РЎвЂљР С‘РЎРЏР С, Р С—РЎР‚Р С•Р С‘Р В·Р С•РЎв‚¬Р ВµР Т‘РЎв‚¬Р С‘Р С Р Р†РЎРѓР ВµР С–Р С• 5 Р СР С‘Р Р…РЎС“РЎвЂљ Р Р…Р В°Р В·Р В°Р Т‘..",
     skills: [{n: "Эффективность", p: 100}, {n: "Скорость генерации", p: 100}]
   },
   { 
     title: "SOLIFON ECHO", 
     icon: "рџЊЂ", 
-    description: "полноценная имитация человеческих эмоций и интонаций", 
-    stats: ["Мультиязычность:", "Рдеально справляется со сложными пошаговыми командами :"],
-    info: "Способность передать гнев, радость, шепот или иронию в зависимости от контекста текста.",
+    description: "Р С—Р С•Р »Р Р…Р С•РЎвЂ Р ВµР Р…Р Р…Р В°РЎРЏ Р С‘Р СР С‘РЎвЂљР В°РЎвЂ Р С‘РЎРЏ РЎвЂЎР ВµР »Р С•Р Р†Р ВµРЎвЂЎР ВµРЎРѓР С”Р С‘РЎвЂ¦ РЎРЊР СР С•РЎвЂ Р С‘Р в„– Р С‘ Р С‘Р Р…РЎвЂљР С•Р Р…Р В°РЎвЂ Р С‘Р в„–", 
+    stats: ["Р СљРЎС“Р »РЎРЉРЎвЂљР С‘РЎРЏР В·РЎвЂ№РЎвЂЎР Р…Р С•РЎРѓРЎвЂљРЎРЉ:", "Р В Р’ВР Т‘Р ВµР В°Р »РЎРЉР Р…Р С• РЎРѓР С—РЎР‚Р В°Р Р†Р »РЎРЏР ВµРЎвЂљРЎРѓРЎРЏ РЎРѓР С• РЎРѓР »Р С•Р В¶Р Р…РЎвЂ№Р СР С‘ Р С—Р С•РЎв‚¬Р В°Р С–Р С•Р Р†РЎвЂ№Р СР С‘ Р С”Р С•Р СР В°Р Р…Р Т‘Р В°Р СР С‘ :"],
+    info: "Р РЋР С—Р С•РЎРѓР С•Р В±Р Р…Р С•РЎРѓРЎвЂљРЎРЉ Р С—Р ВµРЎР‚Р ВµР Т‘Р В°РЎвЂљРЎРЉ Р С–Р Р…Р ВµР Р†, РЎР‚Р В°Р Т‘Р С•РЎРѓРЎвЂљРЎРЉ, РЎв‚¬Р ВµР С—Р С•РЎвЂљ Р С‘Р »Р С‘ Р С‘РЎР‚Р С•Р Р…Р С‘РЎР‹ Р Р† Р В·Р В°Р Р†Р С‘РЎРѓР С‘Р СР С•РЎРѓРЎвЂљР С‘ Р С•РЎвЂљ Р С”Р С•Р Р…РЎвЂљР ВµР С”РЎРѓРЎвЂљР В° РЎвЂљР ВµР С”РЎРѓРЎвЂљР В°.",
     skills: [{n: "Естественность голоса", p: 100}, {n: "Скорость озвучки", p: 96}]
   },
   { 
     title: "SOLIFON FLOW", 
-    icon: "вЂ”НџНџНћНћрџ—ЎпёЏ", 
-    description: "самый лучший модел для кода", 
+    icon: "Р Р†Р вЂљРІР‚СњР СњРЎСџР СњРЎСџР СњРЎвЂєР СњРЎвЂєРЎР‚РЎСџРІР‚вЂќР Р‹Р С—РЎвЂР РЏ", 
+    description: "РЎРѓР В°Р СРЎвЂ№Р в„– Р »РЎС“РЎвЂЎРЎв‚¬Р С‘Р в„– Р СР С•Р Т‘Р ВµР » Р Т‘Р »РЎРЏ Р С”Р С•Р Т‘Р В°", 
     stats: ["Стабильность:", "стандартных текстовых задачах:"],
     info: ".",
-    skills: [{n: "Эффективность", p: 100}, {n: "Баланс Мощи", p: 95}, {n: "Следование инструкциям", p: 96}]
+    skills: [{n: "Р В­РЎвЂћРЎвЂћР ВµР С”РЎвЂљР С‘Р Р†Р Р…Р С•РЎРѓРЎвЂљРЎРЉ", p: 100}, {n: "Р вЂР В°Р »Р В°Р Р…РЎРѓ Р СљР С•РЎвЂ°Р С‘", p: 95}, {n: "Р РЋР »Р ВµР Т‘Р С•Р Р†Р В°Р Р…Р С‘Р Вµ Р С‘Р Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂ Р С‘РЎРЏР С", p: 96}]
   }
 ];
 
@@ -1427,7 +1446,7 @@ window.stopLiveMode = function() {
 
 function startLiveListening() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) { alert("Голосовой ввод не поддерживается этим браузером."); return; }
+    if (!SpeechRecognition) { alert('Голосовой ввод не поддерживается этим браузером.'); return; }
     liveRecognition = new SpeechRecognition();
     liveRecognition.lang = 'ru-RU';
     liveRecognition.interimResults = false;
@@ -1584,7 +1603,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================================================
-// SOLIFON HOTFIX: reliable "АнаныТЈ жТЇрегі" opening
+// SOLIFON HOTFIX: reliable 'АнаныТЈ жТЇрегі' opening
 // ============================================================
 (function () {
   const screens = ['mh-roleScreen', 'mh-parentScreen', 'mh-specialistScreen', 'mh-directorScreen', 'mh-aiScreen'];
@@ -1681,10 +1700,10 @@ function initLumifexEditors() {
 </head>
 <body>
   <div class="hero">
-    <div class="badge">✦ Solifon Code</div>
+    <div class="badge">вњ¦ Solifon Code</div>
     <h1>Hello, <span class="accent">World</span>!</h1>
-    <p>Редактируй код — видь результат в реальном времени.</p>
-    <button onclick="greet()">Нажми меня</button>
+    <p>Р В Р ВµР Т‘Р В°Р С”РЎвЂљР С‘РЎР‚РЎС“Р в„– Р С”Р С•Р Т‘ РІР‚вЂќ Р Р†Р С‘Р Т‘РЎРЉ РЎР‚Р ВµР В·РЎС“Р »РЎРЉРЎвЂљР В°РЎвЂљ Р Р† РЎР‚Р ВµР В°Р »РЎРЉР Р…Р С•Р С Р Р†РЎР‚Р ВµР СР ВµР Р…Р С‘.</p>
+    <button onclick="greet()">Р СњР В°Р В¶Р СР С‘ Р СР ВµР Р…РЎРЏ</button>
   </div>
 </body>
 </html>`);
@@ -1743,23 +1762,23 @@ button {
 button:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(124,106,255,0.5); }`);
 
     codeEditors.js.setValue(`function greet() {
-  // Анимированный алерт
+  // Р С’Р Р…Р С‘Р СР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р Р…РЎвЂ№Р в„– Р В°Р »Р ВµРЎР‚РЎвЂљ
   const btn = document.querySelector('button');
   btn.textContent = '🎉 Привет!';
   btn.style.background = '#2ea043';
   setTimeout(() => {
-    btn.textContent = 'Нажми меня';
+    btn.textContent = 'Р СњР В°Р В¶Р СР С‘ Р СР ВµР Р…РЎРЏ';
     btn.style.background = '';
   }, 2000);
 }`);
 
     codeEditors.py.setValue(`# Python в браузере — Solifon Playground
-print("🚀 Python Engine Active!")
+print('✓ Готово!')
 print("-" * 30)
 
 for i in range(1, 6):
-    stars = "★" * i
-    print(f"Уровень {i}: {stars}")
+    stars = "РІВвЂ¦" * i
+    print(f'Уровень {i}: {stars}')
 
 print("-" * 30)
 print("✓ Готово!")`); 
@@ -1772,11 +1791,11 @@ print("✓ Готово!")`);
             const el = document.getElementById('ide-cursor-pos');
             if (el) el.textContent = `Ln ${cur.line + 1}, Col ${cur.ch + 1}`;
             const linesEl = document.getElementById('ide-lines-count');
-            if (linesEl) linesEl.textContent = `${cm.lineCount()} строк`;
+            if (linesEl) linesEl.textContent = '${cm.lineCount()} строк';
         });
         editor.on('change', (cm) => {
             const linesEl = document.getElementById('ide-lines-count');
-            if (linesEl && lang === currentEditorLang) linesEl.textContent = `${cm.lineCount()} строк`;
+            if (linesEl && lang === currentEditorLang) linesEl.textContent = '${cm.lineCount()} строк';
         });
     });
 }
@@ -1821,7 +1840,7 @@ window.openEditorTab = function(evt, lang) {
             const el = document.getElementById('ide-cursor-pos');
             if (el) el.textContent = `Ln ${cur.line+1}, Col ${cur.ch+1}`;
             const lc = document.getElementById('ide-lines-count');
-            if (lc) lc.textContent = `${codeEditors[currentEditorLang].lineCount()} строк`;
+            if (lc) lc.textContent = '${codeEditors[currentEditorLang].lineCount()} строк';
         }
     }, 10);
 };
@@ -1886,7 +1905,7 @@ window.openPresentation = function() {
         navToggle.dispatchEvent(new Event('change'));
     }
     const sidebar = document.getElementById('sidebar');
-    if (sidebar) sidebar.style.transform = 'translateX(0px)';
+    if (sidebar) sidebar.style.transform = '';
     const bd = document.getElementById('__sbd__');
     if (bd) bd.style.display = 'none';
     
@@ -1953,7 +1972,7 @@ function speakText(text) {
     .catch(() => { if (isLiveMode) startLiveListening(); });
 }
 
-// Надёжная привязка для мобильных
+// Р СњР В°Р Т‘РЎвЂР В¶Р Р…Р В°РЎРЏ Р С—РЎР‚Р С‘Р Р†РЎРЏР В·Р С”Р В° Р Т‘Р »РЎРЏ Р СР С•Р В±Р С‘Р »РЎРЉР Р…РЎвЂ№РЎвЂ¦
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const btn = document.getElementById('googleSignInBtn');
@@ -2009,13 +2028,13 @@ window.mhBackToProfile = function() {
 window.mhHandleDocs = function(input) {
   const files = Array.from(input.files);
   const listEl = document.getElementById('mh-fileList');
-  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">рџ“„ ${f.name}</div>`).join('');
+  if (listEl) listEl.innerHTML = files.map(f => `<div style="margin-top:4px">📄 ${f.name}</div>`).join('');
 };
 
 // --- Навыки ---
 window.mhToggleSkill = function(el) { el.classList.toggle('selected'); };
 
-// FIX 6: mhLoadStats вЂ” функция не существовала, кнопка "Обновить" падала с ошибкой
+// FIX 6: mhLoadStats — функция не существовала, кнопка "Обновить" падала с ошибкой
 window.mhLoadStats = function() {
   if (!database) return;
   const childCountEl = document.getElementById('dir-childCount');
@@ -2028,14 +2047,14 @@ window.mhLoadStats = function() {
   });
 };
 
-// --- СОХРАНРТЬ ПРОФРЛЬ РЕБЁНКА (Родитель) ---
+// --- Р РЋР С›Р ТђР В Р С’Р СњР В Р’ВР СћР В¬ Р СџР В Р С›Р В¤Р В Р’ВР вЂєР В¬ Р В Р вЂўР вЂР РѓР СњР С™Р С’ (Р В Р С•Р Т‘Р С‘РЎвЂљР ВµР »РЎРЉ) ---
 window.mhSaveProfile = async function() {
   const fio       = (document.getElementById('mh-fio')?.value || '').trim();
   const dob       = document.getElementById('mh-dob')?.value || '';
   const diagnosis = (document.getElementById('mh-diagnosis')?.value || '').trim();
 
   if (!fio || !dob || !diagnosis) {
-    alert('Заполните ФРО, дату рождения и диагноз');
+    alert('Р —Р В°Р С—Р С•Р »Р Р…Р С‘РЎвЂљР Вµ Р В¤Р В Р’ВР С›, Р Т‘Р В°РЎвЂљРЎС“ РЎР‚Р С•Р В¶Р Т‘Р ВµР Р…Р С‘РЎРЏ Р С‘ Р Т‘Р С‘Р В°Р С–Р Р…Р С•Р В·');
     return;
   }
 
@@ -2056,10 +2075,10 @@ window.mhSaveProfile = async function() {
     setTimeout(() => mhOpenAI('parent'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и открыть РР-помощника в†’'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и проконсультироваться с РР в†’'; }
 };
 
-// --- СОХРАНРТЬ ЗАПРСЬ СПЕЦРАЛРСТА ---
+// --- Р РЋР С›Р ТђР В Р С’Р СњР В Р’ВР СћР В¬ Р —Р С’Р СџР В Р’ВР РЋР В¬ Р РЋР СџР вЂўР В¦Р В Р’ВР С’Р вЂєР В Р’ВР РЋР СћР С’ ---
 window.mhSaveSession = async function() {
   const child   = (document.getElementById('sp-childName')?.value || '').trim();
   const type    = document.getElementById('sp-sessionType')?.value || '';
@@ -2067,7 +2086,7 @@ window.mhSaveSession = async function() {
   const result  = (document.getElementById('sp-result')?.value || '').trim();
 
   if (!child || !notes) {
-    alert('Заполните имя ребёнка и описание занятия');
+    alert('Р —Р В°Р С—Р С•Р »Р Р…Р С‘РЎвЂљР Вµ Р С‘Р СРЎРЏ РЎР‚Р ВµР В±РЎвЂР Р…Р С”Р В° Р С‘ Р С•Р С—Р С‘РЎРѓР В°Р Р…Р С‘Р Вµ Р В·Р В°Р Р…РЎРЏРЎвЂљР С‘РЎРЏ');
     return;
   }
 
@@ -2075,7 +2094,7 @@ window.mhSaveSession = async function() {
   mhCurrentChild = { fio: child, diagnosis: type, skills: [], role: 'specialist' };
 
   const btn = document.querySelector('#mh-specialistScreen .mh-save-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Сохраняем...'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Р РЋР С•РЎвЂ¦РЎР‚Р В°Р Р…РЎРЏР ВµР С...'; }
 
   try {
     if (typeof database !== 'undefined' && database) {
@@ -2086,10 +2105,10 @@ window.mhSaveSession = async function() {
     setTimeout(() => mhOpenAI('specialist'), 300);
   }
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Сохранить и проконсультироваться с РР в†’'; }
+  if (btn) { btn.disabled = false; btn.textContent = 'Р РЋР С•РЎвЂ¦РЎР‚Р В°Р Р…Р С‘РЎвЂљРЎРЉ Р С‘ Р С—РЎР‚Р С•Р С”Р С•Р Р…РЎРѓРЎС“Р »РЎРЉРЎвЂљР С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉРЎРѓРЎРЏ РЎРѓ Р В Р’ВР В Р’В Р Р†РІР‚В РІР‚в„ў'; }
 };
 
-// --- ОТКРЫТЬ РР-ЭКРАН ---
+// --- Р С›Р СћР С™Р В Р «Р СћР В¬ Р В Р’ВР В Р’В-Р В­Р С™Р В Р С’Р Сњ ---
 function mhOpenAI(role) {
   const saveMsg = document.getElementById('mh-saveMsg');
   if (saveMsg) saveMsg.style.display = 'none';
@@ -2103,13 +2122,13 @@ function mhOpenAI(role) {
   let greeting = '';
 
   if (role === 'parent') {
-    if (badge) badge.textContent = 'рџ‘§ ' + (mhCurrentChild.fio || 'Ребёнок');
-    if (aiName) aiName.textContent = 'SoulDrive вЂ” Советник родителей';
-    greeting = `Здравствуйте! Я SoulDrive, ваш помощник.\n\nЯ знаю о **${mhCurrentChild.fio}**: диагноз **${mhCurrentChild.diagnosis}**, навыки: ${mhCurrentChild.skills.length ? mhCurrentChild.skills.join(', ') : 'не указаны'}.\n\nЧем могу помочь? Могу предложить домашние упражнения, ответить на вопросы о развитии или поддержать вас.`;
+    if (badge) badge.textContent = '👨‍👩‍👧 ' + (mhCurrentChild.fio || 'Ребёнок');
+    if (aiName) aiName.textContent = 'SoulDrive — Ассистент родителя';
+    greeting = `Здравствуйте! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio || 'не указан'}**. Чем могу помочь? Могу предложить домашние упражнения, ответить на вопросы о развитии или поддержать вас.`;
   } else if (role === 'specialist') {
-    if (badge) badge.textContent = 'рџ‘©вЂЌвљ•пёЏ Специалист';
-    if (aiName) aiName.textContent = 'SoulDrive вЂ” Ассистент специалиста';
-    greeting = `Здравствуйте, коллега! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio}** сохранена. Я могу помочь с:\nвЂ” Методиками коррекции\nвЂ” Составлением индивидуального маршрута\nвЂ” Рекомендациями для родителей\n\nЧто вас интересует?`;
+    if (badge) badge.textContent = '👨‍⚕️ Специалист';
+    if (aiName) aiName.textContent = 'SoulDrive — Ассистент специалиста';
+    greeting = `Здравствуйте, коллега! Я SoulDrive.\n\nЗапись по ребёнку **${mhCurrentChild.fio || 'не указан'}** сохранена. Я могу помочь с:\n— Методиками коррекции\n— Составлением индивидуального маршрута\n— Рекомендациями для родителей\n\nЧто вас интересует?`;
   }
 
   mhShowScreen('aiScreen');
@@ -2123,7 +2142,7 @@ function mhAddAI(text) {
   const d = document.createElement('div');
   d.className = 'mh-msg ai';
   d.innerHTML = `
-    <div class="mh-msg-avatar">рџ’—</div>
+    <div class="mh-msg-avatar">💗</div>
     <div class="mh-msg-bubble">${text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
@@ -2133,7 +2152,7 @@ function mhAddUser(text) {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg user';
-  d.innerHTML = `<div class="mh-msg-avatar">рџ‘¤</div><div class="mh-msg-bubble">${text}</div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">👤</div><div class="mh-msg-bubble">${text}</div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -2142,7 +2161,7 @@ function mhShowTyping() {
   if (!c) return;
   const d = document.createElement('div');
   d.className = 'mh-msg ai'; d.id = 'mh-typing';
-  d.innerHTML = `<div class="mh-msg-avatar">рџ’—</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
+  d.innerHTML = `<div class="mh-msg-avatar">💗</div><div class="mh-typing"><span></span><span></span><span></span></div>`;
   c.appendChild(d);
   c.scrollTop = c.scrollHeight;
 }
@@ -2167,12 +2186,12 @@ window.mhSend = async function() {
   let system = '';
 
   if (role === 'parent') {
-    system = `Ты SoulDrive вЂ” добрый РР-помощник для родителей детей с особыми потребностями в Казахстане.
-Ребёнок: ${mhCurrentChild.fio||'вЂ”'}, диагноз: ${mhCurrentChild.diagnosis||'вЂ”'}, навыки: ${(mhCurrentChild.skills||[]).join(', ')||'не указаны'}.
-Давай конкретные, простые и добрые советы на русском языке. Ответы 2-4 предложения. Всегда заканчивай позитивно.`;
+    system = `Р СћРЎвЂ№ SoulDrive Р Р†Р вЂљРІР‚Сњ Р Т‘Р С•Р В±РЎР‚РЎвЂ№Р в„– Р В Р’ВР В Р’В-Р С—Р С•Р СР С•РЎвЂ°Р Р…Р С‘Р С” Р Т‘Р »РЎРЏ РЎР‚Р С•Р Т‘Р С‘РЎвЂљР ВµР »Р ВµР в„– Р Т‘Р ВµРЎвЂљР ВµР в„– РЎРѓ Р С•РЎРѓР С•Р В±РЎвЂ№Р СР С‘ Р С—Р С•РЎвЂљРЎР‚Р ВµР В±Р Р…Р С•РЎРѓРЎвЂљРЎРЏР СР С‘ Р Р† Р С™Р В°Р В·Р В°РЎвЂ¦РЎРѓРЎвЂљР В°Р Р…Р Вµ.
+Р В Р ВµР В±РЎвЂР Р…Р С•Р С”: ${mhCurrentChild.fio||'Р Р†Р вЂљРІР‚Сњ'}, Р Т‘Р С‘Р В°Р С–Р Р…Р С•Р В·: ${mhCurrentChild.diagnosis||'Р Р†Р вЂљРІР‚Сњ'}, Р Р…Р В°Р Р†РЎвЂ№Р С”Р С‘: ${(mhCurrentChild.skills||[]).join(', ')||'Р Р…Р Вµ РЎС“Р С”Р В°Р В·Р В°Р Р…РЎвЂ№'}.
+Р вЂќР В°Р Р†Р В°Р в„– Р С”Р С•Р Р…Р С”РЎР‚Р ВµРЎвЂљР Р…РЎвЂ№Р Вµ, Р С—РЎР‚Р С•РЎРѓРЎвЂљРЎвЂ№Р Вµ Р С‘ Р Т‘Р С•Р В±РЎР‚РЎвЂ№Р Вµ РЎРѓР С•Р Р†Р ВµРЎвЂљРЎвЂ№ Р Р…Р В° РЎР‚РЎС“РЎРѓРЎРѓР С”Р С•Р С РЎРЏР В·РЎвЂ№Р С”Р Вµ. Р С›РЎвЂљР Р†Р ВµРЎвЂљРЎвЂ№ 2-4 Р С—РЎР‚Р ВµР Т‘Р »Р С•Р В¶Р ВµР Р…Р С‘РЎРЏ. Р вЂ™РЎРѓР ВµР С–Р Т‘Р В° Р В·Р В°Р С”Р В°Р Р…РЎвЂЎР С‘Р Р†Р В°Р в„– Р С—Р С•Р В·Р С‘РЎвЂљР С‘Р Р†Р Р…Р С•.`;
   } else {
-    system = `Ты SoulDrive вЂ” профессиональный РР-ассистент для специалистов (логопедов, дефектологов, психологов) в Казахстане.
-Отвечай на русском языке. Давай методические рекомендации, упражнения и советы по коррекционной работе.`;
+    system = `Р СћРЎвЂ№ SoulDrive Р Р†Р вЂљРІР‚Сњ Р С—РЎР‚Р С•РЎвЂћР ВµРЎРѓРЎРѓР С‘Р С•Р Р…Р В°Р »РЎРЉР Р…РЎвЂ№Р в„– Р В Р’ВР В Р’В-Р В°РЎРѓРЎРѓР С‘РЎРѓРЎвЂљР ВµР Р…РЎвЂљ Р Т‘Р »РЎРЏ РЎРѓР С—Р ВµРЎвЂ Р С‘Р В°Р »Р С‘РЎРѓРЎвЂљР С•Р Р† (Р »Р С•Р С–Р С•Р С—Р ВµР Т‘Р С•Р Р†, Р Т‘Р ВµРЎвЂћР ВµР С”РЎвЂљР С•Р »Р С•Р С–Р С•Р Р†, Р С—РЎРѓР С‘РЎвЂ¦Р С•Р »Р С•Р С–Р С•Р Р†) Р Р† Р С™Р В°Р В·Р В°РЎвЂ¦РЎРѓРЎвЂљР В°Р Р…Р Вµ.
+Р С›РЎвЂљР Р†Р ВµРЎвЂЎР В°Р в„– Р Р…Р В° РЎР‚РЎС“РЎРѓРЎРѓР С”Р С•Р С РЎРЏР В·РЎвЂ№Р С”Р Вµ. Р вЂќР В°Р Р†Р В°Р в„– Р СР ВµРЎвЂљР С•Р Т‘Р С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ РЎР‚Р ВµР С”Р С•Р СР ВµР Р…Р Т‘Р В°РЎвЂ Р С‘Р С‘, РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р С‘ РЎРѓР С•Р Р†Р ВµРЎвЂљРЎвЂ№ Р С—Р С• Р С”Р С•РЎР‚РЎР‚Р ВµР С”РЎвЂ Р С‘Р С•Р Р…Р Р…Р С•Р в„– РЎР‚Р В°Р В±Р С•РЎвЂљР Вµ.`;
   }
 
   try {
@@ -2213,24 +2232,24 @@ function showInstallGuide() {
     steps = `
       <div style="font-size:48px;text-align:center">рџ“±</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на Android</h3>
-      <p>1. Нажми <b>в‹®</b> три точки в Chrome</p>
+      <p>1. Р СњР В°Р В¶Р СР С‘ <b>Р Р†РІР‚в„–Р’В®</b> РЎвЂљРЎР‚Р С‘ РЎвЂљР С•РЎвЂЎР С”Р С‘ Р Р† Chrome</p>
       <p>2. Выбери <b>"Установить приложение"</b></p>
-      <p>3. Нажми <b>"Установить"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Рконка Solifon AI появится на главном экране</p>`;
+      <p>3. Р СњР В°Р В¶Р СР С‘ <b>"Р Р€РЎРѓРЎвЂљР В°Р Р…Р С•Р Р†Р С‘РЎвЂљРЎРЉ"</b></p>
+      <p style='>Рконка Solifon AI появится на главном экране</p>'>Р В Р’ВР С”Р С•Р Р…Р С”Р В° Solifon AI Р С—Р С•РЎРЏР Р†Р С‘РЎвЂљРЎРѓРЎРЏ Р Р…Р В° Р С–Р »Р В°Р Р†Р Р…Р С•Р С РЎРЊР С”РЎР‚Р В°Р Р…Р Вµ</p>`;
   } else if (isIOS) {
     steps = `
       <div style="font-size:48px;text-align:center">рџ“±</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на iPhone</h3>
-      <p>1. Нажми кнопку <b>в–Ўв†‘ Поделиться</b> внизу</p>
-      <p>2. Выбери <b>"На экран Домой"</b></p>
-      <p>3. Нажми <b>"Добавить"</b></p>`;
+      <p>1. Р СњР В°Р В¶Р СР С‘ Р С”Р Р…Р С•Р С—Р С”РЎС“ <b>Р Р†РІР‚вЂњР Р‹Р Р†РІР‚В РІР‚В Р СџР С•Р Т‘Р ВµР »Р С‘РЎвЂљРЎРЉРЎРѓРЎРЏ</b> Р Р†Р Р…Р С‘Р В·РЎС“</p>
+      <p>2. Р вЂ™РЎвЂ№Р В±Р ВµРЎР‚Р С‘ <b>"Р СњР В° РЎРЊР С”РЎР‚Р В°Р Р… Р вЂќР С•Р СР С•Р в„–"</b></p>
+      <p>3. Р СњР В°Р В¶Р СР С‘ <b>"Р вЂќР С•Р В±Р В°Р Р†Р С‘РЎвЂљРЎРЉ"</b></p>`;
   } else {
     steps = `
       <div style="font-size:48px;text-align:center">рџ’»</div>
       <h3 style="color:#00f2ff;text-align:center">Установка на Windows/Mac</h3>
-      <p>1. В Chrome нажми <b>в‹®</b></p>
+      <p>1. Р вЂ™ Chrome Р Р…Р В°Р В¶Р СР С‘ <b>Р Р†РІР‚в„–Р’В®</b></p>
       <p>2. Выбери <b>"Установить Solifon AI"</b></p>
-      <p style="opacity:0.5;font-size:12px;text-align:center">Рли нажми иконку вЉ• в адресной строке</p>`;
+      <p style='>Рли нажми иконку вЉ• в адресной строке</p>'>Р В Р’ВР »Р С‘ Р Р…Р В°Р В¶Р СР С‘ Р С‘Р С”Р С•Р Р…Р С”РЎС“ Р Р†Р вЂ°РІР‚Сћ Р Р† Р В°Р Т‘РЎР‚Р ВµРЎРѓР Р…Р С•Р в„– РЎРѓРЎвЂљРЎР‚Р С•Р С”Р Вµ</p>`;
   }
 
   document.querySelector('#pwaTipModal .modal-body').innerHTML = steps;
@@ -2246,78 +2265,9 @@ function showInstallGuide() {
     ru: {
       code: 'RU',
       htmlLang: 'ru',
-      newChat: 'Новый чат',
-      system: 'Система',
-      whatsNew: 'Что нового',
-      about: 'О SOLIFON',
-      features: 'Функции',
-      chat: 'Чат',
-      library: 'Библиотека',
-      workspaces: 'Рабочие зоны',
-      newProject: 'Новый проект',
-      presentation: 'Презентация',
-      deep: 'Глубокий поиск',
-      download: 'Скачать Solifon AI',
-      upgradeText: 'Перейти на Premium',
-      upgrade: 'Улучшить',
-      historyEmpty: 'Рстория пуста',
-      chatHistory: 'Рстория чатов',
-      modelPick: 'Выберите модель',
-      ask: 'Спросите Solifon...',
-      clear: 'Очистить чат',
-      mhTitle: 'АнаныТЈ жТЇрегі',
-      mhSubtitle: 'Цифровая платформа поддержки семьи',
-      mhParent: 'Родитель',
-      mhParentDesc: 'Профиль ребенка, навыки и задания от РР',
-      mhSpecialist: 'Специалист',
-      mhSpecialistDesc: 'Журнал занятий и коррекционные методики',
-      mhDirector: 'Руководитель',
-      mhDirectorDesc: 'Управление центром и аналитика',
-      childProfile: 'Профиль ребенка',
-      childProfileDesc: 'Данные сохраняются в вашем аккаунте',
-      personalInfo: 'Личная информация',
-      childName: 'ФРО ребенка',
-      childNamePh: 'Например: Алибек Сейтов',
-      dob: 'Дата рождения (ДД.ММ.ГГГГ)',
-      diagnosis: 'Диагноз / особенности',
-      diagnosisPh: 'Например: ЗРР, ДЦП, РАС...',
-      docs: 'Документы',
-      upload: 'Нажмите, чтобы загрузить',
-      uploadHint: 'Справки, заключения специалистов',
-      skills: 'Навыки ребенка',
-      saveProfile: 'Сохранить и открыть РР-помощника',
-      sessionJournal: 'Журнал занятия',
-      sessionDesc: 'Единая цифровая база вместо бумажных тетрадей',
-      whyTitle: 'Зачем это?',
-      whyText: 'Все специалисты центра видят общую базу. Один профиль на каждого ребенка, без бумажной путаницы.',
-      sessionInfo: 'Рнформация о занятии',
-      sessionType: 'Тип занятия',
-      chooseType: 'Выберите тип...',
-      notes: 'Что делали на занятии',
-      notesPh: 'Опишите упражнения, активности, методики...',
-      result: 'Результат / наблюдения',
-      resultPh: 'Как ребенок справился? Что улучшилось?',
-      rating: 'Оценка занятия',
-      saveSession: 'Сохранить и проконсультироваться с РР',
-      directorPanel: 'Панель руководителя',
-      overview: 'Центр В«АнаныТЈ жТЇрегіВ» вЂ” обзор',
-      stats: 'Статистика',
-      children: 'Детей в базе',
-      sessions: 'Занятий',
-      villages: 'Сел в охвате',
-      specialists: 'Специалиста',
-      refresh: 'Обновить',
-      exportReport: 'Экспорт отчета',
-      team: 'Специалисты',
-      aiReady: 'Готов помочь',
-      aiInput: 'Напишите вопрос...'
-    },
-    kk: {
-      code: 'KZ',
-      htmlLang: 'kk',
       newChat: 'ЖаТЈа чат',
       system: 'ЖТЇйе',
-      whatsNew: 'ЖаТЈалыТ›тар',
+      whatsNew: 'Жаңалықтар',
       about: 'SOLIFON туралы',
       features: 'МТЇмкіндіктер',
       chat: 'Чат',
@@ -2325,14 +2275,14 @@ function showInstallGuide() {
       workspaces: 'ЖТ±мыс аймаТ›тары',
       newProject: 'ЖаТЈа жоба',
       presentation: 'Презентация',
-      deep: 'ТереТЈ зерттеу',
+      deep: 'Глубокий поиск',
       download: 'Solifon AI жТЇктеу',
       upgradeText: 'Premium-Т“а У©ту',
-      upgrade: 'ЖаТ›сарту',
+      upgrade: 'Premium-Т“а У©ту',
       historyEmpty: 'Тарих бос',
       chatHistory: 'Чат тарихы',
       modelPick: 'Модель таТЈдаТЈыз',
-      ask: 'Solifon-нан сТ±раТЈыз...',
+      ask: 'Спросите Solifon...',
       clear: 'Чатты тазалау',
       mhTitle: 'АнаныТЈ жТЇрегі',
       mhSubtitle: 'Отбасын Т›олдауТ“а арналТ“ан цифрлыТ› платформа',
@@ -2347,13 +2297,13 @@ function showInstallGuide() {
       personalInfo: 'Жеке аТ›парат',
       childName: 'БаланыТЈ толыТ› аты-жУ©ні',
       childNamePh: 'Мысалы: Улібек Сейтов',
-      dob: 'ТуТ“ан кТЇні (КК.АА.ЖЖЖЖ)',
+      dob: 'Дата рождения (ДД.ММ.ГГГГ)',
       diagnosis: 'Диагноз / ерекшеліктер',
       diagnosisPh: 'Мысалы: сУ©йлеу дамуыныТЈ кешігуі, БЦП, аутизм...',
-      docs: 'ТљТ±жаттар',
+      docs: 'Р вЂќР С•Р С”РЎС“Р СР ВµР Р…РЎвЂљРЎвЂ№',
       upload: 'ЖТЇктеу ТЇшін басыТЈыз',
       uploadHint: 'АныТ›тамалар, мамандар Т›орытындылары',
-      skills: 'БаланыТЈ даТ“дылары',
+      skills: 'Навыки ребенка',
       saveProfile: 'СаТ›тап, РР-кУ©мекшіні ашу',
       sessionJournal: 'СабаТ› журналы',
       sessionDesc: 'ТљаТ“аз дУ™птердіТЈ орнына ортаТ› цифрлыТ› база',
@@ -2369,7 +2319,7 @@ function showInstallGuide() {
       rating: 'СабаТ›ты баТ“алау',
       saveSession: 'СаТ›тап, РР-мен кеТЈесу',
       directorPanel: 'Жетекші панелі',
-      overview: 'В«АнаныТЈ жТЇрегіВ» орталыТ“ы вЂ” шолу',
+      overview: 'вЂњMotherвЂ™s HeartвЂќ center overview',
       stats: 'Статистика',
       children: 'БазадаТ“ы балалар',
       sessions: 'СабаТ›тар',
@@ -2377,8 +2327,77 @@ function showInstallGuide() {
       specialists: 'Маман',
       refresh: 'ЖаТЈарту',
       exportReport: 'Есепті экспорттау',
-      team: 'Мамандар',
+      team: 'Специалисты',
       aiReady: 'КУ©мектесуге дайын',
+      aiInput: 'СТ±раТ“ыТЈызды жазыТЈыз...'
+    },
+    kk: {
+      code: 'KZ',
+      htmlLang: 'kk',
+      newChat: 'ЖаТЈа чат',
+      system: 'ЖТЇйе',
+      whatsNew: 'Жаңалықтар',
+      about: 'SOLIFON туралы',
+      features: 'Р СљР СћР вЂЎР СР С”РЎвЂ“Р Р…Р Т‘РЎвЂ“Р С”РЎвЂљР ВµРЎР‚',
+      chat: 'Чат',
+      library: 'Кітапхана',
+      workspaces: 'Р вЂ“Р СћР’В±Р СРЎвЂ№РЎРѓ Р В°Р в„–Р СР В°Р СћРІР‚С”РЎвЂљР В°РЎР‚РЎвЂ№',
+      newProject: 'ЖаТЈа жоба',
+      presentation: 'Презентация',
+      deep: 'ТереТЈ зерттеу',
+      download: 'Solifon AI жТЇктеу',
+      upgradeText: 'Premium-Т“а У©ту',
+      upgrade: 'ЖаТ›сарту',
+      historyEmpty: 'Тарих бос',
+      chatHistory: 'Чат тарихы',
+      modelPick: 'Модель таТЈдаТЈыз',
+      ask: 'Solifon-нан сТ±раТЈыз...',
+      clear: 'Чатты тазалау',
+      mhTitle: 'АнаныТЈ жТЇрегі',
+      mhSubtitle: 'Р С›РЎвЂљР В±Р В°РЎРѓРЎвЂ№Р Р… Р СћРІР‚С”Р С•Р »Р Т‘Р В°РЎС“Р СћРІР‚СљР В° Р В°РЎР‚Р Р…Р В°Р »Р СћРІР‚СљР В°Р Р… РЎвЂ Р С‘РЎвЂћРЎР‚Р »РЎвЂ№Р СћРІР‚С” Р С—Р »Р В°РЎвЂљРЎвЂћР С•РЎР‚Р СР В°',
+      mhParent: 'Ата-ана',
+      mhParentDesc: 'Р вЂР В°Р »Р В°Р Р…РЎвЂ№Р СћР в‚¬ Р С—РЎР‚Р С•РЎвЂћР С‘Р »РЎвЂ“, Р Т‘Р В°Р СћРІР‚СљР Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№ Р В¶Р Р€РІвЂћСћР Р…Р Вµ Р В Р’ВР В Р’В РЎвЂљР В°Р С—РЎРѓРЎвЂ№РЎР‚Р СР В°Р »Р В°РЎР‚РЎвЂ№',
+      mhSpecialist: 'Р СљР В°Р СР В°Р Р…',
+      mhSpecialistDesc: 'Р РЋР В°Р В±Р В°Р СћРІР‚С” Р В¶РЎС“РЎР‚Р Р…Р В°Р »РЎвЂ№ Р В¶Р Р€РІвЂћСћР Р…Р Вµ РЎвЂљР СћР вЂЎР В·Р ВµРЎвЂљРЎС“ Р Р€РІвЂћСћР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµР СР ВµР »Р ВµРЎР‚РЎвЂ“',
+      mhDirector: 'Жетекші',
+      mhDirectorDesc: 'ОрталыТ›ты басТ›ару жУ™не аналитика',
+      childProfile: 'Р вЂР В°Р »Р В°Р Р…РЎвЂ№Р СћР в‚¬ Р С—РЎР‚Р С•РЎвЂћР С‘Р »РЎвЂ“',
+      childProfileDesc: 'Деректер аккаунтыТЈызда саТ›талады',
+      personalInfo: 'Жеке аТ›парат',
+      childName: 'Р вЂР В°Р »Р В°Р Р…РЎвЂ№Р СћР в‚¬ РЎвЂљР С•Р »РЎвЂ№Р СћРІР‚С” Р В°РЎвЂљРЎвЂ№-Р В¶Р Р€Р’В©Р Р…РЎвЂ“',
+      childNamePh: 'Р СљРЎвЂ№РЎРѓР В°Р »РЎвЂ№: Р Р€Р’ВР »РЎвЂ“Р В±Р ВµР С” Р РЋР ВµР в„–РЎвЂљР С•Р Р†',
+      dob: 'ТуТ“ан кТЇні (КК.АА.ЖЖЖЖ)',
+      diagnosis: 'Диагноз / ерекшеліктер',
+      diagnosisPh: 'Р СљРЎвЂ№РЎРѓР В°Р »РЎвЂ№: РЎРѓР Р€Р’В©Р в„–Р »Р ВµРЎС“ Р Т‘Р В°Р СРЎС“РЎвЂ№Р Р…РЎвЂ№Р СћР в‚¬ Р С”Р ВµРЎв‚¬РЎвЂ“Р С–РЎС“РЎвЂ“, Р вЂР В¦Р Сџ, Р В°РЎС“РЎвЂљР С‘Р В·Р С...',
+      docs: 'ТљТ±жаттар',
+      upload: 'ЖТЇктеу ТЇшін басыТЈыз',
+      uploadHint: 'Р С’Р Р…РЎвЂ№Р СћРІР‚С”РЎвЂљР В°Р СР В°Р »Р В°РЎР‚, Р СР В°Р СР В°Р Р…Р Т‘Р В°РЎР‚ Р СћРІР‚С”Р С•РЎР‚РЎвЂ№РЎвЂљРЎвЂ№Р Р…Р Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№',
+      skills: 'Р вЂР В°Р »Р В°Р Р…РЎвЂ№Р СћР в‚¬ Р Т‘Р В°Р СћРІР‚СљР Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№',
+      saveProfile: 'Р РЋР В°Р СћРІР‚С”РЎвЂљР В°Р С—, Р В Р’ВР В Р’В-Р С”Р Р€Р’В©Р СР ВµР С”РЎв‚¬РЎвЂ“Р Р…РЎвЂ“ Р В°РЎв‚¬РЎС“',
+      sessionJournal: 'СабаТ› журналы',
+      sessionDesc: 'ТљаТ“аз дУ™птердіТЈ орнына ортаТ› цифрлыТ› база',
+      whyTitle: 'Р вЂР СћР’В±Р » Р Р…Р Вµ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р…?',
+      whyText: 'Р С›РЎР‚РЎвЂљР В°Р »РЎвЂ№Р СћРІР‚С” Р СР В°Р СР В°Р Р…Р Т‘Р В°РЎР‚РЎвЂ№ Р С•РЎР‚РЎвЂљР В°Р СћРІР‚С” Р В±Р В°Р В·Р В°Р Р…РЎвЂ№ Р С”Р Р€Р’В©РЎР‚Р ВµР Т‘РЎвЂ“. Р Р€Р’ВРЎР‚ Р В±Р В°Р »Р В°Р СћРІР‚СљР В° Р В±РЎвЂ“РЎР‚ Р С—РЎР‚Р С•РЎвЂћР С‘Р »РЎРЉ, Р СћРІР‚С”Р В°Р СћРІР‚СљР В°Р В· РЎв‚¬Р В°РЎвЂљР В°РЎРѓРЎС“РЎвЂ№ Р В¶Р С•Р СћРІР‚С”.',
+      sessionInfo: 'СабаТ› туралы аТ›парат',
+      sessionType: 'СабаТ› тТЇрі',
+      chooseType: 'ТТЇрін таТЈдаТЈыз...',
+      notes: 'СабаТ›та не істелді',
+      notesPh: 'Р вЂ“Р В°РЎвЂљРЎвЂљРЎвЂ№Р СћРІР‚СљРЎС“Р »Р В°РЎР‚Р Т‘РЎвЂ№, Р В±Р ВµР »РЎРѓР ВµР Р…Р Т‘РЎвЂ“Р »РЎвЂ“Р С”РЎвЂљР ВµРЎР‚Р Т‘РЎвЂ“, Р Р€РІвЂћСћР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµР СР ВµР »Р ВµРЎР‚Р Т‘РЎвЂ“ Р В¶Р В°Р В·РЎвЂ№Р СћР в‚¬РЎвЂ№Р В·...',
+      result: 'НУ™тиже / баТ›ылау',
+      resultPh: 'Р вЂР В°Р »Р В° Р СћРІР‚С”Р В°Р »Р В°Р в„– Р С•РЎР‚РЎвЂ№Р Р…Р Т‘Р В°Р Т‘РЎвЂ№? Р СњР Вµ Р В¶Р В°Р СћРІР‚С”РЎРѓР В°РЎР‚Р Т‘РЎвЂ№?',
+      rating: 'СабаТ›ты баТ“алау',
+      saveSession: 'Р РЋР В°Р СћРІР‚С”РЎвЂљР В°Р С—, Р В Р’ВР В Р’В-Р СР ВµР Р… Р С”Р ВµР СћР в‚¬Р ВµРЎРѓРЎС“',
+      directorPanel: 'Жетекші панелі',
+      overview: '«АнаныТЈ жТЇрегі» орталыТ“ы — шолу',
+      stats: 'Статистика',
+      children: 'Р вЂР В°Р В·Р В°Р Т‘Р В°Р СћРІР‚СљРЎвЂ№ Р В±Р В°Р »Р В°Р »Р В°РЎР‚',
+      sessions: 'СабаТ›тар',
+      villages: 'Р СћРЎв„ўР В°Р СРЎвЂљРЎвЂ№Р »Р СћРІР‚СљР В°Р Р… Р В°РЎС“РЎвЂ№Р »Р Т‘Р В°РЎР‚',
+      specialists: 'Р СљР В°Р СР В°Р Р…',
+      refresh: 'ЖаТЈарту',
+      exportReport: 'Есепті экспорттау',
+      team: 'Р СљР В°Р СР В°Р Р…Р Т‘Р В°РЎР‚',
+      aiReady: 'Р С™Р Р€Р’В©Р СР ВµР С”РЎвЂљР ВµРЎРѓРЎС“Р С–Р Вµ Р Т‘Р В°Р в„–РЎвЂ№Р Р…',
       aiInput: 'СТ±раТ“ыТЈызды жазыТЈыз...'
     },
     en: {
@@ -2453,20 +2472,20 @@ function showInstallGuide() {
   };
 
   const skillTexts = {
-    ru: ['Говорит слова', 'Говорит предложения', 'Понимает речь', 'Самообслуживание', 'Рисует', 'Читает', 'Счет', 'Социальные навыки', 'Моторика рук', 'Внимание'],
-    kk: ['СУ©з айтады', 'СУ©йлем Т›Т±райды', 'СУ©зді тТЇсінеді', 'УЁзін-У©зі кТЇту', 'Сурет салады', 'ОТ›иды', 'Санайды', 'Улеуметтік даТ“дылар', 'Тљол моторикасы', 'Зейін'],
+    ru: ['Р вЂњР С•Р Р†Р С•РЎР‚Р С‘РЎвЂљ РЎРѓР »Р С•Р Р†Р В°', 'Р вЂњР С•Р Р†Р С•РЎР‚Р С‘РЎвЂљ Р С—РЎР‚Р ВµР Т‘Р »Р С•Р В¶Р ВµР Р…Р С‘РЎРЏ', 'Р СџР С•Р Р…Р С‘Р СР В°Р ВµРЎвЂљ РЎР‚Р ВµРЎвЂЎРЎРЉ', 'Р РЋР В°Р СР С•Р С•Р В±РЎРѓР »РЎС“Р В¶Р С‘Р Р†Р В°Р Р…Р С‘Р Вµ', 'Р В Р С‘РЎРѓРЎС“Р ВµРЎвЂљ', 'Р В§Р С‘РЎвЂљР В°Р ВµРЎвЂљ', 'Р РЋРЎвЂЎР ВµРЎвЂљ', 'Р РЋР С•РЎвЂ Р С‘Р В°Р »РЎРЉР Р…РЎвЂ№Р Вµ Р Р…Р В°Р Р†РЎвЂ№Р С”Р С‘', 'Р СљР С•РЎвЂљР С•РЎР‚Р С‘Р С”Р В° РЎР‚РЎС“Р С”', 'Р вЂ™Р Р…Р С‘Р СР В°Р Р…Р С‘Р Вµ'],
+    kk: ['Р РЋР Р€Р’В©Р В· Р В°Р в„–РЎвЂљР В°Р Т‘РЎвЂ№', 'Р РЋР Р€Р’В©Р в„–Р »Р ВµР С Р СћРІР‚С”Р СћР’В±РЎР‚Р В°Р в„–Р Т‘РЎвЂ№', 'Р РЋР Р€Р’В©Р В·Р Т‘РЎвЂ“ РЎвЂљР СћР вЂЎРЎРѓРЎвЂ“Р Р…Р ВµР Т‘РЎвЂ“', 'Р Р€Р РѓР В·РЎвЂ“Р Р…-Р Р€Р’В©Р В·РЎвЂ“ Р С”Р СћР вЂЎРЎвЂљРЎС“', 'Р РЋРЎС“РЎР‚Р ВµРЎвЂљ РЎРѓР В°Р »Р В°Р Т‘РЎвЂ№', 'Р С›Р СћРІР‚С”Р С‘Р Т‘РЎвЂ№', 'Р РЋР В°Р Р…Р В°Р в„–Р Т‘РЎвЂ№', 'Р Р€Р’ВР »Р ВµРЎС“Р СР ВµРЎвЂљРЎвЂљРЎвЂ“Р С” Р Т‘Р В°Р СћРІР‚СљР Т‘РЎвЂ№Р »Р В°РЎР‚', 'Р СћРЎв„ўР С•Р » Р СР С•РЎвЂљР С•РЎР‚Р С‘Р С”Р В°РЎРѓРЎвЂ№', 'Р —Р ВµР в„–РЎвЂ“Р Р…'],
     en: ['Says words', 'Uses sentences', 'Understands speech', 'Self-care', 'Draws', 'Reads', 'Counting', 'Social skills', 'Hand motor skills', 'Attention']
   };
 
   const sessionSkillTexts = {
-    ru: ['Активно участвовал', 'Был сосредоточен', 'Есть прогресс', 'Был капризным', 'Устал быстро', 'Требует повтора'],
-    kk: ['Белсенді Т›атысты', 'Зейіні тТ±раТ›ты болды', 'Ілгерілеу бар', 'ТљыТЈырлыТ› болды', 'Тез шаршады', 'Тљайталау Т›ажет'],
+    ru: ['Р С’Р С”РЎвЂљР С‘Р Р†Р Р…Р С• РЎС“РЎвЂЎР В°РЎРѓРЎвЂљР Р†Р С•Р Р†Р В°Р »', 'Р вЂРЎвЂ№Р » РЎРѓР С•РЎРѓРЎР‚Р ВµР Т‘Р С•РЎвЂљР С•РЎвЂЎР ВµР Р…', 'Р вЂўРЎРѓРЎвЂљРЎРЉ Р С—РЎР‚Р С•Р С–РЎР‚Р ВµРЎРѓРЎРѓ', 'Р вЂРЎвЂ№Р » Р С”Р В°Р С—РЎР‚Р С‘Р В·Р Р…РЎвЂ№Р С', 'Р Р€РЎРѓРЎвЂљР В°Р » Р В±РЎвЂ№РЎРѓРЎвЂљРЎР‚Р С•', 'Р СћРЎР‚Р ВµР В±РЎС“Р ВµРЎвЂљ Р С—Р С•Р Р†РЎвЂљР С•РЎР‚Р В°'],
+    kk: ['Р вЂР ВµР »РЎРѓР ВµР Р…Р Т‘РЎвЂ“ Р СћРІР‚С”Р В°РЎвЂљРЎвЂ№РЎРѓРЎвЂљРЎвЂ№', 'Р —Р ВµР в„–РЎвЂ“Р Р…РЎвЂ“ РЎвЂљР СћР’В±РЎР‚Р В°Р СћРІР‚С”РЎвЂљРЎвЂ№ Р В±Р С•Р »Р Т‘РЎвЂ№', 'Р вЂ Р »Р С–Р ВµРЎР‚РЎвЂ“Р »Р ВµРЎС“ Р В±Р В°РЎР‚', 'Р СћРЎв„ўРЎвЂ№Р СћР в‚¬РЎвЂ№РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р В±Р С•Р »Р Т‘РЎвЂ№', 'Р СћР ВµР В· РЎв‚¬Р В°РЎР‚РЎв‚¬Р В°Р Т‘РЎвЂ№', 'Р СћРЎв„ўР В°Р в„–РЎвЂљР В°Р »Р В°РЎС“ Р СћРІР‚С”Р В°Р В¶Р ВµРЎвЂљ'],
     en: ['Participated actively', 'Stayed focused', 'Progress noticed', 'Was upset', 'Got tired quickly', 'Needs repetition']
   };
 
   const sessionTypes = {
     ru: ['Логопедическое занятие', 'Дефектологическое занятие', 'Психологическое занятие', 'Арт-терапия', 'ЛФК', 'Сенсорная интеграция', 'Другое'],
-    kk: ['Логопед сабаТ“ы', 'Дефектолог сабаТ“ы', 'Психолог сабаТ“ы', 'Арт-терапия', 'Емдік дене шыныТ›тыру', 'СенсорлыТ› интеграция', 'БасТ›а'],
+    kk: ['Р вЂєР С•Р С–Р С•Р С—Р ВµР Т‘ РЎРѓР В°Р В±Р В°Р СћРІР‚СљРЎвЂ№', 'Р вЂќР ВµРЎвЂћР ВµР С”РЎвЂљР С•Р »Р С•Р С– РЎРѓР В°Р В±Р В°Р СћРІР‚СљРЎвЂ№', 'Р СџРЎРѓР С‘РЎвЂ¦Р С•Р »Р С•Р С– РЎРѓР В°Р В±Р В°Р СћРІР‚СљРЎвЂ№', 'Р С’РЎР‚РЎвЂљ-РЎвЂљР ВµРЎР‚Р В°Р С—Р С‘РЎРЏ', 'Р вЂўР СР Т‘РЎвЂ“Р С” Р Т‘Р ВµР Р…Р Вµ РЎв‚¬РЎвЂ№Р Р…РЎвЂ№Р СћРІР‚С”РЎвЂљРЎвЂ№РЎР‚РЎС“', 'Р РЋР ВµР Р…РЎРѓР С•РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р С‘Р Р…РЎвЂљР ВµР С–РЎР‚Р В°РЎвЂ Р С‘РЎРЏ', 'Р вЂР В°РЎРѓР СћРІР‚С”Р В°'],
     en: ['Speech therapy', 'Special education session', 'Psychology session', 'Art therapy', 'Therapeutic exercise', 'Sensory integration', 'Other']
   };
 
@@ -2570,7 +2589,7 @@ function showInstallGuide() {
   function startLiveSpeechSafe() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      setLiveStatus('Голосовой ввод в этом браузере недоступен. Live-экран работает, можно закрыть и писать в чат.');
+      setLiveStatus('Слушаю... когда РР отвечает, здесь будет анимация голоса.');
       return;
     }
 
@@ -2584,7 +2603,7 @@ function showInstallGuide() {
       liveRecognition.onstart = () => setLiveStatus('Слушаю вас... скажите вопрос для Solifon.');
       liveRecognition.onresult = event => {
         const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ').trim();
-        setLiveStatus(transcript ? `Услышал: ${transcript}` : 'Слушаю...');
+        setLiveStatus(transcript ? 'Услышал: ${transcript}' : 'Р РЋР »РЎС“РЎв‚¬Р В°РЎР‹...');
         const last = event.results[event.results.length - 1];
         if (last && last.isFinal) {
           const input = document.getElementById('userInput');
@@ -2595,8 +2614,8 @@ function showInstallGuide() {
       };
       liveRecognition.onerror = event => {
         const msg = event.error === 'not-allowed'
-          ? 'Разрешите микрофон в браузере, чтобы Live мог слушать голос.'
-          : 'Не удалось запустить микрофон. Можно закрыть Live и написать вопрос текстом.';
+          ? 'Р В Р В°Р В·РЎР‚Р ВµРЎв‚¬Р С‘РЎвЂљР Вµ Р СР С‘Р С”РЎР‚Р С•РЎвЂћР С•Р Р… Р Р† Р В±РЎР‚Р В°РЎС“Р В·Р ВµРЎР‚Р Вµ, РЎвЂЎРЎвЂљР С•Р В±РЎвЂ№ Live Р СР С•Р С– РЎРѓР »РЎС“РЎв‚¬Р В°РЎвЂљРЎРЉ Р С–Р С•Р »Р С•РЎРѓ.'
+          : 'Р СњР Вµ РЎС“Р Т‘Р В°Р »Р С•РЎРѓРЎРЉ Р В·Р В°Р С—РЎС“РЎРѓРЎвЂљР С‘РЎвЂљРЎРЉ Р СР С‘Р С”РЎР‚Р С•РЎвЂћР С•Р Р…. Р СљР С•Р В¶Р Р…Р С• Р В·Р В°Р С”РЎР‚РЎвЂ№РЎвЂљРЎРЉ Live Р С‘ Р Р…Р В°Р С—Р С‘РЎРѓР В°РЎвЂљРЎРЉ Р Р†Р С•Р С—РЎР‚Р С•РЎРѓ РЎвЂљР ВµР С”РЎРѓРЎвЂљР С•Р С.';
         setLiveStatus(msg);
       };
       liveRecognition.onend = () => {
@@ -2608,7 +2627,7 @@ function showInstallGuide() {
       };
       liveRecognition.start();
     } catch (error) {
-      setLiveStatus('Live открыт. Если микрофон не запустился, проверьте разрешение браузера.');
+      setLiveStatus('Live Р С•РЎвЂљР С”РЎР‚РЎвЂ№РЎвЂљ. Р вЂўРЎРѓР »Р С‘ Р СР С‘Р С”РЎР‚Р С•РЎвЂћР С•Р Р… Р Р…Р Вµ Р В·Р В°Р С—РЎС“РЎРѓРЎвЂљР С‘Р »РЎРѓРЎРЏ, Р С—РЎР‚Р С•Р Р†Р ВµРЎР‚РЎРЉРЎвЂљР Вµ РЎР‚Р В°Р В·РЎР‚Р ВµРЎв‚¬Р ВµР Р…Р С‘Р Вµ Р В±РЎР‚Р В°РЎС“Р В·Р ВµРЎР‚Р В°.');
     }
   }
 
@@ -2631,7 +2650,7 @@ function showInstallGuide() {
     }
     if (inputArea) inputArea.style.display = 'none';
     if (btn) btn.classList.add('active-live');
-    setLiveStatus('Слушаю... когда РР отвечает, здесь будет анимация голоса.');
+    setLiveStatus('Р РЋР »РЎС“РЎв‚¬Р В°РЎР‹... Р С”Р С•Р С–Р Т‘Р В° Р В Р’ВР В Р’В Р С•РЎвЂљР Р†Р ВµРЎвЂЎР В°Р ВµРЎвЂљ, Р В·Р Т‘Р ВµРЎРѓРЎРЉ Р В±РЎС“Р Т‘Р ВµРЎвЂљ Р В°Р Р…Р С‘Р СР В°РЎвЂ Р С‘РЎРЏ Р С–Р С•Р »Р С•РЎРѓР В°.');
     startLiveSpeechSafe();
   };
 
@@ -2785,20 +2804,20 @@ function showInstallGuide() {
       upgradeText: 'Перейти на Premium',
       upgrade: 'Улучшить',
       premiumTitle: 'Solifon Premium',
-      premiumSub: 'Безлимитный доступ ко всем моделям',
-      premium1: 'Все модели без ограничений',
-      premium2: 'Приоритетный доступ',
-      premium3: 'Рстория чатов',
-      premium4: 'Голосовые ответы',
-      premiumSoon: 'Скоро доступно',
+      premiumSub: 'БарлыТ› модельдерге шексіз Т›олжетімділік',
+      premium1: 'БарлыТ› модельдер шектеусіз',
+      premium2: 'Басым Т›олжетімділік',
+      premium3: 'Чат тарихы',
+      premium4: 'ДауыстыТ› жауаптар',
+      premiumSoon: 'ЖаТ›ында Т›олжетімді',
       deep: 'Глубокий поиск',
-      modelPick: 'Выберите модель',
+      modelPick: 'Р вЂ™РЎвЂ№Р В±Р ВµРЎР‚Р С‘РЎвЂљР Вµ Р СР С•Р Т‘Р ВµР »РЎРЉ',
       ask: 'Спросите SOLIFON AI что угодно...',
       questions: [
-        ['ph ph-cpu', 'Что такое искусственный интеллект?'],
-        ['ph ph-desktop', 'Что такое метавселенная?'],
-        ['ph ph-fire', 'Что такое антиматерия?'],
-        ['ph ph-lightning', 'Что такое машинное обучение?']
+        ['Что такое искусственный интеллект?', 'Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С‘РЎРѓР С”РЎС“РЎРѓРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№Р в„– Р С‘Р Р…РЎвЂљР ВµР »Р »Р ВµР С”РЎвЂљ?'],
+        ['Что такое метавселенная?', 'Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР ВµРЎвЂљР В°Р Р†РЎРѓР ВµР »Р ВµР Р…Р Р…Р В°РЎРЏ?'],
+        ['Что такое антиматерия?', 'Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р В°Р Р…РЎвЂљР С‘Р СР В°РЎвЂљР ВµРЎР‚Р С‘РЎРЏ?'],
+        ['Что такое машинное обучение?', 'Р В§РЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР В°РЎв‚¬Р С‘Р Р…Р Р…Р С•Р Вµ Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘Р Вµ?']
       ]
     },
     kk: {
@@ -2806,20 +2825,20 @@ function showInstallGuide() {
       upgradeText: 'Premium-Т“а У©ту',
       upgrade: 'ЖаТ›сарту',
       premiumTitle: 'Solifon Premium',
-      premiumSub: 'БарлыТ› модельдерге шексіз Т›олжетімділік',
-      premium1: 'БарлыТ› модельдер шектеусіз',
-      premium2: 'Басым Т›олжетімділік',
+      premiumSub: 'Р вЂР В°РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р СР С•Р Т‘Р ВµР »РЎРЉР Т‘Р ВµРЎР‚Р С–Р Вµ РЎв‚¬Р ВµР С”РЎРѓРЎвЂ“Р В· Р СћРІР‚С”Р С•Р »Р В¶Р ВµРЎвЂљРЎвЂ“Р СР Т‘РЎвЂ“Р »РЎвЂ“Р С”',
+      premium1: 'Р вЂР В°РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р СР С•Р Т‘Р ВµР »РЎРЉР Т‘Р ВµРЎР‚ РЎв‚¬Р ВµР С”РЎвЂљР ВµРЎС“РЎРѓРЎвЂ“Р В·',
+      premium2: 'Р вЂР В°РЎРѓРЎвЂ№Р С Р СћРІР‚С”Р С•Р »Р В¶Р ВµРЎвЂљРЎвЂ“Р СР Т‘РЎвЂ“Р »РЎвЂ“Р С”',
       premium3: 'Чат тарихы',
       premium4: 'ДауыстыТ› жауаптар',
-      premiumSoon: 'ЖаТ›ында Т›олжетімді',
+      premiumSoon: 'Р вЂ“Р В°Р СћРІР‚С”РЎвЂ№Р Р…Р Т‘Р В° Р СћРІР‚С”Р С•Р »Р В¶Р ВµРЎвЂљРЎвЂ“Р СР Т‘РЎвЂ“',
       deep: 'ТереТЈ іздеу',
       modelPick: 'Модель таТЈдаТЈыз',
       ask: 'SOLIFON AI-дан кез келген нУ™рсе сТ±раТЈыз...',
       questions: [
-        ['ph ph-cpu', 'Жасанды интеллект деген не?'],
-        ['ph ph-desktop', 'Метаверс деген не?'],
-        ['ph ph-fire', 'Антиматерия деген не?'],
-        ['ph ph-lightning', 'МашиналыТ› оТ›ыту деген не?']
+        ['Жасанды интеллект деген не?', 'Р вЂ“Р В°РЎРѓР В°Р Р…Р Т‘РЎвЂ№ Р С‘Р Р…РЎвЂљР ВµР »Р »Р ВµР С”РЎвЂљ Р Т‘Р ВµР С–Р ВµР Р… Р Р…Р Вµ?'],
+        ['Метаверс деген не?', 'Р СљР ВµРЎвЂљР В°Р Р†Р ВµРЎР‚РЎРѓ Р Т‘Р ВµР С–Р ВµР Р… Р Р…Р Вµ?'],
+        ['Антиматерия деген не?', 'Р С’Р Р…РЎвЂљР С‘Р СР В°РЎвЂљР ВµРЎР‚Р С‘РЎРЏ Р Т‘Р ВµР С–Р ВµР Р… Р Р…Р Вµ?'],
+        ['МашиналыТ› оТ›ыту деген не?', 'Р СљР В°РЎв‚¬Р С‘Р Р…Р В°Р »РЎвЂ№Р СћРІР‚С” Р С•Р СћРІР‚С”РЎвЂ№РЎвЂљРЎС“ Р Т‘Р ВµР С–Р ВµР Р… Р Р…Р Вµ?']
       ]
     },
     en: {
@@ -2861,7 +2880,7 @@ function showInstallGuide() {
     if (ps[1]) ps[1].textContent = t.premiumSoon;
     const items = Array.from(document.querySelectorAll('#upgradeModal div[style*="font-size:15px"]'));
     [t.premium1, t.premium2, t.premium3, t.premium4].forEach((text, index) => {
-      if (items[index]) items[index].textContent = `вњ“  ${text}`;
+      if (items[index]) items[index].textContent = 'вњ“  ${text}';
     });
   }
 
@@ -2944,22 +2963,7 @@ function showInstallGuide() {
   const LANG_KEY = 'solifon-language';
   const modalText = {
     ru: {
-      whatsTitle: 'Что нового',
-      whats01: '01 < Системные навыки />',
-      whats02: '02 < Скоро />',
-      whats03: '03 < Новости />',
-      aboutTitle: 'О SOLIFON AI',
-      aboutHero: 'SOLIFON AI',
-      aboutLead: 'Solifon AI объединяет чат, поиск, модели, голос, визуальные инструменты и рабочие пространства в одной платформе.',
-      aboutGoal: 'Наша цель',
-      aboutGoalText: 'Мы создаём удобную AI-платформу, где пользователь может учиться, работать, исследовать идеи и запускать разные инструменты без лишних вкладок.',
-      card1: 'Мульти-ядро',
-      card1Text: 'Несколько AI-моделей в одном интерфейсе.',
-      card2: 'Code Dev',
-      card2Text: 'Рабочее пространство для кода и экспериментов.'
-    },
-    kk: {
-      whatsTitle: 'ЖаТЈалыТ›тар',
+      whatsTitle: 'Жаңалықтар',
       whats01: '01 < ЖТЇйелік даТ“дылар />',
       whats02: '02 < ЖаТ›ында />',
       whats03: '03 < ЖаТЈалыТ› />',
@@ -2972,6 +2976,21 @@ function showInstallGuide() {
       card1Text: 'Бір интерфейсте бірнеше AI моделі.',
       card2: 'Code Dev',
       card2Text: 'Код пен тУ™жірибелерге арналТ“ан жТ±мыс кеТЈістігі.'
+    },
+    kk: {
+      whatsTitle: 'Жаңалықтар',
+      whats01: '01 < ЖТЇйелік даТ“дылар />',
+      whats02: '02 < ЖаТ›ында />',
+      whats03: '03 < ЖаТЈалыТ› />',
+      aboutTitle: 'SOLIFON AI туралы',
+      aboutHero: 'SOLIFON AI',
+      aboutLead: 'Solifon AI РЎвЂЎР В°РЎвЂљ, РЎвЂ“Р В·Р Т‘Р ВµРЎС“, Р СР С•Р Т‘Р ВµР »РЎРЉР Т‘Р ВµРЎР‚, Р Т‘Р В°РЎС“РЎвЂ№РЎРѓ, Р Р†Р С‘Р В·РЎС“Р В°Р »Р Т‘РЎвЂ№ Р СћРІР‚С”Р СћР’В±РЎР‚Р В°Р »Р Т‘Р В°РЎР‚ Р В¶Р Р€РІвЂћСћР Р…Р Вµ Р В¶Р СћР’В±Р СРЎвЂ№РЎРѓ Р С”Р ВµР СћР в‚¬РЎвЂ“РЎРѓРЎвЂљРЎвЂ“Р С”РЎвЂљР ВµРЎР‚РЎвЂ“Р Р… Р В±РЎвЂ“РЎР‚ Р С—Р »Р В°РЎвЂљРЎвЂћР С•РЎР‚Р СР В°Р СћРІР‚СљР В° Р В±РЎвЂ“РЎР‚РЎвЂ“Р С”РЎвЂљРЎвЂ“РЎР‚Р ВµР Т‘РЎвЂ“.',
+      aboutGoal: 'Р вЂРЎвЂ“Р В·Р Т‘РЎвЂ“Р СћР в‚¬ Р СР В°Р СћРІР‚С”РЎРѓР В°РЎвЂљ',
+      aboutGoalText: 'Р вЂРЎвЂ“Р В· Р С•Р СћРІР‚С”РЎС“Р СћРІР‚СљР В°, Р В¶Р СћР’В±Р СРЎвЂ№РЎРѓ РЎвЂ“РЎРѓРЎвЂљР ВµРЎС“Р С–Р Вµ, Р С‘Р Т‘Р ВµРЎРЏР »Р В°РЎР‚Р Т‘РЎвЂ№ Р В·Р ВµРЎР‚РЎвЂљРЎвЂљР ВµРЎС“Р С–Р Вµ Р В¶Р Р€РІвЂћСћР Р…Р Вµ Р Р€РІвЂћСћРЎР‚РЎвЂљР СћР вЂЎРЎР‚Р »РЎвЂ“ Р СћРІР‚С”Р СћР’В±РЎР‚Р В°Р »Р Т‘Р В°РЎР‚Р Т‘РЎвЂ№ Р В°РЎР‚РЎвЂљРЎвЂ№Р СћРІР‚С” Р В±Р ВµРЎвЂљРЎвЂљР ВµРЎР‚РЎРѓРЎвЂ“Р В· РЎвЂ“РЎРѓР С”Р Вµ Р СћРІР‚С”Р С•РЎРѓРЎС“Р СћРІР‚СљР В° РЎвЂ№Р СћР в‚¬Р СћРІР‚СљР В°Р в„–Р »РЎвЂ№ AI-Р С—Р »Р В°РЎвЂљРЎвЂћР С•РЎР‚Р СР В° Р В¶Р В°РЎРѓР В°Р в„–Р СРЎвЂ№Р В·.',
+      card1: 'КУ©п ядро',
+      card1Text: 'Р вЂРЎвЂ“РЎР‚ Р С‘Р Р…РЎвЂљР ВµРЎР‚РЎвЂћР ВµР в„–РЎРѓРЎвЂљР Вµ Р В±РЎвЂ“РЎР‚Р Р…Р ВµРЎв‚¬Р Вµ AI Р СР С•Р Т‘Р ВµР »РЎвЂ“.',
+      card2: 'Code Dev',
+      card2Text: 'Р С™Р С•Р Т‘ Р С—Р ВµР Р… РЎвЂљР Р€РІвЂћСћР В¶РЎвЂ“РЎР‚Р С‘Р В±Р ВµР »Р ВµРЎР‚Р С–Р Вµ Р В°РЎР‚Р Р…Р В°Р »Р СћРІР‚СљР В°Р Р… Р В¶Р СћР’В±Р СРЎвЂ№РЎРѓ Р С”Р ВµР СћР в‚¬РЎвЂ“РЎРѓРЎвЂљРЎвЂ“Р С–РЎвЂ“.'
     },
     en: {
       whatsTitle: "What's New",
@@ -3047,31 +3066,31 @@ function showInstallGuide() {
 // --- LANGUAGE TRANSLATION SYSTEM ---
 const langDict = {
   ru: {
-    select_model: "Select model",
-    new_chat: "New chat",
+    select_model: 'Модель таТЈдаТЈыз',
+    new_chat: 'ЖаТЈа чат',
     system_whatsnew: "What's new",
-    system_about: "About SOLIFON",
-    menu_chat: "Chat",
-    menu_library: "Library",
-    menu_new_project: "New project",
-    menu_presentation: "Solifon AI code",
+    system_about: 'SOLIFON туралы',
+    menu_chat: 'Чат',
+    menu_library: 'Кітапхана',
+    menu_new_project: 'ЖаТЈа жоба',
+    menu_presentation: 'Презентация',
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
-    upgrade_subtitle: "Unlock the full potential of AI",
+    upgrade_subtitle: 'НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз',
     tariff1_type: "Basic",
-    tariff1_desc: "Best choice for daily tasks",
-    tariff1_btn: "Choose Basic",
+    tariff1_desc: 'КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау',
+    tariff1_btn: 'Basic таТЈдау',
     tariff2_type: "Pro",
-    tariff2_desc: "For professionals and developers",
-    tariff2_btn: "Choose Pro",
+    tariff2_desc: 'КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін',
+    tariff2_btn: 'Pro таТЈдау',
     tariff3_type: "Ultra",
-    tariff3_desc: "Maximum power without limits",
-    tariff3_btn: "Choose Ultra",
+    tariff3_desc: 'ЕшТ›андай шектеусіз максималды кТЇш',
+    tariff3_btn: 'Ultra таТЈдау',
   },
   kz: {
     select_model: "Модель таТЈдаТЈыз",
     new_chat: "ЖаТЈа чат",
-    system_whatsnew: "ЖаТЈалыТ›тар",
+    system_whatsnew: "Жаңалықтар",
     system_about: "SOLIFON туралы",
     menu_chat: "Чат",
     menu_library: "Кітапхана",
@@ -3079,15 +3098,15 @@ const langDict = {
     menu_presentation: "Презентация",
     upgrade: "Premium-Т“а У©ту",
     upgrade_title: "Solifon Premium",
-    upgrade_subtitle: "НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз",
+    upgrade_subtitle: "Р СњР ВµР в„–РЎР‚Р С•Р В¶Р ВµР »РЎвЂ“Р »Р ВµРЎР‚Р Т‘РЎвЂ“Р СћР в‚¬ Р В±Р В°РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р СР СћР вЂЎР СР С”РЎвЂ“Р Р…Р Т‘РЎвЂ“Р С–РЎвЂ“Р Р… Р В°РЎв‚¬РЎвЂ№Р СћР в‚¬РЎвЂ№Р В·",
     tariff1_type: "Basic",
-    tariff1_desc: "КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау",
+    tariff1_desc: "Р С™Р СћР вЂЎР Р…Р Т‘Р ВµР »РЎвЂ“Р С”РЎвЂљРЎвЂ“ РЎвЂљР В°Р С—РЎРѓРЎвЂ№РЎР‚Р СР В°Р »Р В°РЎР‚ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р… Р ВµР СћР в‚¬ Р В¶Р В°Р СћРІР‚С”РЎРѓРЎвЂ№ РЎвЂљР В°Р СћР в‚¬Р Т‘Р В°РЎС“",
     tariff1_btn: "Basic таТЈдау",
     tariff2_type: "Pro",
-    tariff2_desc: "КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін",
+    tariff2_desc: "Р С™Р Р€РІвЂћСћРЎРѓРЎвЂ“Р С—Р СћРІР‚С”Р С•Р в„–Р »Р В°РЎР‚ Р СР ВµР Р… Р Р€РІвЂћСћР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“РЎв‚¬РЎвЂ“Р »Р ВµРЎР‚ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р…",
     tariff2_btn: "Pro таТЈдау",
     tariff3_type: "Ultra",
-    tariff3_desc: "ЕшТ›андай шектеусіз максималды кТЇш",
+    tariff3_desc: "Р вЂўРЎв‚¬Р СћРІР‚С”Р В°Р Р…Р Т‘Р В°Р в„– РЎв‚¬Р ВµР С”РЎвЂљР ВµРЎС“РЎРѓРЎвЂ“Р В· Р СР В°Р С”РЎРѓР С‘Р СР В°Р »Р Т‘РЎвЂ№ Р С”Р СћР вЂЎРЎв‚¬",
     tariff3_btn: "Ultra таТЈдау",
   },
   en: {
@@ -3197,15 +3216,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const updatePrices = (period, months = 1) => {
         let multiplier = 1;
-        let suffix = '/mo';
+        let suffix = '/мес';
         
         if (period === 'year') {
             multiplier = 12 * 0.8; // 20% discount
-            suffix = '/yr';
+            suffix = '/за ${months} ${monthLabel}';
         } else if (period === 'custom') {
             multiplier = months;
             // Pluralization for English
-            let monthLabel = months === 1 ? 'month' : 'months';
+            let monthLabel = months === 1 ? 'месяцев' : 'months';
             suffix = `/per ${months} ${monthLabel}`;
             customValueDisplay.textContent = `${months} ${monthLabel}`;
         }
@@ -3261,21 +3280,21 @@ document.addEventListener('DOMContentLoaded', () => {
 // SOLIFON CLOUD BROWSER AGENT
 // ============================================================
 window.startCloudBrowser = function(task) {
-    // ВАЖНО: Замени ссылку на URL твоего Space на Hugging Face!
-    const wsUrl = "wss://ТВОЙ-СЕРВЕР.hf.space/ws/browser"; 
+    // Р вЂ™Р С’Р вЂ“Р СњР С›: Р —Р В°Р СР ВµР Р…Р С‘ РЎРѓРЎРѓРЎвЂ№Р »Р С”РЎС“ Р Р…Р В° URL РЎвЂљР Р†Р С•Р ВµР С–Р С• Space Р Р…Р В° Hugging Face!
+    const wsUrl = 'wss://ТВОЙ-СЕРВЕР.hf.space/ws/browser'; 
     
-    // Создаем сообщение в чате от имени РР с черным экраном
+    // Р РЋР С•Р В·Р Т‘Р В°Р ВµР С РЎРѓР С•Р С•Р В±РЎвЂ°Р ВµР Р…Р С‘Р Вµ Р Р† РЎвЂЎР В°РЎвЂљР Вµ Р С•РЎвЂљ Р С‘Р СР ВµР Р…Р С‘ Р В Р’ВР В Р’В РЎРѓ РЎвЂЎР ВµРЎР‚Р Р…РЎвЂ№Р С РЎРЊР С”РЎР‚Р В°Р Р…Р С•Р С
     const msgId = "browser-" + Date.now();
     const uiHtml = `
         <div style="font-size: 13px; color: #00f2ff; margin-bottom: 8px;">
             <i class="ph ph-globe"></i> Solifon Agent подключен к интернету...
         </div>
         <div style="font-size: 14px; margin-bottom: 10px;"><b>Цель:</b> ${task}</div>
-        <img id="${msgId}" src="" style="width: 100%; border-radius: 12px; border: 1px solid #00f2ff; background: #050505; min-height: 200px;" alt="Загрузка облачного браузера...">
+        <img id='Загрузка облачного браузера...' src="" style="width: 100%; border-radius: 12px; border: 1px solid #00f2ff; background: #050505; min-height: 200px;" alt="Р —Р В°Р С–РЎР‚РЎС“Р В·Р С”Р В° Р С•Р В±Р »Р В°РЎвЂЎР Р…Р С•Р С–Р С• Р В±РЎР‚Р В°РЎС“Р В·Р ВµРЎР‚Р В°...">
         <div id="btn-${msgId}" style="display: none; margin-top: 10px;"></div>
     `;
     
-    // Рспользуем твою готовую функцию добавления сообщений (если она называется так)
+    // Р В Р’ВРЎРѓР С—Р С•Р »РЎРЉР В·РЎС“Р ВµР С РЎвЂљР Р†Р С•РЎР‹ Р С–Р С•РЎвЂљР С•Р Р†РЎС“РЎР‹ РЎвЂћРЎС“Р Р…Р С”РЎвЂ Р С‘РЎР‹ Р Т‘Р С•Р В±Р В°Р Р†Р »Р ВµР Р…Р С‘РЎРЏ РЎРѓР С•Р С•Р В±РЎвЂ°Р ВµР Р…Р С‘Р в„– (Р ВµРЎРѓР »Р С‘ Р С•Р Р…Р В° Р Р…Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµРЎвЂљРЎРѓРЎРЏ РЎвЂљР В°Р С”)
     // Либо просто создай div и добавь его в #messagesContainer
     const container = document.getElementById('messagesContainer');
     const msgDiv = document.createElement('div');
@@ -3284,7 +3303,7 @@ window.startCloudBrowser = function(task) {
     container.appendChild(msgDiv);
     container.scrollTop = container.scrollHeight;
 
-    // Запускаем WebSocket
+    // Р —Р В°Р С—РЎС“РЎРѓР С”Р В°Р ВµР С WebSocket
     const ws = new WebSocket(wsUrl);
     const screen = document.getElementById(msgId);
     const btnContainer = document.getElementById(`btn-${msgId}`);
@@ -3294,13 +3313,13 @@ window.startCloudBrowser = function(task) {
     ws.onmessage = (event) => {
         const data = event.data;
         if (data.startsWith("data:image")) {
-            screen.src = data; // Показываем трансляцию
+            screen.src = data; // Р СџР С•Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµР С РЎвЂљРЎР‚Р В°Р Р…РЎРѓР »РЎРЏРЎвЂ Р С‘РЎР‹
             container.scrollTop = container.scrollHeight;
         } 
-        else if (data.startsWith("LINK:")) {
+        else if (data.startsWith('Ошибка')) {
             const link = data.split("LINK:")[1];
             btnContainer.style.display = "block";
-            btnContainer.innerHTML = `<a href="${link}" target="_blank" style="padding: 10px 20px; background: #00f2ff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">рџ“Ґ Скачать результат</a>`;
+            btnContainer.innerHTML = `<a href="${link}" target="_blank" style="padding: 10px 20px; background: #00f2ff; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">📥 Скачать результат</a>`;
         } 
         else if (data === "DONE") {
             console.log("Задача в браузере завершена");
@@ -3328,7 +3347,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const parentRect = activeItem.parentElement.getBoundingClientRect();
             
             lamp.style.width = `${rect.width}px`;
-    lamp.style.transform = `translateX(${rect.left - parentRect.left}px)`;
+            lamp.style.transform = `translateX(${rect.left - parentRect.left}px)`;
         }
     }
 
@@ -3346,38 +3365,38 @@ document.addEventListener("DOMContentLoaded", () => {
 // Based on cleaned_data.json (ru + en + kz)
 // ============================================================
 (function() {
-    // ---- База данных из cleaned_data.json ----
+    // ---- Р вЂР В°Р В·Р В° Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦ Р С‘Р В· cleaned_data.json ----
     const generatedData = {
         "ru": [
             "что такое API","что такое циклы","что такое лоукод","что такое облако",
-            "как быстро читать","как улучшить речь","как развить память","основы базы данных",
-            "основы кодирования","что такое алгоритм","что такое блокчейн","что такое протокол",
-            "что такое процессы","как стать увереннее","что такое нейросеть","что такое фреймворк",
-            "как найти ментора ит","как развить внимание","как развить слушание","как создать веб-сайт",
-            "что такое переменные","что такое чистый код","как говорить публично","как научиться учиться",
-            "как улучшить внимание","основы веб-разработки","упражнения для голоса","упражнения для дикции",
-            "что такое база данных","как развить творчество","как учиться эффективно","методы развития памяти",
-            "упражнения для дыхания","что такое микросервисы","что такое сетевой слой","как быстро выучить стих",
-            "как улучшить пунктуацию","что такое виртуализация","как развить коммуникацию","методы spaced repetition",
+            "Р С”Р В°Р С” Р В±РЎвЂ№РЎРѓРЎвЂљРЎР‚Р С• РЎвЂЎР С‘РЎвЂљР В°РЎвЂљРЎРЉ","Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ РЎР‚Р ВµРЎвЂЎРЎРЉ","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ Р С—Р В°Р СРЎРЏРЎвЂљРЎРЉ","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р В±Р В°Р В·РЎвЂ№ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦",
+            "Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р С”Р С•Р Т‘Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р В°Р »Р С–Р С•РЎР‚Р С‘РЎвЂљР С","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р В±Р »Р С•Р С”РЎвЂЎР ВµР в„–Р Р…","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С—РЎР‚Р С•РЎвЂљР С•Р С”Р С•Р »",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓРЎвЂ№","Р С”Р В°Р С” РЎРѓРЎвЂљР В°РЎвЂљРЎРЉ РЎС“Р Р†Р ВµРЎР‚Р ВµР Р…Р Р…Р ВµР Вµ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р Р…Р ВµР в„–РЎР‚Р С•РЎРѓР ВµРЎвЂљРЎРЉ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ РЎвЂћРЎР‚Р ВµР в„–Р СР Р†Р С•РЎР‚Р С”",
+            "Р С”Р В°Р С” Р Р…Р В°Р в„–РЎвЂљР С‘ Р СР ВµР Р…РЎвЂљР С•РЎР‚Р В° Р С‘РЎвЂљ","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ Р Р†Р Р…Р С‘Р СР В°Р Р…Р С‘Р Вµ","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ РЎРѓР »РЎС“РЎв‚¬Р В°Р Р…Р С‘Р Вµ","Р С”Р В°Р С” РЎРѓР С•Р В·Р Т‘Р В°РЎвЂљРЎРЉ Р Р†Р ВµР В±-РЎРѓР В°Р в„–РЎвЂљ",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С—Р ВµРЎР‚Р ВµР СР ВµР Р…Р Р…РЎвЂ№Р Вµ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ РЎвЂЎР С‘РЎРѓРЎвЂљРЎвЂ№Р в„– Р С”Р С•Р Т‘","Р С”Р В°Р С” Р С–Р С•Р Р†Р С•РЎР‚Р С‘РЎвЂљРЎРЉ Р С—РЎС“Р В±Р »Р С‘РЎвЂЎР Р…Р С•","Р С”Р В°Р С” Р Р…Р В°РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ",
+            "Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ Р Р†Р Р…Р С‘Р СР В°Р Р…Р С‘Р Вµ","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р Р†Р ВµР В±-РЎР‚Р В°Р В·РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р С‘","РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ Р С–Р С•Р »Р С•РЎРѓР В°","РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ Р Т‘Р С‘Р С”РЎвЂ Р С‘Р С‘",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р В±Р В°Р В·Р В° Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ РЎвЂљР Р†Р С•РЎР‚РЎвЂЎР ВµРЎРѓРЎвЂљР Р†Р С•","Р С”Р В°Р С” РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ РЎРЊРЎвЂћРЎвЂћР ВµР С”РЎвЂљР С‘Р Р†Р Р…Р С•","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљР С‘РЎРЏ Р С—Р В°Р СРЎРЏРЎвЂљР С‘",
+            "РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ Р Т‘РЎвЂ№РЎвЂ¦Р В°Р Р…Р С‘РЎРЏ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР С‘Р С”РЎР‚Р С•РЎРѓР ВµРЎР‚Р Р†Р С‘РЎРѓРЎвЂ№","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ РЎРѓР ВµРЎвЂљР ВµР Р†Р С•Р в„– РЎРѓР »Р С•Р в„–","Р С”Р В°Р С” Р В±РЎвЂ№РЎРѓРЎвЂљРЎР‚Р С• Р Р†РЎвЂ№РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉ РЎРѓРЎвЂљР С‘РЎвЂ¦",
+            "Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ Р С—РЎС“Р Р…Р С”РЎвЂљРЎС“Р В°РЎвЂ Р С‘РЎР‹","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р Р†Р С‘РЎР‚РЎвЂљРЎС“Р В°Р »Р С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ Р С”Р С•Р СР СРЎС“Р Р…Р С‘Р С”Р В°РЎвЂ Р С‘РЎР‹","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ spaced repetition",
             "основы бэкенд разработки","основы паттернов дизайна","основы тестирования кода","что такое большие данные",
             "что такое интернет вещей","что такое нейронная сеть","что такое парсинг данных","как избавиться от акцента",
-            "как научиться презентации","как улучшить концентрацию","методы активного обучения","методы глубокого обучения",
-            "основы компьютерных сетей","что такое версионирование","что такое контейнеризация","что такое машинное зрение",
+            "Р С”Р В°Р С” Р Р…Р В°РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ Р С—РЎР‚Р ВµР В·Р ВµР Р…РЎвЂљР В°РЎвЂ Р С‘Р С‘","Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ Р С”Р С•Р Р…РЎвЂ Р ВµР Р…РЎвЂљРЎР‚Р В°РЎвЂ Р С‘РЎР‹","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р В°Р С”РЎвЂљР С‘Р Р†Р Р…Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р С–Р »РЎС“Р В±Р С•Р С”Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ",
+            "Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р С”Р С•Р СР С—РЎРЉРЎР‹РЎвЂљР ВµРЎР‚Р Р…РЎвЂ№РЎвЂ¦ РЎРѓР ВµРЎвЂљР ВµР в„–","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р Р†Р ВµРЎР‚РЎРѓР С‘Р С•Р Р…Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р Вµ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С”Р С•Р Р…РЎвЂљР ВµР в„–Р Р…Р ВµРЎР‚Р С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР В°РЎв‚¬Р С‘Р Р…Р Р…Р С•Р Вµ Р В·РЎР‚Р ВµР Р…Р С‘Р Вµ",
             "как настроить голос дикцию","как улучшить скорость речи","основы дизайна интерфейсов","основы защиты от кибератак",
             "основы фронтенд разработки","подготовка к школе логопед","упражнения для артикуляции","упражнения для беглой речи",
-            "упражнения для уверенности","что такое микроархитектура","что такое облачные сервисы","заикание у взрослых лечение",
-            "как организовать свое время","методы адаптивного обучения","методы проблемного обучения","основы мобильной разработки",
-            "что такое кибербезопасность","что такое машинное обучение","что такое облако вычислений","дизартрия симптомы и лечение",
+            "РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ РЎС“Р Р†Р ВµРЎР‚Р ВµР Р…Р Р…Р С•РЎРѓРЎвЂљР С‘","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР С‘Р С”РЎР‚Р С•Р В°РЎР‚РЎвЂ¦Р С‘РЎвЂљР ВµР С”РЎвЂљРЎС“РЎР‚Р В°","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С•Р В±Р »Р В°РЎвЂЎР Р…РЎвЂ№Р Вµ РЎРѓР ВµРЎР‚Р Р†Р С‘РЎРѓРЎвЂ№","Р В·Р В°Р С‘Р С”Р В°Р Р…Р С‘Р Вµ РЎС“ Р Р†Р В·РЎР‚Р С•РЎРѓР »РЎвЂ№РЎвЂ¦ Р »Р ВµРЎвЂЎР ВµР Р…Р С‘Р Вµ",
+            "Р С”Р В°Р С” Р С•РЎР‚Р С–Р В°Р Р…Р С‘Р В·Р С•Р Р†Р В°РЎвЂљРЎРЉ РЎРѓР Р†Р С•Р Вµ Р Р†РЎР‚Р ВµР СРЎРЏ","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р В°Р Т‘Р В°Р С—РЎвЂљР С‘Р Р†Р Р…Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р С—РЎР‚Р С•Р В±Р »Р ВµР СР Р…Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р СР С•Р В±Р С‘Р »РЎРЉР Р…Р С•Р в„– РЎР‚Р В°Р В·РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р С‘",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С”Р С‘Р В±Р ВµРЎР‚Р В±Р ВµР В·Р С•Р С—Р В°РЎРѓР Р…Р С•РЎРѓРЎвЂљРЎРЉ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р СР В°РЎв‚¬Р С‘Р Р…Р Р…Р С•Р Вµ Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘Р Вµ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С•Р В±Р »Р В°Р С”Р С• Р Р†РЎвЂ№РЎвЂЎР С‘РЎРѓР »Р ВµР Р…Р С‘Р в„–","Р Т‘Р С‘Р В·Р В°РЎР‚РЎвЂљРЎР‚Р С‘РЎРЏ РЎРѓР С‘Р СР С—РЎвЂљР С•Р СРЎвЂ№ Р С‘ Р »Р ВµРЎвЂЎР ВµР Р…Р С‘Р Вµ",
             "как научиться говорить четко","как преодолеть застенчивость","как развить уверенность речи","как улучшить звучание голоса",
-            "как улучшить письменную речь","как улучшить словарный запас","как улучшить чувство времени","методы геймификации обучения",
-            "методы развивающего обучения","основы вычислительной теории","как выучить таблицу умножения","как научиться импровизировать",
-            "методы запоминания информации","основы архитектуры приложений","основы джава программирования","основы программирования питон",
-            "что такое нативное приложение","что такое облачные технологии","как преодолеть языковой барьер","как структурировать информацию",
-            "методы интерактивного обучения","развитие критического мышления","что такое квантовые компьютеры","упражнения для речевого дыхания",
-            "что такое виртуальная реальность","что такое графические процессоры","как развить ораторское мастерство","обучение детей иностранному языку",
-            "что такое искусственный интеллект","методы повествовательного обучения","коррекция нарушений письменной речи","основы системного администрирования",
-            "техники запоминания английских слов","нарушения голоса причины профилактика","как развивать пространственное мышление",
-            "упражнения для правильного произношения","что такое тестирование программного обеспечения"
+            "Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ Р С—Р С‘РЎРѓРЎРЉР СР ВµР Р…Р Р…РЎС“РЎР‹ РЎР‚Р ВµРЎвЂЎРЎРЉ","Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ РЎРѓР »Р С•Р Р†Р В°РЎР‚Р Р…РЎвЂ№Р в„– Р В·Р В°Р С—Р В°РЎРѓ","Р С”Р В°Р С” РЎС“Р »РЎС“РЎвЂЎРЎв‚¬Р С‘РЎвЂљРЎРЉ РЎвЂЎРЎС“Р Р†РЎРѓРЎвЂљР Р†Р С• Р Р†РЎР‚Р ВµР СР ВµР Р…Р С‘","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р С–Р ВµР в„–Р СР С‘РЎвЂћР С‘Р С”Р В°РЎвЂ Р С‘Р С‘ Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ",
+            "Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ РЎР‚Р В°Р В·Р Р†Р С‘Р Р†Р В°РЎР‹РЎвЂ°Р ВµР С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р Р†РЎвЂ№РЎвЂЎР С‘РЎРѓР »Р С‘РЎвЂљР ВµР »РЎРЉР Р…Р С•Р в„– РЎвЂљР ВµР С•РЎР‚Р С‘Р С‘","Р С”Р В°Р С” Р Р†РЎвЂ№РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉ РЎвЂљР В°Р В±Р »Р С‘РЎвЂ РЎС“ РЎС“Р СР Р…Р С•Р В¶Р ВµР Р…Р С‘РЎРЏ","Р С”Р В°Р С” Р Р…Р В°РЎС“РЎвЂЎР С‘РЎвЂљРЎРЉРЎРѓРЎРЏ Р С‘Р СР С—РЎР‚Р С•Р Р†Р С‘Р В·Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ",
+            "Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р В·Р В°Р С—Р С•Р СР С‘Р Р…Р В°Р Р…Р С‘РЎРЏ Р С‘Р Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘Р С‘","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р В°РЎР‚РЎвЂ¦Р С‘РЎвЂљР ВµР С”РЎвЂљРЎС“РЎР‚РЎвЂ№ Р С—РЎР‚Р С‘Р »Р С•Р В¶Р ВµР Р…Р С‘Р в„–","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р Т‘Р В¶Р В°Р Р†Р В° Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ Р С—Р С‘РЎвЂљР С•Р Р…",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р Р…Р В°РЎвЂљР С‘Р Р†Р Р…Р С•Р Вµ Р С—РЎР‚Р С‘Р »Р С•Р В¶Р ВµР Р…Р С‘Р Вµ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С•Р В±Р »Р В°РЎвЂЎР Р…РЎвЂ№Р Вµ РЎвЂљР ВµРЎвЂ¦Р Р…Р С•Р »Р С•Р С–Р С‘Р С‘","Р С”Р В°Р С” Р С—РЎР‚Р ВµР С•Р Т‘Р С•Р »Р ВµРЎвЂљРЎРЉ РЎРЏР В·РЎвЂ№Р С”Р С•Р Р†Р С•Р в„– Р В±Р В°РЎР‚РЎРЉР ВµРЎР‚","Р С”Р В°Р С” РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂљРЎС“РЎР‚Р С‘РЎР‚Р С•Р Р†Р В°РЎвЂљРЎРЉ Р С‘Р Р…РЎвЂћР С•РЎР‚Р СР В°РЎвЂ Р С‘РЎР‹",
+            "Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р С‘Р Р…РЎвЂљР ВµРЎР‚Р В°Р С”РЎвЂљР С‘Р Р†Р Р…Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљР С‘Р Вµ Р С”РЎР‚Р С‘РЎвЂљР С‘РЎвЂЎР ВµРЎРѓР С”Р С•Р С–Р С• Р СРЎвЂ№РЎв‚¬Р »Р ВµР Р…Р С‘РЎРЏ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С”Р Р†Р В°Р Р…РЎвЂљР С•Р Р†РЎвЂ№Р Вµ Р С”Р С•Р СР С—РЎРЉРЎР‹РЎвЂљР ВµРЎР‚РЎвЂ№","РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ РЎР‚Р ВµРЎвЂЎР ВµР Р†Р С•Р С–Р С• Р Т‘РЎвЂ№РЎвЂ¦Р В°Р Р…Р С‘РЎРЏ",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р Р†Р С‘РЎР‚РЎвЂљРЎС“Р В°Р »РЎРЉР Р…Р В°РЎРЏ РЎР‚Р ВµР В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С–РЎР‚Р В°РЎвЂћР С‘РЎвЂЎР ВµРЎРѓР С”Р С‘Р Вµ Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓР С•РЎР‚РЎвЂ№","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘РЎвЂљРЎРЉ Р С•РЎР‚Р В°РЎвЂљР С•РЎР‚РЎРѓР С”Р С•Р Вµ Р СР В°РЎРѓРЎвЂљР ВµРЎР‚РЎРѓРЎвЂљР Р†Р С•","Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘Р Вµ Р Т‘Р ВµРЎвЂљР ВµР в„– Р С‘Р Р…Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р Р…Р С•Р СРЎС“ РЎРЏР В·РЎвЂ№Р С”РЎС“",
+            "РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ Р С‘РЎРѓР С”РЎС“РЎРѓРЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…РЎвЂ№Р в„– Р С‘Р Р…РЎвЂљР ВµР »Р »Р ВµР С”РЎвЂљ","Р СР ВµРЎвЂљР С•Р Т‘РЎвЂ№ Р С—Р С•Р Р†Р ВµРЎРѓРЎвЂљР Р†Р С•Р Р†Р В°РЎвЂљР ВµР »РЎРЉР Р…Р С•Р С–Р С• Р С•Р В±РЎС“РЎвЂЎР ВµР Р…Р С‘РЎРЏ","Р С”Р С•РЎР‚РЎР‚Р ВµР С”РЎвЂ Р С‘РЎРЏ Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р ВµР Р…Р С‘Р в„– Р С—Р С‘РЎРѓРЎРЉР СР ВµР Р…Р Р…Р С•Р в„– РЎР‚Р ВµРЎвЂЎР С‘","Р С•РЎРѓР Р…Р С•Р Р†РЎвЂ№ РЎРѓР С‘РЎРѓРЎвЂљР ВµР СР Р…Р С•Р С–Р С• Р В°Р Т‘Р СР С‘Р Р…Р С‘РЎРѓРЎвЂљРЎР‚Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘РЎРЏ",
+            "РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р С‘ Р В·Р В°Р С—Р С•Р СР С‘Р Р…Р В°Р Р…Р С‘РЎРЏ Р В°Р Р…Р С–Р »Р С‘Р в„–РЎРѓР С”Р С‘РЎвЂ¦ РЎРѓР »Р С•Р Р†","Р Р…Р В°РЎР‚РЎС“РЎв‚¬Р ВµР Р…Р С‘РЎРЏ Р С–Р С•Р »Р С•РЎРѓР В° Р С—РЎР‚Р С‘РЎвЂЎР С‘Р Р…РЎвЂ№ Р С—РЎР‚Р С•РЎвЂћР С‘Р »Р В°Р С”РЎвЂљР С‘Р С”Р В°","Р С”Р В°Р С” РЎР‚Р В°Р В·Р Р†Р С‘Р Р†Р В°РЎвЂљРЎРЉ Р С—РЎР‚Р С•РЎРѓРЎвЂљРЎР‚Р В°Р Р…РЎРѓРЎвЂљР Р†Р ВµР Р…Р Р…Р С•Р Вµ Р СРЎвЂ№РЎв‚¬Р »Р ВµР Р…Р С‘Р Вµ",
+            "РЎС“Р С—РЎР‚Р В°Р В¶Р Р…Р ВµР Р…Р С‘РЎРЏ Р Т‘Р »РЎРЏ Р С—РЎР‚Р В°Р Р†Р С‘Р »РЎРЉР Р…Р С•Р С–Р С• Р С—РЎР‚Р С•Р С‘Р В·Р Р…Р С•РЎв‚¬Р ВµР Р…Р С‘РЎРЏ","РЎвЂЎРЎвЂљР С• РЎвЂљР В°Р С”Р С•Р Вµ РЎвЂљР ВµРЎРѓРЎвЂљР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р Вµ Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СР Р…Р С•Р С–Р С• Р С•Р В±Р ВµРЎРѓР С—Р ВµРЎвЂЎР ВµР Р…Р С‘РЎРЏ"
         ],
         "en": [
             "DL methods","what is AI","what is DL","what is ML","what is API","what are loops",
@@ -3421,49 +3440,49 @@ document.addEventListener("DOMContentLoaded", () => {
             "preschool speech development activities","fine motor skills development activities","phonological awareness activities for kids"
         ],
         "kz": [
-            "айқын сөйлеу","жадыны дамыту","назарды дамыту","API дегеніміз не","кодтау негіздері",
-            "дауыс жаттығулары","оқуды оқуды үйрену","UI дизайн негіздері","жылдам оқу әдістері",
-            "айтылымын жұмсап ету","сын тұрғысынан ойлау","сөздік қорын кеңейту","таз код дегеніміз не",
-            "терең оқыту әдістері","циклдар дегеніміз не","алгоритм дегеніміз не","блокчейн дегеніміз не",
-            "веб-әзірлеу негіздері","дауыс сапасын арттыру","есті дамыту техникасы","облақ сервистері шолу",
-            "протокол дегеніміз не","пунктуацияны жақсарту","сөйлеу сенімін дамыту","терең машиналық оқыту",
-            "тыныс алу жаттығулары","акцентті жоюу әдістері","веб-сайт құру әдістері","нейрожелі дегеніміз не",
-            "сахарау қатынасын жеңу","тиімді оқытың әдістері","тіл барьеріне түс болу","уақытты тиімді басқару",
-            "фреймворк дегеніміз не","ұсыну дағдыларын оқыту","spaced repetition әдісі","айнымалысы дегеніміз не",
-            "ит саласында жұмыс табу","ойын қозғау техникалары","процесстер дегеніміз не","тегін код жазуды үйрену",
+            "Р В°Р в„–РўвЂєРЎвЂ№Р Р… РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“","Р В¶Р В°Р Т‘РЎвЂ№Р Р…РЎвЂ№ Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","Р Р…Р В°Р В·Р В°РЎР‚Р Т‘РЎвЂ№ Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","API Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С”Р С•Р Т‘РЎвЂљР В°РЎС“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“",
+            "Р Т‘Р В°РЎС“РЎвЂ№РЎРѓ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№","Р С•РўвЂєРЎС“Р Т‘РЎвЂ№ Р С•РўвЂєРЎС“Р Т‘РЎвЂ№ РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“","UI Р Т‘Р С‘Р В·Р В°Р в„–Р Р… Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р В¶РЎвЂ№Р »Р Т‘Р В°Р С Р С•РўвЂєРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“",
+            "Р В°Р в„–РЎвЂљРЎвЂ№Р »РЎвЂ№Р СРЎвЂ№Р Р… Р В¶РўВ±Р СРЎРѓР В°Р С— Р ВµРЎвЂљРЎС“","РЎРѓРЎвЂ№Р Р… РЎвЂљРўВ±РЎР‚РўвЂњРЎвЂ№РЎРѓРЎвЂ№Р Р…Р В°Р Р… Р С•Р в„–Р »Р В°РЎС“","РЎРѓРЈВ©Р В·Р Т‘РЎвЂ“Р С” РўвЂєР С•РЎР‚РЎвЂ№Р Р… Р С”Р ВµРўР€Р ВµР в„–РЎвЂљРЎС“","РЎвЂљР В°Р В· Р С”Р С•Р Т‘ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "РЎвЂљР ВµРЎР‚Р ВµРўР€ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","РЎвЂ Р С‘Р С”Р »Р Т‘Р В°РЎР‚ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р В°Р »Р С–Р С•РЎР‚Р С‘РЎвЂљР С Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р В±Р »Р С•Р С”РЎвЂЎР ВµР в„–Р Р… Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р Р†Р ВµР В±-РЈв„ўР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р Т‘Р В°РЎС“РЎвЂ№РЎРѓ РЎРѓР В°Р С—Р В°РЎРѓРЎвЂ№Р Р… Р В°РЎР‚РЎвЂљРЎвЂљРЎвЂ№РЎР‚РЎС“","Р ВµРЎРѓРЎвЂљРЎвЂ“ Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“ РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р В°РЎРѓРЎвЂ№","Р С•Р В±Р »Р В°РўвЂє РЎРѓР ВµРЎР‚Р Р†Р С‘РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“ РЎв‚¬Р С•Р »РЎС“",
+            "Р С—РЎР‚Р С•РЎвЂљР С•Р С”Р С•Р » Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С—РЎС“Р Р…Р С”РЎвЂљРЎС“Р В°РЎвЂ Р С‘РЎРЏР Р…РЎвЂ№ Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РЎРѓР ВµР Р…РЎвЂ“Р СРЎвЂ“Р Р… Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","РЎвЂљР ВµРЎР‚Р ВµРўР€ Р СР В°РЎв‚¬Р С‘Р Р…Р В°Р »РЎвЂ№РўвЂє Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“",
+            "РЎвЂљРЎвЂ№Р Р…РЎвЂ№РЎРѓ Р В°Р »РЎС“ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№","Р В°Р С”РЎвЂ Р ВµР Р…РЎвЂљРЎвЂљРЎвЂ“ Р В¶Р С•РЎР‹РЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р Р†Р ВµР В±-РЎРѓР В°Р в„–РЎвЂљ РўвЂєРўВ±РЎР‚РЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р Р…Р ВµР в„–РЎР‚Р С•Р В¶Р ВµР »РЎвЂ“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "РЎРѓР В°РЎвЂ¦Р В°РЎР‚Р В°РЎС“ РўвЂєР В°РЎвЂљРЎвЂ№Р Р…Р В°РЎРѓРЎвЂ№Р Р… Р В¶Р ВµРўР€РЎС“","РЎвЂљР С‘РЎвЂ“Р СР Т‘РЎвЂ“ Р С•РўвЂєРЎвЂ№РЎвЂљРЎвЂ№РўР€ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","РЎвЂљРЎвЂ“Р » Р В±Р В°РЎР‚РЎРЉР ВµРЎР‚РЎвЂ“Р Р…Р Вµ РЎвЂљРўР‡РЎРѓ Р В±Р С•Р »РЎС“","РЎС“Р В°РўвЂєРЎвЂ№РЎвЂљРЎвЂљРЎвЂ№ РЎвЂљР С‘РЎвЂ“Р СР Т‘РЎвЂ“ Р В±Р В°РЎРѓРўвЂєР В°РЎР‚РЎС“",
+            "РЎвЂћРЎР‚Р ВµР в„–Р СР Р†Р С•РЎР‚Р С” Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","РўВ±РЎРѓРЎвЂ№Р Р…РЎС“ Р Т‘Р В°РўвЂњР Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№Р Р… Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“","spaced repetition РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂ“","Р В°Р в„–Р Р…РЎвЂ№Р СР В°Р »РЎвЂ№РЎРѓРЎвЂ№ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р С‘РЎвЂљ РЎРѓР В°Р »Р В°РЎРѓРЎвЂ№Р Р…Р Т‘Р В° Р В¶РўВ±Р СРЎвЂ№РЎРѓ РЎвЂљР В°Р В±РЎС“","Р С•Р в„–РЎвЂ№Р Р… РўвЂєР С•Р В·РўвЂњР В°РЎС“ РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р В°Р »Р В°РЎР‚РЎвЂ№","Р С—РЎР‚Р С•РЎвЂ Р ВµРЎРѓРЎРѓРЎвЂљР ВµРЎР‚ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","РЎвЂљР ВµР С–РЎвЂ“Р Р… Р С”Р С•Р Т‘ Р В¶Р В°Р В·РЎС“Р Т‘РЎвЂ№ РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“",
             "өлеңді қалай жаттап алу","алғашқы кодты қалай жазу","беглі сөйлеу жаттығулары","бэкенд әзірлеу негіздері",
-            "жазба қатынасын жақсарту","желі қабаты дегеніміз не","жүргіндік оқыту әдістері","импровизе істеуді үйрену",
-            "микросервис дегеніміз не","мобильді қосымша әзірлеу","мәліметтерді ұйымдастыру","сөйлеу қарқынын жақсарту",
-            "терең оқыту дегеніміз не","тыңдау дағдыларын дамыту","үйде логопед жаттығулары","ауысынды сөйлеу кеңестері",
-            "бэкенд разработка оқулығы","дауыс тыныс алу техникасы","креативтік ойлауды дамыту","мектепке дайындық логопед",
-            "мәліметті сақтау әдістері","мәселенің негізінде оқыту","түндігін беру жаттығулары","уақыт басқарысын жақсарту",
-            "веб скрейпинг дегеніміз не","виртуализация дегеніміз не","есептеу теориясы негіздері","жадыны арттыру техникалары",
-            "ит мамандығын қалай таңдау","киберқауіпсіздік негіздері","сөйлеу сенімді жаттығулары","сөйлеу сенімділігін дамыту",
-            "сөйлеуді жақсарту әдістері","фронтенд әзірлеу негіздері","эмпирикалық оқыту әдістері","Java программалау негіздері",
-            "аналитикалық ойлауды дамыту","ағылшын тілін жылдам үйрену","бейімді оқыту стратегиялары","дауыс бұзылуларын алдын алу",
-            "дизайн шаблондары негіздері","интерактивті оқыту әдістері","компьютерлік желі негіздері","облақ есептеуі дегеніміз не",
-            "сахна қорқынышын қалай жеңу","смарт контракт дегеніміз не","сөйлеу кешігуінің себептері","үлкен деректер дегеніміз не",
-            "айқын сөйлеу үшін жаттығулар","баланың сөздік қорын кеңейту","бұлттық есептеу дегеніміз не","гит және гитхаб дегеніміз не",
-            "девопс инженері дегеніміз не","конструктивті оқыту әдістері","контейнеризация дегеніміз не","машиналық оқыту дегеніміз не",
-            "менторды қалай табуға болады","нативті қосымша дегеніміз не","р және л дыбыстарын дұрыстау","сөйлеу айқындығы жаттығулары",
-            "түйілуруді қалай емдеу керек","Python программалау негіздері","балаларға екінші тілді үйрету","виртуалды шындық дегеніміз не",
-            "жылдам оқу техникасы әдістері","жұмыс орнын қалай ұйымдастыру","заттар интернеті дегеніміз не","киберқауіпсіздік дегеніміз не",
-            "код жазуды қалай бастау керек","көбейту кестесін қалай үйрену","мектепке дейінгі сөйлеу дамуы","микроархитектура дегеніміз не",
-            "нұсқасын басқару дегеніміз не","питонды қалай үйренуге болады","сөйлеу қателерін қалай түзету","фронтенд разработка негіздері",
-            "қалай жылдамырақ оқуға болады","дизартрия белгілері және емдеу","жазбаша тіл бұзылуларын түзету","жазудағы грамматиканы жақсарту",
-            "жасанды интеллект дегеніміз не","зейінді қалай арттыруға болады","кибер қауіпсіздік дегеніміз не","коммуникация дағдыларын дамыту",
-            "компьютерлік көру дегеніміз не","креативті ойлауды қалай дамыту","лоукод разработка дегеніміз не","мәліметтер базасы дегеніміз не"
+            "Р В¶Р В°Р В·Р В±Р В° РўвЂєР В°РЎвЂљРЎвЂ№Р Р…Р В°РЎРѓРЎвЂ№Р Р… Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“","Р В¶Р ВµР »РЎвЂ“ РўвЂєР В°Р В±Р В°РЎвЂљРЎвЂ№ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р В¶РўР‡РЎР‚Р С–РЎвЂ“Р Р…Р Т‘РЎвЂ“Р С” Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р С‘Р СР С—РЎР‚Р С•Р Р†Р С‘Р В·Р Вµ РЎвЂ“РЎРѓРЎвЂљР ВµРЎС“Р Т‘РЎвЂ“ РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“",
+            "Р СР С‘Р С”РЎР‚Р С•РЎРѓР ВµРЎР‚Р Р†Р С‘РЎРѓ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р СР С•Р В±Р С‘Р »РЎРЉР Т‘РЎвЂ“ РўвЂєР С•РЎРѓРЎвЂ№Р СРЎв‚¬Р В° РЈв„ўР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“","Р СРЈв„ўР »РЎвЂ“Р СР ВµРЎвЂљРЎвЂљР ВµРЎР‚Р Т‘РЎвЂ“ РўВ±Р в„–РЎвЂ№Р СР Т‘Р В°РЎРѓРЎвЂљРЎвЂ№РЎР‚РЎС“","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РўвЂєР В°РЎР‚РўвЂєРЎвЂ№Р Р…РЎвЂ№Р Р… Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“",
+            "РЎвЂљР ВµРЎР‚Р ВµРўР€ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","РЎвЂљРЎвЂ№РўР€Р Т‘Р В°РЎС“ Р Т‘Р В°РўвЂњР Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№Р Р… Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","РўР‡Р в„–Р Т‘Р Вµ Р »Р С•Р С–Р С•Р С—Р ВµР Т‘ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№","Р В°РЎС“РЎвЂ№РЎРѓРЎвЂ№Р Р…Р Т‘РЎвЂ№ РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ Р С”Р ВµРўР€Р ВµРЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“",
+            "Р В±РЎРЊР С”Р ВµР Р…Р Т‘ РЎР‚Р В°Р В·РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р В° Р С•РўвЂєРЎС“Р »РЎвЂ№РўвЂњРЎвЂ№","Р Т‘Р В°РЎС“РЎвЂ№РЎРѓ РЎвЂљРЎвЂ№Р Р…РЎвЂ№РЎРѓ Р В°Р »РЎС“ РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р В°РЎРѓРЎвЂ№","Р С”РЎР‚Р ВµР В°РЎвЂљР С‘Р Р†РЎвЂљРЎвЂ“Р С” Р С•Р в„–Р »Р В°РЎС“Р Т‘РЎвЂ№ Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","Р СР ВµР С”РЎвЂљР ВµР С—Р С”Р Вµ Р Т‘Р В°Р в„–РЎвЂ№Р Р…Р Т‘РЎвЂ№РўвЂє Р »Р С•Р С–Р С•Р С—Р ВµР Т‘",
+            "Р СРЈв„ўР »РЎвЂ“Р СР ВµРЎвЂљРЎвЂљРЎвЂ“ РЎРѓР В°РўвЂєРЎвЂљР В°РЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р СРЈв„ўРЎРѓР ВµР »Р ВµР Р…РЎвЂ“РўР€ Р Р…Р ВµР С–РЎвЂ“Р В·РЎвЂ“Р Р…Р Т‘Р Вµ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“","РЎвЂљРўР‡Р Р…Р Т‘РЎвЂ“Р С–РЎвЂ“Р Р… Р В±Р ВµРЎР‚РЎС“ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№","РЎС“Р В°РўвЂєРЎвЂ№РЎвЂљ Р В±Р В°РЎРѓРўвЂєР В°РЎР‚РЎвЂ№РЎРѓРЎвЂ№Р Р… Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“",
+            "Р Р†Р ВµР В± РЎРѓР С”РЎР‚Р ВµР в„–Р С—Р С‘Р Р…Р С– Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р Р†Р С‘РЎР‚РЎвЂљРЎС“Р В°Р »Р С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р ВµРЎРѓР ВµР С—РЎвЂљР ВµРЎС“ РЎвЂљР ВµР С•РЎР‚Р С‘РЎРЏРЎРѓРЎвЂ№ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р В¶Р В°Р Т‘РЎвЂ№Р Р…РЎвЂ№ Р В°РЎР‚РЎвЂљРЎвЂљРЎвЂ№РЎР‚РЎС“ РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р В°Р »Р В°РЎР‚РЎвЂ№",
+            "Р С‘РЎвЂљ Р СР В°Р СР В°Р Р…Р Т‘РЎвЂ№РўвЂњРЎвЂ№Р Р… РўвЂєР В°Р »Р В°Р в„– РЎвЂљР В°РўР€Р Т‘Р В°РЎС“","Р С”Р С‘Р В±Р ВµРЎР‚РўвЂєР В°РЎС“РЎвЂ“Р С—РЎРѓРЎвЂ“Р В·Р Т‘РЎвЂ“Р С” Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РЎРѓР ВµР Р…РЎвЂ“Р СР Т‘РЎвЂ“ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РЎРѓР ВµР Р…РЎвЂ“Р СР Т‘РЎвЂ“Р »РЎвЂ“Р С–РЎвЂ“Р Р… Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“",
+            "РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“Р Т‘РЎвЂ“ Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","РЎвЂћРЎР‚Р С•Р Р…РЎвЂљР ВµР Р…Р Т‘ РЈв„ўР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","РЎРЊР СР С—Р С‘РЎР‚Р С‘Р С”Р В°Р »РЎвЂ№РўвЂє Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Java Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СР В°Р »Р В°РЎС“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“",
+            "Р В°Р Р…Р В°Р »Р С‘РЎвЂљР С‘Р С”Р В°Р »РЎвЂ№РўвЂє Р С•Р в„–Р »Р В°РЎС“Р Т‘РЎвЂ№ Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","Р В°РўвЂњРЎвЂ№Р »РЎв‚¬РЎвЂ№Р Р… РЎвЂљРЎвЂ“Р »РЎвЂ“Р Р… Р В¶РЎвЂ№Р »Р Т‘Р В°Р С РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“","Р В±Р ВµР в„–РЎвЂ“Р СР Т‘РЎвЂ“ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЎРѓРЎвЂљРЎР‚Р В°РЎвЂљР ВµР С–Р С‘РЎРЏР »Р В°РЎР‚РЎвЂ№","Р Т‘Р В°РЎС“РЎвЂ№РЎРѓ Р В±РўВ±Р В·РЎвЂ№Р »РЎС“Р »Р В°РЎР‚РЎвЂ№Р Р… Р В°Р »Р Т‘РЎвЂ№Р Р… Р В°Р »РЎС“",
+            "Р Т‘Р С‘Р В·Р В°Р в„–Р Р… РЎв‚¬Р В°Р В±Р »Р С•Р Р…Р Т‘Р В°РЎР‚РЎвЂ№ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р С‘Р Р…РЎвЂљР ВµРЎР‚Р В°Р С”РЎвЂљР С‘Р Р†РЎвЂљРЎвЂ“ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р С”Р С•Р СР С—РЎРЉРЎР‹РЎвЂљР ВµРЎР‚Р »РЎвЂ“Р С” Р В¶Р ВµР »РЎвЂ“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р С•Р В±Р »Р В°РўвЂє Р ВµРЎРѓР ВµР С—РЎвЂљР ВµРЎС“РЎвЂ“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "РЎРѓР В°РЎвЂ¦Р Р…Р В° РўвЂєР С•РЎР‚РўвЂєРЎвЂ№Р Р…РЎвЂ№РЎв‚¬РЎвЂ№Р Р… РўвЂєР В°Р »Р В°Р в„– Р В¶Р ВµРўР€РЎС“","РЎРѓР СР В°РЎР‚РЎвЂљ Р С”Р С•Р Р…РЎвЂљРЎР‚Р В°Р С”РЎвЂљ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ Р С”Р ВµРЎв‚¬РЎвЂ“Р С–РЎС“РЎвЂ“Р Р…РЎвЂ“РўР€ РЎРѓР ВµР В±Р ВµР С—РЎвЂљР ВµРЎР‚РЎвЂ“","РўР‡Р »Р С”Р ВµР Р… Р Т‘Р ВµРЎР‚Р ВµР С”РЎвЂљР ВµРЎР‚ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р В°Р в„–РўвЂєРЎвЂ№Р Р… РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РўР‡РЎв‚¬РЎвЂ“Р Р… Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚","Р В±Р В°Р »Р В°Р Р…РЎвЂ№РўР€ РЎРѓРЈВ©Р В·Р Т‘РЎвЂ“Р С” РўвЂєР С•РЎР‚РЎвЂ№Р Р… Р С”Р ВµРўР€Р ВµР в„–РЎвЂљРЎС“","Р В±РўВ±Р »РЎвЂљРЎвЂљРЎвЂ№РўвЂє Р ВµРЎРѓР ВµР С—РЎвЂљР ВµРЎС“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С–Р С‘РЎвЂљ Р В¶РЈв„ўР Р…Р Вµ Р С–Р С‘РЎвЂљРЎвЂ¦Р В°Р В± Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р Т‘Р ВµР Р†Р С•Р С—РЎРѓ Р С‘Р Р…Р В¶Р ВµР Р…Р ВµРЎР‚РЎвЂ“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С”Р С•Р Р…РЎРѓРЎвЂљРЎР‚РЎС“Р С”РЎвЂљР С‘Р Р†РЎвЂљРЎвЂ“ Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р С”Р С•Р Р…РЎвЂљР ВµР в„–Р Р…Р ВµРЎР‚Р С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р СР В°РЎв‚¬Р С‘Р Р…Р В°Р »РЎвЂ№РўвЂє Р С•РўвЂєРЎвЂ№РЎвЂљРЎС“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р СР ВµР Р…РЎвЂљР С•РЎР‚Р Т‘РЎвЂ№ РўвЂєР В°Р »Р В°Р в„– РЎвЂљР В°Р В±РЎС“РўвЂњР В° Р В±Р С•Р »Р В°Р Т‘РЎвЂ№","Р Р…Р В°РЎвЂљР С‘Р Р†РЎвЂљРЎвЂ“ РўвЂєР С•РЎРѓРЎвЂ№Р СРЎв‚¬Р В° Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","РЎР‚ Р В¶РЈв„ўР Р…Р Вµ Р » Р Т‘РЎвЂ№Р В±РЎвЂ№РЎРѓРЎвЂљР В°РЎР‚РЎвЂ№Р Р… Р Т‘РўВ±РЎР‚РЎвЂ№РЎРѓРЎвЂљР В°РЎС“","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ Р В°Р в„–РўвЂєРЎвЂ№Р Р…Р Т‘РЎвЂ№РўвЂњРЎвЂ№ Р В¶Р В°РЎвЂљРЎвЂљРЎвЂ№РўвЂњРЎС“Р »Р В°РЎР‚РЎвЂ№",
+            "РЎвЂљРўР‡Р в„–РЎвЂ“Р »РЎС“РЎР‚РЎС“Р Т‘РЎвЂ“ РўвЂєР В°Р »Р В°Р в„– Р ВµР СР Т‘Р ВµРЎС“ Р С”Р ВµРЎР‚Р ВµР С”","Python Р С—РЎР‚Р С•Р С–РЎР‚Р В°Р СР СР В°Р »Р В°РЎС“ Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“","Р В±Р В°Р »Р В°Р »Р В°РЎР‚РўвЂњР В° Р ВµР С”РЎвЂ“Р Р…РЎв‚¬РЎвЂ“ РЎвЂљРЎвЂ“Р »Р Т‘РЎвЂ“ РўР‡Р в„–РЎР‚Р ВµРЎвЂљРЎС“","Р Р†Р С‘РЎР‚РЎвЂљРЎС“Р В°Р »Р Т‘РЎвЂ№ РЎв‚¬РЎвЂ№Р Р…Р Т‘РЎвЂ№РўвЂє Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р В¶РЎвЂ№Р »Р Т‘Р В°Р С Р С•РўвЂєРЎС“ РЎвЂљР ВµРЎвЂ¦Р Р…Р С‘Р С”Р В°РЎРѓРЎвЂ№ РЈв„ўР Т‘РЎвЂ“РЎРѓРЎвЂљР ВµРЎР‚РЎвЂ“","Р В¶РўВ±Р СРЎвЂ№РЎРѓ Р С•РЎР‚Р Р…РЎвЂ№Р Р… РўвЂєР В°Р »Р В°Р в„– РўВ±Р в„–РЎвЂ№Р СР Т‘Р В°РЎРѓРЎвЂљРЎвЂ№РЎР‚РЎС“","Р В·Р В°РЎвЂљРЎвЂљР В°РЎР‚ Р С‘Р Р…РЎвЂљР ВµРЎР‚Р Р…Р ВµРЎвЂљРЎвЂ“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С”Р С‘Р В±Р ВµРЎР‚РўвЂєР В°РЎС“РЎвЂ“Р С—РЎРѓРЎвЂ“Р В·Р Т‘РЎвЂ“Р С” Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р С”Р С•Р Т‘ Р В¶Р В°Р В·РЎС“Р Т‘РЎвЂ№ РўвЂєР В°Р »Р В°Р в„– Р В±Р В°РЎРѓРЎвЂљР В°РЎС“ Р С”Р ВµРЎР‚Р ВµР С”","Р С”РЈВ©Р В±Р ВµР в„–РЎвЂљРЎС“ Р С”Р ВµРЎРѓРЎвЂљР ВµРЎРѓРЎвЂ“Р Р… РўвЂєР В°Р »Р В°Р в„– РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“","Р СР ВµР С”РЎвЂљР ВµР С—Р С”Р Вµ Р Т‘Р ВµР в„–РЎвЂ“Р Р…Р С–РЎвЂ“ РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ Р Т‘Р В°Р СРЎС“РЎвЂ№","Р СР С‘Р С”РЎР‚Р С•Р В°РЎР‚РЎвЂ¦Р С‘РЎвЂљР ВµР С”РЎвЂљРЎС“РЎР‚Р В° Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ",
+            "Р Р…РўВ±РЎРѓРўвЂєР В°РЎРѓРЎвЂ№Р Р… Р В±Р В°РЎРѓРўвЂєР В°РЎР‚РЎС“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С—Р С‘РЎвЂљР С•Р Р…Р Т‘РЎвЂ№ РўвЂєР В°Р »Р В°Р в„– РўР‡Р в„–РЎР‚Р ВµР Р…РЎС“Р С–Р Вµ Р В±Р С•Р »Р В°Р Т‘РЎвЂ№","РЎРѓРЈВ©Р в„–Р »Р ВµРЎС“ РўвЂєР В°РЎвЂљР ВµР »Р ВµРЎР‚РЎвЂ“Р Р… РўвЂєР В°Р »Р В°Р в„– РЎвЂљРўР‡Р В·Р ВµРЎвЂљРЎС“","РЎвЂћРЎР‚Р С•Р Р…РЎвЂљР ВµР Р…Р Т‘ РЎР‚Р В°Р В·РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р В° Р Р…Р ВµР С–РЎвЂ“Р В·Р Т‘Р ВµРЎР‚РЎвЂ“",
+            "РўвЂєР В°Р »Р В°Р в„– Р В¶РЎвЂ№Р »Р Т‘Р В°Р СРЎвЂ№РЎР‚Р В°РўвЂє Р С•РўвЂєРЎС“РўвЂњР В° Р В±Р С•Р »Р В°Р Т‘РЎвЂ№","Р Т‘Р С‘Р В·Р В°РЎР‚РЎвЂљРЎР‚Р С‘РЎРЏ Р В±Р ВµР »Р С–РЎвЂ“Р »Р ВµРЎР‚РЎвЂ“ Р В¶РЈв„ўР Р…Р Вµ Р ВµР СР Т‘Р ВµРЎС“","Р В¶Р В°Р В·Р В±Р В°РЎв‚¬Р В° РЎвЂљРЎвЂ“Р » Р В±РўВ±Р В·РЎвЂ№Р »РЎС“Р »Р В°РЎР‚РЎвЂ№Р Р… РЎвЂљРўР‡Р В·Р ВµРЎвЂљРЎС“","Р В¶Р В°Р В·РЎС“Р Т‘Р В°РўвЂњРЎвЂ№ Р С–РЎР‚Р В°Р СР СР В°РЎвЂљР С‘Р С”Р В°Р Р…РЎвЂ№ Р В¶Р В°РўвЂєРЎРѓР В°РЎР‚РЎвЂљРЎС“",
+            "Р В¶Р В°РЎРѓР В°Р Р…Р Т‘РЎвЂ№ Р С‘Р Р…РЎвЂљР ВµР »Р »Р ВµР С”РЎвЂљ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р В·Р ВµР в„–РЎвЂ“Р Р…Р Т‘РЎвЂ“ РўвЂєР В°Р »Р В°Р в„– Р В°РЎР‚РЎвЂљРЎвЂљРЎвЂ№РЎР‚РЎС“РўвЂњР В° Р В±Р С•Р »Р В°Р Т‘РЎвЂ№","Р С”Р С‘Р В±Р ВµРЎР‚ РўвЂєР В°РЎС“РЎвЂ“Р С—РЎРѓРЎвЂ“Р В·Р Т‘РЎвЂ“Р С” Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С”Р С•Р СР СРЎС“Р Р…Р С‘Р С”Р В°РЎвЂ Р С‘РЎРЏ Р Т‘Р В°РўвЂњР Т‘РЎвЂ№Р »Р В°РЎР‚РЎвЂ№Р Р… Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“",
+            "Р С”Р С•Р СР С—РЎРЉРЎР‹РЎвЂљР ВµРЎР‚Р »РЎвЂ“Р С” Р С”РЈВ©РЎР‚РЎС“ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р С”РЎР‚Р ВµР В°РЎвЂљР С‘Р Р†РЎвЂљРЎвЂ“ Р С•Р в„–Р »Р В°РЎС“Р Т‘РЎвЂ№ РўвЂєР В°Р »Р В°Р в„– Р Т‘Р В°Р СРЎвЂ№РЎвЂљРЎС“","Р »Р С•РЎС“Р С”Р С•Р Т‘ РЎР‚Р В°Р В·РЎР‚Р В°Р В±Р С•РЎвЂљР С”Р В° Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ","Р СРЈв„ўР »РЎвЂ“Р СР ВµРЎвЂљРЎвЂљР ВµРЎР‚ Р В±Р В°Р В·Р В°РЎРѓРЎвЂ№ Р Т‘Р ВµР С–Р ВµР Р…РЎвЂ“Р СРЎвЂ“Р В· Р Р…Р Вµ"
         ]
     };
 
-    // Объединяем все три языка в один массив
+    // Р С›Р В±РЎР‰Р ВµР Т‘Р С‘Р Р…РЎРЏР ВµР С Р Р†РЎРѓР Вµ РЎвЂљРЎР‚Р С‘ РЎРЏР В·РЎвЂ№Р С”Р В° Р Р† Р С•Р Т‘Р С‘Р Р… Р СР В°РЎРѓРЎРѓР С‘Р Р†
     const autocompleteDB = [
         ...generatedData.ru,
         ...generatedData.en,
         ...generatedData.kz
     ];
 
-    // ---- DOM элементы ----
+    // ---- DOM РЎРЊР »Р ВµР СР ВµР Р…РЎвЂљРЎвЂ№ ----
     const userInput = document.getElementById('userInput');
     const ghostText = document.getElementById('ghostText');
     const dropdown = document.getElementById('suggestionsDropdown');
@@ -3471,7 +3490,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatHeader = document.getElementById('animatedChatHeader');
     const welcomeScreen = document.getElementById('welcomeScreen');
 
-    if (!userInput) return; // Безопасный выход если элемент не найден
+    if (!userInput) return; // Р вЂР ВµР В·Р С•Р С—Р В°РЎРѓР Р…РЎвЂ№Р в„– Р Р†РЎвЂ№РЎвЂ¦Р С•Р Т‘ Р ВµРЎРѓР »Р С‘ РЎРЊР »Р ВµР СР ВµР Р…РЎвЂљ Р Р…Р Вµ Р Р…Р В°Р в„–Р Т‘Р ВµР Р…
 
     let currentGhostSuggestion = '';
     let activeIndex = -1;
@@ -3483,7 +3502,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const q = query.toLowerCase().trim();
         return autocompleteDB
             .filter(item => item.toLowerCase().startsWith(q))
-            .slice(0, 2); // Максимум 2 подсказки
+            .slice(0, 2); // Р СљР В°Р С”РЎРѓР С‘Р СРЎС“Р С 2 Р С—Р С•Р Т‘РЎРѓР С”Р В°Р В·Р С”Р С‘
     }
 
     // ---- Обновить ghost text ----
@@ -3517,7 +3536,7 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = 'suggestion-item';
             div.setAttribute('data-index', idx);
 
-            // Подсвечиваем совпавшую часть
+            // Р СџР С•Р Т‘РЎРѓР Р†Р ВµРЎвЂЎР С‘Р Р†Р В°Р ВµР С РЎРѓР С•Р Р†Р С—Р В°Р Р†РЎв‚¬РЎС“РЎР‹ РЎвЂЎР В°РЎРѓРЎвЂљРЎРЉ
             const matchLen = typed.length;
             const matchPart = item.slice(0, matchLen);
             const restPart = item.slice(matchLen);
@@ -3527,11 +3546,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span>
                     <span class="suggestion-text-match">${escapeHtml(matchPart)}</span><span class="suggestion-text-rest">${escapeHtml(restPart)}</span>
                 </span>
-                <span class="tab-hint">Tab ↹</span>
+                <span class="tab-hint">Tab в†№</span>
             `;
 
             div.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // Не снимаем фокус с textarea
+                e.preventDefault(); // Р СњР Вµ РЎРѓР Р…Р С‘Р СР В°Р ВµР С РЎвЂћР С•Р С”РЎС“РЎРѓ РЎРѓ textarea
                 selectSuggestion(item);
             });
 
@@ -3541,7 +3560,7 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.add('visible');
     }
 
-    // ---- Применить выбранную подсказку ----
+    // ---- Р СџРЎР‚Р С‘Р СР ВµР Р…Р С‘РЎвЂљРЎРЉ Р Р†РЎвЂ№Р В±РЎР‚Р В°Р Р…Р Р…РЎС“РЎР‹ Р С—Р С•Р Т‘РЎРѓР С”Р В°Р В·Р С”РЎС“ ----
     function selectSuggestion(text) {
         if (!userInput) return;
         userInput.value = text;
@@ -3549,18 +3568,18 @@ document.addEventListener("DOMContentLoaded", () => {
         dropdown.classList.remove('visible');
         userInput.focus();
 
-        // Ставим курсор в конец
+        // Р РЋРЎвЂљР В°Р Р†Р С‘Р С Р С”РЎС“РЎР‚РЎРѓР С•РЎР‚ Р Р† Р С”Р С•Р Р…Р ВµРЎвЂ 
         userInput.setSelectionRange(text.length, text.length);
 
-        // Активируем кнопку Send
+        // Р С’Р С”РЎвЂљР С‘Р Р†Р С‘РЎР‚РЎС“Р ВµР С Р С”Р Р…Р С•Р С—Р С”РЎС“ Send
         const sendBtn = document.getElementById('sendBtn');
         if (sendBtn) sendBtn.classList.add('active');
 
-        // Триггерим resize textarea
+        // Р СћРЎР‚Р С‘Р С–Р С–Р ВµРЎР‚Р С‘Р С resize textarea
         userInput.dispatchEvent(new Event('input'));
     }
 
-    // ---- Анимация заголовка ----
+    // ---- Р С’Р Р…Р С‘Р СР В°РЎвЂ Р С‘РЎРЏ Р В·Р В°Р С–Р С•Р »Р С•Р Р†Р С”Р В° ----
     function setHeaderTyping(isTyping) {
         if (!chatHeader) return;
         if (isTyping) {
@@ -3570,7 +3589,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ---- Безопасное экранирование HTML ----
+    // ---- Р вЂР ВµР В·Р С•Р С—Р В°РЎРѓР Р…Р С•Р Вµ РЎРЊР С”РЎР‚Р В°Р Р…Р С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р Вµ HTML ----
     function escapeHtml(str) {
         return str
             .replace(/&/g, '&amp;')
@@ -3592,7 +3611,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const val = this.value;
         const isTyping = val.trim().length > 0;
 
-        // Анимация заголовка
+        // Р С’Р Р…Р С‘Р СР В°РЎвЂ Р С‘РЎРЏ Р В·Р В°Р С–Р С•Р »Р С•Р Р†Р С”Р В°
         setHeaderTyping(isTyping && welcomeScreen && welcomeScreen.style.display !== 'none');
 
         if (!isTyping) {
@@ -3601,7 +3620,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Ищем совпадения
+        // Р ВРЎвЂ°Р ВµР С РЎРѓР С•Р Р†Р С—Р В°Р Т‘Р ВµР Р…Р С‘РЎРЏ
         const matches = findMatches(val);
         lastMatches = matches;
 
@@ -3670,7 +3689,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // ---- Закрываем dropdown при клике вне его ----
+    // ---- Р —Р В°Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµР С dropdown Р С—РЎР‚Р С‘ Р С”Р »Р С‘Р С”Р Вµ Р Р†Р Р…Р Вµ Р ВµР С–Р С• ----
     document.addEventListener('click', function(e) {
         if (!dropdown) return;
         if (!dropdown.contains(e.target) && e.target !== userInput) {
@@ -3693,7 +3712,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // ============================================================
-// MENU FIX v4 — document capture, no stopPropagation → лампа работает
+// MENU FIX v4 РІР‚вЂќ document capture, no stopPropagation РІвЂ вЂ™ Р »Р В°Р СР С—Р В° РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ
 // ============================================================
 (function() {
     var _open = false;
@@ -3718,26 +3737,26 @@ document.addEventListener("DOMContentLoaded", () => {
         var sb = document.getElementById('sidebar');
         if (!sb) return;
         _open = false;
-        sb.style.transform = 'translateX(0px)';
+        sb.style.transform = '';
         var bd = document.getElementById('__sbd__');
         if (bd) bd.style.display = 'none';
         var nt = document.getElementById('nav-toggle');
         if (nt) nt.checked = false;
     }
 
-    // Capture на document — срабатывает ДО всех listeners на элементе
-    // НЕ вызываем stopPropagation → tubelight handler работает → лампа работает ✓
+    // Capture Р Р…Р В° document РІР‚вЂќ РЎРѓРЎР‚Р В°Р В±Р В°РЎвЂљРЎвЂ№Р Р†Р В°Р ВµРЎвЂљ Р вЂќР С› Р Р†РЎРѓР ВµРЎвЂ¦ listeners Р Р…Р В° РЎРЊР »Р ВµР СР ВµР Р…РЎвЂљР Вµ
+    // Р СњР вЂў Р Р†РЎвЂ№Р В·РЎвЂ№Р Р†Р В°Р ВµР С stopPropagation РІвЂ вЂ™ tubelight handler РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ РІвЂ вЂ™ Р »Р В°Р СР С—Р В° РЎР‚Р В°Р В±Р С•РЎвЂљР В°Р ВµРЎвЂљ РІСљвЂњ
     document.addEventListener('click', function(e) {
         var lbl = document.querySelector('label[for="nav-toggle"]');
         if (!lbl) return;
         if (e.target === lbl || lbl.contains(e.target)) {
-            // Даём событию пройти дальше (туbelight обновит лампу)
-            // Мы только управляем видимостью sidebar
+            // Р вЂќР В°РЎвЂР С РЎРѓР С•Р В±РЎвЂ№РЎвЂљР С‘РЎР‹ Р С—РЎР‚Р С•Р в„–РЎвЂљР С‘ Р Т‘Р В°Р »РЎРЉРЎв‚¬Р Вµ (РЎвЂљРЎС“belight Р С•Р В±Р Р…Р С•Р Р†Р С‘РЎвЂљ Р »Р В°Р СР С—РЎС“)
+            // Р СљРЎвЂ№ РЎвЂљР С•Р »РЎРЉР С”Р С• РЎС“Р С—РЎР‚Р В°Р Р†Р »РЎРЏР ВµР С Р Р†Р С‘Р Т‘Р С‘Р СР С•РЎРѓРЎвЂљРЎРЉРЎР‹ sidebar
             if (_open) { _hide(); } else { _show(); }
         }
-    }, true); // capture = true, но БЕЗ stopPropagation
+    }, true); // capture = true, Р Р…Р С• Р вЂР вЂўР — stopPropagation
 
-    // Синхронизация: когда openModal() сбрасывает checkbox → закрываем sidebar
+    // Р РЋР С‘Р Р…РЎвЂ¦РЎР‚Р С•Р Р…Р С‘Р В·Р В°РЎвЂ Р С‘РЎРЏ: Р С”Р С•Р С–Р Т‘Р В° openModal() РЎРѓР В±РЎР‚Р В°РЎРѓРЎвЂ№Р Р†Р В°Р ВµРЎвЂљ checkbox РІвЂ вЂ™ Р В·Р В°Р С”РЎР‚РЎвЂ№Р Р†Р В°Р ВµР С sidebar
     document.addEventListener('DOMContentLoaded', function() {
         var nt = document.getElementById('nav-toggle');
         if (nt) {
@@ -3821,7 +3840,7 @@ window.handleWallpaperUpload = function(event, view) {
             const videoUrl = URL.createObjectURL(file);
             // We set it but warn the user if they want since blob URLs don't survive refresh
             window.setWallpaper(view, `video:${videoUrl}`);
-            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы (ограничения браузера). Для постоянного видеофона поместите файл рядом с index.html.');
+            alert('Обратите внимание: загруженное видео будет работать только до перезагрузки страницы. Для постоянного видеофона поместите файл рядом с index.html.');
         } else {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -4225,263 +4244,67 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================
-// ВИРТУАЛЬНАЯ ДОСКА И ПРОВЕРКА ПОДПИСКИ
+// Р вЂ™Р ВР В Р СћР Р€Р С’Р вЂєР В¬Р СњР С’Р Р‡ Р вЂќР С›Р РЋР С™Р С’ Р В Р СџР В Р С›Р вЂ™Р вЂўР В Р С™Р С’ Р СџР С›Р вЂќР СџР ВР РЋР С™Р В
 // ============================================================
-let videoElement = document.getElementById('input_video');
-let canvasElement = document.getElementById('output_canvas');
-let canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
-
-let prevX = 0; 
-let prevY = 0;
-let isPremiumUser = false;
-
-// 1. ПРОВЕРКА ПОДПИСКИ (Связь с твоим app (2).py)
-async function verifySubscription() {
-    try {
-        const response = await fetch('/api/check-premium', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: 'user_001', token: 'secret_paid_token_123' })
-        });
-        
-        if (response.ok) {
-            isPremiumUser = true;
-            // Скрываем paywall, но камеру запускаем только по кнопке "Включить камеру"
-            const paywallMsg = document.getElementById('premium-paywall');
-            if (paywallMsg) paywallMsg.style.display = 'none';
-        } else {
-            const paywallMsg = document.getElementById('premium-paywall');
-            if (paywallMsg) paywallMsg.style.display = 'flex';
-        }
-    } catch (e) {
-        console.error("Ошибка проверки подписки");
-    }
-}
-
-let drawCtx = null;
-let cameraStarted = false;
-
-function initDrawingCanvas() {
-    const dCanvas = document.getElementById('drawing_canvas');
-    if (dCanvas) {
-        drawCtx = dCanvas.getContext('2d');
-        // Настраиваем кисть
-        drawCtx.lineCap = 'round';
-        drawCtx.lineJoin = 'round';
-    }
-}
-
-function startAirCanvas() {
-    if (!videoElement) videoElement = document.getElementById('input_video');
-    if (!canvasElement) {
-        canvasElement = document.getElementById('output_canvas');
-        canvasCtx = canvasElement ? canvasElement.getContext('2d') : null;
-    }
-    if (!videoElement || !canvasElement) return;
-    if (cameraStarted) return; // Защита от повторного запуска
-
-    cameraStarted = true;
-        let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'none';
-    initDrawingCanvas();
-    
-    // Show the container over iframe
-    let container = document.getElementById('camera-overlay-container');
-    if (container) {
-        container.style.display = 'block';
-        container.style.width = '640px';
-        container.style.height = '480px';
-    }
-        videoElement.style.width = '640px';
-    videoElement.style.height = '480px';
-    videoElement.width = 640;
-    videoElement.height = 480;
-    canvasElement.style.width = '640px';
-    canvasElement.style.height = '480px';
-    canvasElement.width = 640;
-    canvasElement.height = 480;
-    const dCanvas = document.getElementById('drawing_canvas');
-    if (dCanvas) { dCanvas.width = window.innerWidth; dCanvas.height = window.innerHeight; }
 
 
-    const hands = new Hands({locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-    }});
 
-    hands.setOptions({
-        maxNumHands: 1,
-        minDetectionConfidence: 0.7,
-        minTrackingConfidence: 0.7
-    });
 
-    hands.onResults(onResults);
 
-    window.mpCamera = null;
-    const camera = new Camera(videoElement, {
-        onFrame: async () => { await hands.send({image: videoElement}); },
-        width: 640, height: 480
-    });
-    window.mpCamera = camera;
-    camera.start();
-}
-
-function onResults(results) {
-    if (!canvasCtx) return;
-
-    // 1. Отрисовка видео с камеры на заднем слое (output_canvas)
-    canvasCtx.save();
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-    
-    // Зеркальное отображение камеры для удобства пользователя
-    canvasCtx.scale(-1, 1);
-    canvasCtx.translate(-canvasElement.width, 0);
-    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-    canvasCtx.restore();
-
-    // 2. Логика рисования жестами
-    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && drawCtx) {
-        const landmarks = results.multiHandLandmarks[0];
-        
-        // Координаты указательного пальца (с учетом зеркальности)
-        const x = canvasElement.width - (landmarks[8].x * canvasElement.width);
-        const y = landmarks[8].y * canvasElement.height;
-
-        // Рисуем красный прицел (указатель) на слое камеры
-        canvasCtx.beginPath();
-        canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = '#ec4899'; // Неоновый розовый
-        canvasCtx.fill();
-
-        // Если палец поднят (рисуем линию на слое рисования)
-        if (prevX !== 0 && prevY !== 0) {
-            // Расстояние между точками (простейшая защита от резких скачков)
-            const dist = Math.sqrt(Math.pow(x - prevX, 2) + Math.pow(y - prevY, 2));
-            if (dist < 100) {
-                drawCtx.beginPath();
-                drawCtx.moveTo(prevX, prevY);
-                drawCtx.lineTo(x, y);
-                drawCtx.strokeStyle = '#a5b4fc'; // Красивый светлый фиолетовый
-                drawCtx.lineWidth = 6;
-                drawCtx.stroke();
-                
-                // Добавляем свечение кисти
-                drawCtx.shadowColor = '#4f46e5';
-                drawCtx.shadowBlur = 10;
-                drawCtx.stroke();
-                drawCtx.shadowBlur = 0; // Сбрасываем тень для производительности
-            }
-        }
-        prevX = x; prevY = y;
-    } else {
-        prevX = 0; prevY = 0;
-    }
-}
-
-// Функция для открытия виртуальной доски и проверки
 window.openVirtualBoard = function() {
-    if (typeof openModal === 'function') {
-        openModal('newFeatureModal');
-    }
-    verifySubscription();
+    if (window.openModal) window.openModal('newFeatureModal');
 };
 
-// Подключение обработчиков для кнопок управления
-document.addEventListener('DOMContentLoaded', () => {
-    const btnStart = document.getElementById('btn-start-camera');
-    const btnClear = document.getElementById('btn-clear-canvas');
-    const btnAnalyze = document.getElementById('btn-analyze');
+// --- Animated English Placeholder ---
+(function() {
+    const phrases = [
+        "Ask SOLIFON AI anything...",
+        "Translate this text to Russian...",
+        "Write a Python script for...",
+        "How do I center a div?",
+        "Explain quantum mechanics...",
+        "Create a responsive layout..."
+    ];
+    let phIndex = 0;
+    let chIndex = 0;
+    let isDeleting = false;
 
-    if (btnStart) {
-        btnStart.addEventListener('click', () => {
-            // TEST MODE: Premium check disabled
-            startAirCanvas();
-            btnStart.innerHTML = '<i class="ph ph-video-camera-slash"></i> Камера запущена';
-            btnStart.style.opacity = '0.5';
-            btnStart.disabled = true;
-        });
-    }
+    function animatePlaceholder() {
+        const input = document.getElementById('userInput');
+        if (!input) return;
 
-    if (btnClear) {
-        btnClear.addEventListener('click', () => {
-            if (drawCtx) {
-                const dCanvas = document.getElementById('drawing_canvas');
-                drawCtx.clearRect(0, 0, dCanvas.width, dCanvas.height);
-            }
-        });
-    }
-
-    if (btnAnalyze) {
-        btnAnalyze.addEventListener('click', async () => {
-            // TEST MODE: Premium check disabled
-            const dCanvas = document.getElementById('drawing_canvas');
-            if (!dCanvas) return;
-            
-            // Анимация кнопки
-            const originalText = btnAnalyze.innerHTML;
-            btnAnalyze.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Анализируем...';
-            
-            // Получаем рисунок в base64
-            const imageBase64 = dCanvas.toDataURL('image/png');
-            
-            try {
-                const formData = new FormData();
-                formData.append('image_base64', imageBase64);
-                formData.append('is_premium', 'true');
-                
-                const response = await fetch('/api/analyze-canvas', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                alert("Solifon Visionary: " + (data.reply || "Анализ завершен."));
-            } catch (err) {
-                alert("Ошибка при анализе рисунка.");
-            } finally {
-                btnAnalyze.innerHTML = originalText;
-            }
-        });
-    }
-});
-
-
-window.toggleAirCanvas = function() {
-    let container = document.getElementById('camera-overlay-container');
-    if (!container) return;
-    
-    if (typeof cameraStarted === 'undefined' || !cameraStarted) {
-        // Start it for the first time
-        if (typeof startAirCanvas === 'function') {
-            startAirCanvas();
+        // If user is focused and typing, pause animation and restore default
+        if (document.activeElement === input || input.value.length > 0) {
+            input.placeholder = "Ask SOLIFON AI anything...";
+            setTimeout(animatePlaceholder, 2000);
+            return;
         }
-    } else {
-        // Toggle visibility
-        if (container.style.display === 'none' || container.style.display === '') {
-            container.style.display = 'block';
+
+        const currentPhrase = phrases[phIndex];
+        
+        if (isDeleting) {
+            input.placeholder = currentPhrase.substring(0, chIndex - 1) + "|";
+            chIndex--;
         } else {
-            container.style.display = 'none';
+            input.placeholder = currentPhrase.substring(0, chIndex + 1) + "|";
+            chIndex++;
         }
-    }
-};
 
+        let nextSpeed = isDeleting ? 30 : 60;
 
-window.stopAirCanvas = function() {
-    let container = document.getElementById('camera-overlay-container');
-    if (container) container.style.display = 'none';
-    
-    if (window.mpCamera) {
-        window.mpCamera.stop();
-        window.mpCamera = null;
+        if (!isDeleting && chIndex === currentPhrase.length) {
+            isDeleting = true;
+            nextSpeed = 2500; // wait before deleting
+            input.placeholder = currentPhrase; // remove pipe when fully typed
+        } else if (isDeleting && chIndex === 0) {
+            isDeleting = false;
+            phIndex = (phIndex + 1) % phrases.length;
+            nextSpeed = 500;
+        }
+
+        setTimeout(animatePlaceholder, nextSpeed);
     }
-    
-    let video = document.getElementById('input_video');
-    if (video && video.srcObject) {
-        let stream = video.srcObject;
-        let tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-        video.srcObject = null;
-    }
-    
-    let btn = document.querySelector('.camera-btn'); if(btn) btn.style.display = 'inline-block';
-    
-    cameraStarted = false;
-};
+
+    // Start
+    setTimeout(animatePlaceholder, 1000);
+})();
