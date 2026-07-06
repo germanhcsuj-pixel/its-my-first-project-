@@ -1700,7 +1700,7 @@ function initLumifexEditors() {
 </head>
 <body>
   <div class="hero">
-    <div class="badge">вњ¦ Solifon Code</div>
+    <div class="badge">✦ Solifon Code</div>
     <h1>Hello, <span class="accent">World</span>!</h1>
     <p>Р В Р ВµР Т‘Р В°Р С”РЎвЂљР С‘РЎР‚РЎС“Р в„– Р С”Р С•Р Т‘ РІР‚вЂќ Р Р†Р С‘Р Т‘РЎРЉ РЎР‚Р ВµР В·РЎС“Р »РЎРЉРЎвЂљР В°РЎвЂљ Р Р† РЎР‚Р ВµР В°Р »РЎРЉР Р…Р С•Р С Р Р†РЎР‚Р ВµР СР ВµР Р…Р С‘.</p>
     <button onclick="greet()">Р СњР В°Р В¶Р СР С‘ Р СР ВµР Р…РЎРЏ</button>
@@ -2880,7 +2880,7 @@ function showInstallGuide() {
     if (ps[1]) ps[1].textContent = t.premiumSoon;
     const items = Array.from(document.querySelectorAll('#upgradeModal div[style*="font-size:15px"]'));
     [t.premium1, t.premium2, t.premium3, t.premium4].forEach((text, index) => {
-      if (items[index]) items[index].textContent = 'вњ“  ${text}';
+      if (items[index]) items[index].textContent = '✔  ${text}';
     });
   }
 
@@ -3220,7 +3220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (period === 'year') {
             multiplier = 12 * 0.8; // 20% discount
-            suffix = '/за ${months} ${monthLabel}';
+            suffix = '/за 1 год';
         } else if (period === 'custom') {
             multiplier = months;
             // Pluralization for English
@@ -3239,11 +3239,11 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         if (priceEls.second && periodEls.second) {
-            priceEls.second.textContent = Math.round(prices.second * multiplier);
+            priceEls.second.textContent = '$' + Math.round(prices.second * multiplier);
             periodEls.second.textContent = suffix;
         }
         if (priceEls.third && periodEls.third) {
-            priceEls.third.textContent = Math.round(prices.third * multiplier);
+            priceEls.third.textContent = '$' + Math.round(prices.third * multiplier);
             periodEls.third.textContent = suffix;
         }
     };
