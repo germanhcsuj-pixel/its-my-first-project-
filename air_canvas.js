@@ -322,11 +322,7 @@ function onResultsElite(results) {
     // Draw video to UI canvas (mirrored)
     uiCtx.save();
     uiCtx.clearRect(0, 0, w, h);
-    if (!isPresentationMode) {
-        uiCtx.scale(-1, 1);
-        uiCtx.translate(-w, 0);
-        uiCtx.drawImage(results.image, 0, 0, w, h);
-    }
+    if (document.getElementById("camVideo")) { document.getElementById("camVideo").style.opacity = isPresentationMode ? "0" : "1"; }
     uiCtx.restore();
 
     if (isLocked) {
@@ -399,6 +395,5 @@ window.addEventListener('message', (event) => {
         window.stopAirCanvasElite();
     }
 });
-
 
 
