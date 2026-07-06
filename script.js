@@ -4308,3 +4308,4 @@ window.openVirtualBoard = function() {
     // Start
     setTimeout(animatePlaceholder, 1000);
 })();
+
