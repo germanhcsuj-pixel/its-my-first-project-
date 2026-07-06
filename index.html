@@ -334,7 +334,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div id="imagePreviewContainer" style="display: none; padding: 12px 15px 0; gap: 10px; flex-wrap: wrap;"></div>
         <!-- Ghost text wrapper -->
         <div class="textarea-ghost-wrapper">
-            <textarea id="userInput" class="chat-textarea" placeholder="Ask SOLIFON AI anything..."></textarea>
+            <textarea id="userInput" class="chat-textarea" placeholder="Ask SOLIFON AI anything..." maxlength="2000"></textarea>
             <div id="ghostText" class="ghost-text-overlay"></div>
         </div>
         
@@ -814,7 +814,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
   <div style="background:#1a1a1c; border:1px solid rgba(255,255,255,0.15); border-radius:20px; max-width:360px; width:88%; padding:32px 28px; position:relative; box-sizing:border-box;">
     
-    <button onclick="closeModal('authModal')" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;z-index:1;">вњ•</button>
+    <button onclick="closeModal('authModal')" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;z-index:1;"><i class="ph ph-x" style="transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='rotate(90deg) scale(1.1)'" onmouseout="this.style.transform='rotate(0deg) scale(1)'"></i></button>
     
     <div style="text-align:center;font-size:40px;margin-bottom:12px;">рџ”ђ</div>
     <h2 id="authTitle" style="color:#fff;margin:0 0 6px 0;font-size:20px;text-align:center;">Sign in to your account</h2>
@@ -846,7 +846,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- в”Ђв”Ђ UPGRADE MODAL в”Ђв”Ђ -->
 <div id="upgradeModal" class="modal-overlay custom-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5) !important; backdrop-filter: blur(25px); z-index:99999; align-items:center; justify-content:center;">
   <div style="width:100% !important; max-width:100% !important; height:100% !important; max-height:100% !important; margin:0 !important; border-radius:0 !important; padding:20px 0 !important; box-sizing:border-box; position:relative; overflow-y: auto; overflow-x: hidden;">
-    <button onclick="closeModal('upgradeModal')" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;width:44px;height:44px;border-radius:50%;z-index:100;">вњ•</button>
+    <button onclick="closeModal('upgradeModal')" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.08);border:none;color:#fff;font-size:22px;cursor:pointer;width:44px;height:44px;border-radius:50%;z-index:100;"><i class="ph ph-x" style="transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='rotate(90deg) scale(1.1)'" onmouseout="this.style.transform='rotate(0deg) scale(1)'"></i></button>
     <div class="preview" style="display: none;">
         <img src="https://bato-web-agency.github.io/bato-shared/img/tariff-plans-preview.jpg?v=1.0">
     </div>
@@ -1008,7 +1008,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__content">
                             <div class="tariff__info">
                                 <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Corporate</span><span class="tariff__tag">Most Popular</span></div>
-                                <div class="tariff__price"><span class="tariff__number">60</span><span class="tariff__period">/month</span></div>
+                                <div class="tariff__price"><span class="tariff__number">$60</span><span class="tariff__period">/month</span></div>
                                 <p class="tariff__description">Ideal for small teams & regular meetings</p>
                             </div>
                             <button class="tariff__button second__tariff-button">Select plan</button>
@@ -1079,7 +1079,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__content">
                             <div class="tariff__info">
                                 <span class="tariff__type third__tariff-type">Premium</span>
-                                <div class="tariff__price"><span class="tariff__number">90</span><span class="tariff__period">/month</span></div>
+                                <div class="tariff__price"><span class="tariff__number">$90</span><span class="tariff__period">/month</span></div>
                                 <p class="tariff__description">Built for businesses & corporations</p>
                             </div>
                             <button class="tariff__button third__tariff-button">Select plan</button>
@@ -1750,10 +1750,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- File Tabs -->
         <div id="ide-file-tabs" style="display:flex; align-items:stretch; height:100%; overflow-x:auto; flex:1;">
-            <div class="ide-ftab active" onclick="openEditorTab(event,'html')" data-lang="html" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e06c75;white-space:nowrap;background:#0d0d0f;border-top:2px solid #528bff;">рџ“„ index.html</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'css')" data-lang="css" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#61afef;white-space:nowrap;background:transparent;">рџЋЁ style.css</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'js')" data-lang="js" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e5c07b;white-space:nowrap;background:transparent;">вљЎ script.js</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'py')" data-lang="py" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#c678dd;white-space:nowrap;background:transparent;">рџђЌ main.py</div>
+            <div class="ide-ftab active" onclick="openEditorTab(event,'html')" data-lang="html" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e06c75;white-space:nowrap;background:#0d0d0f;border-top:2px solid #528bff;">📄 index.html</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'css')" data-lang="css" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#61afef;white-space:nowrap;background:transparent;">🎨 style.css</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'js')" data-lang="js" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e5c07b;white-space:nowrap;background:transparent;">⚡ script.js</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'py')" data-lang="py" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#c678dd;white-space:nowrap;background:transparent;">🐍 main.py</div>
         </div>
 
         <!-- Close button -->
@@ -1765,12 +1765,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- Right controls -->
         <div style="display:flex;gap:10px;align-items:center;margin-left:auto;flex-shrink:0;">
             <div style="display:flex;background:#252529;border-radius:8px;padding:3px;gap:2px;">
-                <button id="layout-split" onclick="window.setIDELayout('split')" title="Split" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">в—§ Split</button>
-                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Editor only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">в–Ј Code</button>
-                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Preview only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">в–ў Preview</button>
+                <button id="layout-split" onclick="window.setIDELayout('split')" title="Split" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
+                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Editor only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◣ Code</button>
+                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Preview only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◟ Preview</button>
             </div>
             <div id="ide-status-pill" style="background:#1a1a1e;border:1px solid #333;border-radius:20px;padding:5px 14px;font-size:12px;color:#888;"><span id="ide-cursor-pos">Ln 1, Col 1</span></div>
-            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">в–¶ Run</button>
+            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Run</button>
         </div>
     </div>
 
@@ -1781,10 +1781,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div id="ide-sidebar" style="width:200px;background:#141416;border-right:1px solid #222;display:flex;flex-direction:column;flex-shrink:0;">
             <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Files</div>
             <div style="padding:6px 0;">
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">рџ“„ index.html</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">рџЋЁ style.css</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e5c07b;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">вљЎ script.js</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" style="padding:6px 14px 6px 24px;font-size:13px;color:#c678dd;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">рџђЌ main.py</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">📄 index.html</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🎨 style.css</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e5c07b;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">⚡ script.js</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" style="padding:6px 14px 6px 24px;font-size:13px;color:#c678dd;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🐍 main.py</div>
             </div>
             <div style="margin-top:auto;padding:10px 14px;border-top:1px solid #1e1e1e;font-size:11px;color:#444;">Solifon Code v2.6</div>
         </div>
@@ -1801,7 +1801,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
             </div>
             <div style="background:#2ea043;padding:3px 16px;display:flex;align-items:center;gap:16px;font-size:11px;color:#fff;flex-shrink:0;">
-                <span>вњ“ Solifon Code</span>
+                <span>✔ Solifon Code</span>
                 <span style="margin-left:auto;" id="ide-lines-count"></span>
             </div>
         </div>
@@ -1809,8 +1809,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- PREVIEW PANE -->
         <div id="ide-preview-pane" style="flex:1;display:flex;flex-direction:column;border-left:1px solid #222;min-width:0;">
             <div style="background:#181820;padding:6px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;flex-shrink:0;">
-                <span style="font-size:12px;color:#555;">рџ”’ Sneak peek</span>
-                <button onclick="runEditorCode()" title="Refresh" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">в†»</button>
+                <span style="font-size:12px;color:#555;">🔒 Sneak peek</span>
+                <button onclick="runEditorCode()" title="Refresh" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
             </div>
             <iframe id="editor-preview-window" style="width:100%;flex:1;border:none;"></iframe>
         </div>
@@ -2233,7 +2233,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 z-index: 20;
             }
             .wp-btn.active::after {
-                content: 'вњ“';
+                content: '✔';
                 position: absolute;
                 top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5);
@@ -2255,7 +2255,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         transform: scale(0.95) !important;
                     }
                     .wp-btn.active::after {
-                        content: 'вњ“';
+                        content: '✔';
                         position: absolute;
                         top: 50%; left: 50%; transform: translate(-50%, -50%);
                         font-size: 40px; color: #fff; font-weight: bold;
