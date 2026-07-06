@@ -392,10 +392,10 @@ body {
 /* Фикс панелей */
 .chat-panel, .library-panel {
     position: absolute;
-    top: 70px; /* Оставляем место под логотип */
+    top: 0; /* Оставляем место под логотип */
     left: 100%; 
     width: 100%;
-    height: calc(100% - 70px);
+    height: 100%;
     background: var(--sidebar-bg);
     padding: 10px 20px;
     display: flex;
