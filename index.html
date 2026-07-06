@@ -1838,7 +1838,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         /* CodeMirror fills 100% */
-        #presentation-screen .CodeMirror {
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror {
             flex: 1;
             width: 100% !important;
             height: 100% !important;
@@ -1847,23 +1847,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             line-height: 1.7 !important;
             background: #1e1e2e !important;
         }
-        #presentation-screen .CodeMirror-wrap { height: 100% !important; }
-        #presentation-screen .CodeMirror-scroll {
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-wrap { height: 100% !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-scroll {
             height: 100% !important;
             overflow-x: auto !important;
             overflow-y: auto !important;
         }
-        #presentation-screen .CodeMirror-sizer { min-height: 100% !important; }
-        #presentation-screen .CodeMirror-gutters {
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-sizer { min-height: 100% !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-gutters {
             background: #181825 !important;
             border-right: 1px solid #252530 !important;
             min-width: 48px;
             height: 100% !important;
         }
-        #presentation-screen .CodeMirror-linenumber { color: #3d3d5c !important; padding: 0 12px 0 8px !important; }
-        #presentation-screen .CodeMirror-cursor { border-left: 2px solid #528bff !important; }
-        #presentation-screen .CodeMirror-selected { background: rgba(82,139,255,0.2) !important; }
-        #presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.03) !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-linenumber { color: #3d3d5c !important; padding: 0 12px 0 8px !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-cursor { border-left: 2px solid #528bff !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-selected { background: rgba(82,139,255,0.2) !important; }
+        #presentation-screen .CodeMirror, .ide-container .CodeMirror-activeline-background { background: rgba(255,255,255,0.03) !important; }
 
         /* No black gap — fill with editor bg color */
         #ide-editor-pane { background: #1e1e2e; }
