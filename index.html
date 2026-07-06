@@ -158,7 +158,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="library-panel" id="libraryPanel">
         <div class="library-header">
-            <button class="back-btn" id="closeLibrary">
+            <button class="back-btn" id="closeLibrary" onclick="document.getElementById('sidebar').classList.remove('library-active'); document.getElementById('libraryTrigger')?.classList.remove('active');">
                 <i class="ph ph-arrow-left"></i>
             </button>
             <h2>Library</h2>
@@ -174,13 +174,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div class="chat-panel" id="chatPanel">
         <div class="library-header">
-            <button class="back-btn" id="closeChat">                <i class="ph ph-arrow-left"></i>            </button>
-            <h2>Chat History</h2>
+            <button class="back-btn" id="closeChat" onclick="document.getElementById('sidebar').classList.remove('chat-active'); document.getElementById('chatTrigger')?.classList.remove('active');">                <i class="ph ph-arrow-left"></i>            </button>
+            <h2>History of Chat</h2>
         </div>
         <div class="library-body">
             <div class="empty-library">
                 <i class="ph ph-clock-counter-clockwise"></i>
-                <p>Chat history is empty</p>
+                <p>The chat history is empty</p>
             </div>
             <div id="chatHistoryItems"></div>
         </div>
