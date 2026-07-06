@@ -4482,18 +4482,11 @@ body::before { display: none; content: none; }
 		animation: move-gradient 0.6s linear;
 	}
 
-	.first__tariff-button:hover {
-		color: transparent;
-		border-color: transparent;
-	}
-
-	.second__tariff-button:hover {
-		background-position: right center;
-	}
-
+	.first__tariff-button:hover,
+	.second__tariff-button:hover,
 	.third__tariff-button:hover {
-		color: var(--tariff-color-green);
-		border-color: var(--tariff-color-green);
+		transform: scale(1.03);
+		filter: brightness(1.1);
 	}
 }
 
@@ -5158,3 +5151,65 @@ body.chat-started .suggestion-btn {
     100% { transform: translateY(0px); }
 }
 
+
+/* MINIMAL DOCK */
+.dock-container {
+    position: relative;
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.dock-inner {
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(20, 20, 20, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    z-index: 2;
+    position: relative;
+}
+
+.dock-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dock-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transform: translateY(-2px) scale(1.1);
+}
+
+.dock-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.dock-reflection {
+    position: absolute;
+    top: 100%;
+    left: 10%;
+    width: 80%;
+    height: 30px;
+    background: rgba(20, 20, 20, 0.4);
+    border-radius: 20px;
+    filter: blur(8px);
+    transform: scaleY(-1);
+    opacity: 0.5;
+    z-index: 1;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    pointer-events: none;
+}
