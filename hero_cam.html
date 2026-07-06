@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   
-  <!-- Бесплатные библиотеки Google MediaPipe (CDN) -->
+  <!-- Р‘РµСЃРїР»Р°С‚РЅС‹Рµ Р±РёР±Р»РёРѕС‚РµРєРё Google MediaPipe (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   
@@ -35,19 +35,20 @@
       flex:1; background:#0a0a14; border-radius:8px 8px 0 0; overflow:hidden; position:relative;
     }
 
-    /* Видео и канвасы */
+    /* Р’РёРґРµРѕ Рё РєР°РЅРІР°СЃС‹ */
     #camVideo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:none; }
-    #drawCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:10; }
+    #drawCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:20; }
     
-    /* Заглушка, когда камера выключена */
+    /* Р—Р°РіР»СѓС€РєР°, РєРѕРіРґР° РєР°РјРµСЂР° РІС‹РєР»СЋС‡РµРЅР° */
     .cam-ph {
       position:absolute; inset:0; display:flex; flex-direction:column;
       align-items:center; justify-content:center; gap:10px; background:#0a0a14; color:#444; font-size:13px;
     }
     .cam-ph svg { opacity:.25; }
 
-    /* Окно проверки подписки */
+    /* РћРєРЅРѕ РїСЂРѕРІРµСЂРєРё РїРѕРґРїРёСЃРєРё */
     #premiumLock {
+
       display:flex; position:absolute; inset:0; background:rgba(0,0,0,.85);
       backdrop-filter:blur(8px); z-index:50; flex-direction:column;
       align-items:center; justify-content:center; gap:14px; text-align:center; padding:20px;
@@ -66,7 +67,7 @@
     }
     #lockError { color:#ef4444; font-size:13px; display:none; font-weight:600; }
 
-    /* Палитра цветов */
+    /* РџР°Р»РёС‚СЂР° С†РІРµС‚РѕРІ */
     #colorBar {
       display:none; position:absolute; top:10px; left:10px; z-index:30;
       flex-direction:column; gap:8px;
@@ -83,14 +84,14 @@
       cursor:pointer; display:flex; align-items:center; justify-content:center;
     }
 
-    /* Подсказка */
+    /* РџРѕРґСЃРєР°Р·РєР° */
     #hint {
       display:none; position:absolute; top:10px; left:50%; transform:translateX(-50%);
       background:rgba(0,0,0,.7); backdrop-filter:blur(6px); color:#fff; font-size:12px;
       font-weight:600; padding:6px 16px; border-radius:20px; white-space:nowrap; z-index:30;
     }
 
-    /* Индикатор жестов */
+    /* РРЅРґРёРєР°С‚РѕСЂ Р¶РµСЃС‚РѕРІ */
     #gestureIndicator {
       position: absolute; bottom: 16px; right: 16px; z-index: 30;
       background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); border-radius: 20px;
@@ -99,7 +100,7 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s;
     }
     
-    /* Таймер фото */
+    /* РўР°Р№РјРµСЂ С„РѕС‚Рѕ */
     #photoTimer {
       display: none; position: absolute; z-index: 40;
       align-items: center; justify-content: center;
@@ -112,21 +113,21 @@
     
     #uiCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:15; }
 
-    /* Вспышка */
+    /* Р’СЃРїС‹С€РєР° */
     #photoFlash {
       display: none; position: absolute; inset: 0; background: #fff; z-index: 45;
     }
 
   </style>
 
-  <!-- Строго отделенный JS для рисования -->
+  <!-- РЎС‚СЂРѕРіРѕ РѕС‚РґРµР»РµРЅРЅС‹Р№ JS РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ -->
   <script src="air_canvas.js?v=10" defer></script>
 </head>
 <body>
 
 <div class="hero-text">
-  <div class="sub">Watch a Video, then</div>
-  <div class="main">build your App in <span class="hour">1 hour</span></div>
+  <div class="sub">Try out our</div>
+  <div class="main">New Feature <span class="hour">now</span></div>
 </div>
 
 <div class="tablet-outer">
@@ -142,40 +143,41 @@
         <span>Camera is off</span>
       </div>
 
-      <!-- Камера -->
+      <!-- РљР°РјРµСЂР° -->
       <video id="camVideo" autoplay playsinline muted></video>
 
-      <!-- Холст для рисования -->
+      <!-- РҐРѕР»СЃС‚ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ -->
       <canvas id="uiCanvas"></canvas>
       <canvas id="drawCanvas"></canvas>
 
-      <!-- Панель управления (цвета) -->
-      <div id="colorBar">
+      <!-- РџР°РЅРµР»СЊ СѓРїСЂР°РІР»РµРЅРёСЏ (С†РІРµС‚Р°) -->
+      <div id="colorBar" style="display:flex;">
         <div class="cb-swatch active" style="background:#ef4444" data-color="#ef4444"></div>
         <div class="cb-swatch" style="background:#3b82f6" data-color="#3b82f6"></div>
         <div class="cb-swatch" style="background:#10b981" data-color="#10b981"></div>
         <div class="cb-swatch" style="background:#f59e0b" data-color="#f59e0b"></div>
         <div class="cb-swatch" style="background:#ffffff" data-color="#ffffff"></div>
-        <button id="clearBtn" title="Clear">✕</button>
+        <div class="cb-swatch" style="background:#a855f7" data-color="#a855f7"></div>
+        <div class="cb-swatch" style="background:#ec4899" data-color="#ec4899"></div>
+        <button id="clearBtn" title="Clear">✖</button>
       </div>
 
-      <!-- Экран проверки подписки -->
-      <div id="premiumLock">
-        <div class="lock-icon">🔒</div>
-        <h3>Air Canvas</h3>
-        <p>Air Canvas requires a subscription. Enter access token:</p>
-        <input id="tokenInput" type="password" placeholder="Token (secret_paid_token_123)"/>
-        <div id="lockError">Invalid token</div>
-        <button id="authBtn">Activate camera</button>
+      <!-- Р­РєСЂР°РЅ РїСЂРѕРІРµСЂРєРё РїРѕРґРїРёСЃРєРё -->
+      <div id="premiumLock" style="display: flex;">
+        <div class="lock-icon" style="font-size: 40px; margin-bottom: 10px;">🎥</div>
+        <h3>Air Canvas Elite</h3>
+        <p>Experience the 20-gesture advanced drawing system.</p>
+        <button id="authBtn" onclick="window.parent.postMessage('startCamera', '*')">Start Camera</button>
+        <button id="stopCamBtn" style="display: none; background: #ef4444; position: absolute; top: 25px; right: 90px; z-index: 9999;" onclick="window.parent.postMessage('stopCamera', '*')">Stop Camera</button>
       </div>
 
-      <!-- Подсказка -->
+      <!-- РџРѕРґСЃРєР°Р·РєР° -->
       <div id="hint"></div>
 
-      <!-- Индикатор жестов -->
-      <div id="gestureIndicator">👀 Waiting for gesture...</div>
+      <!-- Р˜РЅРґРёРєР°С‚РѕСЂ Р¶РµСЃС‚РѕРІ -->
+      <div id="gestureIndicator">✋ Waiting for gesture...</div>
       
-      <!-- Таймер и вспышка для фото -->
+      <!-- РўР°Р№РјРµСЂ Рё РІСЃРїС‹С€РєР° РґР»СЏ С„РѕС‚Рѕ -->
       <div id="directorBox"></div>
       <div id="photoTimer">3</div>
       <div id="photoFlash"></div>
@@ -186,3 +188,4 @@
 
 </body>
 </html>
+
