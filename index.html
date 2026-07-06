@@ -833,6 +833,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"
       style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
 
+    <div style="text-align: right; margin-bottom: 14px;">
+        <a href="#" onclick="resetPassword()" style="color: #00c8ff; font-size: 13px; text-decoration: none;">Forgot password?</a>
+    </div>
+
     <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
 
     <button id="authSubmitBtn" onclick="submitAuth()" 
@@ -869,81 +873,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="billing-toggle">
                     <button class="billing-btn active" data-period="month">1 Month</button>
                     <button class="billing-btn" data-period="year">1 Year</button>
-                    <button class="billing-btn" data-period="custom">Custom Selection</button>
-                </div>
-            </div>
-
-            <!-- Custom Months Slider UI -->
-            <style>
-                .premium-slider-container {
-                    text-align: center;
-                    margin-bottom: 40px;
-                    animation: fadeIn 0.4s ease;
-                }
-                .premium-slider-label {
-                    color: rgba(255,255,255,0.8);
-                    font-family: 'Inter', sans-serif;
-                    font-size: 15px;
-                    display: block;
-                    margin-bottom: 20px;
-                }
-                .premium-slider-value {
-                    color: #fff;
-                    font-weight: 700;
-                    font-size: 18px;
-                }
-                .premium-slider-wrapper {
-                    position: relative;
-                    width: 80%;
-                    max-width: 300px;
-                    margin: 0 auto;
-                }
-                .premium-slider {
-                    -webkit-appearance: none;
-                    width: 100%;
-                    height: 8px;
-                    background: linear-gradient(90deg, #9c40ff, #ffaa40);
-                    border-radius: 10px;
-                    outline: none;
-                    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(156, 64, 255, 0.4);
-                }
-                .premium-slider::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    appearance: none;
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #9c40ff;
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
-                    cursor: pointer;
-                    transition: transform 0.25s ease, box-shadow 0.25s ease;
-                }
-                .premium-slider::-webkit-slider-thumb:hover {
-                    transform: scale(1.2);
-                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
-                }
-                .premium-slider::-moz-range-thumb {
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #9c40ff;
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
-                    cursor: pointer;
-                    transition: transform 0.25s ease, box-shadow 0.25s ease;
-                }
-                .premium-slider::-moz-range-thumb:hover {
-                    transform: scale(1.2);
-                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
-                }
-            </style>
-            <div id="custom-months-container" class="premium-slider-container" style="display: none;">
-                <label for="customMonthsRange" class="premium-slider-label">
-                    Selected: <span id="customMonthsValue" class="premium-slider-value">5 Months</span>
-                </label>
-                <div class="premium-slider-wrapper">
-                    <input type="range" id="customMonthsRange" class="premium-slider" min="2" max="24" value="5">
                 </div>
             </div>
 
@@ -983,6 +912,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                         </svg>
                                     </div>
                                     <p class="tariff__item-text">Smart Web Context</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Standard Processing Speed</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Email support</p>
                                 </div>
                             </div>
                         </div>
@@ -1031,91 +976,76 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     </div>
                                     <p class="tariff__item-text">Smart Web Context</p>
                                 </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Fast API Processing</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Priority chat support</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Third Tariff-->
-                    <div class="tariff third-tariff">
-                        <div class="tariff__gradient"></div>
+                    <div class="tariff third-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(255, 215, 0, 0.3);">
+                        <style>
+                            @keyframes pulseGlow { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
+                        </style>
+                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #FFD700, #ff8c00, #ff0080); animation: pulseGlow 3s infinite alternate;"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type third__tariff-type">Solifon Alpha</span>
+                                <span class="tariff__type third__tariff-type" style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">Solifon Alpha</span>
                                 <div class="tariff__price"><span class="tariff__number">$119.99</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">The ultimate AI workspace for creators and businesses.</p>
+                                <p class="tariff__description">The ultimate AI workspace for creators and businesses. Maximum power without limits.</p>
                             </div>
-                            <button class="tariff__button third__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/a07f7b65-bd2c-4a86-b909-f3ea8a56d390'">Buy Alpha</button>
+                            <button class="tariff__button third__tariff-button" style="background: linear-gradient(90deg, #ff8c00, #ff0080); box-shadow: 0 0 15px rgba(255, 0, 128, 0.6); border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/a07f7b65-bd2c-4a86-b909-f3ea8a56d390'">Buy Alpha</button>
                             <div class="tariff__list third__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                        </svg>
+                                    <p class="tariff__item-text">All features from Max Plan</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    </div>
+                                    <p class="tariff__item-text">Unlimited Image Generation</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    </div>
+                                    <p class="tariff__item-text">Advanced Computer Vision</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    </div>
+                                    <p class="tariff__item-text">Priority API Processing</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
                                     <p class="tariff__item-text">Dedicated account manager</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">24/7 priority support</p>
+                                    <p class="tariff__item-text">24/7 VIP support</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fourth Tariff (Coming Soon) -->
-                    <div class="tariff fourth-tariff" style="position: relative;">
-                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #ff0050, #00f2fe);"></div>
-                        <div class="tariff__content" style="pointer-events: none; opacity: 0.6; filter: grayscale(50%);">
-                            <div class="tariff__info">
-                                <div class="tariff__info-top"><span class="tariff__type fourth__tariff-type">SMM Business</span><span class="tariff__tag" style="background: #ff0050; color: white;">Coming Soon</span></div>
-                                <div class="tariff__price">???<span class="tariff__period">/mo</span></div>
-                                <p class="tariff__description">AI for managing TikTok, Instagram and social networks</p>
-                            </div>
-                            <button class="tariff__button fourth__tariff-button" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255, 255, 255, 0.1);">In development</button>
-                            <div class="tariff__list fourth__tariff-checkbox-list">
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Integration with TikTok & Instagram</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Auto-posting and reel generation</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Audience and trend analytics</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">SMM AI strategies</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 10; background: rgba(0,0,0,0.2); border-radius: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(1.5px);">
-                            <div style="background: rgba(255, 0, 80, 0.9); padding: 10px 25px; border-radius: 20px; font-weight: bold; color: white; transform: rotate(-5deg); box-shadow: 0 5px 15px rgba(255,0,80,0.4); border: 1px solid rgba(255,255,255,0.2); font-family: 'Poppins', sans-serif;">
-                                SOON
                             </div>
                         </div>
                     </div>
