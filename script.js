@@ -1702,8 +1702,8 @@ function initLumifexEditors() {
   <div class="hero">
     <div class="badge">✦ Solifon Code</div>
     <h1>Hello, <span class="accent">World</span>!</h1>
-    <p>Р В Р ВµР Т‘Р В°Р С”РЎвЂљР С‘РЎР‚РЎС“Р в„– Р С”Р С•Р Т‘ РІР‚вЂќ Р Р†Р С‘Р Т‘РЎРЉ РЎР‚Р ВµР В·РЎС“Р »РЎРЉРЎвЂљР В°РЎвЂљ Р Р† РЎР‚Р ВµР В°Р »РЎРЉР Р…Р С•Р С Р Р†РЎР‚Р ВµР СР ВµР Р…Р С‘.</p>
-    <button onclick="greet()">Р СњР В°Р В¶Р СР С‘ Р СР ВµР Р…РЎРЏ</button>
+    <p>Edit code and see the result in real-time.</p>
+    <button onclick="greet()">Click me</button>
   </div>
 </body>
 </html>`);
@@ -4308,4 +4308,3 @@ window.openVirtualBoard = function() {
     // Start
     setTimeout(animatePlaceholder, 1000);
 })();
-
