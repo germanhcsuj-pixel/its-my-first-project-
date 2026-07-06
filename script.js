@@ -349,7 +349,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!', 'РЎР‚РЎСџРІР‚СњР’В¬ Р вЂєР С‘Р СР С‘РЎвЂљ Deep Mode Р С‘РЎРѓРЎвЂЎР ВµРЎР‚Р С—Р В°Р Р…. Р Р€ Р Р†Р В°РЎРѓ Р ВµРЎРѓРЎвЂљРЎРЉ 5 Р В·Р В°Р С—РЎР‚Р С•РЎРѓР С•Р Р† Р Р† Р Т‘Р ВµР Р…РЎРЉ. Р СџР С•Р С—РЎР‚Р С•Р В±РЎС“Р в„–РЎвЂљР Вµ Р В·Р В°Р Р†РЎвЂљРЎР‚Р В°!');
+        addMessageToUI('рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!', 'РЎР‚РЎСџРІР‚СњР’В¬ Р вЂєР С‘Р С˜Р С‘РЎвЂљ Deep Mode Р С‘РЎРѓРЎвЂЎР ВµРЎР‚Р С—Р В°Р Р…. Р Р€ Р Р†Р В°РЎРѓ Р ВµРЎРѓРЎвЂљРЎРЉ 5 Р В·Р В°Р С—РЎР‚Р С•РЎРѓР С•Р Р† Р Р† Р Т‘Р ВµР Р…РЎРЉ. Р СџР С•Р С—РЎР‚Р С•Р В±РЎС“Р в„–РЎвЂљР Вµ Р В·Р В°Р Р†РЎвЂљРЎР‚Р В°!');
         return false;
     }
     return true;
@@ -390,6 +390,15 @@ function typeEffect(element, text) {
     const textContainer = element.querySelector('.text');
     if (!textContainer) return;
     const cleanText = (text || "").trim();
+
+    // Hide deep mode steps gracefully
+    const deepSteps = textContainer.closest('.message').querySelector('.ai-thinking-steps');
+    if (deepSteps) {
+        deepSteps.style.transition = 'opacity 0.5s ease, max-height 0.5s ease';
+        deepSteps.style.opacity = '0';
+        deepSteps.style.maxHeight = '0';
+        setTimeout(() => deepSteps.remove(), 500);
+    }
     
     let typeSpan = textContainer.querySelector('.typed-content');
     if (!typeSpan) {
@@ -402,19 +411,48 @@ function typeEffect(element, text) {
     let i = 0;
     const interval = setInterval(() => {
         if (i < cleanText.length) {
-            i++;
-            // Р СџР С•Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµР С Р Р…Р В°Р С”Р С•Р С—Р »Р ВµР Р…Р Р…РЎвЂ№Р в„– РЎвЂљР ВµР С”РЎРѓРЎвЂљ РЎРѓ РЎвЂћР С•РЎР‚Р СР В°РЎвЂљР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р ВµР С
+            i += Math.floor(Math.random() * 4) + 3; 
+            if (i > cleanText.length) i = cleanText.length;
+            
             const partial = cleanText.slice(0, i);
             typeSpan.innerHTML = partial
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #00c8ff;">$1</strong>')
                 .replace(/\n/g, '<br>');
             const container = document.getElementById('messagesContainer');
             if (container) container.scrollTop = container.scrollHeight;
         } else {
             clearInterval(interval);
+            if (typeof addMinimalDock === 'function') {
+                addMinimalDock(textContainer);
+            }
         }
-    }, 12);
+    }, 10);
 }
+
+function addMinimalDock(container) {
+    const dockContainer = document.createElement('div');
+    dockContainer.innerHTML = `
+        <div class="dock-container" style="margin-top: 15px;">
+          <div class="dock-inner">
+            <button class="dock-btn" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.text').querySelector('.typed-content').innerText)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+            <button class="dock-btn" title="Like">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
+            </button>
+            <button class="dock-btn" title="Dislike">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-down"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
+            </button>
+            <button class="dock-btn" title="Refresh">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </button>
+          </div>
+          <div class="dock-reflection"></div>
+        </div>
+    `;
+    container.appendChild(dockContainer.firstElementChild);
+}
+
 
 function renderMediaInMessage(containerElement, mediaUrl) {
     const textContainer = containerElement.querySelector('.text');
