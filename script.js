@@ -4400,3 +4400,140 @@ window.openVirtualBoard = function() {
     // Start
     setTimeout(animatePlaceholder, 1000);
 })();
+
+
+// ==========================================
+// GOOGLE DRIVE & DOCS INTEGRATION
+// ==========================================
+const CLIENT_ID = '1025199836674-lrrirvhvg3f5t9su2nckg7k0k0hr3h9v.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyAv8nCfVZKTAMJUQy9xrqP91-0dnkdgJ90';
+
+const DISCOVERY_DOCS = [
+    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
+    'https://docs.googleapis.com/$discovery/rest?version=v1'
+];
+const SCOPES = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/documents';
+
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+let oauthToken = null;
+
+function gapiLoaded() {
+    gapi.load('client:picker', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+    await gapi.client.init({
+        apiKey: API_KEY,
+        discoveryDocs: DISCOVERY_DOCS,
+    });
+    gapiInited = true;
+    console.log("GAPI Initialized");
+}
+
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (response) => {
+            if (response.error !== undefined) {
+                throw (response);
+            }
+            oauthToken = response.access_token;
+            createPicker();
+        },
+    });
+    gisInited = true;
+    console.log("GIS Initialized");
+}
+
+function handleAuthClick() {
+    if (oauthToken) {
+        // У нас уже есть токен, просто открываем пикер
+        createPicker();
+    } else {
+        // Спрашиваем доступ
+        tokenClient.requestAccessToken({prompt: 'consent'});
+    }
+}
+
+function createPicker() {
+    const view = new google.picker.DocsView(google.picker.ViewId.DOCS);
+    view.setIncludeFolders(true);
+    
+    const picker = new google.picker.PickerBuilder()
+        .enableFeature(google.picker.Feature.NAV_HIDDEN)
+        .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+        .setDeveloperKey(API_KEY)
+        .setOAuthToken(oauthToken)
+        .addView(view)
+        .addView(new google.picker.DocsUploadView())
+        .setCallback(pickerCallback)
+        .build();
+    picker.setVisible(true);
+}
+
+async function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+        const file = data.docs[0];
+        const fileId = file.id;
+        const mimeType = file.mimeType;
+        
+        console.log(`Выбран файл: ${file.name} (ID: ${fileId}, Type: ${mimeType})`);
+        
+        let content = "";
+        
+        try {
+            if (mimeType === 'application/vnd.google-apps.document') {
+                // Если это Google Docs
+                const response = await gapi.client.docs.documents.get({ documentId: fileId });
+                content = readDocsContent(response.result.body.content);
+            } else {
+                // Если это обычный текстовый файл
+                const response = await gapi.client.drive.files.get({ fileId: fileId, alt: 'media' });
+                content = response.body;
+            }
+            
+            // Добавляем файл в интерфейс
+            addGoogleDriveFileToUI(file.name, content);
+            
+        } catch (error) {
+            console.error("Ошибка загрузки файла", error);
+            alert("Не удалось прочитать файл. Убедитесь, что это текстовый документ.");
+        }
+    }
+}
+
+function readDocsContent(contentElements) {
+    let text = "";
+    contentElements.forEach(element => {
+        if (element.paragraph) {
+            element.paragraph.elements.forEach(el => {
+                if (el.textRun) {
+                    text += el.textRun.content;
+                }
+            });
+        }
+    });
+    return text;
+}
+
+function addGoogleDriveFileToUI(fileName, content) {
+    // Используем уже готовую функцию handleFileSelect из скрипта
+    // Создаем искусственный File объект
+    const blob = new Blob([content], { type: 'text/plain' });
+    const file = new File([blob], fileName, { type: 'text/plain' });
+    
+    // Эмулируем выбор файла
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    
+    const fileInput = document.getElementById('fileInput');
+    fileInput.files = dataTransfer.files;
+    
+    // Вызываем существующее событие
+    const event = new Event('change');
+    fileInput.dispatchEvent(event);
+}
+
