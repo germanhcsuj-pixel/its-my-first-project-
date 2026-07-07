@@ -3,47 +3,18 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-  SOLIFON AI — PWA PATCH
-  
-  INSTRUCTION: Add these blocks to index.html
 
-  в‘  Block 1 в†’ insert inside <head>
-<meta charset="UTF-8"> ... </head>
-
-<script>
-window.addEventListener('message', function(event) {
-    if (event.data === 'toggleCamera') {
-        if (window.toggleAirCanvas) window.toggleAirCanvas();
-    }
-    if (event.data === 'startCamera') {
-        if (window.startHeroCamera) window.startHeroCamera();
-    }
-    if (event.data === 'stopCamera') {
-        if (window.stopHeroCamera) window.stopHeroCamera();
-    }
-    if (event.data === 'closeNewFeatureModal') {
-        if (window.closeModal) window.closeModal('newFeatureModal');
-    }
-});
-</script>
 
     
 
 
 
 
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-</body>
-
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     BLOCK 1 — Insert into <head>
+
+
 <meta charset="UTF-8">
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
@@ -63,15 +34,7 @@ window.addEventListener('message', function(event) {
 
   
   <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
 <!-- End Google Tag Manager -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOLIFON AI</title>
@@ -86,6 +49,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
+    <!-- Google API & GIS -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </head>
 <body class="no-select">
   <!-- Google Tag Manager (noscript) -->
@@ -343,6 +309,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button type="button" class="action-icon-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
                     <i class="ph ph-paperclip"></i>
                 </button>
+                <button type="button" class="action-icon-btn" id="googleDriveBtn" onclick="handleAuthClick()" title="Google Drive">
+                    <i class="ph ph-google-drive-logo"></i>
+                </button>
                 <button type="button" class="action-icon-btn" id="micBtn" title="Voice Input">
                     <i class="ph ph-microphone"></i>
                 </button>
@@ -404,6 +373,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         border-radius: 50%;
                         box-shadow: 0 0 6px #fff;
                     }
+                    .mmd-option.locked {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                    .mmd-option.locked:hover {
+                        background: transparent;
+                        padding-left: 14px;
+                    }
+                    .mmd-pro-badge {
+                        margin-left: auto;
+                        font-size: 10px;
+                        background: linear-gradient(90deg, #c7fe42, #7efde3);
+                        color: #000;
+                        padding: 2px 6px;
+                        border-radius: 6px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        display: flex;
+                        align-items: center;
+                        gap: 3px;
+                    }
+
                     #modelMiniBtn {
                         border-radius: 14px;
                         padding: 0 16px;
@@ -444,10 +435,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </button>
                     <div id="modelMiniDropdown" class="mmd-dropdown">
                         <div class="mmd-option active" data-value="gemini">Solifon Air</div>
-                        <div class="mmd-option" data-value="solifon-souldrive">Solifon SoulDrive</div>
-                        <div class="mmd-option" data-value="github">Solifon Ultra</div>
-                        <div class="mmd-option" data-value="solifon-pulse">Solifon Pulse</div>
-                        <div class="mmd-option" data-value="solifon-loom">Solifon Loom</div>
+                        <div class="mmd-option locked" data-value="solifon-souldrive">Solifon SoulDrive <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="github">Solifon Ultra <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="solifon-pulse">Solifon Pulse <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="solifon-loom">Solifon Loom <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
                     </div>
                 </div>
 
@@ -528,7 +519,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
 
             mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
-                opt.addEventListener('click', () => {
+                opt.addEventListener('click', (e) => {
+                    if (opt.classList.contains('locked')) {
+                        e.stopPropagation();
+                        if (typeof openModal === 'function') {
+                            openModal('upgradeModal');
+                        } else {
+                            alert("This is a Premium model! Pro subscription is required.");
+                        }
+                        mmdDropdown.classList.remove('open');
+                        miniBtn.classList.remove('open');
+                        return;
+                    }
                     const val = opt.getAttribute('data-value');
                     const shortName = mmdShortNames[val] || val;
                     if (miniName) miniName.textContent = shortName;
@@ -2630,6 +2632,97 @@ window.addEventListener('message', function(event) {
 
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+
+        <script>
+            // --- Premium Logic ---
+            function unlockPremiumModels() {
+                const lockedModels = document.querySelectorAll('.mmd-option.locked');
+                lockedModels.forEach(model => {
+                    model.classList.remove('locked');
+                    const badge = model.querySelector('.mmd-pro-badge');
+                    if (badge) badge.style.display = 'none';
+                });
+            }
+            
+            function checkUserPremiumStatus(user) {
+                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
+                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
+                if (user) {
+                    unlockPremiumModels();
+                }
+            }
+            
+            // Хук для проверки авторизации
+            document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => {
+                    if (typeof firebase !== 'undefined') {
+                        firebase.auth().onAuthStateChanged((user) => {
+                            checkUserPremiumStatus(user);
+                        });
+                    }
+                }, 2000);
+            });
+            // ---------------------
+        </script>
+    <script>
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'startCamera') {
+        if (window.startHeroCamera) window.startHeroCamera();
+    }
+    if (event.data === 'stopCamera') {
+        if (window.stopHeroCamera) window.stopHeroCamera();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+        <script>
+            // --- Premium Logic ---
+            function unlockPremiumModels() {
+                const lockedModels = document.querySelectorAll('.mmd-option.locked');
+                lockedModels.forEach(model => {
+                    model.classList.remove('locked');
+                    const badge = model.querySelector('.mmd-pro-badge');
+                    if (badge) badge.style.display = 'none';
+                });
+            }
+            
+            function checkUserPremiumStatus(user) {
+                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
+                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
+                if (user) {
+                    unlockPremiumModels();
+                }
+            }
+            
+            // Хук для проверки авторизации
+            document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => {
+                    if (typeof firebase !== 'undefined') {
+                        firebase.auth().onAuthStateChanged((user) => {
+                            checkUserPremiumStatus(user);
+                        });
+                    }
+                }, 2000);
+            });
+            // ---------------------
+        </script>
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
+
 </body>
+
 
 </html>
