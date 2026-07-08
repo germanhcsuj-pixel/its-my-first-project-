@@ -233,12 +233,21 @@ function loadChatHistory() {
         item.innerHTML = `
             <div style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; position: relative; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s;"
                  onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                 onmouseout="this.style.background=''"
-                 onclick="window.restoreSession('${sessionId}')">
-                <i class="ph ph-chat-teardrop-text" style="color: #00f2ff; opacity: 0.8; font-size: 16px;"></i>
-                <p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity:0.9; flex: 1;">
-                    ${title}
-                </p>
+                 onmouseout="this.style.background=''">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;" onclick="window.restoreSession('${sessionId}')">
+                    <i class="ph ph-chat-teardrop-text" style="color: #00f2ff; opacity: 0.8; font-size: 16px;"></i>
+                    <p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity:0.9; flex: 1;">
+                        ${title}
+                    </p>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                    <button class="fav-session-btn" onclick="event.stopPropagation(); window.toggleFavoriteSession('${sessionId}', this)" title="Add to Favorites" style="background:none;border:none;cursor:pointer;color:${sessionMsgs[0].isFavoriteSession ? '#ffcf33' : 'rgba(255,255,255,0.3)'};transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 4px;">
+                        <i class="${sessionMsgs[0].isFavoriteSession ? 'ph-fill ph-star' : 'ph ph-star'}"></i>
+                    </button>
+                    <button class="del-session-btn" onclick="event.stopPropagation(); window.deleteSession('${sessionId}', this)" title="Delete" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);transition:color 0.2s; padding: 4px;">
+                        <i class="ph ph-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
         historyContainer.appendChild(item);
@@ -264,7 +273,16 @@ window.restoreSession = function(sessionId) {
         if (msg.role === 'ai') {
             content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         }
-        addMessageToUI(msg.role, content);
+        const msgDiv = addMessageToUI(msg.role, content);
+        if (msg.role === 'ai' && msgDiv) {
+            const textContainer = msgDiv.querySelector('.text');
+            if (textContainer) {
+                textContainer.innerHTML = `<div class="typed-content" style="margin-top: 12px;">${content}</div>`;
+                if (typeof addMinimalDock === 'function') {
+                    addMinimalDock(textContainer);
+                }
+            }
+        }
     });
     
     const sidebar = document.getElementById('sidebar');
@@ -288,28 +306,100 @@ window.toggleFavorite = function(msgId, btnElement) {
     btnElement.classList.toggle('ph-star', !msg.isFavorite);
 };
 
+window.toggleFavoriteSession = function(sessionId, btnElement) {
+    const history = getLocalHistory();
+    const sessionMsgs = history.filter(m => (m.sessionId || 'legacy') === sessionId);
+    if(sessionMsgs.length > 0) {
+        const firstMsg = sessionMsgs[0];
+        const isCurrentlyFav = firstMsg.isFavoriteSession;
+        firstMsg.isFavoriteSession = !isCurrentlyFav;
+        const index = history.findIndex(m => m.id === firstMsg.id);
+        if(index > -1) {
+            history[index].isFavoriteSession = !isCurrentlyFav;
+            setLocalHistory(history);
+        }
+        
+        const icon = btnElement.querySelector('i');
+        if(!isCurrentlyFav) {
+            icon.classList.remove('ph');
+            icon.classList.add('ph-fill');
+            btnElement.style.color = '#ffcf33';
+            icon.style.animation = 'none';
+            void icon.offsetWidth;
+            icon.style.animation = 'starBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+        } else {
+            icon.classList.remove('ph-fill');
+            icon.classList.add('ph');
+            btnElement.style.color = 'rgba(255,255,255,0.3)';
+            icon.style.animation = 'none';
+            icon.style.filter = 'none';
+        }
+        
+        if(typeof loadLibrary === 'function') loadLibrary();
+    }
+};
+
+window.deleteSession = function(sessionId, btnElement) {
+    let history = getLocalHistory();
+    const isCurrent = window.currentSessionId === sessionId;
+    history = history.filter(m => (m.sessionId || 'legacy') !== sessionId);
+    setLocalHistory(history);
+    
+    const item = btnElement ? btnElement.closest('.history-item') : null;
+    if (item) {
+        item.style.transition = 'all 0.4s ease';
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        setTimeout(() => {
+            loadChatHistory();
+            if(typeof loadLibrary === 'function') loadLibrary();
+            if(isCurrent) {
+                window.clearChat();
+            }
+        }, 400);
+    } else {
+        loadChatHistory();
+        if(typeof loadLibrary === 'function') loadLibrary();
+        if(isCurrent) {
+            window.clearChat();
+        }
+    }
+};
+
 function loadLibrary() {
     const libraryContainer = document.getElementById('savedItemsContainer');
     if (!libraryContainer) return;
     
     libraryContainer.innerHTML = '';
     const history = getLocalHistory();
-    const favorites = history.filter(m => m.isFavorite);
+    const sessions = {};
+    history.forEach(msg => {
+        const sid = msg.sessionId || 'legacy';
+        if (!sessions[sid]) sessions[sid] = [];
+        sessions[sid].push(msg);
+    });
+    const favorites = Object.values(sessions).filter(sessionMsgs => sessionMsgs[0] && sessionMsgs[0].isFavoriteSession).map(sessionMsgs => sessionMsgs[0]);
     
+    const emptyEl = document.querySelector('#libraryPanel .empty-library');
     if (favorites.length === 0) {
-        libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Ваша библиотека пуста.<br>Отметьте важные сообщения звездочкой в чате.</div>';
+        if (emptyEl) emptyEl.style.display = 'flex';
         return;
     }
+    if (emptyEl) emptyEl.style.display = 'none';
     
     favorites.forEach((data) => {
         const item = document.createElement('div');
         item.className = 'library-item';
         item.innerHTML = `
-            <div style="padding: 15px; background: rgba(0, 242, 255, 0.03); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 12px; margin-bottom: 12px; position: relative; overflow: hidden; cursor: pointer;"
+            <div style="padding: 15px; background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 12px; margin-bottom: 12px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(10px);"
+                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,242,255,0.15)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';"
                  onclick="window.restoreSession('${data.sessionId}')">
-                <div style="font-size: 10px; color: #00f2ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; opacity: 0.7;">Saved Memory</div>
-                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #fff; opacity: 0.9;">${data.content}</p>
-                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: #00f2ff;"></div>
+                <div style="font-size: 10px; color: #00f2ff; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px;">
+                    <i class="ph-fill ph-star" style="color: #00f2ff;"></i> Saved Memory
+                </div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #fff; opacity: 0.9; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${data.content}</p>
+                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, #00f2ff, #0051ff);"></div>
             </div>
         `;
         libraryContainer.prepend(item);
@@ -434,17 +524,41 @@ function addMinimalDock(container) {
     dockContainer.innerHTML = `
         <div class="dock-container" style="margin-top: 15px;">
           <div class="dock-inner">
-            <button class="dock-btn" title="Copy" onclick="navigator.clipboard.writeText(this.closest('.text').querySelector('.typed-content').innerText)">
+            <button class="dock-btn" title="Copy" onclick="
+                const tc = this.closest('.text').querySelector('.typed-content');
+                const textToCopy = tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, '');
+                navigator.clipboard.writeText(textToCopy);
+                const svg = this.querySelector('svg');
+                svg.innerHTML = '<polyline points=\\\'20 6 9 17 4 12\\\'></polyline>';
+                this.style.color = '#00c8ff';
+                setTimeout(() => {
+                    svg.innerHTML = '<rect width=\\\'14\\\' height=\\\'14\\\' x=\\\'8\\\' y=\\\'8\\\' rx=\\\'2\\\' ry=\\\'2\\\'/><path d=\\\'M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\\\'/>';
+                    this.style.color = '';
+                }, 2000);
+            ">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
             </button>
-            <button class="dock-btn" title="Like">
+            <button class="dock-btn" title="Like" onclick="this.style.color='#00ff88'; this.style.transform='scale(1.2)'; setTimeout(()=>this.style.transform='scale(1)', 200)">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
             </button>
-            <button class="dock-btn" title="Dislike">
+            <button class="dock-btn" title="Dislike" onclick="this.style.color='#ff5555'; this.style.transform='scale(1.2)'; setTimeout(()=>this.style.transform='scale(1)', 200)">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-down"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
             </button>
-            <button class="dock-btn" title="Refresh">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-refresh-cw"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <button class="dock-btn" title="Voice" onclick="
+                this.style.color='#a29bfe'; 
+                this.style.transform='scale(1.2)'; 
+                setTimeout(()=>this.style.transform='scale(1)', 200);
+                if(window.readAloud) {
+                    const tc = this.closest('.text').querySelector('.typed-content');
+                    window.readAloud(tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, ''));
+                } else if(window.speak) {
+                    const tc = this.closest('.text').querySelector('.typed-content');
+                    window.speak(tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, ''));
+                } else {
+                    alert('Озвучка включена!');
+                }
+            ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
             </button>
           </div>
           <div class="dock-reflection"></div>
@@ -858,10 +972,10 @@ if (chatTrigger) {
     } else {
         totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
     }
-        const stage1 = ['Инициализация нейросетевых ядер...', 'Загрузка контекстных модулей...', 'Анализ пользовательского запроса...'];
-    const stage2 = ['Сканирование многомерных баз данных...', 'Извлечение релевантных контекстных блоков...', 'Обращение к модулям долгосрочной памяти...', 'Синхронизация информационных потоков...', 'Фильтрация избыточного шума...', 'Поиск пересечений в векторном пространстве...', 'Извлечение ассоциативных паттернов...', 'Сбор верифицированных фактов...'];
-    const stage3 = ['Кросс-верификация найденных источников...', 'Установка логических противоречий...', 'Проверка контекста на безопасность (Safety Check)...', 'Каскадная валидация аргументов...', 'Оценка достоверности метаданных...', 'Взвешивание вероятностных исходов...', 'Оптимизация цепочки рассуждений...'];
-    const stage4 = ['Запуск процессов языкового синтеза...', 'Формирование структурных финальных тезисов...', 'Адаптация стилистики под контекст беседы...', 'Подбор точных лингвистических формулировок...', 'Калибровка параметров вывода текста...', 'Финальный рендеринг ответа модели...', 'Проверка грамматических паттернов...'];
+        const stage1 = ['Initializing neural cores...', 'Loading contextual modules...', 'Analyzing user query...'];
+    const stage2 = ['Scanning multi-dimensional databases...', 'Extracting relevant context blocks...', 'Accessing long-term memory modules...', 'Synchronizing information streams...', 'Filtering excessive noise...', 'Searching for intersections in vector space...', 'Extracting associative patterns...', 'Gathering verified facts...'];
+    const stage3 = ['Cross-verifying found sources...', 'Resolving logical contradictions...', 'Safety Check...', 'Cascading argument validation...', 'Evaluating metadata reliability...', 'Weighing probabilistic outcomes...', 'Optimizing reasoning chain...'];
+    const stage4 = ['Starting language synthesis processes...', 'Formulating structural final theses...', 'Adapting stylistics to conversation context...', 'Selecting precise linguistic formulations...', 'Calibrating text output parameters...', 'Final rendering of model response...', 'Checking grammatical patterns...'];
     
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
     let selectedTexts = [];
@@ -889,118 +1003,6 @@ if (chatTrigger) {
     });
 
     const stepsHTML = `
-<style>
-.ai-thinking-steps {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 0;
-    font-family: 'Inter', sans-serif;
-    color: #fff;
-    margin-bottom: 12px;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-}
-.thinking-step {
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-    padding-bottom: 0; /* starts collapsed */
-    
-    /* Initially hidden for sequential appearance */
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transform: translateY(-10px);
-    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, transform 0.5s ease, padding-bottom 0.5s ease;
-}
-.thinking-step.active {
-    opacity: 1;
-    max-height: 80px;
-    transform: translateY(0);
-    padding-bottom: 20px;
-}
-.thinking-step:last-child.active {
-    padding-bottom: 0;
-}
-.step-line {
-    position: absolute;
-    left: 8px;
-    top: 20px;
-    bottom: -4px;
-    width: 2px;
-    background-color: rgba(255,255,255,0.15);
-    z-index: 1;
-}
-.thinking-step:last-child .step-line {
-    display: none;
-}
-.step-icon-container {
-    position: relative;
-    z-index: 2;
-    background: transparent;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 14px;
-    margin-top: 2px;
-}
-.step-icon {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    background: transparent;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-/* Pulsing animation while active but not completed (Claude style) */
-.thinking-step.active:not(.completed) .step-icon {
-    border-color: rgba(255,255,255,0.6);
-    animation: claudePulse 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
-}
-@keyframes claudePulse {
-    0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
-    100% { transform: scale(1.1); box-shadow: 0 0 8px 0 rgba(255,255,255,0.05); }
-}
-.step-icon i {
-    opacity: 0;
-    font-size: 8px;
-    color: #000;
-    transform: scale(0.5);
-    transition: all 0.3s ease;
-}
-.thinking-step.completed .step-icon {
-    background: #e5e5e5;
-    border-color: #e5e5e5;
-    box-shadow: none;
-}
-.thinking-step.completed .step-icon i {
-    opacity: 1;
-    transform: scale(1);
-    color: #000;
-}
-.step-content {
-    display: flex;
-    flex-direction: column;
-}
-.step-title {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(255,255,255,0.4);
-    transition: color 0.3s ease;
-    line-height: 1.4;
-}
-.thinking-step.completed .step-title {
-    color: rgba(255,255,255,0.9);
-}
-</style>
 <div class="ai-thinking-steps">
   ${stepsHTMLContent}
 </div>
@@ -4537,3 +4539,47 @@ function addGoogleDriveFileToUI(fileName, content) {
     fileInput.dispatchEvent(event);
 }
 
+// === VOICE TTS IMPLEMENTATION ===
+window.currentAudio = null;
+window.readAloud = async function(text) {
+    if(!text) return;
+    
+    // Если уже играет звук, останавливаем его
+    if (window.currentAudio) {
+        window.currentAudio.pause();
+        window.currentAudio = null;
+        return;
+    }
+
+    // Определяем тариф пользователя на основе выбранной модели
+    const isPro = ['github', 'solifon-souldrive', 'solifon-pulse'].includes(window.selectedProvider);
+    const plan = isPro ? 'pro' : 'free';
+
+    try {
+        const response = await fetch('http://localhost:7860/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: text, plan: plan })
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            alert("Ошибка озвучки: " + errorText);
+            return;
+        }
+        
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        window.currentAudio = audio;
+        audio.play();
+        
+        audio.onended = () => {
+            window.currentAudio = null;
+            URL.revokeObjectURL(url);
+        };
+    } catch (e) {
+        console.error("TTS Error:", e);
+        alert("Сервер озвучки (app.py) недоступен на порту 7860. Пожалуйста, запустите его!");
+    }
+};
