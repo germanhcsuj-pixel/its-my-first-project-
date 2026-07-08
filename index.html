@@ -80,30 +80,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <nav class="menu">
                         <div class="menu-section-title">System</div>
             <div class="menu-item" onclick="openModal('whatsNewModal')">
-    <i class="ph ph-megaphone"></i><span>What's New</span>
+    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span><span class="stylish-first-letter">W</span>hat's New</span>
 </div>
 
             <div class="menu-item" onclick="openModal('aboutModal')">
-                <i class="ph ph-info"></i><span>About SOLIFON</span>
+                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span><span class="stylish-first-letter">A</span>bout SOLIFON</span>
             </div>
 
             <div class="menu-section-title">Features</div>           
           <div class="menu-item active" id="chatTrigger">
 
-<i class="ph ph-chat-circle-dots"></i><span>Chat</span>
+<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span><span class="stylish-first-letter">C</span>hat</span>
 
           </div>
             
             <div class="menu-item" id="libraryTrigger">
-                <i class="ph ph-books"></i><span>Library</span>
+                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter">L</span>ibrary</span>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
             <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code"></i><span>Solifon AI Code</span>
+    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span><span class="stylish-first-letter">S</span>olifon AI Code</span>
 </div>
 <div class="menu-item" onclick="openModal('newFeatureModal')">
-    <i class="ph ph-camera"></i><span>new feature</span>
+    <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter">N</span>ew feature</span>
 </div>
 
             
@@ -288,6 +288,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             letter-spacing: 0.5px;
             border: 1px solid rgba(255,255,255,0.05);
         }
+        
+        /* ===== STYLISH FIRST LETTER ===== */
+        .stylish-first-letter {
+            font-family: 'Georgia', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-right: 1px;
+            display: inline-block;
+            transform: translateY(1px);
+        }
+        
+        /* ===== ANIMATION FOR FAV ICON ===== */
+        @keyframes starBurst {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.6) rotate(20deg); filter: drop-shadow(0 0 12px #ffcf33); color: #ffcf33; }
+            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px #ffcf33); color: #ffcf33; }
+        }
     </style>
     <div style="position: relative; width: 100%; height: 0; display: flex; justify-content: center; z-index: 10000;">
         <!-- Autocomplete Suggestions Dropdown -->
@@ -436,7 +457,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <div id="modelMiniDropdown" class="mmd-dropdown">
                         <div class="mmd-option active" data-value="gemini">Solifon Air</div>
                         <div class="mmd-option locked" data-value="solifon-souldrive">Solifon SoulDrive <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
-                        <div class="mmd-option locked" data-value="github">Solifon Ultra <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="github">Solifon Alpha <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
                         <div class="mmd-option locked" data-value="solifon-pulse">Solifon Pulse <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
                         <div class="mmd-option locked" data-value="solifon-loom">Solifon Loom <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
                     </div>
@@ -505,7 +526,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const mmdShortNames = {
             'gemini': 'Air',
             'solifon-pulse': 'Pulse',
-            'github': 'Ultra',
+            'github': 'Alpha',
             'solifon-souldrive': 'SoulDrive',
             'solifon-loom': 'Loom'
         };
@@ -799,7 +820,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="model-option" onclick="setVoice('rachel')">
                     <i class="ph ph-user-circle"></i> Rachel (Clear & Warm)
                 </div>
-                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs API v1</p>
+                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs v1</p>
             </div>
         </div>
     </div>
@@ -952,7 +973,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Unrestricted access to Ultra and Loom</p>
+                                    <p class="tariff__item-text">Unrestricted access to Alpha and Loom</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -984,7 +1005,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Fast API Processing</p>
+                                    <p class="tariff__item-text">Fast Processing</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1034,7 +1055,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                     <div class="tariff__checkbox">
                                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">Priority API Processing</p>
+                                    <p class="tariff__item-text">Priority Processing</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
