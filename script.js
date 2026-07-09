@@ -4807,15 +4807,29 @@ document.addEventListener('DOMContentLoaded', () => {
 window.downloadMobilePDF = function(content) {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
+    
+    // ВАЖНО: html2pdf/html2canvas требует, чтобы элемент был в DOM для рендера стилей и размеров!
+    document.body.appendChild(tempDiv);
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '0';
+    tempDiv.style.width = '800px'; // Фиксированная ширина как на ПК
+    tempDiv.style.padding = '20px';
+    tempDiv.style.background = '#ffffff'; // Белый фон, чтобы текст не сливался
+    tempDiv.style.color = '#000000';
+    
     const opt = {
         margin:       0.5,
         filename:     'Solifon_Artifact.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
+        html2canvas:  { scale: 2, useCORS: true },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
     if(window.html2pdf) {
-        html2pdf().set(opt).from(tempDiv).save();
+        html2pdf().set(opt).from(tempDiv).save().then(() => {
+            // Очищаем DOM после скачивания
+            document.body.removeChild(tempDiv);
+        });
     } else {
         alert("PDF generator not loaded yet.");
     }
