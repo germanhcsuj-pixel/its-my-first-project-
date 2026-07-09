@@ -1,7 +1,10 @@
 // ============================================================
 // 0. FIREBASE SETUP
-localStorage.setItem('solifon-language', 'en');
-localStorage.setItem('solifon-lang', 'en');
+let currentLang = localStorage.getItem('solifon-lang');
+if (!currentLang || currentLang === 'en') {
+    localStorage.setItem('solifon-language', 'ru');
+    localStorage.setItem('solifon-lang', 'ru');
+}
 // ============================================================
 const firebaseConfig = {
     apiKey: "AIzaSyCBsuPtp3sBdGV0eFkTtSPKEpmNP7PSCsM",
@@ -500,8 +503,13 @@ function typeEffect(element, text) {
     
     let i = 0;
     const interval = setInterval(() => {
+        if (window.isGenerationStopped) {
+            clearInterval(interval);
+            if (typeof addMinimalDock === 'function') addMinimalDock(textContainer);
+            return;
+        }
         if (i < cleanText.length) {
-            i += Math.floor(Math.random() * 4) + 3; 
+            i += Math.floor(Math.random() * 8) + 8; // Super fast typing
             if (i > cleanText.length) i = cleanText.length;
             
             const partial = cleanText.slice(0, i);
@@ -890,6 +898,12 @@ if (chatTrigger) {
 
     window.handleAI = async function handleAI() {
     if (window.isHandlingAI) return;
+    
+    window.isGenerationStopped = false;
+    window.activeAbortController = new AbortController();
+    const stopBtn = document.getElementById('stopBtn');
+    if (stopBtn) stopBtn.classList.remove('disabled');
+    
     const targetSessionId = window.currentSessionId;
     
     const isDeepMode = document.getElementById('mainAppLayout')?.classList.contains('deep-mode');
@@ -1047,11 +1061,11 @@ if (chatTrigger) {
 
         const fetchPromise = fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
-            body: formData
+            body: formData,
+            signal: window.activeAbortController.signal
         });
 
-        const minDelayPromise = new Promise(resolve => setTimeout(resolve, totalTime));
-        const [response] = await Promise.all([fetchPromise, minDelayPromise]);
+        const response = await fetchPromise;
 
         if (!response.ok) throw new Error("Server Error");
 
@@ -1064,8 +1078,77 @@ if (chatTrigger) {
         } else {
             const data = await response.json();
             const reply = data.reply || '...';
-            typeEffect(botMsgElement, reply);
-            saveToFirebase('ai', reply, targetSessionId);
+
+            // --- НАЧАЛО: ПЕРЕХВАТ ДОКУМЕНТОВ ---
+            const codeBlockRegex = /(?:`{2,3}|'{2,3})([a-z0-9]*)\s*?\n([\s\S]*?)(?:`{2,3}|'{2,3})/i;
+            const rawHtmlRegex = /(<!DOCTYPE html>|<html[\s\S]*?>|<body[\s\S]*?>)[\s\S]*?(<\/html>|<\/body>|$)/i;
+
+            let match = reply.match(codeBlockRegex);
+            let targetRegex = codeBlockRegex;
+            let codeContent = '';
+
+            if (match) {
+                codeContent = match[2];
+            } else {
+                match = reply.match(rawHtmlRegex);
+                if (match) {
+                    targetRegex = rawHtmlRegex;
+                    codeContent = match[0];
+                }
+            }
+
+            if (match && codeContent.trim().length > 0) {
+                // ЭТО ФАЙЛ! Отключаем печатную машинку и выдаем UI-карточку
+                const escapedCode = encodeURIComponent(codeContent);
+                let formattedContent = reply;
+
+                if (window.innerWidth > 768) {
+                    // Версия для ПК: Открываем сплит-экран
+                    setTimeout(() => window.openArtifact(codeContent, 'Сгенерированный документ'), 500);
+                    formattedContent = reply.replace(targetRegex, `
+                        <div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25);" onclick="window.openArtifact(decodeURIComponent('${escapedCode}'), 'document.pdf')">
+                            <div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                <i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i>
+                            </div>
+                            <div style="display: flex; flex-direction: column; padding-right: 20px;">
+                                <span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span>
+                                <span style="color: rgba(255,255,255,0.5); font-size: 12px;">Сгенерированный файл • Кликнуть для просмотра</span>
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    // Версия для Телефона: Даем кнопку скачивания
+                    formattedContent = reply.replace(targetRegex, `
+                        <div style="margin: 10px 0; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i>
+                                </div>
+                                <span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span>
+                            </div>
+                            <button onclick="window.downloadMobilePDF(decodeURIComponent('${escapedCode}'))" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                <i class="ph ph-download-simple"></i> Скачать PDF
+                            </button>
+                        </div>
+                    `);
+                }
+
+                // Вставляем карточку мгновенно (без анимации)
+                const textContainer = botMsgElement.querySelector('.text');
+                if (textContainer) {
+                    const deepSteps = textContainer.closest('.message').querySelector('.ai-thinking-steps');
+                    if (deepSteps) deepSteps.remove();
+                    textContainer.innerHTML = `<div class="typed-content" style="margin-top: 12px;">${formattedContent.replace(/\\n/g, '<br>')}</div>`;
+                    if (typeof addMinimalDock === 'function') addMinimalDock(textContainer);
+                }
+                saveToFirebase('ai', formattedContent, targetSessionId);
+
+            } else {
+                // ЭТО ОБЫЧНЫЙ ТЕКСТ! Включаем печатную машинку
+                typeEffect(botMsgElement, reply);
+                saveToFirebase('ai', reply, targetSessionId);
+            }
+            // --- КОНЕЦ ---
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
@@ -1078,7 +1161,9 @@ if (chatTrigger) {
             }
         }
     } catch (error) {
-        if (isLiveMode) {
+        if (error.name === 'AbortError') {
+            console.log('Generation stopped by user.');
+        } else if (isLiveMode) {
             const status = document.getElementById('liveStatus');
             if (status) status.innerText = "Ошибка... повтор через 2 сек";
             setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
@@ -1090,6 +1175,8 @@ if (chatTrigger) {
         }
     } finally {
         window.isHandlingAI = false;
+        const stopBtn = document.getElementById('stopBtn');
+        if (stopBtn) stopBtn.classList.add('disabled');
         if (userInput) userInput.focus();
     }
 };
@@ -3160,26 +3247,27 @@ function showInstallGuide() {
 // --- LANGUAGE TRANSLATION SYSTEM ---
 const langDict = {
   ru: {
-    select_model: 'Модель таТЈдаТЈыз',
-    new_chat: 'ЖаТЈа чат',
-    system_whatsnew: "What's new",
-    system_about: 'SOLIFON туралы',
+    select_model: 'Выбрать модель',
+    new_chat: 'Новый разговор',
+    system_whatsnew: 'Что нового',
+    system_about: 'О SOLIFON',
     menu_chat: 'Чат',
-    menu_library: 'Кітапхана',
-    menu_new_project: 'ЖаТЈа жоба',
+    menu_library: 'Библиотека',
+    menu_new_project: 'Новый проект',
     menu_presentation: 'Презентация',
-    upgrade: "Upgrade to premium",
-    upgrade_title: "Solifon Premium",
-    upgrade_subtitle: 'НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз',
-    tariff1_type: "Basic",
-    tariff1_desc: 'КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау',
-    tariff1_btn: 'Basic таТЈдау',
-    tariff2_type: "Pro",
-    tariff2_desc: 'КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін',
-    tariff2_btn: 'Pro таТЈдау',
-    tariff3_type: "Ultra",
-    tariff3_desc: 'ЕшТ›андай шектеусіз максималды кТЇш',
-    tariff3_btn: 'Ultra таТЈдау',
+    menu_new_feature: 'О новой функции',
+    upgrade: 'Повышение до премиум-класса',
+    upgrade_title: 'Solifon Premium',
+    upgrade_subtitle: 'Раскройте весь потенциал ИИ',
+    tariff1_type: 'Basic',
+    tariff1_desc: 'Лучший выбор для ежедневных задач',
+    tariff1_btn: 'Выбрать Basic',
+    tariff2_type: 'Pro',
+    tariff2_desc: 'Для профессионалов и разработчиков',
+    tariff2_btn: 'Выбрать Pro',
+    tariff3_type: 'Alpha',
+    tariff3_desc: 'Максимальная мощь без ограничений',
+    tariff3_btn: 'Выбрать Alpha',
   },
   kz: {
     select_model: "Модель таТЈдаТЈыз",
@@ -3190,6 +3278,7 @@ const langDict = {
     menu_library: "Кітапхана",
     menu_new_project: "ЖаТЈа жоба",
     menu_presentation: "Презентация",
+    menu_new_feature: "Жаңа функция туралы",
     upgrade: "Premium-Т“а У©ту",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Р СњР ВµР в„–РЎР‚Р С•Р В¶Р ВµР »РЎвЂ“Р »Р ВµРЎР‚Р Т‘РЎвЂ“Р СћР в‚¬ Р В±Р В°РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р СР СћР вЂЎР СР С”РЎвЂ“Р Р…Р Т‘РЎвЂ“Р С–РЎвЂ“Р Р… Р В°РЎв‚¬РЎвЂ№Р СћР в‚¬РЎвЂ№Р В·",
@@ -3199,9 +3288,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "Р С™Р Р€РІвЂћСћРЎРѓРЎвЂ“Р С—Р СћРІР‚С”Р С•Р в„–Р »Р В°РЎР‚ Р СР ВµР Р… Р Р€РІвЂћСћР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“РЎв‚¬РЎвЂ“Р »Р ВµРЎР‚ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р…",
     tariff2_btn: "Pro таТЈдау",
-    tariff3_type: "Ultra",
+    tariff3_type: "Alpha",
     tariff3_desc: "Р вЂўРЎв‚¬Р СћРІР‚С”Р В°Р Р…Р Т‘Р В°Р в„– РЎв‚¬Р ВµР С”РЎвЂљР ВµРЎС“РЎРѓРЎвЂ“Р В· Р СР В°Р С”РЎРѓР С‘Р СР В°Р »Р Т‘РЎвЂ№ Р С”Р СћР вЂЎРЎв‚¬",
-    tariff3_btn: "Ultra таТЈдау",
+    tariff3_btn: "Alpha таТЈдау",
   },
   en: {
     select_model: "Select Model",
@@ -3212,6 +3301,7 @@ const langDict = {
     menu_library: "Library",
     menu_new_project: "New Project",
     menu_presentation: "Solifon AI Code",
+    menu_new_feature: "About New Feature",
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Unleash the full potential of AI",
@@ -3221,9 +3311,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "For professionals and developers",
     tariff2_btn: "Choose Pro",
-    tariff3_type: "Ultra",
+    tariff3_type: "Alpha",
     tariff3_desc: "Maximum power without limits",
-    tariff3_btn: "Choose Ultra",
+    tariff3_btn: "Choose Alpha",
   }
 };
 
@@ -3257,7 +3347,14 @@ window.changeLang = function(lang, btnElement) {
 
   const updateText = (selector, key) => {
     const el = document.querySelector(selector);
-    if (el && dict[key]) el.textContent = dict[key];
+    if (el && dict[key]) {
+        el.textContent = dict[key];
+        
+        // Clear any old intervals just in case
+        if (el._randomLetterInterval) {
+            clearInterval(el._randomLetterInterval);
+        }
+    }
   };
 
   updateText("#currentModel", "select_model");
@@ -4582,4 +4679,164 @@ window.readAloud = async function(text) {
         console.error("TTS Error:", e);
         alert("Сервер озвучки (app.py) недоступен на порту 7860. Пожалуйста, запустите его!");
     }
+};
+
+// ============================================================
+// SOLIFON ARTIFACTS LOGIC (CLAUDE-STYLE SPLIT VIEW)
+// ============================================================
+
+window.artifactState = {
+    isOpen: false,
+    content: ''
+};
+
+window.openArtifact = function(content, title = 'Generated Content') {
+    if (window.innerWidth <= 768) {
+        return;
+    }
+    
+    const panel = document.getElementById('artifactPanel');
+    const iframe = document.getElementById('artifactIframe');
+    const titleEl = document.querySelector('#artifactTitle span');
+    const resizeHandle = document.getElementById('resizeHandle');
+    const chat = document.querySelector('.main-content');
+    
+    if(titleEl) titleEl.textContent = title;
+    
+    if(iframe) iframe.srcdoc = content;
+    window.artifactState.content = content;
+    
+    if(panel) {
+        panel.classList.add('active');
+        panel.style.width = '60%';
+    }
+    if(resizeHandle) resizeHandle.style.display = 'block';
+    if(chat) chat.style.width = '40%';
+    
+    window.artifactState.isOpen = true;
+};
+
+window.closeArtifact = function() {
+    const panel = document.getElementById('artifactPanel');
+    const resizeHandle = document.getElementById('resizeHandle');
+    const chat = document.querySelector('.main-content');
+    
+    if(panel) {
+        panel.classList.remove('active');
+        panel.style.width = '0';
+    }
+    if(resizeHandle) resizeHandle.style.display = 'none';
+    if(chat) chat.style.width = '100%';
+    
+    window.artifactState.isOpen = false;
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const resizeHandle = document.getElementById('resizeHandle');
+    const panel = document.getElementById('artifactPanel');
+    const chat = document.querySelector('.main-content');
+    let isResizing = false;
+
+    if(resizeHandle) {
+        resizeHandle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            resizeHandle.classList.add('active');
+            document.body.style.cursor = 'col-resize';
+            const iframe = document.getElementById('artifactIframe');
+            if(iframe) iframe.style.pointerEvents = 'none';
+        });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const container = document.getElementById('splitViewContainer');
+        if(!container) return;
+        
+        const containerRect = container.getBoundingClientRect();
+        let chatWidthPx = e.clientX - containerRect.left;
+        let chatWidthPercent = (chatWidthPx / containerRect.width) * 100;
+        
+        if (chatWidthPx < 300) {
+            chatWidthPercent = (300 / containerRect.width) * 100;
+        } else if (chatWidthPercent > 80) {
+            chatWidthPercent = 80;
+        }
+        
+        if(chat) chat.style.width = chatWidthPercent + '%';
+        if(panel) panel.style.width = (100 - chatWidthPercent) + '%';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            if(resizeHandle) resizeHandle.classList.remove('active');
+            document.body.style.cursor = '';
+            const iframe = document.getElementById('artifactIframe');
+            if(iframe) iframe.style.pointerEvents = 'auto';
+        }
+    });
+
+    const closeBtn = document.getElementById('artifactCloseBtn');
+    if(closeBtn) closeBtn.addEventListener('click', window.closeArtifact);
+    
+    const copyBtn = document.getElementById('artifactCopyBtn');
+    if(copyBtn) {
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(window.artifactState.content);
+            const icon = copyBtn.querySelector('i');
+            if(icon) {
+                icon.className = 'ph ph-check';
+                setTimeout(() => icon.className = 'ph ph-copy', 2000);
+            }
+        });
+    }
+    
+    const pdfBtn = document.getElementById('artifactPdfBtn');
+    if(pdfBtn) {
+        pdfBtn.addEventListener('click', () => {
+            const content = window.artifactState.content;
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const opt = {
+                margin:       0.5,
+                filename:     'Solifon_Artifact.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            if(window.html2pdf) {
+                html2pdf().set(opt).from(tempDiv).save();
+            } else {
+                alert("PDF generation library is loading, please try again.");
+            }
+        });
+    }
+});
+
+
+
+window.downloadMobilePDF = function(content) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    const opt = {
+        margin:       0.5,
+        filename:     'Solifon_Artifact.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    if(window.html2pdf) {
+        html2pdf().set(opt).from(tempDiv).save();
+    } else {
+        alert("PDF generator not loaded yet.");
+    }
+};
+
+window.stopGeneration = function() {
+    window.isGenerationStopped = true;
+    if (window.activeAbortController) {
+        window.activeAbortController.abort();
+    }
+    const stopBtn = document.getElementById('stopBtn');
+    if (stopBtn) stopBtn.classList.add('disabled');
 };
