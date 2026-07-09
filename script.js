@@ -1122,6 +1122,9 @@ if (chatTrigger) {
                     formattedContent = reply.replace(targetRegex, `<div style="margin: 10px 0; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;"><div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i></div><span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span></div><button onclick="window.downloadMobilePDF(window.artifactStore['${artifactId}'])" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;"><i class="ph ph-download-simple"></i> Скачать PDF</button></div>`);
                 }
 
+                // ЗАЩИТА ОТ CSS-ИНЪЕКЦИЙ (чтобы ИИ не сломал дизайн сайта глобальными стилями)
+                formattedContent = formattedContent.replace(/<(style|script|iframe|link|meta)/gi, '&lt;$1');
+                
                 // Вставляем карточку мгновенно (без анимации)
                 const textContainer = botMsgElement.querySelector('.text');
                 if (textContainer) {
@@ -1134,6 +1137,8 @@ if (chatTrigger) {
 
             } else {
                 // ЭТО ОБЫЧНЫЙ ТЕКСТ! Включаем печатную машинку
+                // ЗАЩИТА ОТ CSS-ИНЪЕКЦИЙ
+                reply = reply.replace(/<(style|script|iframe|link|meta)/gi, '&lt;$1');
                 typeEffect(botMsgElement, reply);
                 saveToFirebase('ai', reply, targetSessionId);
             }
@@ -4805,33 +4810,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 window.downloadMobilePDF = function(content) {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = content;
-    
-    // ВАЖНО: html2pdf/html2canvas требует, чтобы элемент был в DOM для рендера стилей и размеров!
-    document.body.appendChild(tempDiv);
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.top = '0';
-    tempDiv.style.width = '800px'; // Фиксированная ширина как на ПК
-    tempDiv.style.padding = '20px';
-    tempDiv.style.background = '#ffffff'; // Белый фон, чтобы текст не сливался
-    tempDiv.style.color = '#000000';
+    // ВАЖНО: Мы используем скрытый iframe, чтобы CSS из сгенерированного кода
+    // не просочился в основной интерфейс чата и не "сломал" сайт!
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '0';
+    iframe.style.width = '800px';
+    iframe.style.height = '2000px'; // Большой размер, чтобы все поместилось
+    iframe.style.border = 'none';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    // Добавляем белый фон, чтобы PDF не был прозрачным
+    doc.write('<style>body { background-color: #ffffff; color: #000000; margin: 0; padding: 20px; }</style>' + content);
+    doc.close();
     
     const opt = {
         margin:       0.5,
         filename:     'Solifon_Artifact.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
         jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
+    
     if(window.html2pdf) {
-        html2pdf().set(opt).from(tempDiv).save().then(() => {
-            // Очищаем DOM после скачивания
-            document.body.removeChild(tempDiv);
-        });
+        // Даем браузеру 500мс на рендер iframe (загрузку шрифтов/картинок) перед созданием PDF
+        setTimeout(() => {
+            html2pdf().set(opt).from(doc.body).save().then(() => {
+                document.body.removeChild(iframe);
+            });
+        }, 500);
     } else {
         alert("PDF generator not loaded yet.");
+        document.body.removeChild(iframe);
     }
 };
 
