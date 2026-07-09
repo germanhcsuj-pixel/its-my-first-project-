@@ -41,7 +41,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=20260706_1">
+    <link rel="stylesheet" href="style.css?v=20260709_13">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
@@ -79,42 +79,70 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <nav class="menu">
                         <div class="menu-section-title">System</div>
+<style>
+.menu .menu-item > span {
+    display: inline-block;
+}
+.menu .menu-item > span::first-letter {
+    font-family: 'Georgia', serif;
+    font-size: 1.3em;
+    font-weight: 700;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    margin-right: 1px;
+    background-image: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
+}
+.menu .menu-item[onclick*='whatsNewModal'] > span::first-letter {
+    background-image: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+.menu .menu-item[onclick*='aboutModal'] > span::first-letter {
+    background-image: linear-gradient(135deg, #11998e, #38ef7d);
+}
+.menu #chatTrigger > span::first-letter {
+    background-image: linear-gradient(135deg, #b92b27, #1565C0);
+}
+.menu #libraryTrigger > span::first-letter {
+    background-image: linear-gradient(135deg, #8E2DE2, #4A00E0);
+}
+.menu .menu-item[onclick*='openPresentation'] > span::first-letter {
+    background-image: linear-gradient(135deg, #f12711, #f5af19);
+}
+</style>
             <div class="menu-item" onclick="openModal('whatsNewModal')">
-    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span><span class="stylish-first-letter">W</span>hat's New</span>
+    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span>What's New</span>
 </div>
 
             <div class="menu-item" onclick="openModal('aboutModal')">
-                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span><span class="stylish-first-letter">A</span>bout SOLIFON</span>
+                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span>About SOLIFON</span>
             </div>
 
             <div class="menu-section-title">Features</div>           
           <div class="menu-item active" id="chatTrigger">
 
-<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span><span class="stylish-first-letter">C</span>hat</span>
+<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span>Chat</span>
 
           </div>
             
             <div class="menu-item" id="libraryTrigger">
-                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter">L</span>ibrary</span>
+                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span>Library</span>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
             <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span><span class="stylish-first-letter">S</span>olifon AI Code</span>
+    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span>Solifon AI Code</span>
 </div>
-<div class="menu-item" onclick="openModal('newFeatureModal')">
-    <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter">N</span>ew feature</span>
+<div class="menu-item" onclick="openModal('emptyFeatureModal')">
+    <i class="ph ph-app-window" style="color: #ff4757; filter: drop-shadow(0 0 5px rgba(255,71,87,0.5));"></i><span>А</span>
 </div>
-
-            
-            
 
 
 
             </nav>
 
         <div class="upgrade-card" onclick="openModal('upgradeModal')">
-            <div class="upgrade-icon"><i class="ph ph-crown"></i></div>
+            <div class="upgrade-icon"><i class="ph ph-sparkle"></i></div>
             <div class="upgrade-text">
                 <p>Upgrade to premium</p>
                 <button class="upgrade-btn">Upgrade</button>
@@ -155,7 +183,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    
       
             
-                    <main class="main-content">
+        <div class="split-view-container" id="splitViewContainer">
+            <main class="main-content">
                     <header class="app-header">
     <div class="tubelight-navbar">
         <div class="tubelight-navbar-inner">
@@ -335,6 +364,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </button>
                 <button type="button" class="action-icon-btn" id="micBtn" title="Voice Input">
                     <i class="ph ph-microphone"></i>
+                </button>
+                <button type="button" class="action-icon-btn disabled" id="stopBtn" title="Stop Generation" onclick="if(!this.classList.contains('disabled')) stopGeneration()">
+                    <i class="ph ph-stop-circle"></i>
                 </button>
             </div>
 
@@ -774,6 +806,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
     </main>
+    
+    <!-- ARTIFACTS PANEL (LIVE CANVAS) -->
+    <div class="resize-handle" id="resizeHandle"></div>
+    <aside class="artifact-panel" id="artifactPanel">
+        <div class="artifact-header">
+            <div class="artifact-title" id="artifactTitle">
+                <i class="ph ph-code"></i> <span>Generated Content</span>
+            </div>
+            <div class="artifact-actions">
+                <button id="artifactCopyBtn" class="artifact-btn" title="Copy Code">
+                    <i class="ph ph-copy"></i>
+                </button>
+                <button id="artifactPdfBtn" class="artifact-btn" title="Download PDF">
+                    <i class="ph ph-download-simple"></i>
+                </button>
+                <button id="artifactCloseBtn" class="artifact-btn" title="Close Canvas">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+        </div>
+        <div class="artifact-body">
+            <iframe id="artifactIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+    </aside>
+</div> <!-- End split-view-container -->
 </div>
 
 <div id="sim-screen" style="display: none;">
@@ -868,7 +925,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 </div>
-    <script src="script.js?v=23" charset="utf-8"></script>
+    <script src="script.js?v=37" charset="utf-8"></script>
     <script src="air_canvas.js" charset="utf-8" defer></script>
   
 
@@ -1092,37 +1149,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- INFRA CARDS -->
         <div class="wn-infra-row">
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">🏗️</div>
+                <div class="wn-infra-icon"><i class="ph ph-buildings" style="color: #ffffff; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">X Infrastructure</div>
                 <div class="wn-infra-desc">We don't stand still · AI Evolution</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">📸</div>
+                <div class="wn-infra-icon"><i class="ph ph-instagram-logo" style="color: #ff007b; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">Instagram Stack</div>
                 <div class="wn-infra-desc">CDN · Media pipeline · Scale</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">🚀</div>
+                <div class="wn-infra-icon"><i class="ph ph-rocket-launch" style="color: #00f2ff; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">NASA Standards</div>
                 <div class="wn-infra-desc">Fault Tolerance · Mission Critical</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">💎</div>
+                <div class="wn-infra-icon"><i class="ph ph-sketch-logo" style="color: #0051ff; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">Solifon Crypto</div>
                 <div class="wn-infra-desc">Crypto News · Decentralization</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">🎬</div>
-                <div class="wn-infra-name">Solifon Motion 2.0</div>
+                <div class="wn-infra-icon"><i class="ph ph-film-strip" style="color: #a29bfe; font-size: 28px;"></i></div>
+                <div class="wn-infra-name">Solifon Loom</div>
                 <div class="wn-infra-desc">Stunning video generation · Cinematography</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">🧠</div>
+                <div class="wn-infra-icon"><i class="ph ph-brain" style="color: #ff0055; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">Smart Models</div>
                 <div class="wn-infra-desc">High intelligence · Became even smarter</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon">📈</div>
+                <div class="wn-infra-icon"><i class="ph ph-trend-up" style="color: #00ff88; font-size: 28px;"></i></div>
                 <div class="wn-infra-name">Constant Evolution</div>
                 <div class="wn-infra-desc">We don't stand still · AI Evolution</div>
             </div>
@@ -1217,416 +1274,271 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- FOOTER -->
         <div class="wn-footer">
-            <span>В© 2026 SOLIFON AI</span>
-            <span class="wn-footer-sep">В·</span>
+            <span>© 2026 SOLIFON AI</span>
+            <span class="wn-footer-sep">·</span>
             <span>Built for scale</span>
-            <span class="wn-footer-sep">В·</span>
-            <span>KZ В· Global</span>
+            <span class="wn-footer-sep">·</span>
+            <span>KZ · Global</span>
         </div>
     </div>
 </div>
 
-
 <div class="custom-modal" id="aboutModal">
     <style>
-        /* Base Modal Overrides for Premium Feel */
+        /* Sleek & Expensive Dark Mode Redesign */
         #aboutModal {
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
-        /* Modal Container with Animated Gradient Border */
         #aboutModal .modal-content {
-            background: #09090b;
-            border-radius: 24px;
-            max-width: 840px;
+            background: #000000;
+            border-radius: 20px;
+            max-width: 800px;
             width: 95%;
             padding: 0;
             overflow: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: #ededed;
+            font-family: 'Inter', sans-serif;
+            color: #ffffff;
             position: relative;
-            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.08);
-            transform: translateY(10px);
-            animation: modalPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,1), inset 0 1px 0 rgba(255,255,255,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: aboutFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: scale(0.97);
         }
 
-        @keyframes modalPop {
-            to { transform: translateY(0); }
-        }
-
-        /* Moving Glow Effect */
-        #aboutModal .modal-content::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0), rgba(139, 90, 43, 0.05));
-            z-index: 0;
-            pointer-events: none;
+        @keyframes aboutFadeIn {
+            to { opacity: 1; transform: scale(1); }
         }
 
         #aboutModal .modal-header {
-            padding: 24px 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px 36px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(9, 9, 11, 0.7);
-            backdrop-filter: blur(12px);
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-        #aboutModal .modal-header h3 {
-            margin: 0;
-            font-size: 1.15rem;
-            font-weight: 500;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            letter-spacing: -0.01em;
-        }
-        
-        .premium-badge {
-            background: linear-gradient(135deg, #ffffff, #a1a1aa);
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-left: 8px;
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-        }
-
-        .close-premium {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #a1a1aa;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .close-premium:hover {
-            background: #fff;
-            color: #000;
-            transform: rotate(90deg) scale(1.1);
-        }
-
-        #aboutModal .modal-body {
-            padding: 40px;
-            max-height: 75vh;
-            overflow-y: auto;
             position: relative;
             z-index: 10;
         }
-        #aboutModal .modal-body::-webkit-scrollbar { width: 6px; }
-        #aboutModal .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
+
+        #aboutModal .modal-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ededed;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
         
-        .hero-section {
-            text-align: center;
-            margin-bottom: 50px;
-            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .premium-badge {
+            background: #fff;
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
         }
 
-        .premium-gradient-text {
-            background: linear-gradient(180deg, #ffffff 0%, #71717a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .close-premium {
+            background: transparent;
+            border: none;
+            color: #a1a1aa;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-premium:hover {
+            color: #fff;
+        }
+
+        #aboutModal .modal-body {
+            padding: 48px 36px;
+            max-height: 70vh;
+            overflow-y: auto;
+            position: relative;
+            background: radial-gradient(circle at center top, rgba(255,255,255,0.04), transparent 70%);
+        }
+        
+        #aboutModal .modal-body::-webkit-scrollbar { width: 4px; }
+        #aboutModal .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+        .about-hero {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .about-title {
             font-size: 3.5rem;
             font-weight: 700;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.05em;
             margin: 0 0 16px 0;
-            line-height: 1.1;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
-        .hero-subtitle {
+
+        .about-subtitle {
             color: #a1a1aa;
-            font-size: 1.15rem;
-            max-width: 580px;
+            font-size: 1.1rem;
+            max-width: 600px;
             margin: 0 auto;
             line-height: 1.6;
-            font-weight: 400;
         }
 
-        /* Bento Box Layout */
-        .bento-grid {
+        .about-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            gap: 24px;
         }
 
-        .bento-card {
+        .about-card {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 20px;
-            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 1;
         }
-        
-        .bento-card:nth-child(1) { animation-delay: 0.1s; }
-        .bento-card:nth-child(2) { animation-delay: 0.2s; }
-        .bento-card:nth-child(3) { animation-delay: 0.3s; grid-column: span 2; }
-        .bento-card:nth-child(4) { animation-delay: 0.4s; grid-column: span 2; }
 
-        .bento-card::before {
+        .about-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
+            background: var(--hover-gradient, rgba(255,255,255,0.05));
             opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
-            z-index: 1;
+            z-index: -1;
+            transition: opacity 0.5s ease;
         }
-        .bento-card:hover::before {
+
+        .about-card:hover {
+            border-color: var(--hover-color, rgba(255,255,255,0.2));
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8), 0 0 20px var(--hover-shadow, transparent);
+        }
+
+        .about-card:hover::before {
             opacity: 1;
         }
 
-        .bento-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            background: rgba(255, 255, 255, 0.04);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
-        }
-
-        /* Card Accents */
-        .card-glow-brown { background: radial-gradient(circle at top right, rgba(139, 90, 43, 0.15), transparent 60%), rgba(255, 255, 255, 0.015); }
-        .card-glow-white { background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 60%), rgba(255, 255, 255, 0.015); }
-
-        .bento-icon {
+        .about-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 1.4rem;
+            width: 56px;
+            height: 56px;
+            font-size: 32px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--hover-color, #fff);
             margin-bottom: 24px;
-            position: relative;
-            z-index: 2;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .bento-card:hover .bento-icon {
-            transform: scale(1.1) rotate(-5deg);
+        .about-card:hover .about-icon {
+            background: var(--hover-color, #fff);
+            color: #000;
+            transform: rotate(-5deg) scale(1.1);
+            box-shadow: 0 10px 20px -5px var(--hover-shadow, transparent);
         }
 
-        .bento-icon.brown-tint {
-            color: #d4a373;
-            background: rgba(212, 163, 115, 0.1);
-            border-color: rgba(212, 163, 115, 0.2);
-        }
-        .bento-icon.white-tint {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .bento-title {
-            color: #fff;
+        .about-card h4 {
             font-size: 1.25rem;
             font-weight: 600;
+            color: #fff;
             margin: 0 0 12px 0;
-            letter-spacing: -0.02em;
-            position: relative;
-            z-index: 2;
+            letter-spacing: -0.01em;
+            transition: color 0.3s;
         }
 
-        .bento-text {
+        .about-card:hover h4 {
+            color: var(--hover-color, #fff);
+            text-shadow: 0 0 15px var(--hover-shadow, transparent);
+        }
+
+        .about-card p {
             color: #a1a1aa;
             font-size: 0.95rem;
             line-height: 1.7;
             margin: 0;
-            position: relative;
-            z-index: 2;
+            transition: color 0.3s;
+        }
+
+        .about-card:hover p {
+            color: #ededed;
+        }
+
+        .about-footer {
+            margin-top: 56px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 32px;
+            color: #52525b;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
         }
         
-        .bento-text strong {
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-right: 8px;
-            margin-top: 16px;
-            letter-spacing: 0.03em;
-            position: relative;
-            z-index: 2;
-            transition: all 0.2s;
-        }
-        .status-pill:hover {
-            transform: translateY(-2px);
-        }
-        .status-pill.removed {
-            background: rgba(255, 60, 60, 0.08);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 60, 60, 0.15);
-        }
-        .status-pill.active {
-            background: rgba(212, 163, 115, 0.1);
-            color: #d4a373;
-            border: 1px solid rgba(212, 163, 115, 0.2);
-        }
-        .status-pill.neutral {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ededed;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Abstract glowing orb in background */
-        .bg-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.5;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-orb-1 {
-            width: 300px; height: 300px;
-            background: rgba(139, 90, 43, 0.4);
-            top: -100px; right: -100px;
-            animation: floatOrb 10s ease-in-out infinite alternate;
-        }
-        .bg-orb-2 {
-            width: 400px; height: 400px;
-            background: rgba(255,255,255,0.08);
-            bottom: -150px; left: -100px;
-            animation: floatOrb 15s ease-in-out infinite alternate-reverse;
-        }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-30px, 50px) scale(1.1); }
-        }
-
         @media (max-width: 768px) {
-            .bento-grid { grid-template-columns: 1fr; }
-            .bento-card:nth-child(3), .bento-card:nth-child(4) { grid-column: span 1; }
-            .premium-gradient-text { font-size: 2.5rem; }
-            #aboutModal .modal-body { padding: 24px; }
+            .about-grid { grid-template-columns: 1fr; }
+            .about-title { font-size: 2.5rem; }
+            #aboutModal .modal-body { padding: 32px 24px; }
         }
     </style>
 
     <div class="modal-content">
-        <!-- Abstract Background Orbs -->
-        <div class="bg-orb bg-orb-1"></div>
-        <div class="bg-orb bg-orb-2"></div>
-
         <div class="modal-header">
-            <h3>SOLIFON AI <span class="premium-badge">Vercel Edition</span></h3>
-            <button class="close-premium" onclick="closeModal('aboutModal')"><i class="ph ph-x"></i></button>
+            <h3>SOLIFON <span class="premium-badge">PRO</span></h3>
+            <button class="close-premium" onclick="closeModal('aboutModal')">&times;</button>
         </div>
-        <div class="modal-body" id="bentoContainer">
-            <div class="hero-section">
-                <h2 class="premium-gradient-text">Absolute Focus.</h2>
-                <p class="hero-subtitle">
-                    We discarded everything unnecessary to create the perfect tool. 7 months of evolution led us to a single, powerful goal.</p>
+        <div class="modal-body">
+            <div class="about-hero">
+                <h2 class="about-title">Absolute Focus.</h2>
+                <p class="about-subtitle">We discarded everything unnecessary to create the perfect tool. No compromises. Only premium, highly targeted intelligent systems.</p>
             </div>
 
-            <div class="bento-grid">
-                <!-- Card 1: Time & Origin -->
-                <div class="bento-card card-glow-white">
-                    <div class="bento-icon white-tint"><i class="ph ph-hourglass-high"></i></div>
-                    <h4 class="bento-title">7 Months of Development</h4>
-                    <p class="bento-text">
-                        The project was born in <strong>1 January</strong>. In this short time, we went through hundreds of iterations, mistakes, and improvements to form a premium product.
-                    </p>
+            <div class="about-grid">
+                <div class="about-card" style="--hover-color: #00f2ff; --hover-shadow: rgba(0, 242, 255, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(0,242,255,0.1), transparent 70%);">
+                    <div class="about-icon"><i class="ph ph-cpu"></i></div>
+                    <h4>Neural Engine V2</h4>
+                    <p>Powered by our latest proprietary architecture. Lightweight, infinitely scalable, and optimized for extreme precision.</p>
+                </div>
+                
+                <div class="about-card" style="--hover-color: #ff0055; --hover-shadow: rgba(255, 0, 85, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(255,0,85,0.1), transparent 70%);">
+                    <div class="about-icon"><i class="ph ph-shield-check"></i></div>
+                    <h4>Zero-Knowledge</h4>
+                    <p>Total privacy. Data stays exclusively on your machine or within encrypted edge networks. No exceptions.</p>
                 </div>
 
-                <!-- Card 2: Optimization -->
-                <div class="bento-card card-glow-brown">
-                    <div class="bento-icon brown-tint"><i class="ph ph-cpu"></i></div>
-                    <h4 class="bento-title">Architectural Cleanup</h4>
-                    <p class="bento-text">
-                        We <strong>removed and optimized</strong> heavy models, including <em>Soul Max Pro</em>. The remaining core became more compact, faster, and significantly more intelligent.
-                    </p>
-                    <div>
-                        <span class="status-pill removed"><i class="ph ph-x-circle"></i> Max Pro</span>
-                        <span class="status-pill active"><i class="ph ph-check-circle"></i> Core AI V2</span>
-                    </div>
+                <div class="about-card" style="--hover-color: #00ff88; --hover-shadow: rgba(0, 255, 136, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(0,255,136,0.1), transparent 70%);">
+                    <div class="about-icon"><i class="ph ph-lightning"></i></div>
+                    <h4>Unmatched Speed</h4>
+                    <p>Responses delivered in milliseconds. Global edge CDN routing ensures zero latency regardless of location.</p>
                 </div>
-
-                <!-- Card 3: Strategic Pivot (Full Width) -->
-                <div class="bento-card">
-                    <div class="bento-icon"><i class="ph ph-scissors"></i></div>
-                    <h4 class="bento-title">Strategic Pivot</h4>
-                    <p class="bento-text">
-                        To become the best in our niche, we had to say "no". We <strong>completely abandoned</strong> from project «Ananyn Zhuregy», as well as from all educational and medical initiatives. 
-                        We no longer <strong>do not work with the public sector</strong>, civil servants and do not support partnerships in these areas. Our independence — is a guarantee of quality.
-                    </p>
-                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Medicine</span>
-                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Education</span>
-                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Gov Sector</span>
-                    </div>
-                </div>
-
-                <!-- Card 4: Future Focus (Full Width) -->
-                <div class="bento-card" style="background: rgba(255,255,255,0.03); border-color: rgba(212, 163, 115, 0.3);">
-                    <div class="bento-icon brown-tint"><i class="ph ph-brain"></i></div>
-                    <h4 class="bento-title" style="color: #d4a373;">Singularity: AI Agents</h4>
-                    <p class="bento-text">
-                        Our new and <strong>the only vector of development</strong> — these are cutting-edge <strong>AI agents</strong> and specialized AI models. We focus exclusively on artificial intelligence and related technologies that need it. No more compromises. Only premium, highly targeted intelligent systems.
-                    </p>
+                
+                <div class="about-card" style="--hover-color: #a29bfe; --hover-shadow: rgba(162, 155, 254, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(162,155,254,0.1), transparent 70%);">
+                    <div class="about-icon"><i class="ph ph-infinity"></i></div>
+                    <h4>Singularity Bound</h4>
+                    <p>Moving beyond simple text generation. Autonomous AI agents designed to handle complex logic seamlessly.</p>
                 </div>
             </div>
             
-            <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: inline-block; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, #8b5a2b, transparent); margin-bottom: 20px;"></div>
-                <p style="color: #52525b; font-size: 0.8rem; margin: 0; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;">
-                    &copy; 2026 SOLIFON AI &middot; The Future is Now
-                </p>
+            <div class="about-footer">
+                &copy; 2026 SOLIFON AI &middot; THE FUTURE IS NOW
             </div>
         </div>
     </div>
-    
-    <script>
-        // Micro-interaction for Bento Cards (Mouse tracking glow)
-        document.getElementById('bentoContainer').addEventListener('mousemove', function(e) {
-            const cards = this.querySelectorAll('.bento-card');
-            for(const card of cards) {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', ${x}px);
-                card.style.setProperty('--mouse-y', ${y}px);
-            }
-        });
-    </script>
 </div>
 
 
@@ -2368,6 +2280,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 }
 </style>
 
+<div class="custom-modal" id="emptyFeatureModal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
+    <button onclick="closeModal('emptyFeatureModal');"
+        style="position: absolute; top: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%;
+               background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);
+               color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center;
+               cursor: pointer; z-index: 10001; transition: background 0.3s;"
+        onmouseover="this.style.background='rgba(0,0,0,0.7)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
+        <i class="ph ph-x"></i>
+    </button>
+</div>
+
 <div class="custom-modal premium-modal-overlay" id="newFeatureModal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
 
     <!-- Close button -->
@@ -2743,6 +2666,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
 
+<!-- External Libraries for Artifacts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 
 
