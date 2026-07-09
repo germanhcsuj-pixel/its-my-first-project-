@@ -1,6 +1,6 @@
 /**
  * Solifon Air Canvas Elite 
- * Architecture: 20 Gestures, LERP Smoothing, Multi-hand logic.
+ * Architecture: 20 Gestures, LERP Smoothing, Multi-hand logic, 3D Holographic Ribbon.
  */
 
 const videoElement = document.getElementById('camVideo');
@@ -9,8 +9,7 @@ const drawCanvas = document.getElementById('drawCanvas');
 const uiCtx = uiCanvas ? uiCanvas.getContext('2d', { willReadFrequently: true }) : null;
 const drawCtx = drawCanvas ? drawCanvas.getContext('2d', { willReadFrequently: true }) : null;
 
-// LERP variables
-let smoothedX = 0, smoothedY = 0;
+// LERP constant
 const LERP_FACTOR = 0.45;
 
 // State variables
@@ -22,13 +21,15 @@ let isLocked = false;
 let isPresentationMode = false;
 let isDarkMode = true;
 
-// Drawing state
-let currentBrush = 'Premium Pen';
-let currentColor = '#ef4444'; // Default Premium Gold
-let lineWidth = 5;
-let shadowBlur = 0;
-let isDrawing = false;
-let prevX = 0, prevY = 0;
+// Independent hand states (Step 1: Removed global smoothedX, smoothedY, prevX, prevY, isDrawing, currentColor)
+const handStates = [
+    { x: 0, y: 0, px: 0, py: 0, isDrawing: false, color: '#ef4444', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 },
+    { x: 0, y: 0, px: 0, py: 0, isDrawing: false, color: '#3b82f6', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 }
+];
+
+// Assets and gallery for 3D Ribbon
+let uploadedAssets = [];
+let galleryRotation = 0;
 
 // History for Undo
 let canvasHistory = [];
@@ -38,14 +39,14 @@ let lastSaveTime = 0;
 // Cooldowns
 let lastClearTime = 0;
 let lastUndoTime = 0;
-let lastPaletteTime = 0;
+let lastPaletteTime = [0, 0]; // per hand
 let lastLockTime = 0;
 let lastModeTime = 0;
 let lastPresentationTime = 0;
 let lastSaveDocTime = 0;
 
 const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#a855f7', '#ec4899'];
-let colorIndex = 0;
+let colorIndex = [0, 0]; // per hand
 
 // Initialization
 function initAirCanvasElite() {
@@ -139,7 +140,7 @@ function getFingerStates(landmarks, handedness) {
     return states;
 }
 
-function executeDrawingLogic(x, y, gestureString) {
+function executeDrawingLogic(state, x, y, gestureString) {
     if (!drawCtx) return;
 
     // Reset some defaults before applying specific logic
@@ -147,58 +148,58 @@ function executeDrawingLogic(x, y, gestureString) {
     
     switch (gestureString) {
         case '01000': // Premium Pen
-            currentBrush = 'Premium Pen';
-            isDrawing = true;
-            lineWidth = 5;
-            shadowBlur = 0;
+            state.brush = 'Premium Pen';
+            state.isDrawing = true;
+            state.width = 5;
+            state.shadow = 0;
             break;
         case '01100': // Smart Eraser
-            currentBrush = 'Smart Eraser';
-            isDrawing = true;
-            lineWidth = 40;
-            shadowBlur = 0;
+            state.brush = 'Smart Eraser';
+            state.isDrawing = true;
+            state.width = 40;
+            state.shadow = 0;
             drawCtx.globalCompositeOperation = 'destination-out';
             break;
         case '01110': // Thick Marker
-            currentBrush = 'Thick Marker';
-            isDrawing = true;
-            lineWidth = 15;
-            shadowBlur = 0;
+            state.brush = 'Thick Marker';
+            state.isDrawing = true;
+            state.width = 15;
+            state.shadow = 0;
             break;
         case '00001': // Calligraphy
-            currentBrush = 'Calligraphy';
-            isDrawing = true;
-            lineWidth = 2;
-            shadowBlur = 0;
+            state.brush = 'Calligraphy';
+            state.isDrawing = true;
+            state.width = 2;
+            state.shadow = 0;
             break;
         case '01001': // Neon Glow
-            currentBrush = 'Neon Glow';
-            isDrawing = true;
-            lineWidth = 6;
-            shadowBlur = 10;
-            drawCtx.shadowColor = currentColor;
+            state.brush = 'Neon Glow';
+            state.isDrawing = true;
+            state.width = 6;
+            state.shadow = 10;
+            drawCtx.shadowColor = state.color;
             break;
         case '11100': // Laser Pointer
-            currentBrush = 'Laser Pointer';
-            isDrawing = false; // Override: no drawing
+            state.brush = 'Laser Pointer';
+            state.isDrawing = false; // Override: no drawing
             break;
         default:
-            isDrawing = false;
+            state.isDrawing = false;
             break;
     }
 
-    if (isDrawing && currentBrush !== 'Laser Pointer') {
+    if (state.isDrawing && state.brush !== 'Laser Pointer') {
         // Only start drawing if we moved enough to prevent dots or just starting
-        if (prevX !== 0 && prevY !== 0) {
+        if (state.px !== 0 && state.py !== 0) {
             drawCtx.beginPath();
-            drawCtx.moveTo(prevX, prevY);
+            drawCtx.moveTo(state.px, state.py);
             drawCtx.lineTo(x, y);
-            drawCtx.strokeStyle = currentColor;
-            drawCtx.lineWidth = lineWidth;
+            drawCtx.strokeStyle = state.color;
+            drawCtx.lineWidth = state.width;
             drawCtx.lineCap = 'round';
             drawCtx.lineJoin = 'round';
-            drawCtx.shadowBlur = shadowBlur;
-            if (shadowBlur > 0) drawCtx.shadowColor = currentColor;
+            drawCtx.shadowBlur = state.shadow;
+            if (state.shadow > 0) drawCtx.shadowColor = state.color;
             drawCtx.stroke();
             drawCtx.shadowBlur = 0; // reset
             
@@ -219,17 +220,17 @@ function getColorFromVideo(x, y) {
     }
 }
 
-function processGestures(landmarks, handedness, w, h) {
+function processGestures(state, handIndex, landmarks, handedness, w, h) {
     // Smoothed target
     const targetX = w - (landmarks[8].x * w); // Mirrored
     const targetY = landmarks[8].y * h;
 
-    if (smoothedX === 0 && smoothedY === 0) {
-        smoothedX = targetX;
-        smoothedY = targetY;
+    if (state.x === 0 && state.y === 0) {
+        state.x = targetX;
+        state.y = targetY;
     } else {
-        smoothedX = lerp(smoothedX, targetX, LERP_FACTOR);
-        smoothedY = lerp(smoothedY, targetY, LERP_FACTOR);
+        state.x = lerp(state.x, targetX, LERP_FACTOR);
+        state.y = lerp(state.y, targetY, LERP_FACTOR);
     }
 
     const states = getFingerStates(landmarks, handedness);
@@ -250,68 +251,120 @@ function processGestures(landmarks, handedness, w, h) {
         actionStr = '00000'; // Hover / Default
     }
 
+    state.action = actionStr;
+
     if (actionStr === '11111') {
         if (Date.now() - lastClearTime > 1000) {
             drawCtx.clearRect(0, 0, w, h);
             canvasHistory = [];
             lastClearTime = Date.now();
         }
-        isDrawing = false;
+        state.isDrawing = false;
     } else if (actionStr === '10001') {
-        if (Date.now() - lastPaletteTime > 500) {
-            colorIndex = (colorIndex + 1) % PREMIUM_COLORS.length;
-            currentColor = PREMIUM_COLORS[colorIndex];
-            lastPaletteTime = Date.now();
+        if (Date.now() - lastPaletteTime[handIndex] > 500) {
+            colorIndex[handIndex] = (colorIndex[handIndex] + 1) % PREMIUM_COLORS.length;
+            state.color = PREMIUM_COLORS[colorIndex[handIndex]];
+            lastPaletteTime[handIndex] = Date.now();
             
             // Highlight color in UI if available
             const swatches = document.querySelectorAll('.cb-swatch');
             if (swatches.length > 0) {
                 swatches.forEach(sw => sw.classList.remove('active'));
-                const targetSwatch = Array.from(swatches).find(sw => sw.dataset.color === currentColor);
+                const targetSwatch = Array.from(swatches).find(sw => sw.dataset.color === state.color);
                 if (targetSwatch) targetSwatch.classList.add('active');
             }
         }
-        isDrawing = false;
+        state.isDrawing = false;
     } else if (actionStr === '00000') {
-        isDrawing = false;
+        state.isDrawing = false;
     } else {
-        isDrawing = true;
-        executeDrawingLogic(smoothedX, smoothedY, actionStr);
+        state.isDrawing = true;
+        executeDrawingLogic(state, state.x, state.y, actionStr);
     }
 
-    // Update gesture indicator
-    const indicator = document.getElementById('gestureIndicator');
-    if (indicator) {
-        if (isDrawing && actionStr === '01000') {
-             indicator.innerHTML = '✨ Premium Pen';
-        } else if (isDrawing && actionStr === '01100') {
-             indicator.innerHTML = '🧹 Smart Eraser';
-        } else if (actionStr === '10001') {
-             indicator.innerHTML = '🎨 Color Changed';
-        } else {
-             indicator.innerHTML = '✋ Waiting for gesture...';
+    // Update gesture indicator (only for first hand to avoid conflicts)
+    if (handIndex === 0) {
+        const indicator = document.getElementById('gestureIndicator');
+        if (indicator) {
+            if (state.isDrawing && actionStr === '01000') {
+                 indicator.innerHTML = '✨ Premium Pen';
+            } else if (state.isDrawing && actionStr === '01100') {
+                 indicator.innerHTML = '🧹 Smart Eraser';
+            } else if (actionStr === '10001') {
+                 indicator.innerHTML = '🎨 Color Changed';
+            } else {
+                 indicator.innerHTML = '✋ Waiting for gesture...';
+            }
         }
     }
 
-    // Draw UI Cursor
+    // Draw UI Cursor for this hand
     uiCtx.beginPath();
-    uiCtx.arc(smoothedX, smoothedY, 10, 0, 2 * Math.PI);
-    uiCtx.fillStyle = actionStr === '01100' ? '#ffffff' : currentColor;
+    uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
+    uiCtx.fillStyle = actionStr === '01100' ? '#ffffff' : state.color;
     uiCtx.fill();
     uiCtx.shadowBlur = 0;
 
-    if (!isDrawing) {
-        prevX = 0;
-        prevY = 0;
+    if (!state.isDrawing) {
+        state.px = 0;
+        state.py = 0;
     } else {
-        prevX = smoothedX;
-        prevY = smoothedY;
+        state.px = state.x;
+        state.py = state.y;
     }
 }
 
-function processTwoHands(handsData, w, h) {
-    // Disabled all complex two hand gestures for simplicity
-    return;
+function processTwoHands(w, h) {
+    const s1 = handStates[0];
+    const s2 = handStates[1];
+    const isRibbon = (s1.action === '00000' && s2.action === '01100') || (s1.action === '01100' && s2.action === '00000');
+
+    if (isRibbon) {
+        s1.isDrawing = false;
+        s2.isDrawing = false;
+        
+        // Защита от переворота
+        const pLeft = s1.x < s2.x ? s1 : s2;
+        const pRight = s1.x < s2.x ? s2 : s1;
+
+        const dx = pRight.x - pLeft.x; 
+        const dy = pRight.y - pLeft.y; 
+        const distance = Math.hypot(dx, dy);
+        const angle = Math.atan2(dy, dx);
+
+        let dynamicScale = distance / 400; 
+        if (dynamicScale < 0.6) dynamicScale = 0.6; 
+        if (dynamicScale > 1.1) dynamicScale = 1.1; 
+
+        const items = uploadedAssets.length > 0 ? uploadedAssets : [null, null, null, null];
+        const maxDisplay = Math.min(items.length, 8);
+
+        uiCtx.save();
+        for(let i = 0; i < maxDisplay; i++) {
+            let amt = (i + 1) / (maxDisplay + 1);
+            let lx = lerp(pLeft.x, pRight.x, amt);
+            let ly = lerp(pLeft.y, pRight.y, amt);
+            
+            uiCtx.save(); 
+            uiCtx.translate(lx, ly); 
+            uiCtx.rotate(angle + galleryRotation); 
+            uiCtx.scale(dynamicScale, dynamicScale);
+            
+            const sizeX = 80, sizeY = 80;
+            if (items[i]) {
+                uiCtx.drawImage(items[i], -sizeX/2, -sizeY/2, sizeX, sizeY);
+                uiCtx.strokeStyle = '#00ffcc'; 
+                uiCtx.lineWidth = 2;
+                uiCtx.strokeRect(-sizeX/2, -sizeY/2, sizeX, sizeY);
+            } else {
+                uiCtx.strokeStyle = '#a855f7'; 
+                uiCtx.lineWidth = 2;
+                uiCtx.strokeRect(-sizeX/2, -sizeY/2, sizeX, sizeY);
+            }
+            uiCtx.restore();
+        }
+        uiCtx.restore();
+    }
 }
 
 function onResultsElite(results) {
@@ -319,11 +372,12 @@ function onResultsElite(results) {
     const w = uiCanvas.width;
     const h = uiCanvas.height;
 
-    // Draw video to UI canvas (mirrored)
-    uiCtx.save();
+    // Clear UI canvas STRICTLY ONCE at the beginning (Step 2)
     uiCtx.clearRect(0, 0, w, h);
-    if (document.getElementById("camVideo")) { document.getElementById("camVideo").style.opacity = isPresentationMode ? "0" : "1"; }
-    uiCtx.restore();
+    
+    if (document.getElementById("camVideo")) { 
+        document.getElementById("camVideo").style.opacity = isPresentationMode ? "0" : "1"; 
+    }
 
     if (isLocked) {
         uiCtx.fillStyle = 'rgba(255,0,0,0.5)';
@@ -334,19 +388,21 @@ function onResultsElite(results) {
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const numHands = results.multiHandLandmarks.length;
         
-        if (numHands === 1) {
-            processGestures(results.multiHandLandmarks[0], results.multiHandedness[0].label, w, h);
-        } else if (numHands === 2) {
-            const handsData = [
-                { landmarks: results.multiHandLandmarks[0], classification: results.multiHandedness[0].label },
-                { landmarks: results.multiHandLandmarks[1], classification: results.multiHandedness[1].label }
-            ];
-            processTwoHands(handsData, w, h);
-            // Also process gestures for the dominant hand (index 0 usually)
-            processGestures(handsData[0].landmarks, handsData[0].classification, w, h);
+        // Step 2: Loop through hands and process each independently
+        for (let i = 0; i < numHands && i < 2; i++) {
+            processGestures(handStates[i], i, results.multiHandLandmarks[i], results.multiHandedness[i].label, w, h);
+        }
+        
+        // If two hands detected, process two-hand gestures
+        if (numHands === 2) {
+            processTwoHands(w, h);
         }
     } else {
-        prevX = 0; prevY = 0;
+        // Reset drawing states when no hands detected
+        for (let i = 0; i < 2; i++) {
+            handStates[i].px = 0;
+            handStates[i].py = 0;
+        }
     }
 }
 
@@ -395,5 +451,3 @@ window.addEventListener('message', (event) => {
         window.stopAirCanvasElite();
     }
 });
-
-
