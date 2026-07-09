@@ -1,5 +1,14 @@
 // ============================================================
-// 0. FIREBASE SETUP
+// 0. GLOBALS & FIREBASE SETUP
+
+// Безопасное кодирование и декодирование Base64 с поддержкой Unicode
+window.safeEncodeBase64 = function(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+};
+window.safeDecodeBase64 = function(str) {
+    return decodeURIComponent(escape(atob(str)));
+};
+
 let currentLang = localStorage.getItem('solifon-lang');
 if (!currentLang || currentLang === 'en') {
     localStorage.setItem('solifon-language', 'ru');
@@ -1099,14 +1108,14 @@ if (chatTrigger) {
 
             if (match && codeContent.trim().length > 0) {
                 // ЭТО ФАЙЛ! Отключаем печатную машинку и выдаем UI-карточку
-                const escapedCode = encodeURIComponent(codeContent);
+                const safeString = window.safeEncodeBase64(codeContent);
                 let formattedContent = reply;
 
                 if (window.innerWidth > 768) {
                     // Версия для ПК: Открываем сплит-экран
                     setTimeout(() => window.openArtifact(codeContent, 'Сгенерированный документ'), 500);
                     formattedContent = reply.replace(targetRegex, `
-                        <div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25);" onclick="window.openArtifact(decodeURIComponent('${escapedCode}'), 'document.pdf')">
+                        <div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25);" onclick="window.openArtifact(window.safeDecodeBase64('${safeString}'), 'document.pdf')">
                             <div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                 <i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i>
                             </div>
@@ -1126,7 +1135,7 @@ if (chatTrigger) {
                                 </div>
                                 <span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span>
                             </div>
-                            <button onclick="window.downloadMobilePDF(decodeURIComponent('${escapedCode}'))" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;">
+                            <button onclick="window.downloadMobilePDF(window.safeDecodeBase64('${safeString}'))" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;">
                                 <i class="ph ph-download-simple"></i> Скачать PDF
                             </button>
                         </div>
