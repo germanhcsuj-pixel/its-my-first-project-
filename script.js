@@ -8,6 +8,7 @@ window.safeEncodeBase64 = function(str) {
 window.safeDecodeBase64 = function(str) {
     return decodeURIComponent(escape(atob(str)));
 };
+window.artifactStore = window.artifactStore || {};
 
 let currentLang = localStorage.getItem('solifon-lang');
 if (!currentLang || currentLang === 'en') {
@@ -1108,38 +1109,17 @@ if (chatTrigger) {
 
             if (match && codeContent.trim().length > 0) {
                 // ЭТО ФАЙЛ! Отключаем печатную машинку и выдаем UI-карточку
-                const safeString = window.safeEncodeBase64(codeContent);
+                const artifactId = 'art_' + Date.now() + Math.floor(Math.random() * 1000);
+                window.artifactStore[artifactId] = codeContent;
                 let formattedContent = reply;
 
                 if (window.innerWidth > 768) {
                     // Версия для ПК: Открываем сплит-экран
                     setTimeout(() => window.openArtifact(codeContent, 'Сгенерированный документ'), 500);
-                    formattedContent = reply.replace(targetRegex, `
-                        <div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,0.25);" onclick="window.openArtifact(window.safeDecodeBase64('${safeString}'), 'document.pdf')">
-                            <div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                <i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i>
-                            </div>
-                            <div style="display: flex; flex-direction: column; padding-right: 20px;">
-                                <span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span>
-                                <span style="color: rgba(255,255,255,0.5); font-size: 12px;">Сгенерированный файл • Кликнуть для просмотра</span>
-                            </div>
-                        </div>
-                    `);
+                    formattedContent = reply.replace(targetRegex, `<div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);"><div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openArtifact(window.artifactStore['${artifactId}'], 'document.pdf')"><i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i></div><div style="display: flex; flex-direction: column; padding-right: 10px; cursor: pointer;" onclick="window.openArtifact(window.artifactStore['${artifactId}'], 'document.pdf')"><span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span><span style="color: rgba(255,255,255,0.5); font-size: 12px;">Сгенерированный файл • Открыть</span></div><button onclick="window.downloadMobilePDF(window.artifactStore['${artifactId}'])" style="padding: 8px 12px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px;"><i class="ph ph-download-simple"></i> Скачать</button></div>`);
                 } else {
                     // Версия для Телефона: Даем кнопку скачивания
-                    formattedContent = reply.replace(targetRegex, `
-                        <div style="margin: 10px 0; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
-                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
-                                <div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i>
-                                </div>
-                                <span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span>
-                            </div>
-                            <button onclick="window.downloadMobilePDF(window.safeDecodeBase64('${safeString}'))" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;">
-                                <i class="ph ph-download-simple"></i> Скачать PDF
-                            </button>
-                        </div>
-                    `);
+                    formattedContent = reply.replace(targetRegex, `<div style="margin: 10px 0; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;"><div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i></div><span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span></div><button onclick="window.downloadMobilePDF(window.artifactStore['${artifactId}'])" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;"><i class="ph ph-download-simple"></i> Скачать PDF</button></div>`);
                 }
 
                 // Вставляем карточку мгновенно (без анимации)
