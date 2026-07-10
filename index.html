@@ -3,18 +3,47 @@
 <head>
 <meta charset="UTF-8">
 
+<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+  SOLIFON AI — PWA PATCH
+  
+  INSTRUCTION: Add these blocks to index.html
 
+  в‘  Block 1 в†’ insert inside <head>
+<meta charset="UTF-8"> ... </head>
+
+<script>
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'startCamera') {
+        if (window.startHeroCamera) window.startHeroCamera();
+    }
+    if (event.data === 'stopCamera') {
+        if (window.stopHeroCamera) window.stopHeroCamera();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+</script>
 
     
 
 
 
 
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 
-
-
+<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+     BLOCK 1 — Insert into <head>
 <meta charset="UTF-8">
+в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
@@ -34,14 +63,22 @@
 
   
   <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
 <!-- End Google Tag Manager -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOLIFON AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=20260709_15">
+    <link rel="stylesheet" href="style.css?v=20260706_1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
@@ -49,9 +86,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
-    <!-- Google API & GIS -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </head>
 <body class="no-select">
   <!-- Google Tag Manager (noscript) -->
@@ -79,70 +113,42 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <nav class="menu">
                         <div class="menu-section-title">System</div>
-<style>
-.menu .menu-item > span {
-    display: inline-block;
-}
-.menu .menu-item > span::first-letter {
-    font-family: 'Georgia', serif;
-    font-size: 1.3em;
-    font-weight: 700;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: transparent;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    margin-right: 1px;
-    background-image: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
-}
-.menu .menu-item[onclick*='whatsNewModal'] > span::first-letter {
-    background-image: linear-gradient(135deg, #00c6ff, #0072ff);
-}
-.menu .menu-item[onclick*='aboutModal'] > span::first-letter {
-    background-image: linear-gradient(135deg, #11998e, #38ef7d);
-}
-.menu #chatTrigger > span::first-letter {
-    background-image: linear-gradient(135deg, #b92b27, #1565C0);
-}
-.menu #libraryTrigger > span::first-letter {
-    background-image: linear-gradient(135deg, #8E2DE2, #4A00E0);
-}
-.menu .menu-item[onclick*='openPresentation'] > span::first-letter {
-    background-image: linear-gradient(135deg, #f12711, #f5af19);
-}
-</style>
             <div class="menu-item" onclick="openModal('whatsNewModal')">
-    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span>What's New</span>
+    <i class="ph ph-megaphone"></i><span>What's New</span>
 </div>
 
             <div class="menu-item" onclick="openModal('aboutModal')">
-                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span>About SOLIFON</span>
+                <i class="ph ph-info"></i><span>About SOLIFON</span>
             </div>
 
             <div class="menu-section-title">Features</div>           
           <div class="menu-item active" id="chatTrigger">
 
-<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span>Chat</span>
+<i class="ph ph-chat-circle-dots"></i><span>Chat</span>
 
           </div>
             
             <div class="menu-item" id="libraryTrigger">
-                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span>Library</span>
+                <i class="ph ph-books"></i><span>Library</span>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
             <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span>Solifon AI Code</span>
+    <i class="ph ph-code"></i><span>Solifon AI Code</span>
 </div>
-<div class="menu-item" onclick="openModal('emptyFeatureModal')">
-    <i class="ph ph-app-window" style="color: #ff4757; filter: drop-shadow(0 0 5px rgba(255,71,87,0.5));"></i><span>А</span>
+<div class="menu-item" onclick="openModal('newFeatureModal')">
+    <i class="ph ph-camera"></i><span>new feature</span>
 </div>
+
+            
+            
 
 
 
             </nav>
 
         <div class="upgrade-card" onclick="openModal('upgradeModal')">
-            <div class="upgrade-icon"><i class="ph ph-sparkle"></i></div>
+            <div class="upgrade-icon"><i class="ph ph-crown"></i></div>
             <div class="upgrade-text">
                 <p>Upgrade to premium</p>
                 <button class="upgrade-btn">Upgrade</button>
@@ -183,8 +189,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    
       
             
-        <div class="split-view-container" id="splitViewContainer">
-            <main class="main-content">
+                    <main class="main-content">
                     <header class="app-header">
     <div class="tubelight-navbar">
         <div class="tubelight-navbar-inner">
@@ -317,27 +322,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             letter-spacing: 0.5px;
             border: 1px solid rgba(255,255,255,0.05);
         }
-        
-        /* ===== STYLISH FIRST LETTER ===== */
-        .stylish-first-letter {
-            font-family: 'Georgia', serif;
-            font-size: 1.3em;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            margin-right: 1px;
-            display: inline-block;
-            transform: translateY(1px);
-        }
-        
-        /* ===== ANIMATION FOR FAV ICON ===== */
-        @keyframes starBurst {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.6) rotate(20deg); filter: drop-shadow(0 0 12px #ffcf33); color: #ffcf33; }
-            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px #ffcf33); color: #ffcf33; }
-        }
     </style>
     <div style="position: relative; width: 100%; height: 0; display: flex; justify-content: center; z-index: 10000;">
         <!-- Autocomplete Suggestions Dropdown -->
@@ -359,14 +343,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <button type="button" class="action-icon-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
                     <i class="ph ph-paperclip"></i>
                 </button>
-                <button type="button" class="action-icon-btn" id="googleDriveBtn" onclick="handleAuthClick()" title="Google Drive">
-                    <i class="ph ph-google-drive-logo"></i>
-                </button>
                 <button type="button" class="action-icon-btn" id="micBtn" title="Voice Input">
                     <i class="ph ph-microphone"></i>
-                </button>
-                <button type="button" class="action-icon-btn disabled" id="stopBtn" title="Stop Generation" onclick="if(!this.classList.contains('disabled')) stopGeneration()">
-                    <i class="ph ph-stop-circle"></i>
                 </button>
             </div>
 
@@ -426,28 +404,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         border-radius: 50%;
                         box-shadow: 0 0 6px #fff;
                     }
-                    .mmd-option.locked {
-                        opacity: 0.6;
-                        cursor: not-allowed;
-                    }
-                    .mmd-option.locked:hover {
-                        background: transparent;
-                        padding-left: 14px;
-                    }
-                    .mmd-pro-badge {
-                        margin-left: auto;
-                        font-size: 10px;
-                        background: linear-gradient(90deg, #c7fe42, #7efde3);
-                        color: #000;
-                        padding: 2px 6px;
-                        border-radius: 6px;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                        display: flex;
-                        align-items: center;
-                        gap: 3px;
-                    }
-
                     #modelMiniBtn {
                         border-radius: 14px;
                         padding: 0 16px;
@@ -488,10 +444,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </button>
                     <div id="modelMiniDropdown" class="mmd-dropdown">
                         <div class="mmd-option active" data-value="gemini">Solifon Air</div>
-                        <div class="mmd-option locked" data-value="solifon-souldrive">Solifon SoulDrive <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
-                        <div class="mmd-option locked" data-value="github">Solifon Alpha <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
-                        <div class="mmd-option locked" data-value="solifon-pulse">Solifon Pulse <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
-                        <div class="mmd-option locked" data-value="solifon-loom">Solifon Loom <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option" data-value="solifon-souldrive">Solifon SoulDrive</div>
+                        <div class="mmd-option" data-value="github">Solifon Ultra</div>
+                        <div class="mmd-option" data-value="solifon-pulse">Solifon Pulse</div>
                     </div>
                 </div>
 
@@ -558,9 +513,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const mmdShortNames = {
             'gemini': 'Air',
             'solifon-pulse': 'Pulse',
-            'github': 'Alpha',
-            'solifon-souldrive': 'SoulDrive',
-            'solifon-loom': 'Loom'
+            'github': 'Ultra',
+            'solifon-souldrive': 'SoulDrive'
         };
 
         if (miniBtn && mmdDropdown) {
@@ -572,18 +526,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
 
             mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
-                opt.addEventListener('click', (e) => {
-                    if (opt.classList.contains('locked')) {
-                        e.stopPropagation();
-                        if (typeof openModal === 'function') {
-                            openModal('upgradeModal');
-                        } else {
-                            alert("This is a Premium model! Pro subscription is required.");
-                        }
-                        mmdDropdown.classList.remove('open');
-                        miniBtn.classList.remove('open');
-                        return;
-                    }
+                opt.addEventListener('click', () => {
                     const val = opt.getAttribute('data-value');
                     const shortName = mmdShortNames[val] || val;
                     if (miniName) miniName.textContent = shortName;
@@ -806,33 +749,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
     </main>
-</div> <!-- Завершает main-screen -->
-</main> <!-- Завершает main-content -->
-    
-    <!-- ARTIFACTS PANEL (LIVE CANVAS) -->
-    <div class="resize-handle" id="resizeHandle"></div>
-    <aside class="artifact-panel" id="artifactPanel">
-        <div class="artifact-header">
-            <div class="artifact-title" id="artifactTitle">
-                <i class="ph ph-code"></i> <span>Generated Content</span>
-            </div>
-            <div class="artifact-actions">
-                <button id="artifactCopyBtn" class="artifact-btn" title="Copy Code">
-                    <i class="ph ph-copy"></i>
-                </button>
-                <button id="artifactPdfBtn" class="artifact-btn" title="Download PDF">
-                    <i class="ph ph-download-simple"></i>
-                </button>
-                <button id="artifactCloseBtn" class="artifact-btn" title="Close Canvas">
-                    <i class="ph ph-x"></i>
-                </button>
-            </div>
-        </div>
-        <div class="artifact-body">
-            <iframe id="artifactIframe" sandbox="allow-scripts allow-same-origin"></iframe>
-        </div>
-    </aside>
-</div> <!-- End split-view-container -->
 </div>
 
 <div id="sim-screen" style="display: none;">
@@ -879,7 +795,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="model-option" onclick="setVoice('rachel')">
                     <i class="ph ph-user-circle"></i> Rachel (Clear & Warm)
                 </div>
-                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs v1</p>
+                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs API v1</p>
             </div>
         </div>
     </div>
@@ -915,10 +831,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"
       style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
 
-    <div style="text-align: right; margin-bottom: 14px;">
-        <a href="#" onclick="resetPassword()" style="color: #00c8ff; font-size: 13px; text-decoration: none;">Forgot password?</a>
-    </div>
-
     <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
 
     <button id="authSubmitBtn" onclick="submitAuth()" 
@@ -927,7 +839,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 </div>
-    <script src="script.js?v=45" charset="utf-8"></script>
+    <script src="script.js?v=23" charset="utf-8"></script>
     <script src="air_canvas.js" charset="utf-8" defer></script>
   
 
@@ -955,6 +867,81 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="billing-toggle">
                     <button class="billing-btn active" data-period="month">1 Month</button>
                     <button class="billing-btn" data-period="year">1 Year</button>
+                    <button class="billing-btn" data-period="custom">Custom Selection</button>
+                </div>
+            </div>
+
+            <!-- Custom Months Slider UI -->
+            <style>
+                .premium-slider-container {
+                    text-align: center;
+                    margin-bottom: 40px;
+                    animation: fadeIn 0.4s ease;
+                }
+                .premium-slider-label {
+                    color: rgba(255,255,255,0.8);
+                    font-family: 'Inter', sans-serif;
+                    font-size: 15px;
+                    display: block;
+                    margin-bottom: 20px;
+                }
+                .premium-slider-value {
+                    color: #fff;
+                    font-weight: 700;
+                    font-size: 18px;
+                }
+                .premium-slider-wrapper {
+                    position: relative;
+                    width: 80%;
+                    max-width: 300px;
+                    margin: 0 auto;
+                }
+                .premium-slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 8px;
+                    background: linear-gradient(90deg, #9c40ff, #ffaa40);
+                    border-radius: 10px;
+                    outline: none;
+                    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(156, 64, 255, 0.4);
+                }
+                .premium-slider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 50%;
+                    background: #ffffff;
+                    border: 2px solid #9c40ff;
+                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
+                    cursor: pointer;
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                .premium-slider::-webkit-slider-thumb:hover {
+                    transform: scale(1.2);
+                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
+                }
+                .premium-slider::-moz-range-thumb {
+                    width: 26px;
+                    height: 26px;
+                    border-radius: 50%;
+                    background: #ffffff;
+                    border: 2px solid #9c40ff;
+                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
+                    cursor: pointer;
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                .premium-slider::-moz-range-thumb:hover {
+                    transform: scale(1.2);
+                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
+                }
+            </style>
+            <div id="custom-months-container" class="premium-slider-container" style="display: none;">
+                <label for="customMonthsRange" class="premium-slider-label">
+                    Selected: <span id="customMonthsValue" class="premium-slider-value">5 Months</span>
+                </label>
+                <div class="premium-slider-wrapper">
+                    <input type="range" id="customMonthsRange" class="premium-slider" min="2" max="24" value="5">
                 </div>
             </div>
 
@@ -965,11 +952,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__gradient"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type first__tariff-type">Solifon Pro</span>
-                                <div class="tariff__price"><span class="tariff__number">$14.99</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">Perfect for daily tasks and creative exploration.</p>
+                                <span class="tariff__type first__tariff-type">Basic</span>
+                                <div class="tariff__price tariff__free">Free</div>
+                                <p class="tariff__description">For casual use & one-on-one meetings</p>
                             </div>
-                            <button class="tariff__button first__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/0531fd1d-0682-4b30-9796-2de86b760449'">Buy Pro</button>
+                            <button class="tariff__button first__tariff-button">Select plan</button>
                             <div class="tariff__list first__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -977,7 +964,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Pulse and SoulDrive Models</p>
+                                    <p class="tariff__item-text">Up to 2 participants</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -985,7 +972,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Image Generation (15 per day)</p>
+                                    <p class="tariff__item-text">40-minute meeting limit</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -993,7 +980,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Smart Web Context</p>
+                                    <p class="tariff__item-text">Standard video quality</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1001,7 +988,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Standard Processing Speed</p>
+                                    <p class="tariff__item-text">Screen sharing</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1020,11 +1007,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__gradient"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Solifon Max</span><span class="tariff__tag">Most Popular</span></div>
-                                <div class="tariff__price"><span class="tariff__number">$39.99</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">Advanced tools for serious creators</p>
+                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Corporate</span><span class="tariff__tag">Most Popular</span></div>
+                                <div class="tariff__price"><span class="tariff__number">$60</span><span class="tariff__period">/month</span></div>
+                                <p class="tariff__description">Ideal for small teams & regular meetings</p>
                             </div>
-                            <button class="tariff__button second__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/66d88b1f-de18-43f2-b0c7-0a71467ba1fe'">Buy Max</button>
+                            <button class="tariff__button second__tariff-button">Select plan</button>
                             <div class="tariff__list second__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1032,7 +1019,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Unrestricted access to Alpha and Loom</p>
+                                    <p class="tariff__item-text">Up to 25 participants</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1040,7 +1027,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Image Generation (50 per day)</p>
+                                    <p class="tariff__item-text">Unlimited meeting duration</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1048,7 +1035,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Voice Synthesis (ElevenLabs)</p>
+                                    <p class="tariff__item-text">HD video quality</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1056,7 +1043,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Smart Web Context</p>
+                                    <p class="tariff__item-text">Screen sharing & file sharing</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1064,7 +1051,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Fast Processing</p>
+                                    <p class="tariff__item-text">Meeting recording (limited storage)</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1072,62 +1059,123 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Priority chat support</p>
+                                    <p class="tariff__item-text">Custom meeting links</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Priority email support</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Third Tariff-->
-                    <div class="tariff third-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(255, 215, 0, 0.3);">
-                        <style>
-                            @keyframes pulseGlow { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
-                        </style>
-                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #FFD700, #ff8c00, #ff0080); animation: pulseGlow 3s infinite alternate;"></div>
+                    <div class="tariff third-tariff">
+                        <div class="tariff__gradient"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type third__tariff-type" style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">Solifon Alpha</span>
-                                <div class="tariff__price"><span class="tariff__number">$119.99</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">The ultimate AI workspace for creators and businesses. Maximum power without limits.</p>
+                                <span class="tariff__type third__tariff-type">Premium</span>
+                                <div class="tariff__price"><span class="tariff__number">$90</span><span class="tariff__period">/month</span></div>
+                                <p class="tariff__description">Built for businesses & corporations</p>
                             </div>
-                            <button class="tariff__button third__tariff-button" style="background: linear-gradient(90deg, #ff8c00, #ff0080); box-shadow: 0 0 15px rgba(255, 0, 128, 0.6); border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/a07f7b65-bd2c-4a86-b909-f3ea8a56d390'">Buy Alpha</button>
+                            <button class="tariff__button third__tariff-button">Select plan</button>
                             <div class="tariff__list third__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </div>
-                                    <p class="tariff__item-text">All features from Max Plan</p>
+                                    <p class="tariff__item-text">All features from Corporate Plan</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </div>
-                                    <p class="tariff__item-text">Unlimited Image Generation</p>
+                                    <p class="tariff__item-text">Cloud recording with storage</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </div>
-                                    <p class="tariff__item-text">Advanced Computer Vision</p>
+                                    <p class="tariff__item-text">Branding & custom backgrounds</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                    </div>
-                                    <p class="tariff__item-text">Priority Processing</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </div>
                                     <p class="tariff__item-text">Dedicated account manager</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
                                     </div>
-                                    <p class="tariff__item-text">24/7 VIP support</p>
+                                    <p class="tariff__item-text">24/7 priority support</p>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fourth Tariff (Coming Soon) -->
+                    <div class="tariff fourth-tariff" style="position: relative;">
+                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #ff0050, #00f2fe);"></div>
+                        <div class="tariff__content" style="pointer-events: none; opacity: 0.6; filter: grayscale(50%);">
+                            <div class="tariff__info">
+                                <div class="tariff__info-top"><span class="tariff__type fourth__tariff-type">SMM Business</span><span class="tariff__tag" style="background: #ff0050; color: white;">Coming Soon</span></div>
+                                <div class="tariff__price">???<span class="tariff__period">/mo</span></div>
+                                <p class="tariff__description">AI for managing TikTok, Instagram and social networks</p>
+                            </div>
+                            <button class="tariff__button fourth__tariff-button" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255, 255, 255, 0.1);">In development</button>
+                            <div class="tariff__list fourth__tariff-checkbox-list">
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Integration with TikTok & Instagram</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Auto-posting and reel generation</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">Audience and trend analytics</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <p class="tariff__item-text">SMM AI strategies</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 10; background: rgba(0,0,0,0.2); border-radius: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(1.5px);">
+                            <div style="background: rgba(255, 0, 80, 0.9); padding: 10px 25px; border-radius: 20px; font-weight: bold; color: white; transform: rotate(-5deg); box-shadow: 0 5px 15px rgba(255,0,80,0.4); border: 1px solid rgba(255,255,255,0.2); font-family: 'Poppins', sans-serif;">
+                                SOON
                             </div>
                         </div>
                     </div>
@@ -1151,37 +1199,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- INFRA CARDS -->
         <div class="wn-infra-row">
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-buildings" style="color: #ffffff; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">🏗️</div>
                 <div class="wn-infra-name">X Infrastructure</div>
                 <div class="wn-infra-desc">We don't stand still · AI Evolution</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-instagram-logo" style="color: #ff007b; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">📸</div>
                 <div class="wn-infra-name">Instagram Stack</div>
                 <div class="wn-infra-desc">CDN · Media pipeline · Scale</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-rocket-launch" style="color: #00f2ff; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">🚀</div>
                 <div class="wn-infra-name">NASA Standards</div>
                 <div class="wn-infra-desc">Fault Tolerance · Mission Critical</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-sketch-logo" style="color: #0051ff; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">💎</div>
                 <div class="wn-infra-name">Solifon Crypto</div>
                 <div class="wn-infra-desc">Crypto News · Decentralization</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-film-strip" style="color: #a29bfe; font-size: 28px;"></i></div>
-                <div class="wn-infra-name">Solifon Loom</div>
+                <div class="wn-infra-icon">🎬</div>
+                <div class="wn-infra-name">Solifon Motion 2.0</div>
                 <div class="wn-infra-desc">Stunning video generation · Cinematography</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-brain" style="color: #ff0055; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">🧠</div>
                 <div class="wn-infra-name">Smart Models</div>
                 <div class="wn-infra-desc">High intelligence · Became even smarter</div>
             </div>
             <div class="wn-infra-card">
-                <div class="wn-infra-icon"><i class="ph ph-trend-up" style="color: #00ff88; font-size: 28px;"></i></div>
+                <div class="wn-infra-icon">📈</div>
                 <div class="wn-infra-name">Constant Evolution</div>
                 <div class="wn-infra-desc">We don't stand still · AI Evolution</div>
             </div>
@@ -1276,777 +1324,493 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <!-- FOOTER -->
         <div class="wn-footer">
-            <span>© 2026 SOLIFON AI</span>
-            <span class="wn-footer-sep">·</span>
+            <span>В© 2026 SOLIFON AI</span>
+            <span class="wn-footer-sep">В·</span>
             <span>Built for scale</span>
-            <span class="wn-footer-sep">·</span>
-            <span>KZ · Global</span>
+            <span class="wn-footer-sep">В·</span>
+            <span>KZ В· Global</span>
         </div>
     </div>
 </div>
 
+
 <div class="custom-modal" id="aboutModal">
     <style>
-        /* Sleek & Expensive Dark Mode Redesign */
+        /* Base Modal Overrides for Premium Feel */
         #aboutModal {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(40px) saturate(150%);
-            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
+        /* Modal Container with Animated Gradient Border */
         #aboutModal .modal-content {
-            background: #000000;
-            border-radius: 20px;
-            max-width: 800px;
+            background: #09090b;
+            border-radius: 24px;
+            max-width: 840px;
             width: 95%;
             padding: 0;
             overflow: hidden;
-            font-family: 'Inter', sans-serif;
-            color: #ffffff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #ededed;
             position: relative;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,1), inset 0 1px 0 rgba(255,255,255,0.15);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: aboutFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: scale(0.97);
+            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.08);
+            transform: translateY(10px);
+            animation: modalPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes aboutFadeIn {
-            to { opacity: 1; transform: scale(1); }
+        @keyframes modalPop {
+            to { transform: translateY(0); }
+        }
+
+        /* Moving Glow Effect */
+        #aboutModal .modal-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.05), rgba(255,255,255,0), rgba(139, 90, 43, 0.05));
+            z-index: 0;
+            pointer-events: none;
         }
 
         #aboutModal .modal-header {
-            padding: 24px 36px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 24px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
-            z-index: 10;
+            background: rgba(9, 9, 11, 0.7);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 20;
         }
-
         #aboutModal .modal-header h3 {
             margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #ededed;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #fff;
             display: flex;
             align-items: center;
             gap: 12px;
+            letter-spacing: -0.01em;
         }
         
         .premium-badge {
-            background: #fff;
+            background: linear-gradient(135deg, #ffffff, #a1a1aa);
             color: #000;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
             letter-spacing: 0.1em;
+            margin-left: 8px;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
         }
 
         .close-premium {
-            background: transparent;
-            border: none;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
             color: #a1a1aa;
-            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .close-premium:hover {
-            color: #fff;
+            background: #fff;
+            color: #000;
+            transform: rotate(90deg) scale(1.1);
         }
 
         #aboutModal .modal-body {
-            padding: 48px 36px;
-            max-height: 70vh;
+            padding: 40px;
+            max-height: 75vh;
             overflow-y: auto;
             position: relative;
-            background: radial-gradient(circle at center top, rgba(255,255,255,0.04), transparent 70%);
+            z-index: 10;
         }
+        #aboutModal .modal-body::-webkit-scrollbar { width: 6px; }
+        #aboutModal .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
         
-        #aboutModal .modal-body::-webkit-scrollbar { width: 4px; }
-        #aboutModal .modal-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-
-        .about-hero {
+        .hero-section {
             text-align: center;
-            margin-bottom: 56px;
+            margin-bottom: 50px;
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .about-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            letter-spacing: -0.05em;
-            margin: 0 0 16px 0;
-            background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+        .premium-gradient-text {
+            background: linear-gradient(180deg, #ffffff 0%, #71717a 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            margin: 0 0 16px 0;
+            line-height: 1.1;
         }
-
-        .about-subtitle {
+        
+        .hero-subtitle {
             color: #a1a1aa;
-            font-size: 1.1rem;
-            max-width: 600px;
+            font-size: 1.15rem;
+            max-width: 580px;
             margin: 0 auto;
             line-height: 1.6;
+            font-weight: 400;
         }
 
-        .about-grid {
+        /* Bento Box Layout */
+        .bento-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+            gap: 20px;
         }
 
-        .about-card {
+        .bento-card {
             background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 32px;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 30px;
             position: relative;
             overflow: hidden;
-            z-index: 1;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+        
+        .bento-card:nth-child(1) { animation-delay: 0.1s; }
+        .bento-card:nth-child(2) { animation-delay: 0.2s; }
+        .bento-card:nth-child(3) { animation-delay: 0.3s; grid-column: span 2; }
+        .bento-card:nth-child(4) { animation-delay: 0.4s; grid-column: span 2; }
 
-        .about-card::before {
+        .bento-card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--hover-gradient, rgba(255,255,255,0.05));
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06), transparent 40%);
             opacity: 0;
-            z-index: -1;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            z-index: 1;
         }
-
-        .about-card:hover {
-            border-color: var(--hover-color, rgba(255,255,255,0.2));
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.8), 0 0 20px var(--hover-shadow, transparent);
-        }
-
-        .about-card:hover::before {
+        .bento-card:hover::before {
             opacity: 1;
         }
 
-        .about-icon {
+        .bento-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* Card Accents */
+        .card-glow-brown { background: radial-gradient(circle at top right, rgba(139, 90, 43, 0.15), transparent 60%), rgba(255, 255, 255, 0.015); }
+        .card-glow-white { background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 60%), rgba(255, 255, 255, 0.015); }
+
+        .bento-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 56px;
-            height: 56px;
-            font-size: 32px;
-            border-radius: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: var(--hover-color, #fff);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1.4rem;
             margin-bottom: 24px;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
-        .about-card:hover .about-icon {
-            background: var(--hover-color, #fff);
-            color: #000;
-            transform: rotate(-5deg) scale(1.1);
-            box-shadow: 0 10px 20px -5px var(--hover-shadow, transparent);
+        .bento-card:hover .bento-icon {
+            transform: scale(1.1) rotate(-5deg);
         }
 
-        .about-card h4 {
+        .bento-icon.brown-tint {
+            color: #d4a373;
+            background: rgba(212, 163, 115, 0.1);
+            border-color: rgba(212, 163, 115, 0.2);
+        }
+        .bento-icon.white-tint {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .bento-title {
+            color: #fff;
             font-size: 1.25rem;
             font-weight: 600;
-            color: #fff;
             margin: 0 0 12px 0;
-            letter-spacing: -0.01em;
-            transition: color 0.3s;
+            letter-spacing: -0.02em;
+            position: relative;
+            z-index: 2;
         }
 
-        .about-card:hover h4 {
-            color: var(--hover-color, #fff);
-            text-shadow: 0 0 15px var(--hover-shadow, transparent);
-        }
-
-        .about-card p {
+        .bento-text {
             color: #a1a1aa;
             font-size: 0.95rem;
             line-height: 1.7;
             margin: 0;
-            transition: color 0.3s;
-        }
-
-        .about-card:hover p {
-            color: #ededed;
-        }
-
-        .about-footer {
-            margin-top: 56px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 32px;
-            color: #52525b;
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
         }
         
+        .bento-text strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-top: 16px;
+            letter-spacing: 0.03em;
+            position: relative;
+            z-index: 2;
+            transition: all 0.2s;
+        }
+        .status-pill:hover {
+            transform: translateY(-2px);
+        }
+        .status-pill.removed {
+            background: rgba(255, 60, 60, 0.08);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 60, 60, 0.15);
+        }
+        .status-pill.active {
+            background: rgba(212, 163, 115, 0.1);
+            color: #d4a373;
+            border: 1px solid rgba(212, 163, 115, 0.2);
+        }
+        .status-pill.neutral {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ededed;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Abstract glowing orb in background */
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.5;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-orb-1 {
+            width: 300px; height: 300px;
+            background: rgba(139, 90, 43, 0.4);
+            top: -100px; right: -100px;
+            animation: floatOrb 10s ease-in-out infinite alternate;
+        }
+        .bg-orb-2 {
+            width: 400px; height: 400px;
+            background: rgba(255,255,255,0.08);
+            bottom: -150px; left: -100px;
+            animation: floatOrb 15s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-30px, 50px) scale(1.1); }
+        }
+
         @media (max-width: 768px) {
-            .about-grid { grid-template-columns: 1fr; }
-            .about-title { font-size: 2.5rem; }
-            #aboutModal .modal-body { padding: 32px 24px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card:nth-child(3), .bento-card:nth-child(4) { grid-column: span 1; }
+            .premium-gradient-text { font-size: 2.5rem; }
+            #aboutModal .modal-body { padding: 24px; }
         }
     </style>
 
     <div class="modal-content">
+        <!-- Abstract Background Orbs -->
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+
         <div class="modal-header">
-            <h3>SOLIFON <span class="premium-badge">PRO</span></h3>
-            <button class="close-premium" onclick="closeModal('aboutModal')">&times;</button>
+            <h3>SOLIFON AI <span class="premium-badge">Vercel Edition</span></h3>
+            <button class="close-premium" onclick="closeModal('aboutModal')"><i class="ph ph-x"></i></button>
         </div>
-        <div class="modal-body">
-            <div class="about-hero">
-                <h2 class="about-title">Absolute Focus.</h2>
-                <p class="about-subtitle">We discarded everything unnecessary to create the perfect tool. No compromises. Only premium, highly targeted intelligent systems.</p>
+        <div class="modal-body" id="bentoContainer">
+            <div class="hero-section">
+                <h2 class="premium-gradient-text">Absolute Focus.</h2>
+                <p class="hero-subtitle">
+                    We discarded everything unnecessary to create the perfect tool. 7 months of evolution led us to a single, powerful goal.</p>
             </div>
 
-            <div class="about-grid">
-                <div class="about-card" style="--hover-color: #00f2ff; --hover-shadow: rgba(0, 242, 255, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(0,242,255,0.1), transparent 70%);">
-                    <div class="about-icon"><i class="ph ph-cpu"></i></div>
-                    <h4>Neural Engine V2</h4>
-                    <p>Powered by our latest proprietary architecture. Lightweight, infinitely scalable, and optimized for extreme precision.</p>
-                </div>
-                
-                <div class="about-card" style="--hover-color: #ff0055; --hover-shadow: rgba(255, 0, 85, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(255,0,85,0.1), transparent 70%);">
-                    <div class="about-icon"><i class="ph ph-shield-check"></i></div>
-                    <h4>Zero-Knowledge</h4>
-                    <p>Total privacy. Data stays exclusively on your machine or within encrypted edge networks. No exceptions.</p>
+            <div class="bento-grid">
+                <!-- Card 1: Time & Origin -->
+                <div class="bento-card card-glow-white">
+                    <div class="bento-icon white-tint"><i class="ph ph-hourglass-high"></i></div>
+                    <h4 class="bento-title">7 Months of Development</h4>
+                    <p class="bento-text">
+                        The project was born in <strong>1 January</strong>. In this short time, we went through hundreds of iterations, mistakes, and improvements to form a premium product.
+                    </p>
                 </div>
 
-                <div class="about-card" style="--hover-color: #00ff88; --hover-shadow: rgba(0, 255, 136, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(0,255,136,0.1), transparent 70%);">
-                    <div class="about-icon"><i class="ph ph-lightning"></i></div>
-                    <h4>Unmatched Speed</h4>
-                    <p>Responses delivered in milliseconds. Global edge CDN routing ensures zero latency regardless of location.</p>
+                <!-- Card 2: Optimization -->
+                <div class="bento-card card-glow-brown">
+                    <div class="bento-icon brown-tint"><i class="ph ph-cpu"></i></div>
+                    <h4 class="bento-title">Architectural Cleanup</h4>
+                    <p class="bento-text">
+                        We <strong>removed and optimized</strong> heavy models, including <em>Soul Max Pro</em>. The remaining core became more compact, faster, and significantly more intelligent.
+                    </p>
+                    <div>
+                        <span class="status-pill removed"><i class="ph ph-x-circle"></i> Max Pro</span>
+                        <span class="status-pill active"><i class="ph ph-check-circle"></i> Core AI V2</span>
+                    </div>
                 </div>
-                
-                <div class="about-card" style="--hover-color: #a29bfe; --hover-shadow: rgba(162, 155, 254, 0.4); --hover-gradient: radial-gradient(circle at top right, rgba(162,155,254,0.1), transparent 70%);">
-                    <div class="about-icon"><i class="ph ph-infinity"></i></div>
-                    <h4>Singularity Bound</h4>
-                    <p>Moving beyond simple text generation. Autonomous AI agents designed to handle complex logic seamlessly.</p>
+
+                <!-- Card 3: Strategic Pivot (Full Width) -->
+                <div class="bento-card">
+                    <div class="bento-icon"><i class="ph ph-scissors"></i></div>
+                    <h4 class="bento-title">Strategic Pivot</h4>
+                    <p class="bento-text">
+                        To become the best in our niche, we had to say "no". We <strong>completely abandoned</strong> from project «Ananyn Zhuregy», as well as from all educational and medical initiatives. 
+                        We no longer <strong>do not work with the public sector</strong>, civil servants and do not support partnerships in these areas. Our independence — is a guarantee of quality.
+                    </p>
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Medicine</span>
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Education</span>
+                        <span class="status-pill neutral"><i class="ph ph-prohibit"></i> Gov Sector</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Future Focus (Full Width) -->
+                <div class="bento-card" style="background: rgba(255,255,255,0.03); border-color: rgba(212, 163, 115, 0.3);">
+                    <div class="bento-icon brown-tint"><i class="ph ph-brain"></i></div>
+                    <h4 class="bento-title" style="color: #d4a373;">Singularity: AI Agents</h4>
+                    <p class="bento-text">
+                        Our new and <strong>the only vector of development</strong> — these are cutting-edge <strong>AI agents</strong> and specialized AI models. We focus exclusively on artificial intelligence and related technologies that need it. No more compromises. Only premium, highly targeted intelligent systems.
+                    </p>
                 </div>
             </div>
             
-            <div class="about-footer">
-                &copy; 2026 SOLIFON AI &middot; THE FUTURE IS NOW
+            <div style="text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: inline-block; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, #8b5a2b, transparent); margin-bottom: 20px;"></div>
+                <p style="color: #52525b; font-size: 0.8rem; margin: 0; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;">
+                    &copy; 2026 SOLIFON AI &middot; The Future is Now
+                </p>
             </div>
         </div>
     </div>
+    
+    <script>
+        // Micro-interaction for Bento Cards (Mouse tracking glow)
+        document.getElementById('bentoContainer').addEventListener('mousemove', function(e) {
+            const cards = this.querySelectorAll('.bento-card');
+            for(const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', ${x}px);
+                card.style.setProperty('--mouse-y', ${y}px);
+            }
+        });
+    </script>
 </div>
 
 
-<style>
-/* ===== SOLIFON AI CODE — PREMIUM REDESIGN ===== */
-#presentation-screen {
-    font-family: 'Inter', sans-serif;
-    --ide-bg: #0a0a0c;
-    --ide-sidebar: #111114;
-    --ide-bar: #0f0f12;
-    --ide-border: rgba(255,255,255,0.06);
-    --ide-accent: #4f8ef7;
-    --ide-accent-soft: rgba(79,142,247,0.12);
-    --ide-text: #e8e8f0;
-    --ide-muted: #555568;
-    --ide-tab-active: #1a1a22;
-}
+<div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0d0d0f; flex-direction:column; font-family:'Inter',sans-serif;">
 
-#ide-topbar-v2 {
-    background: var(--ide-bar);
-    height: 52px;
-    display: flex;
-    align-items: center;
-    padding: 0 20px;
-    border-bottom: 1px solid var(--ide-border);
-    gap: 16px;
-    flex-shrink: 0;
-    backdrop-filter: blur(20px);
-}
-
-.ide-traffic {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-.ide-traffic-dot {
-    width: 13px;
-    height: 13px;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: filter 0.2s, transform 0.2s;
-}
-.ide-traffic-dot:hover { filter: brightness(1.4); transform: scale(1.1); }
-
-.ide-title-center {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-.ide-project-name {
-    font-size: 13px;
-    color: var(--ide-muted);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    letter-spacing: 0.01em;
-}
-.ide-project-name strong {
-    color: #c8c8d8;
-    font-weight: 600;
-}
-
-.ide-topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.ide-layout-group {
-    display: flex;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--ide-border);
-    border-radius: 10px;
-    padding: 3px;
-    gap: 2px;
-}
-.ide-layout-btn {
-    background: transparent;
-    border: none;
-    color: var(--ide-muted);
-    padding: 5px 11px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    transition: all 0.2s;
-    text-transform: uppercase;
-}
-.ide-layout-btn:hover, .ide-layout-btn.active {
-    background: rgba(79,142,247,0.15);
-    color: #4f8ef7;
-}
-
-.ide-run-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #4f8ef7;
-    color: #fff;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.02em;
-    transition: all 0.2s;
-    box-shadow: 0 4px 16px rgba(79,142,247,0.35);
-}
-.ide-run-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(79,142,247,0.5);
-    background: #5f9eff;
-}
-
-.ide-close-btn {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(255,85,75,0.1);
-    border: 1px solid rgba(255,85,75,0.2);
-    color: #ff6b60;
-    padding: 7px 16px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-.ide-close-btn:hover {
-    background: rgba(255,85,75,0.2);
-    border-color: rgba(255,85,75,0.5);
-}
-
-/* === BODY LAYOUT === */
-#ide-body-v2 {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-}
-
-/* === LEFT FILE EXPLORER === */
-#ide-explorer {
-    width: 220px;
-    background: var(--ide-sidebar);
-    border-right: 1px solid var(--ide-border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    transition: width 0.3s ease;
-}
-.ide-explorer-header {
-    padding: 14px 16px 10px;
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--ide-muted);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    border-bottom: 1px solid var(--ide-border);
-}
-.ide-explorer-section {
-    padding: 6px 0;
-}
-.ide-explorer-section-label {
-    padding: 8px 16px 4px;
-    font-size: 10px;
-    color: #333345;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-}
-.ide-file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 7px 16px 7px 24px;
-    font-size: 13px;
-    cursor: pointer;
-    border-radius: 0;
-    transition: background 0.15s;
-    position: relative;
-    color: #888899;
-}
-.ide-file-item:hover {
-    background: rgba(255,255,255,0.04);
-    color: #c8c8d8;
-}
-.ide-file-item.active {
-    background: var(--ide-accent-soft);
-    color: var(--ide-accent);
-}
-.ide-file-item.active::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: var(--ide-accent);
-    border-radius: 0 2px 2px 0;
-}
-.ide-file-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.5;
-    flex-shrink: 0;
-}
-
-.ide-explorer-footer {
-    margin-top: auto;
-    padding: 12px 16px;
-    border-top: 1px solid var(--ide-border);
-    font-size: 11px;
-    color: #333345;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* === EDITOR PANE === */
-#ide-editor-v2 {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    background: #1a1a24;
-    position: relative;
-}
-
-#ide-tabs-v2 {
-    display: flex;
-    align-items: stretch;
-    background: var(--ide-bg);
-    border-bottom: 1px solid var(--ide-border);
-    overflow-x: auto;
-    flex-shrink: 0;
-    height: 42px;
-    scrollbar-width: none;
-}
-#ide-tabs-v2::-webkit-scrollbar { display: none; }
-
-.ide-tab-v2 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0 20px;
-    font-size: 13px;
-    cursor: pointer;
-    color: var(--ide-muted);
-    white-space: nowrap;
-    border-right: 1px solid var(--ide-border);
-    transition: all 0.15s;
-    position: relative;
-    flex-shrink: 0;
-}
-.ide-tab-v2:hover {
-    background: rgba(255,255,255,0.03);
-    color: #a0a0b8;
-}
-.ide-tab-v2.active {
-    background: #1a1a24;
-    color: #e0e0f0;
-    border-top: 2px solid var(--ide-accent);
-    padding-top: 2px;
-}
-
-.ide-breadcrumb-v2 {
-    padding: 6px 16px;
-    background: rgba(255,255,255,0.02);
-    border-bottom: 1px solid var(--ide-border);
-    font-size: 12px;
-    color: #444455;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-}
-.ide-breadcrumb-v2 span { color: #666680; }
-
-#ide-editor-content-v2 {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-}
-
-.ide-statusbar {
-    background: var(--ide-accent);
-    height: 24px;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    gap: 16px;
-    font-size: 11px;
-    color: rgba(255,255,255,0.85);
-    font-weight: 500;
-    flex-shrink: 0;
-}
-.ide-statusbar-right {
-    margin-left: auto;
-    opacity: 0.75;
-}
-
-/* === PREVIEW PANE === */
-#ide-preview-v2 {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border-left: 1px solid var(--ide-border);
-    min-width: 0;
-    background: #fff;
-}
-#ide-preview-header {
-    background: var(--ide-bar);
-    border-bottom: 1px solid var(--ide-border);
-    height: 42px;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    gap: 10px;
-    flex-shrink: 0;
-}
-.ide-preview-url {
-    flex: 1;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--ide-border);
-    border-radius: 8px;
-    padding: 5px 14px;
-    font-size: 12px;
-    color: #666;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.ide-preview-url-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #2ea043;
-    box-shadow: 0 0 6px rgba(46,160,67,0.5);
-}
-
-/* ── CodeMirror: fill every available pixel ── */
-#presentation-screen .CodeMirror {
-    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
-    font-size: 14px !important;
-    line-height: 1.75 !important;
-    background: #1a1a24 !important;
-    /* Height cascade: fill the flex parent */
-    height: 100% !important;
-    min-height: 0 !important;
-}
-/* The wrapper must also stretch */
-#presentation-screen .CodeMirror-wrap {
-    height: 100% !important;
-    min-height: 0 !important;
-}
-#presentation-screen .CodeMirror-scroll {
-    height: 100% !important;
-    min-height: 0 !important;
-    box-sizing: border-box !important;
-    overflow-x: auto !important;
-    overflow-y: auto !important;
-}
-#presentation-screen .CodeMirror-sizer {
-    min-height: 0 !important;
-}
-/* Gutter colours */
-#presentation-screen .CodeMirror-gutters {
-    background: #14141e !important;
-    border-right: 1px solid rgba(255,255,255,0.04) !important;
-    height: 100% !important;
-}
-#presentation-screen .CodeMirror-linenumber { color: #3a3a5c !important; }
-#presentation-screen .CodeMirror-cursor { border-left: 2px solid #4f8ef7 !important; }
-#presentation-screen .CodeMirror-selected { background: rgba(79,142,247,0.15) !important; }
-#presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.025) !important; }
-
-/* editor-tab-content and its parents must form a proper flex chain */
-#ide-editor-v2 {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-}
-#ide-editor-content-v2 {
-    flex: 1 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-#editor-container {
-    flex: 1 !important;
-    min-height: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-}
-.editor-tab-content {
-    flex: 1 !important;
-    min-height: 0 !important;
-    display: none;
-    flex-direction: column !important;
-    height: 100% !important;
-}
-.editor-tab-content.show {
-    display: flex !important;
-}
-/* Remove any pointer-events overlay that might block clicks on text */
-#presentation-screen::before,
-#presentation-screen::after {
-    pointer-events: none !important;
-}
-
-
-</style>
-<div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
-
-    <!-- TOP BAR v2 -->
-    <div id="ide-topbar-v2" style="height:48px; background:#0f0f12; border-bottom:1px solid #222; display:flex; align-items:center; padding:0 16px; flex-shrink:0;">
-        <!-- Traffic lights -->
-        <div class="ide-traffic" style="display:flex; gap:8px;">
-            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#ff5f57; cursor:pointer;" onclick="closePresentation()" title="Close"></div>
-            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#febc2e;"></div>
-            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#28c840; cursor:pointer;" onclick="window.setIDELayout('preview')" title="Preview"></div>
+    <!-- TOP BAR: macOS-style -->
+    <div id="ide-topbar" style="background:#161618; display:flex; align-items:center; padding:0 16px; height:48px; border-bottom:1px solid #2a2a2e; flex-shrink:0; gap:12px;">
+        <!-- Traffic Lights -->
+        <div style="display:flex; gap:7px; align-items:center; margin-right:8px;">
+            <div onclick="closePresentation()" title="Close" style="width:13px;height:13px;border-radius:50%;background:#ff5f57;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">вЂ‹</div>
+            <div style="width:13px;height:13px;border-radius:50%;background:#febc2e;">вЂ‹</div>
+            <div onclick="window.setIDELayout('preview')" title="Full screen preview" style="width:13px;height:13px;border-radius:50%;background:#28c840;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">вЂ‹</div>
         </div>
 
-        <!-- Center: project name -->
-        <div class="ide-title-center" style="margin:0 auto; display:flex; align-items:center; gap:8px; color:#fff; font-size:13px;">
-            <div class="ide-project-name" style="display:flex; align-items:center; gap:6px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                <strong>Solifon AI Code</strong>
-                <span style="color:#444;">— workspace</span>
-            </div>
-            <select style="background:#1a1a20; color:#888; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:11px; margin-left:10px;">
-                <option>Solifon Base</option>
-                <option>Solifon Loom</option>
-            </select>
+        <!-- File Tabs -->
+        <div id="ide-file-tabs" style="display:flex; align-items:stretch; height:100%; overflow-x:auto; flex:1;">
+            <div class="ide-ftab active" onclick="openEditorTab(event,'html')" data-lang="html" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e06c75;white-space:nowrap;background:#0d0d0f;border-top:2px solid #528bff;">📄 index.html</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'css')" data-lang="css" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#61afef;white-space:nowrap;background:transparent;">🎨 style.css</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'js')" data-lang="js" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e5c07b;white-space:nowrap;background:transparent;">⚡ script.js</div>
+            <div class="ide-ftab" onclick="openEditorTab(event,'py')" data-lang="py" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#c678dd;white-space:nowrap;background:transparent;">🐍 main.py</div>
         </div>
+
+        <!-- Close button -->
+        <button onclick="closePresentation()" title="Exit editor" style="display:flex;align-items:center;gap:7px;background:rgba(255,95,87,0.12);border:1px solid rgba(255,95,87,0.3);color:#ff5f57;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,95,87,0.25)';this.style.borderColor='#ff5f57'" onmouseout="this.style.background='rgba(255,95,87,0.12)';this.style.borderColor='rgba(255,95,87,0.3)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5f57" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Log Out
+        </button>
 
         <!-- Right controls -->
-        <div class="ide-topbar-right" style="display:flex; gap:12px; align-items:center;">
-            <div class="ide-layout-group" style="display:flex; background:#1a1a20; border-radius:6px; padding:2px;">
-                <button class="ide-layout-btn" id="layout-split" onclick="window.setIDELayout('split')" style="background:#333; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer;">Split</button>
-                <button class="ide-layout-btn" id="layout-editor" onclick="window.setIDELayout('editor')" style="background:transparent; color:#666; border:none; padding:4px 10px; cursor:pointer; font-size:11px;">Code</button>
-                <button class="ide-layout-btn" id="layout-preview" onclick="window.setIDELayout('preview')" style="background:transparent; color:#666; border:none; padding:4px 10px; cursor:pointer; font-size:11px;">Preview</button>
+        <div style="display:flex;gap:10px;align-items:center;margin-left:auto;flex-shrink:0;">
+            <div style="display:flex;background:#252529;border-radius:8px;padding:3px;gap:2px;">
+                <button id="layout-split" onclick="window.setIDELayout('split')" title="Split" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
+                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Editor only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◣ Code</button>
+                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Preview only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◟ Preview</button>
             </div>
-            <button class="ide-run-btn" onclick="runEditorCode()" style="background:#2ea043; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;">
-                Run
-            </button>
-            <button class="ide-close-btn" onclick="closePresentation()" style="background:transparent; color:#ff5f57; border:1px solid #ff5f57; padding:5px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Exit</button>
+            <div id="ide-status-pill" style="background:#1a1a1e;border:1px solid #333;border-radius:20px;padding:5px 14px;font-size:12px;color:#888;"><span id="ide-cursor-pos">Ln 1, Col 1</span></div>
+            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Run</button>
         </div>
     </div>
 
-    <!-- BODY -->
-    <div id="ide-body-v2" style="display:flex; flex:1; overflow:hidden;">
+    <!-- BODY: Sidebar + Editor + Preview -->
+    <div style="display:flex;flex:1;overflow:hidden;">
 
-        <!-- LEFT FILE EXPLORER -->
-        <div id="ide-explorer" style="width:200px; background:#0d0d0f; border-right:1px solid #222; display:flex; flex-direction:column;">
-            <div class="ide-explorer-header" style="padding:12px; font-size:10px; color:#555; text-transform:uppercase;">Explorer</div>
-            <div class="ide-explorer-section">
-                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" id="fitem-html" style="padding:8px 16px; color:#e06c75; cursor:pointer;">📄 index.html</div>
-                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" id="fitem-css" style="padding:8px 16px; color:#61afef; cursor:pointer;">🎨 style.css</div>
-                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" id="fitem-js" style="padding:8px 16px; color:#e5c07b; cursor:pointer;">⚡ script.js</div>
-                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" id="fitem-py" style="padding:8px 16px; color:#c678dd; cursor:pointer;">🐍 main.py</div>
+        <!-- LEFT SIDEBAR -->
+        <div id="ide-sidebar" style="width:200px;background:#141416;border-right:1px solid #222;display:flex;flex-direction:column;flex-shrink:0;">
+            <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Files</div>
+            <div style="padding:6px 0;">
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">📄 index.html</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🎨 style.css</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e5c07b;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">⚡ script.js</div>
+                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" style="padding:6px 14px 6px 24px;font-size:13px;color:#c678dd;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🐍 main.py</div>
             </div>
+            <div style="margin-top:auto;padding:10px 14px;border-top:1px solid #1e1e1e;font-size:11px;color:#444;">Solifon Code v2.6</div>
         </div>
 
         <!-- EDITOR PANE -->
-        <div id="ide-editor-v2" style="flex:1; display:flex; flex-direction:column; background:#1a1a24;">
-            <div id="ide-tabs-v2" style="display:flex; background:#0f0f12; border-bottom:1px solid #222;">
-                <div class="ide-tab-v2 active" onclick="openEditorTab(event,'html')" data-lang="html" style="padding:10px 20px; font-size:13px; color:#fff; border-right:1px solid #222;">index.html</div>
-                <div class="ide-tab-v2" onclick="openEditorTab(event,'css')" data-lang="css" style="padding:10px 20px; font-size:13px; color:#777;">style.css</div>
-                <div class="ide-tab-v2" onclick="openEditorTab(event,'js')" data-lang="js" style="padding:10px 20px; font-size:13px; color:#777;">script.js</div>
-                <div class="ide-tab-v2" onclick="openEditorTab(event,'py')" data-lang="py" style="padding:10px 20px; font-size:13px; color:#777;">main.py</div>
+        <div id="ide-editor-pane" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
+            <div style="background:#181820;padding:4px 16px;font-size:12px;color:#555;border-bottom:1px solid #222;display:flex;align-items:center;gap:6px;">
+                <span style="color:#444;">solifon вЂє</span> <span id="ide-breadcrumb" style="color:#888;">index.html</span>
             </div>
-            <div id="ide-editor-content-v2" style="flex:1; overflow:hidden; position:relative;">
-                <div id="editor-container" style="height:100%; display:flex; flex-direction:column;">
-                    <div id="html-editor-box" class="editor-tab-content show" style="height:100%;"><textarea id="html-edit-area"></textarea></div>
-                    <div id="css-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="css-edit-area"></textarea></div>
-                    <div id="js-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="js-edit-area"></textarea></div>
-                    <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
-                </div>
+            <div id="editor-container" style="flex:1;overflow:hidden;position:relative;">
+                <div id="html-editor-box" class="editor-tab-content show" style="height:100%;"><textarea id="html-edit-area"></textarea></div>
+                <div id="css-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="css-edit-area"></textarea></div>
+                <div id="js-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="js-edit-area"></textarea></div>
+                <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
             </div>
-            <div class="ide-statusbar" style="background:#4f8ef7; height:24px; display:flex; align-items:center; padding:0 16px; gap:16px; font-size:11px; color:rgba(255,255,255,0.85); font-weight:500; flex-shrink:0;">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-                Solifon Code
-                <span style="opacity:0.6;">&middot;</span>
-                <span id="ide-lang-indicator">HTML</span>
-                <div style="margin-left:auto; opacity:0.75;"><span id="ide-lines-count"></span></div>
+            <div style="background:#2ea043;padding:3px 16px;display:flex;align-items:center;gap:16px;font-size:11px;color:#fff;flex-shrink:0;">
+                <span>✔ Solifon Code</span>
+                <span style="margin-left:auto;" id="ide-lines-count"></span>
             </div>
         </div>
 
         <!-- PREVIEW PANE -->
-        <div id="ide-preview-v2" style="flex:1; display:flex; flex-direction:column; border-left:1px solid #222; min-width:0;">
-            <div id="ide-preview-header" style="background:#0f0f12; border-bottom:1px solid #222; height:42px; display:flex; align-items:center; padding:0 16px; gap:10px; flex-shrink:0;">
-                <div class="ide-preview-url" style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:5px 14px; font-size:12px; color:#666; display:flex; align-items:center; gap:8px;">
-                    <div style="width:8px; height:8px; border-radius:50%; background:#2ea043; box-shadow:0 0 6px rgba(46,160,67,0.5);"></div>
-                    <span>localhost &middot; preview</span>
-                </div>
-                <button onclick="runEditorCode()" title="Refresh" style="background:none;border:none;color:#666;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px;transition:all 0.15s;" onmouseover="this.style.color='#4f8ef7'" onmouseout="this.style.color='#666'">&#8635;</button>
+        <div id="ide-preview-pane" style="flex:1;display:flex;flex-direction:column;border-left:1px solid #222;min-width:0;">
+            <div style="background:#181820;padding:6px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;flex-shrink:0;">
+                <span style="font-size:12px;color:#555;">🔒 Sneak peek</span>
+                <button onclick="runEditorCode()" title="Refresh" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
             </div>
             <iframe id="editor-preview-window" style="width:100%;flex:1;border:none;"></iframe>
         </div>
@@ -2054,15 +1818,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <style>
-        /* Essential editor styles */
         .ide-ftab { transition: background 0.15s !important; }
         .ide-ftab.active { background: #0d0d0f !important; border-top: 2px solid #528bff !important; }
         .ide-ftab:not(.active):hover { background: rgba(255,255,255,0.05) !important; }
 
+        /* Make editor-container a proper flex column */
         #editor-container {
             display: flex;
             flex-direction: column;
-            height: 100%;
         }
         .editor-tab-content {
             flex: 1;
@@ -2073,6 +1836,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         .editor-tab-content.show {
             display: flex !important;
         }
+
+        /* CodeMirror fills 100% */
+        #presentation-screen .CodeMirror {
+            flex: 1;
+            width: 100% !important;
+            height: 100% !important;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace !important;
+            font-size: 14px !important;
+            line-height: 1.7 !important;
+            background: #1e1e2e !important;
+        }
+        #presentation-screen .CodeMirror-wrap { height: 100% !important; }
+        #presentation-screen .CodeMirror-scroll {
+            height: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+        }
+        #presentation-screen .CodeMirror-sizer { min-height: 100% !important; }
+        #presentation-screen .CodeMirror-gutters {
+            background: #181825 !important;
+            border-right: 1px solid #252530 !important;
+            min-width: 48px;
+            height: 100% !important;
+        }
+        #presentation-screen .CodeMirror-linenumber { color: #3d3d5c !important; padding: 0 12px 0 8px !important; }
+        #presentation-screen .CodeMirror-cursor { border-left: 2px solid #528bff !important; }
+        #presentation-screen .CodeMirror-selected { background: rgba(82,139,255,0.2) !important; }
+        #presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.03) !important; }
+
+        /* No black gap — fill with editor bg color */
+        #ide-editor-pane { background: #1e1e2e; }
+        #editor-container { background: #1e1e2e; }
     </style>
 </div>
 
@@ -2282,17 +2077,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 }
 </style>
 
-<div class="custom-modal" id="emptyFeatureModal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
-    <button onclick="closeModal('emptyFeatureModal');"
-        style="position: absolute; top: 30px; right: 30px; width: 44px; height: 44px; border-radius: 50%;
-               background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);
-               color: #fff; font-size: 20px; display: flex; align-items: center; justify-content: center;
-               cursor: pointer; z-index: 10001; transition: background 0.3s;"
-        onmouseover="this.style.background='rgba(0,0,0,0.7)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">
-        <i class="ph ph-x"></i>
-    </button>
-</div>
-
 <div class="custom-modal premium-modal-overlay" id="newFeatureModal" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);">
 
     <!-- Close button -->
@@ -2491,7 +2275,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <!-- ROWS (4 views) -->
 
                 <div style="display: flex; gap: 40px; align-items: center; justify-content: center; width: 100%;">
-                    <div id="preview_square_main" class="fs-premium-card" style="flex: 0 0 320px; height: 320px; cursor: pointer; padding: 24px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal('fullscreenLayerModal');">
+                    <div id="preview_square_main" class="fs-premium-card" style="TEMP_REPLACE style="flex: 0 0 320px; height: 320px; cursor: pointer; padding: 24px; background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 40px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.8); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;" onclick="closeModal(\'fullscreenLayerModal\');"">
                         <i class="ph-fill ph-house" style="font-size: 64px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 4px 10px rgba(255,255,255,0.3));"></i><h3 style="color: #fff; font-size: 28px; font-weight: 800; margin: 0; text-align: center;">Main screen<span style="color:#ff0050;">.</span></h3><p style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 12px; text-align: center;">Customize the app's base background.</p>
                     </div>
 
@@ -2578,100 +2362,6 @@ window.addEventListener('message', function(event) {
 
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-
-        <script>
-            // --- Premium Logic ---
-            function unlockPremiumModels() {
-                const lockedModels = document.querySelectorAll('.mmd-option.locked');
-                lockedModels.forEach(model => {
-                    model.classList.remove('locked');
-                    const badge = model.querySelector('.mmd-pro-badge');
-                    if (badge) badge.style.display = 'none';
-                });
-            }
-            
-            function checkUserPremiumStatus(user) {
-                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
-                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
-                if (user) {
-                    unlockPremiumModels();
-                }
-            }
-            
-            // Хук для проверки авторизации
-            document.addEventListener("DOMContentLoaded", () => {
-                setTimeout(() => {
-                    if (typeof firebase !== 'undefined') {
-                        firebase.auth().onAuthStateChanged((user) => {
-                            checkUserPremiumStatus(user);
-                        });
-                    }
-                }, 2000);
-            });
-            // ---------------------
-        </script>
-    <script>
-window.addEventListener('message', function(event) {
-    if (event.data === 'toggleCamera') {
-        if (window.toggleAirCanvas) window.toggleAirCanvas();
-    }
-    if (event.data === 'startCamera') {
-        if (window.startHeroCamera) window.startHeroCamera();
-    }
-    if (event.data === 'stopCamera') {
-        if (window.stopHeroCamera) window.stopHeroCamera();
-    }
-    if (event.data === 'closeNewFeatureModal') {
-        if (window.closeModal) window.closeModal('newFeatureModal');
-    }
-});
-</script>
-
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-
-        <script>
-            // --- Premium Logic ---
-            function unlockPremiumModels() {
-                const lockedModels = document.querySelectorAll('.mmd-option.locked');
-                lockedModels.forEach(model => {
-                    model.classList.remove('locked');
-                    const badge = model.querySelector('.mmd-pro-badge');
-                    if (badge) badge.style.display = 'none';
-                });
-            }
-            
-            function checkUserPremiumStatus(user) {
-                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
-                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
-                if (user) {
-                    unlockPremiumModels();
-                }
-            }
-            
-            // Хук для проверки авторизации
-            document.addEventListener("DOMContentLoaded", () => {
-                setTimeout(() => {
-                    if (typeof firebase !== 'undefined') {
-                        firebase.auth().onAuthStateChanged((user) => {
-                            checkUserPremiumStatus(user);
-                        });
-                    }
-                }, 2000);
-            });
-            // ---------------------
-        </script>
-
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
-
-<!-- External Libraries for Artifacts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </body>
 
-
 </html>
-
