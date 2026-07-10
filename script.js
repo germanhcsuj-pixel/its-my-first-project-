@@ -4853,7 +4853,7 @@ async function _callPdfCreate(prompt) {
     try {
         const BASE = location.hostname.includes('hf.space') || location.hostname.includes('huggingface.co')
             ? 'https://germanhcsuj-itssoimportandforme.hf.space'
-            : (location.protocol === 'file:' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
+            : (location.protocol === 'file:' || location.hostname === 'localhost' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
@@ -4886,7 +4886,7 @@ async function _callPdfEdit(prompt, pdfFile) {
     try {
         const BASE = location.hostname.includes('hf.space') || location.hostname.includes('huggingface.co')
             ? 'https://germanhcsuj-itssoimportandforme.hf.space'
-            : (location.protocol === 'file:' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
+            : (location.protocol === 'file:' || location.hostname === 'localhost' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
