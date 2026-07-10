@@ -1,20 +1,7 @@
 // ============================================================
-// 0. GLOBALS & FIREBASE SETUP
-
-// Безопасное кодирование и декодирование Base64 с поддержкой Unicode
-window.safeEncodeBase64 = function(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-};
-window.safeDecodeBase64 = function(str) {
-    return decodeURIComponent(escape(atob(str)));
-};
-window.artifactStore = window.artifactStore || {};
-
-let currentLang = localStorage.getItem('solifon-lang');
-if (!currentLang || currentLang === 'en') {
-    localStorage.setItem('solifon-language', 'ru');
-    localStorage.setItem('solifon-lang', 'ru');
-}
+// 0. FIREBASE SETUP
+localStorage.setItem('solifon-language', 'en');
+localStorage.setItem('solifon-lang', 'en');
 // ============================================================
 const firebaseConfig = {
     apiKey: "AIzaSyCBsuPtp3sBdGV0eFkTtSPKEpmNP7PSCsM",
@@ -142,32 +129,8 @@ window.submitAuth = function() {
             errorEl.textContent = msgs[err.code] || 'Ошибка: ' + err.message;
         })
         .finally(() => {
-            btn.textContent = authMode === 'login' ? 'Sign In' : 'Sign Up';
+            btn.textContent = authMode === 'Войти' ? 'Р вЂ™Р С•Р в„–РЎвЂљР С‘' : 'Р РЋР С•Р В·Р Т‘Р В°РЎвЂљРЎРЉ Р В°Р С”Р С”Р В°РЎС“Р Р…РЎвЂљ';
             btn.disabled = false;
-        });
-};
-
-window.resetPassword = function() {
-    const email = document.getElementById('authEmail').value.trim();
-    const errorEl = document.getElementById('authError');
-    if (!email) {
-        errorEl.style.color = '#ff5555';
-        errorEl.textContent = 'Please enter your email first to reset password.';
-        return;
-    }
-    
-    firebase.auth().sendPasswordResetEmail(email)
-        .then(() => {
-            errorEl.style.color = '#00ff88';
-            errorEl.textContent = 'Password reset link sent to your email!';
-            setTimeout(() => {
-                errorEl.style.color = '#ff5555';
-                errorEl.textContent = '';
-            }, 5000);
-        })
-        .catch((error) => {
-            errorEl.style.color = '#ff5555';
-            errorEl.textContent = 'Error: ' + error.message;
         });
 };
 
@@ -246,21 +209,12 @@ function loadChatHistory() {
         item.innerHTML = `
             <div style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 13px; position: relative; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: background 0.2s;"
                  onmouseover="this.style.background='rgba(255,255,255,0.03)'"
-                 onmouseout="this.style.background=''">
-                <div style="display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden;" onclick="window.restoreSession('${sessionId}')">
-                    <i class="ph ph-chat-teardrop-text" style="color: #00f2ff; opacity: 0.8; font-size: 16px;"></i>
-                    <p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity:0.9; flex: 1;">
-                        ${title}
-                    </p>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                    <button class="fav-session-btn" onclick="event.stopPropagation(); window.toggleFavoriteSession('${sessionId}', this)" title="Add to Favorites" style="background:none;border:none;cursor:pointer;color:${sessionMsgs[0].isFavoriteSession ? '#ffcf33' : 'rgba(255,255,255,0.3)'};transition:all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); padding: 4px;">
-                        <i class="${sessionMsgs[0].isFavoriteSession ? 'ph-fill ph-star' : 'ph ph-star'}"></i>
-                    </button>
-                    <button class="del-session-btn" onclick="event.stopPropagation(); window.deleteSession('${sessionId}', this)" title="Delete" style="background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);transition:color 0.2s; padding: 4px;">
-                        <i class="ph ph-trash"></i>
-                    </button>
-                </div>
+                 onmouseout="this.style.background=''"
+                 onclick="window.restoreSession('${sessionId}')">
+                <i class="ph ph-chat-teardrop-text" style="color: #00f2ff; opacity: 0.8; font-size: 16px;"></i>
+                <p style="margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity:0.9; flex: 1;">
+                    ${title}
+                </p>
             </div>
         `;
         historyContainer.appendChild(item);
@@ -286,16 +240,7 @@ window.restoreSession = function(sessionId) {
         if (msg.role === 'ai') {
             content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
         }
-        const msgDiv = addMessageToUI(msg.role, content);
-        if (msg.role === 'ai' && msgDiv) {
-            const textContainer = msgDiv.querySelector('.text');
-            if (textContainer) {
-                textContainer.innerHTML = `<div class="typed-content" style="margin-top: 12px;">${content}</div>`;
-                if (typeof addMinimalDock === 'function') {
-                    addMinimalDock(textContainer);
-                }
-            }
-        }
+        addMessageToUI(msg.role, content);
     });
     
     const sidebar = document.getElementById('sidebar');
@@ -319,100 +264,28 @@ window.toggleFavorite = function(msgId, btnElement) {
     btnElement.classList.toggle('ph-star', !msg.isFavorite);
 };
 
-window.toggleFavoriteSession = function(sessionId, btnElement) {
-    const history = getLocalHistory();
-    const sessionMsgs = history.filter(m => (m.sessionId || 'legacy') === sessionId);
-    if(sessionMsgs.length > 0) {
-        const firstMsg = sessionMsgs[0];
-        const isCurrentlyFav = firstMsg.isFavoriteSession;
-        firstMsg.isFavoriteSession = !isCurrentlyFav;
-        const index = history.findIndex(m => m.id === firstMsg.id);
-        if(index > -1) {
-            history[index].isFavoriteSession = !isCurrentlyFav;
-            setLocalHistory(history);
-        }
-        
-        const icon = btnElement.querySelector('i');
-        if(!isCurrentlyFav) {
-            icon.classList.remove('ph');
-            icon.classList.add('ph-fill');
-            btnElement.style.color = '#ffcf33';
-            icon.style.animation = 'none';
-            void icon.offsetWidth;
-            icon.style.animation = 'starBurst 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
-        } else {
-            icon.classList.remove('ph-fill');
-            icon.classList.add('ph');
-            btnElement.style.color = 'rgba(255,255,255,0.3)';
-            icon.style.animation = 'none';
-            icon.style.filter = 'none';
-        }
-        
-        if(typeof loadLibrary === 'function') loadLibrary();
-    }
-};
-
-window.deleteSession = function(sessionId, btnElement) {
-    let history = getLocalHistory();
-    const isCurrent = window.currentSessionId === sessionId;
-    history = history.filter(m => (m.sessionId || 'legacy') !== sessionId);
-    setLocalHistory(history);
-    
-    const item = btnElement ? btnElement.closest('.history-item') : null;
-    if (item) {
-        item.style.transition = 'all 0.4s ease';
-        item.style.opacity = '0';
-        item.style.transform = 'translateX(-20px)';
-        setTimeout(() => {
-            loadChatHistory();
-            if(typeof loadLibrary === 'function') loadLibrary();
-            if(isCurrent) {
-                window.clearChat();
-            }
-        }, 400);
-    } else {
-        loadChatHistory();
-        if(typeof loadLibrary === 'function') loadLibrary();
-        if(isCurrent) {
-            window.clearChat();
-        }
-    }
-};
-
 function loadLibrary() {
     const libraryContainer = document.getElementById('savedItemsContainer');
     if (!libraryContainer) return;
     
     libraryContainer.innerHTML = '';
     const history = getLocalHistory();
-    const sessions = {};
-    history.forEach(msg => {
-        const sid = msg.sessionId || 'legacy';
-        if (!sessions[sid]) sessions[sid] = [];
-        sessions[sid].push(msg);
-    });
-    const favorites = Object.values(sessions).filter(sessionMsgs => sessionMsgs[0] && sessionMsgs[0].isFavoriteSession).map(sessionMsgs => sessionMsgs[0]);
+    const favorites = history.filter(m => m.isFavorite);
     
-    const emptyEl = document.querySelector('#libraryPanel .empty-library');
     if (favorites.length === 0) {
-        if (emptyEl) emptyEl.style.display = 'flex';
+        libraryContainer.innerHTML = '<div style="padding:40px; text-align:center; opacity:0.3;">Ваша библиотека пуста.<br>Отметьте важные сообщения звездочкой в чате.</div>';
         return;
     }
-    if (emptyEl) emptyEl.style.display = 'none';
     
     favorites.forEach((data) => {
         const item = document.createElement('div');
         item.className = 'library-item';
         item.innerHTML = `
-            <div style="padding: 15px; background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 12px; margin-bottom: 12px; position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(10px);"
-                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,242,255,0.15)';"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.1)';"
+            <div style="padding: 15px; background: rgba(0, 242, 255, 0.03); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 12px; margin-bottom: 12px; position: relative; overflow: hidden; cursor: pointer;"
                  onclick="window.restoreSession('${data.sessionId}')">
-                <div style="font-size: 10px; color: #00f2ff; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 600; display: flex; align-items: center; gap: 5px;">
-                    <i class="ph-fill ph-star" style="color: #00f2ff;"></i> Saved Memory
-                </div>
-                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #fff; opacity: 0.9; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${data.content}</p>
-                <div style="position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: linear-gradient(180deg, #00f2ff, #0051ff);"></div>
+                <div style="font-size: 10px; color: #00f2ff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; opacity: 0.7;">Saved Memory</div>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #fff; opacity: 0.9;">${data.content}</p>
+                <div style="position: absolute; top: 0; left: 0; width: 2px; height: 100%; background: #00f2ff;"></div>
             </div>
         `;
         libraryContainer.prepend(item);
@@ -452,7 +325,7 @@ function incrementDeepUsage() {
 
 function checkDeepLimit() {
     if (getDeepUsage() >= DEEP_LIMIT) {
-        addMessageToUI('рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!', 'РЎР‚РЎСџРІР‚СњР’В¬ Р вЂєР С‘Р С˜Р С‘РЎвЂљ Deep Mode Р С‘РЎРѓРЎвЂЎР ВµРЎР‚Р С—Р В°Р Р…. Р Р€ Р Р†Р В°РЎРѓ Р ВµРЎРѓРЎвЂљРЎРЉ 5 Р В·Р В°Р С—РЎР‚Р С•РЎРѓР С•Р Р† Р Р† Р Т‘Р ВµР Р…РЎРЉ. Р СџР С•Р С—РЎР‚Р С•Р В±РЎС“Р в„–РЎвЂљР Вµ Р В·Р В°Р Р†РЎвЂљРЎР‚Р В°!');
+        addMessageToUI('рџ”¬ Лимит Deep Mode исчерпан. У вас есть 5 запросов в день. Попробуйте завтра!', 'РЎР‚РЎСџРІР‚СњР’В¬ Р вЂєР С‘Р СР С‘РЎвЂљ Deep Mode Р С‘РЎРѓРЎвЂЎР ВµРЎР‚Р С—Р В°Р Р…. Р Р€ Р Р†Р В°РЎРѓ Р ВµРЎРѓРЎвЂљРЎРЉ 5 Р В·Р В°Р С—РЎР‚Р С•РЎРѓР С•Р Р† Р Р† Р Т‘Р ВµР Р…РЎРЉ. Р СџР С•Р С—РЎР‚Р С•Р В±РЎС“Р в„–РЎвЂљР Вµ Р В·Р В°Р Р†РЎвЂљРЎР‚Р В°!');
         return false;
     }
     return true;
@@ -493,15 +366,6 @@ function typeEffect(element, text) {
     const textContainer = element.querySelector('.text');
     if (!textContainer) return;
     const cleanText = (text || "").trim();
-
-    // Hide deep mode steps gracefully
-    const deepSteps = textContainer.closest('.message').querySelector('.ai-thinking-steps');
-    if (deepSteps) {
-        deepSteps.style.transition = 'opacity 0.5s ease, max-height 0.5s ease';
-        deepSteps.style.opacity = '0';
-        deepSteps.style.maxHeight = '0';
-        setTimeout(() => deepSteps.remove(), 500);
-    }
     
     let typeSpan = textContainer.querySelector('.typed-content');
     if (!typeSpan) {
@@ -513,78 +377,20 @@ function typeEffect(element, text) {
     
     let i = 0;
     const interval = setInterval(() => {
-        if (window.isGenerationStopped) {
-            clearInterval(interval);
-            if (typeof addMinimalDock === 'function') addMinimalDock(textContainer);
-            return;
-        }
         if (i < cleanText.length) {
-            i += Math.floor(Math.random() * 8) + 8; // Super fast typing
-            if (i > cleanText.length) i = cleanText.length;
-            
+            i++;
+            // Р СџР С•Р С”Р В°Р В·РЎвЂ№Р Р†Р В°Р ВµР С Р Р…Р В°Р С”Р С•Р С—Р »Р ВµР Р…Р Р…РЎвЂ№Р в„– РЎвЂљР ВµР С”РЎРѓРЎвЂљ РЎРѓ РЎвЂћР С•РЎР‚Р СР В°РЎвЂљР С‘РЎР‚Р С•Р Р†Р В°Р Р…Р С‘Р ВµР С
             const partial = cleanText.slice(0, i);
             typeSpan.innerHTML = partial
-                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #00c8ff;">$1</strong>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\n/g, '<br>');
             const container = document.getElementById('messagesContainer');
             if (container) container.scrollTop = container.scrollHeight;
         } else {
             clearInterval(interval);
-            if (typeof addMinimalDock === 'function') {
-                addMinimalDock(textContainer);
-            }
         }
-    }, 10);
+    }, 12);
 }
-
-function addMinimalDock(container) {
-    const dockContainer = document.createElement('div');
-    dockContainer.innerHTML = `
-        <div class="dock-container" style="margin-top: 15px;">
-          <div class="dock-inner">
-            <button class="dock-btn" title="Copy" onclick="
-                const tc = this.closest('.text').querySelector('.typed-content');
-                const textToCopy = tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, '');
-                navigator.clipboard.writeText(textToCopy);
-                const svg = this.querySelector('svg');
-                svg.innerHTML = '<polyline points=\\\'20 6 9 17 4 12\\\'></polyline>';
-                this.style.color = '#00c8ff';
-                setTimeout(() => {
-                    svg.innerHTML = '<rect width=\\\'14\\\' height=\\\'14\\\' x=\\\'8\\\' y=\\\'8\\\' rx=\\\'2\\\' ry=\\\'2\\\'/><path d=\\\'M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\\\'/>';
-                    this.style.color = '';
-                }, 2000);
-            ">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-            </button>
-            <button class="dock-btn" title="Like" onclick="this.style.color='#00ff88'; this.style.transform='scale(1.2)'; setTimeout(()=>this.style.transform='scale(1)', 200)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-up"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>
-            </button>
-            <button class="dock-btn" title="Dislike" onclick="this.style.color='#ff5555'; this.style.transform='scale(1.2)'; setTimeout(()=>this.style.transform='scale(1)', 200)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-thumbs-down"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>
-            </button>
-            <button class="dock-btn" title="Voice" onclick="
-                this.style.color='#a29bfe'; 
-                this.style.transform='scale(1.2)'; 
-                setTimeout(()=>this.style.transform='scale(1)', 200);
-                if(window.readAloud) {
-                    const tc = this.closest('.text').querySelector('.typed-content');
-                    window.readAloud(tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, ''));
-                } else if(window.speak) {
-                    const tc = this.closest('.text').querySelector('.typed-content');
-                    window.speak(tc ? tc.innerText : this.closest('.text').innerText.replace(/<[^>]*>?/gm, ''));
-                } else {
-                    alert('Озвучка включена!');
-                }
-            ">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-            </button>
-          </div>
-          <div class="dock-reflection"></div>
-        </div>
-    `;
-    container.appendChild(dockContainer.firstElementChild);
-}
-
 
 function renderMediaInMessage(containerElement, mediaUrl) {
     const textContainer = containerElement.querySelector('.text');
@@ -908,12 +714,6 @@ if (chatTrigger) {
 
     window.handleAI = async function handleAI() {
     if (window.isHandlingAI) return;
-    
-    window.isGenerationStopped = false;
-    window.activeAbortController = new AbortController();
-    const stopBtn = document.getElementById('stopBtn');
-    if (stopBtn) stopBtn.classList.remove('disabled');
-    
     const targetSessionId = window.currentSessionId;
     
     const isDeepMode = document.getElementById('mainAppLayout')?.classList.contains('deep-mode');
@@ -996,10 +796,10 @@ if (chatTrigger) {
     } else {
         totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
     }
-        const stage1 = ['Initializing neural cores...', 'Loading contextual modules...', 'Analyzing user query...'];
-    const stage2 = ['Scanning multi-dimensional databases...', 'Extracting relevant context blocks...', 'Accessing long-term memory modules...', 'Synchronizing information streams...', 'Filtering excessive noise...', 'Searching for intersections in vector space...', 'Extracting associative patterns...', 'Gathering verified facts...'];
-    const stage3 = ['Cross-verifying found sources...', 'Resolving logical contradictions...', 'Safety Check...', 'Cascading argument validation...', 'Evaluating metadata reliability...', 'Weighing probabilistic outcomes...', 'Optimizing reasoning chain...'];
-    const stage4 = ['Starting language synthesis processes...', 'Formulating structural final theses...', 'Adapting stylistics to conversation context...', 'Selecting precise linguistic formulations...', 'Calibrating text output parameters...', 'Final rendering of model response...', 'Checking grammatical patterns...'];
+        const stage1 = ['Инициализация нейросетевых ядер...', 'Загрузка контекстных модулей...', 'Анализ пользовательского запроса...'];
+    const stage2 = ['Сканирование многомерных баз данных...', 'Извлечение релевантных контекстных блоков...', 'Обращение к модулям долгосрочной памяти...', 'Синхронизация информационных потоков...', 'Фильтрация избыточного шума...', 'Поиск пересечений в векторном пространстве...', 'Извлечение ассоциативных паттернов...', 'Сбор верифицированных фактов...'];
+    const stage3 = ['Кросс-верификация найденных источников...', 'Установка логических противоречий...', 'Проверка контекста на безопасность (Safety Check)...', 'Каскадная валидация аргументов...', 'Оценка достоверности метаданных...', 'Взвешивание вероятностных исходов...', 'Оптимизация цепочки рассуждений...'];
+    const stage4 = ['Запуск процессов языкового синтеза...', 'Формирование структурных финальных тезисов...', 'Адаптация стилистики под контекст беседы...', 'Подбор точных лингвистических формулировок...', 'Калибровка параметров вывода текста...', 'Финальный рендеринг ответа модели...', 'Проверка грамматических паттернов...'];
     
     const pickRandom = (arr) => arr[Math.floor(Math.random() * arr.length)];
     let selectedTexts = [];
@@ -1027,6 +827,118 @@ if (chatTrigger) {
     });
 
     const stepsHTML = `
+<style>
+.ai-thinking-steps {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+    font-family: 'Inter', sans-serif;
+    color: #fff;
+    margin-bottom: 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.thinking-step {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding-bottom: 0; /* starts collapsed */
+    
+    /* Initially hidden for sequential appearance */
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(-10px);
+    transition: max-height 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.5s ease, transform 0.5s ease, padding-bottom 0.5s ease;
+}
+.thinking-step.active {
+    opacity: 1;
+    max-height: 80px;
+    transform: translateY(0);
+    padding-bottom: 20px;
+}
+.thinking-step:last-child.active {
+    padding-bottom: 0;
+}
+.step-line {
+    position: absolute;
+    left: 8px;
+    top: 20px;
+    bottom: -4px;
+    width: 2px;
+    background-color: rgba(255,255,255,0.15);
+    z-index: 1;
+}
+.thinking-step:last-child .step-line {
+    display: none;
+}
+.step-icon-container {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    margin-top: 2px;
+}
+.step-icon {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+/* Pulsing animation while active but not completed (Claude style) */
+.thinking-step.active:not(.completed) .step-icon {
+    border-color: rgba(255,255,255,0.6);
+    animation: claudePulse 1s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes claudePulse {
+    0% { transform: scale(0.85); box-shadow: 0 0 0 0 rgba(255,255,255,0.2); }
+    100% { transform: scale(1.1); box-shadow: 0 0 8px 0 rgba(255,255,255,0.05); }
+}
+.step-icon i {
+    opacity: 0;
+    font-size: 8px;
+    color: #000;
+    transform: scale(0.5);
+    transition: all 0.3s ease;
+}
+.thinking-step.completed .step-icon {
+    background: #e5e5e5;
+    border-color: #e5e5e5;
+    box-shadow: none;
+}
+.thinking-step.completed .step-icon i {
+    opacity: 1;
+    transform: scale(1);
+    color: #000;
+}
+.step-content {
+    display: flex;
+    flex-direction: column;
+}
+.step-title {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.4);
+    transition: color 0.3s ease;
+    line-height: 1.4;
+}
+.thinking-step.completed .step-title {
+    color: rgba(255,255,255,0.9);
+}
+</style>
 <div class="ai-thinking-steps">
   ${stepsHTMLContent}
 </div>
@@ -1066,16 +978,14 @@ if (chatTrigger) {
         formData.append('provider', currentProvider);
         formData.append('use_voice', isLiveMode ? 'true' : 'false');
         if (filesToSend.length > 0) formData.append('file', filesToSend[0]);
-        formData.append('user_email', currentUser ? currentUser.email : '');
-
 
         const fetchPromise = fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
-            body: formData,
-            signal: window.activeAbortController.signal
+            body: formData
         });
 
-        const response = await fetchPromise;
+        const minDelayPromise = new Promise(resolve => setTimeout(resolve, totalTime));
+        const [response] = await Promise.all([fetchPromise, minDelayPromise]);
 
         if (!response.ok) throw new Error("Server Error");
 
@@ -1088,61 +998,8 @@ if (chatTrigger) {
         } else {
             const data = await response.json();
             const reply = data.reply || '...';
-
-            // --- НАЧАЛО: ПЕРЕХВАТ ДОКУМЕНТОВ ---
-            const codeBlockRegex = /(?:`{2,3}|'{2,3})([a-z0-9]*)\s*?\n([\s\S]*?)(?:`{2,3}|'{2,3})/i;
-            const rawHtmlRegex = /(<!DOCTYPE html>|<html[\s\S]*?>|<body[\s\S]*?>)[\s\S]*?(<\/html>|<\/body>|$)/i;
-
-            let match = reply.match(codeBlockRegex);
-            let targetRegex = codeBlockRegex;
-            let codeContent = '';
-
-            if (match) {
-                codeContent = match[2];
-            } else {
-                match = reply.match(rawHtmlRegex);
-                if (match) {
-                    targetRegex = rawHtmlRegex;
-                    codeContent = match[0];
-                }
-            }
-
-            if (match && codeContent.trim().length > 0) {
-                // ЭТО ФАЙЛ! Отключаем печатную машинку и выдаем UI-карточку
-                const artifactId = 'art_' + Date.now() + Math.floor(Math.random() * 1000);
-                window.artifactStore[artifactId] = codeContent;
-                let formattedContent = reply;
-
-                if (window.innerWidth > 768) {
-                    // Версия для ПК: Открываем сплит-экран
-                    setTimeout(() => window.openArtifact(codeContent, 'Сгенерированный документ'), 500);
-                    formattedContent = reply.replace(targetRegex, `<div style="margin: 12px 0; padding: 12px 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15); display: inline-flex; align-items: center; gap: 14px; box-shadow: 0 6px 18px rgba(0,0,0,0.25);"><div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="window.openArtifact(window.artifactStore['${artifactId}'], 'document.pdf')"><i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i></div><div style="display: flex; flex-direction: column; padding-right: 10px; cursor: pointer;" onclick="window.openArtifact(window.artifactStore['${artifactId}'], 'document.pdf')"><span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span><span style="color: rgba(255,255,255,0.5); font-size: 12px;">Сгенерированный файл • Открыть</span></div><button onclick="window.downloadMobilePDF(window.artifactStore['${artifactId}'])" style="padding: 8px 12px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 6px;"><i class="ph ph-download-simple"></i> Скачать</button></div>`);
-                } else {
-                    // Версия для Телефона: Даем кнопку скачивания
-                    formattedContent = reply.replace(targetRegex, `<div style="margin: 10px 0; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)); border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);"><div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;"><div style="width: 42px; height: 42px; background: rgba(255, 71, 87, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="ph ph-file-pdf" style="font-size: 24px; color: #ff4757;"></i></div><span style="color: #fff; font-size: 15px; font-weight: 600;">document.pdf</span></div><button onclick="window.downloadMobilePDF(window.artifactStore['${artifactId}'])" style="width: 100%; padding: 10px; background: #ff4757; border: none; border-radius: 8px; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px;"><i class="ph ph-download-simple"></i> Скачать PDF</button></div>`);
-                }
-
-                // ЗАЩИТА ОТ CSS-ИНЪЕКЦИЙ (чтобы ИИ не сломал дизайн сайта глобальными стилями)
-                formattedContent = formattedContent.replace(/<(style|script|iframe|link|meta)/gi, '&lt;$1');
-                
-                // Вставляем карточку мгновенно (без анимации)
-                const textContainer = botMsgElement.querySelector('.text');
-                if (textContainer) {
-                    const deepSteps = textContainer.closest('.message').querySelector('.ai-thinking-steps');
-                    if (deepSteps) deepSteps.remove();
-                    textContainer.innerHTML = `<div class="typed-content" style="margin-top: 12px;">${formattedContent.replace(/\\n/g, '<br>')}</div>`;
-                    if (typeof addMinimalDock === 'function') addMinimalDock(textContainer);
-                }
-                saveToFirebase('ai', formattedContent, targetSessionId);
-
-            } else {
-                // ЭТО ОБЫЧНЫЙ ТЕКСТ! Включаем печатную машинку
-                // ЗАЩИТА ОТ CSS-ИНЪЕКЦИЙ
-                reply = reply.replace(/<(style|script|iframe|link|meta)/gi, '&lt;$1');
-                typeEffect(botMsgElement, reply);
-                saveToFirebase('ai', reply, targetSessionId);
-            }
-            // --- КОНЕЦ ---
+            typeEffect(botMsgElement, reply);
+            saveToFirebase('ai', reply, targetSessionId);
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
@@ -1155,9 +1012,7 @@ if (chatTrigger) {
             }
         }
     } catch (error) {
-        if (error.name === 'AbortError') {
-            console.log('Generation stopped by user.');
-        } else if (isLiveMode) {
+        if (isLiveMode) {
             const status = document.getElementById('liveStatus');
             if (status) status.innerText = "Ошибка... повтор через 2 сек";
             setTimeout(() => { if (isLiveMode) startLiveListening(); }, 2000);
@@ -1169,8 +1024,6 @@ if (chatTrigger) {
         }
     } finally {
         window.isHandlingAI = false;
-        const stopBtn = document.getElementById('stopBtn');
-        if (stopBtn) stopBtn.classList.add('disabled');
         if (userInput) userInput.focus();
     }
 };
@@ -1560,7 +1413,7 @@ window.toggleLiveMode = function() {
         if (status) status.innerText = "Подключение к серверу...";
         fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
-            body: (() => { const f = new FormData(); f.append('prompt', 'ping'); f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini'); f.append('user_email', currentUser ? currentUser.email : ''); return f; })()
+            body: (() => { const f = new FormData(); f.append('prompt', 'ping'); f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini'); return f; })()
         }).finally(() => { if (isLiveMode) startLiveListening(); });
     } else {
         window.stopLiveMode();
@@ -1836,10 +1689,6 @@ function initLumifexEditors() {
     codeEditors.js   = CodeMirror.fromTextArea(document.getElementById("js-edit-area"),   { ...config, mode: "javascript" });
     codeEditors.py   = CodeMirror.fromTextArea(document.getElementById("py-edit-area"),   { ...config, mode: "python" });
 
-    // Make every editor fill its parent container 100%
-    Object.values(codeEditors).forEach(ed => ed.setSize(null, '100%'));
-
-
     // Starter code — modern & styled
     codeEditors.html.setValue(`<!DOCTYPE html>
 <html lang="ru">
@@ -1956,19 +1805,11 @@ window.openEditorTab = function(evt, lang) {
         content.style.display = "none";
         content.classList.remove("show");
     });
-    // Update old-style file tabs (ide-ftab)
+    // Update file tabs
     document.querySelectorAll(".ide-ftab").forEach(btn => {
         btn.classList.remove("active");
         btn.style.background = 'transparent';
         btn.style.borderTop = '2px solid transparent';
-    });
-    // Update new-style tabs (ide-tab-v2)
-    document.querySelectorAll(".ide-tab-v2").forEach(btn => {
-        btn.classList.remove("active");
-    });
-    // Update file explorer items
-    document.querySelectorAll(".ide-file-item").forEach(item => {
-        item.classList.remove("active");
     });
     const targetBox = document.getElementById(`${lang}-editor-box`);
     if (targetBox) {
@@ -1976,31 +1817,16 @@ window.openEditorTab = function(evt, lang) {
         targetBox.classList.add("show");
     }
     if (evt && evt.currentTarget) {
-        const el = evt.currentTarget;
-        el.classList.add("active");
-        // style old tabs
-        if (el.classList.contains('ide-ftab')) {
-            el.style.background = '#0d0d0f';
-            el.style.borderTop = '2px solid #528bff';
-        }
+        evt.currentTarget.classList.add("active");
+        evt.currentTarget.style.background = '#0d0d0f';
+        evt.currentTarget.style.borderTop = '2px solid #528bff';
     }
-    // Also activate the matching new-style tab
-    const newTab = document.querySelector(`.ide-tab-v2[data-lang='${lang}']`);
-    if (newTab) newTab.classList.add('active');
-    // Activate file explorer item
-    const fitem = document.getElementById(`fitem-${lang}`);
-    if (fitem) fitem.classList.add('active');
-
     currentEditorLang = lang;
     // Update breadcrumb
     const names = { html: 'index.html', css: 'style.css', js: 'script.js', py: 'main.py' };
     const bc = document.getElementById('ide-breadcrumb');
     if (bc) bc.textContent = names[lang] || lang;
-    // Update status bar language indicator
-    const langIndicator = document.getElementById('ide-lang-indicator');
-    const langNames = { html: 'HTML', css: 'CSS', js: 'JavaScript', py: 'Python' };
-    if (langIndicator) langIndicator.textContent = langNames[lang] || lang.toUpperCase();
-    // Legacy badge
+    // Update sidebar badge
     const badge = document.getElementById('ide-lang-name');
     const badgeDot = badge && badge.previousElementSibling;
     const colors = { html:'#e06c75', css:'#61afef', js:'#e5c07b', py:'#c678dd' };
@@ -2014,23 +1840,22 @@ window.openEditorTab = function(evt, lang) {
             const el = document.getElementById('ide-cursor-pos');
             if (el) el.textContent = `Ln ${cur.line+1}, Col ${cur.ch+1}`;
             const lc = document.getElementById('ide-lines-count');
-            if (lc) lc.textContent = `${codeEditors[currentEditorLang].lineCount()} строк`;
+            if (lc) lc.textContent = '${codeEditors[currentEditorLang].lineCount()} строк';
         }
     }, 10);
 };
 
 window.setIDELayout = function(mode) {
-    // Try new v2 panes first, fall back to old pane IDs
-    const editorPane  = document.getElementById('ide-editor-v2') || document.getElementById('ide-editor-pane');
-    const previewPane = document.getElementById('ide-preview-v2') || document.getElementById('ide-preview-pane');
-    const sidebar     = document.getElementById('ide-explorer') || document.getElementById('ide-sidebar');
+    const editorPane  = document.getElementById('ide-editor-pane');
+    const previewPane = document.getElementById('ide-preview-pane');
+    const sidebar     = document.getElementById('ide-sidebar');
     // Reset layout buttons
     ['layout-split','layout-editor','layout-preview'].forEach(id => {
         const b = document.getElementById(id);
-        if (b) { b.style.background = 'transparent'; b.style.color = '#666'; b.classList.remove('active'); }
+        if (b) { b.style.background = 'transparent'; b.style.color = '#666'; }
     });
     const activeBtn = document.getElementById('layout-' + mode);
-    if (activeBtn) { activeBtn.style.background = 'rgba(79,142,247,0.15)'; activeBtn.style.color = '#4f8ef7'; activeBtn.classList.add('active'); }
+    if (activeBtn) { activeBtn.style.background = '#3a3a40'; activeBtn.style.color = '#ccc'; }
 
     if (mode === 'split') {
         if (editorPane)  { editorPane.style.display  = 'flex'; editorPane.style.flex  = '1'; }
@@ -3241,27 +3066,26 @@ function showInstallGuide() {
 // --- LANGUAGE TRANSLATION SYSTEM ---
 const langDict = {
   ru: {
-    select_model: 'Выбрать модель',
-    new_chat: 'Новый разговор',
-    system_whatsnew: 'Что нового',
-    system_about: 'О SOLIFON',
+    select_model: 'Модель таТЈдаТЈыз',
+    new_chat: 'ЖаТЈа чат',
+    system_whatsnew: "What's new",
+    system_about: 'SOLIFON туралы',
     menu_chat: 'Чат',
-    menu_library: 'Библиотека',
-    menu_new_project: 'Новый проект',
+    menu_library: 'Кітапхана',
+    menu_new_project: 'ЖаТЈа жоба',
     menu_presentation: 'Презентация',
-    menu_new_feature: 'О новой функции',
-    upgrade: 'Повышение до премиум-класса',
-    upgrade_title: 'Solifon Premium',
-    upgrade_subtitle: 'Раскройте весь потенциал ИИ',
-    tariff1_type: 'Basic',
-    tariff1_desc: 'Лучший выбор для ежедневных задач',
-    tariff1_btn: 'Выбрать Basic',
-    tariff2_type: 'Pro',
-    tariff2_desc: 'Для профессионалов и разработчиков',
-    tariff2_btn: 'Выбрать Pro',
-    tariff3_type: 'Alpha',
-    tariff3_desc: 'Максимальная мощь без ограничений',
-    tariff3_btn: 'Выбрать Alpha',
+    upgrade: "Upgrade to premium",
+    upgrade_title: "Solifon Premium",
+    upgrade_subtitle: 'НейрожелілердіТЈ барлыТ› мТЇмкіндігін ашыТЈыз',
+    tariff1_type: "Basic",
+    tariff1_desc: 'КТЇнделікті тапсырмалар ТЇшін еТЈ жаТ›сы таТЈдау',
+    tariff1_btn: 'Basic таТЈдау',
+    tariff2_type: "Pro",
+    tariff2_desc: 'КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін',
+    tariff2_btn: 'Pro таТЈдау',
+    tariff3_type: "Ultra",
+    tariff3_desc: 'ЕшТ›андай шектеусіз максималды кТЇш',
+    tariff3_btn: 'Ultra таТЈдау',
   },
   kz: {
     select_model: "Модель таТЈдаТЈыз",
@@ -3272,7 +3096,6 @@ const langDict = {
     menu_library: "Кітапхана",
     menu_new_project: "ЖаТЈа жоба",
     menu_presentation: "Презентация",
-    menu_new_feature: "Жаңа функция туралы",
     upgrade: "Premium-Т“а У©ту",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Р СњР ВµР в„–РЎР‚Р С•Р В¶Р ВµР »РЎвЂ“Р »Р ВµРЎР‚Р Т‘РЎвЂ“Р СћР в‚¬ Р В±Р В°РЎР‚Р »РЎвЂ№Р СћРІР‚С” Р СР СћР вЂЎР СР С”РЎвЂ“Р Р…Р Т‘РЎвЂ“Р С–РЎвЂ“Р Р… Р В°РЎв‚¬РЎвЂ№Р СћР в‚¬РЎвЂ№Р В·",
@@ -3282,9 +3105,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "Р С™Р Р€РІвЂћСћРЎРѓРЎвЂ“Р С—Р СћРІР‚С”Р С•Р в„–Р »Р В°РЎР‚ Р СР ВµР Р… Р Р€РІвЂћСћР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“РЎв‚¬РЎвЂ“Р »Р ВµРЎР‚ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р…",
     tariff2_btn: "Pro таТЈдау",
-    tariff3_type: "Alpha",
+    tariff3_type: "Ultra",
     tariff3_desc: "Р вЂўРЎв‚¬Р СћРІР‚С”Р В°Р Р…Р Т‘Р В°Р в„– РЎв‚¬Р ВµР С”РЎвЂљР ВµРЎС“РЎРѓРЎвЂ“Р В· Р СР В°Р С”РЎРѓР С‘Р СР В°Р »Р Т‘РЎвЂ№ Р С”Р СћР вЂЎРЎв‚¬",
-    tariff3_btn: "Alpha таТЈдау",
+    tariff3_btn: "Ultra таТЈдау",
   },
   en: {
     select_model: "Select Model",
@@ -3295,7 +3118,6 @@ const langDict = {
     menu_library: "Library",
     menu_new_project: "New Project",
     menu_presentation: "Solifon AI Code",
-    menu_new_feature: "About New Feature",
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Unleash the full potential of AI",
@@ -3305,9 +3127,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "For professionals and developers",
     tariff2_btn: "Choose Pro",
-    tariff3_type: "Alpha",
+    tariff3_type: "Ultra",
     tariff3_desc: "Maximum power without limits",
-    tariff3_btn: "Choose Alpha",
+    tariff3_btn: "Choose Ultra",
   }
 };
 
@@ -3341,14 +3163,7 @@ window.changeLang = function(lang, btnElement) {
 
   const updateText = (selector, key) => {
     const el = document.querySelector(selector);
-    if (el && dict[key]) {
-        el.textContent = dict[key];
-        
-        // Clear any old intervals just in case
-        if (el._randomLetterInterval) {
-            clearInterval(el._randomLetterInterval);
-        }
-    }
+    if (el && dict[key]) el.textContent = dict[key];
   };
 
   updateText("#currentModel", "select_model");
@@ -4493,367 +4308,3 @@ window.openVirtualBoard = function() {
     // Start
     setTimeout(animatePlaceholder, 1000);
 })();
-
-
-// ==========================================
-// GOOGLE DRIVE & DOCS INTEGRATION
-// ==========================================
-const CLIENT_ID = '1025199836674-lrrirvhvg3f5t9su2nckg7k0k0hr3h9v.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyAv8nCfVZKTAMJUQy9xrqP91-0dnkdgJ90';
-
-const DISCOVERY_DOCS = [
-    'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest',
-    'https://docs.googleapis.com/$discovery/rest?version=v1'
-];
-const SCOPES = 'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/documents';
-
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
-let oauthToken = null;
-
-function gapiLoaded() {
-    gapi.load('client:picker', initializeGapiClient);
-}
-
-async function initializeGapiClient() {
-    await gapi.client.init({
-        apiKey: API_KEY,
-        discoveryDocs: DISCOVERY_DOCS,
-    });
-    gapiInited = true;
-    console.log("GAPI Initialized");
-}
-
-function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: (response) => {
-            if (response.error !== undefined) {
-                throw (response);
-            }
-            oauthToken = response.access_token;
-            createPicker();
-        },
-    });
-    gisInited = true;
-    console.log("GIS Initialized");
-}
-
-function handleAuthClick() {
-    if (oauthToken) {
-        // У нас уже есть токен, просто открываем пикер
-        createPicker();
-    } else {
-        // Спрашиваем доступ
-        tokenClient.requestAccessToken({prompt: 'consent'});
-    }
-}
-
-function createPicker() {
-    const view = new google.picker.DocsView(google.picker.ViewId.DOCS);
-    view.setIncludeFolders(true);
-    
-    const picker = new google.picker.PickerBuilder()
-        .enableFeature(google.picker.Feature.NAV_HIDDEN)
-        .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
-        .setDeveloperKey(API_KEY)
-        .setOAuthToken(oauthToken)
-        .addView(view)
-        .addView(new google.picker.DocsUploadView())
-        .setCallback(pickerCallback)
-        .build();
-    picker.setVisible(true);
-}
-
-async function pickerCallback(data) {
-    if (data.action === google.picker.Action.PICKED) {
-        const file = data.docs[0];
-        const fileId = file.id;
-        const mimeType = file.mimeType;
-        
-        console.log(`Выбран файл: ${file.name} (ID: ${fileId}, Type: ${mimeType})`);
-        
-        let content = "";
-        
-        try {
-            if (mimeType === 'application/vnd.google-apps.document') {
-                // Если это Google Docs
-                const response = await gapi.client.docs.documents.get({ documentId: fileId });
-                content = readDocsContent(response.result.body.content);
-            } else {
-                // Если это обычный текстовый файл
-                const response = await gapi.client.drive.files.get({ fileId: fileId, alt: 'media' });
-                content = response.body;
-            }
-            
-            // Добавляем файл в интерфейс
-            addGoogleDriveFileToUI(file.name, content);
-            
-        } catch (error) {
-            console.error("Ошибка загрузки файла", error);
-            alert("Не удалось прочитать файл. Убедитесь, что это текстовый документ.");
-        }
-    }
-}
-
-function readDocsContent(contentElements) {
-    let text = "";
-    contentElements.forEach(element => {
-        if (element.paragraph) {
-            element.paragraph.elements.forEach(el => {
-                if (el.textRun) {
-                    text += el.textRun.content;
-                }
-            });
-        }
-    });
-    return text;
-}
-
-function addGoogleDriveFileToUI(fileName, content) {
-    // Используем уже готовую функцию handleFileSelect из скрипта
-    // Создаем искусственный File объект
-    const blob = new Blob([content], { type: 'text/plain' });
-    const file = new File([blob], fileName, { type: 'text/plain' });
-    
-    // Эмулируем выбор файла
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    
-    const fileInput = document.getElementById('fileInput');
-    fileInput.files = dataTransfer.files;
-    
-    // Вызываем существующее событие
-    const event = new Event('change');
-    fileInput.dispatchEvent(event);
-}
-
-// === VOICE TTS IMPLEMENTATION ===
-window.currentAudio = null;
-window.readAloud = async function(text) {
-    if(!text) return;
-    
-    // Если уже играет звук, останавливаем его
-    if (window.currentAudio) {
-        window.currentAudio.pause();
-        window.currentAudio = null;
-        return;
-    }
-
-    // Определяем тариф пользователя на основе выбранной модели
-    const isPro = ['github', 'solifon-souldrive', 'solifon-pulse'].includes(window.selectedProvider);
-    const plan = isPro ? 'pro' : 'free';
-
-    try {
-        const response = await fetch('http://localhost:7860/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: text, plan: plan })
-        });
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            alert("Ошибка озвучки: " + errorText);
-            return;
-        }
-        
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        window.currentAudio = audio;
-        audio.play();
-        
-        audio.onended = () => {
-            window.currentAudio = null;
-            URL.revokeObjectURL(url);
-        };
-    } catch (e) {
-        console.error("TTS Error:", e);
-        alert("Сервер озвучки (app.py) недоступен на порту 7860. Пожалуйста, запустите его!");
-    }
-};
-
-// ============================================================
-// SOLIFON ARTIFACTS LOGIC (CLAUDE-STYLE SPLIT VIEW)
-// ============================================================
-
-window.artifactState = {
-    isOpen: false,
-    content: ''
-};
-
-window.openArtifact = function(content, title = 'Generated Content') {
-    if (window.innerWidth <= 768) {
-        return;
-    }
-    
-    const panel = document.getElementById('artifactPanel');
-    const iframe = document.getElementById('artifactIframe');
-    const titleEl = document.querySelector('#artifactTitle span');
-    const resizeHandle = document.getElementById('resizeHandle');
-    const chat = document.querySelector('.main-content');
-    
-    if(titleEl) titleEl.textContent = title;
-    
-    if(iframe) iframe.srcdoc = content;
-    window.artifactState.content = content;
-    
-    if(panel) {
-        panel.classList.add('active');
-        panel.style.width = '60%';
-    }
-    if(resizeHandle) resizeHandle.style.display = 'block';
-    if(chat) chat.style.width = '40%';
-    
-    window.artifactState.isOpen = true;
-};
-
-window.closeArtifact = function() {
-    const panel = document.getElementById('artifactPanel');
-    const resizeHandle = document.getElementById('resizeHandle');
-    const chat = document.querySelector('.main-content');
-    
-    if(panel) {
-        panel.classList.remove('active');
-        panel.style.width = '0';
-    }
-    if(resizeHandle) resizeHandle.style.display = 'none';
-    if(chat) chat.style.width = '100%';
-    
-    window.artifactState.isOpen = false;
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    const resizeHandle = document.getElementById('resizeHandle');
-    const panel = document.getElementById('artifactPanel');
-    const chat = document.querySelector('.main-content');
-    let isResizing = false;
-
-    if(resizeHandle) {
-        resizeHandle.addEventListener('mousedown', (e) => {
-            isResizing = true;
-            resizeHandle.classList.add('active');
-            document.body.style.cursor = 'col-resize';
-            const iframe = document.getElementById('artifactIframe');
-            if(iframe) iframe.style.pointerEvents = 'none';
-        });
-    }
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isResizing) return;
-        const container = document.getElementById('splitViewContainer');
-        if(!container) return;
-        
-        const containerRect = container.getBoundingClientRect();
-        let chatWidthPx = e.clientX - containerRect.left;
-        let chatWidthPercent = (chatWidthPx / containerRect.width) * 100;
-        
-        if (chatWidthPx < 300) {
-            chatWidthPercent = (300 / containerRect.width) * 100;
-        } else if (chatWidthPercent > 80) {
-            chatWidthPercent = 80;
-        }
-        
-        if(chat) chat.style.width = chatWidthPercent + '%';
-        if(panel) panel.style.width = (100 - chatWidthPercent) + '%';
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (isResizing) {
-            isResizing = false;
-            if(resizeHandle) resizeHandle.classList.remove('active');
-            document.body.style.cursor = '';
-            const iframe = document.getElementById('artifactIframe');
-            if(iframe) iframe.style.pointerEvents = 'auto';
-        }
-    });
-
-    const closeBtn = document.getElementById('artifactCloseBtn');
-    if(closeBtn) closeBtn.addEventListener('click', window.closeArtifact);
-    
-    const copyBtn = document.getElementById('artifactCopyBtn');
-    if(copyBtn) {
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(window.artifactState.content);
-            const icon = copyBtn.querySelector('i');
-            if(icon) {
-                icon.className = 'ph ph-check';
-                setTimeout(() => icon.className = 'ph ph-copy', 2000);
-            }
-        });
-    }
-    
-    const pdfBtn = document.getElementById('artifactPdfBtn');
-    if(pdfBtn) {
-        pdfBtn.addEventListener('click', () => {
-            const content = window.artifactState.content;
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = content;
-            const opt = {
-                margin:       0.5,
-                filename:     'Solifon_Artifact.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            if(window.html2pdf) {
-                html2pdf().set(opt).from(tempDiv).save();
-            } else {
-                alert("PDF generation library is loading, please try again.");
-            }
-        });
-    }
-});
-
-
-
-window.downloadMobilePDF = function(content) {
-    // ВАЖНО: Мы используем скрытый iframe, чтобы CSS из сгенерированного кода
-    // не просочился в основной интерфейс чата и не "сломал" сайт!
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'absolute';
-    iframe.style.left = '-9999px';
-    iframe.style.top = '0';
-    iframe.style.width = '800px';
-    iframe.style.height = '2000px'; // Большой размер, чтобы все поместилось
-    iframe.style.border = 'none';
-    document.body.appendChild(iframe);
-
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    // Добавляем белый фон, чтобы PDF не был прозрачным
-    doc.write('<style>body { background-color: #ffffff; color: #000000; margin: 0; padding: 20px; }</style>' + content);
-    doc.close();
-    
-    const opt = {
-        margin:       0.5,
-        filename:     'Solifon_Artifact.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, windowWidth: 800 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    
-    if(window.html2pdf) {
-        // Даем браузеру 500мс на рендер iframe (загрузку шрифтов/картинок) перед созданием PDF
-        setTimeout(() => {
-            html2pdf().set(opt).from(doc.body).save().then(() => {
-                document.body.removeChild(iframe);
-            });
-        }, 500);
-    } else {
-        alert("PDF generator not loaded yet.");
-        document.body.removeChild(iframe);
-    }
-};
-
-window.stopGeneration = function() {
-    window.isGenerationStopped = true;
-    if (window.activeAbortController) {
-        window.activeAbortController.abort();
-    }
-    const stopBtn = document.getElementById('stopBtn');
-    if (stopBtn) stopBtn.classList.add('disabled');
-};
-
