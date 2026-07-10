@@ -4856,3 +4856,4 @@ window.stopGeneration = function() {
     const stopBtn = document.getElementById('stopBtn');
     if (stopBtn) stopBtn.classList.add('disabled');
 };
+
