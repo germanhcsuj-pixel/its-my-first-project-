@@ -478,12 +478,174 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     </div>
 
-    <div class="chat-suggestion-buttons" >
+    <!-- Hidden PDF file input -->
+    <input type="file" id="pdfFileInput" style="display:none;" accept=".pdf" onchange="window.handlePdfFileSelect(this)">
+
+    <!-- Deep Search Command Menu -->
+    <div id="deepSearchMenu" class="deep-search-menu" style="display:none;">
+        <div class="dsm-header">
+            <i class="ph ph-sparkle"></i>
+            <span>Deep Commands</span>
+            <button class="dsm-close" onclick="window.closeDeepMenu()"><i class="ph ph-x"></i></button>
+        </div>
+        <div class="dsm-commands">
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('pdf_create')">
+                <div class="dsm-cmd-icon" style="background:rgba(99,179,237,0.15);color:#63b3ed">
+                    <i class="ph ph-file-pdf"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/pdf create</span>
+                    <span class="dsm-cmd-desc">ИИ создаст PDF из твоего текста</span>
+                </div>
+                <span class="dsm-badge">NEW</span>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('pdf_edit')">
+                <div class="dsm-cmd-icon" style="background:rgba(154,117,243,0.15);color:#9a75f3">
+                    <i class="ph ph-pencil-simple"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/pdf edit</span>
+                    <span class="dsm-cmd-desc">Загрузи PDF и ИИ изменит его</span>
+                </div>
+                <span class="dsm-badge">NEW</span>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('video')">
+                <div class="dsm-cmd-icon" style="background:rgba(252,129,74,0.15);color:#fc814a">
+                    <i class="ph ph-video-camera"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/video</span>
+                    <span class="dsm-cmd-desc">Анализ YouTube видео по ссылке</span>
+                </div>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('image')">
+                <div class="dsm-cmd-icon" style="background:rgba(72,199,142,0.15);color:#48c78e">
+                    <i class="ph ph-image-square"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/image</span>
+                    <span class="dsm-cmd-desc">Генерация изображения по описанию</span>
+                </div>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('web')">
+                <div class="dsm-cmd-icon" style="background:rgba(251,211,62,0.15);color:#fbd33e">
+                    <i class="ph ph-globe"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/web</span>
+                    <span class="dsm-cmd-desc">Поиск информации в интернете</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* ===== DEEP SEARCH MENU ===== */
+        .deep-search-menu {
+            position: absolute;
+            bottom: calc(100% + 14px);
+            right: 0;
+            width: min(380px, 95vw);
+            background: rgba(14,14,18,0.92);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+            overflow: hidden;
+            z-index: 10000;
+            animation: dsmFadeIn 0.25s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes dsmFadeIn {
+            from { opacity:0; transform:translateY(12px) scale(0.97); }
+            to   { opacity:1; transform:translateY(0) scale(1); }
+        }
+        .dsm-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 16px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            color: rgba(255,255,255,0.5);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+        .dsm-header i { font-size: 15px; color: rgba(255,255,255,0.4); }
+        .dsm-header span { flex:1; }
+        .dsm-close {
+            background: none; border: none; cursor: pointer;
+            color: rgba(255,255,255,0.3); font-size: 16px; padding: 2px 4px;
+            border-radius: 6px; transition: color 0.2s, background 0.2s;
+        }
+        .dsm-close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .dsm-commands { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+        .dsm-cmd {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.18s ease;
+        }
+        .dsm-cmd:hover { background: rgba(255,255,255,0.07); }
+        .dsm-cmd:active { background: rgba(255,255,255,0.12); transform: scale(0.99); }
+        .dsm-cmd-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .dsm-cmd-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+        .dsm-cmd-title {
+            font-size: 14px; font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+        }
+        .dsm-cmd-desc { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .dsm-badge {
+            font-size: 9px; font-weight: 700;
+            background: linear-gradient(90deg, #63b3ed, #9a75f3);
+            color: #fff; padding: 2px 7px; border-radius: 20px;
+            letter-spacing: 0.5px; flex-shrink: 0;
+        }
+        /* Deep button active state */
+        #deepBtn.deep-active {
+            background: rgba(99,179,237,0.15) !important;
+            border-color: rgba(99,179,237,0.4) !important;
+            color: #63b3ed !important;
+        }
+        #deepBtn.deep-active i { color: #63b3ed !important; }
+        /* PDF mode indicator in textarea */
+        .pdf-mode-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(99,179,237,0.15);
+            border: 1px solid rgba(99,179,237,0.3);
+            color: #63b3ed;
+            font-size: 12px; font-weight: 600;
+            padding: 4px 10px; border-radius: 20px;
+            margin: 8px 15px 0;
+        }
+        .pdf-mode-tag i { font-size: 14px; }
+        .pdf-mode-tag .pdf-tag-remove {
+            cursor: pointer; opacity: 0.6;
+            transition: opacity 0.2s;
+            margin-left: 2px;
+        }
+        .pdf-mode-tag .pdf-tag-remove:hover { opacity: 1; }
+        /* wrapper for tag + textarea */
+        #pdfModeTag { display: none; }
+    </style>
+
+    <div class="chat-suggestion-buttons" style="position:relative;">
         <button class="suggestion-btn" onclick="document.getElementById('imageInput').click()">
             <i class="ph ph-image"></i>
             <span>Clone UI</span>
         </button>
-        <button class="suggestion-btn" onclick="alert('пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ')">
+        <button class="suggestion-btn" onclick="alert('Скоро!')">
             <i class="ph ph-link"></i>
             <span>Import Figma</span>
         </button>
@@ -492,10 +654,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <i class="ph ph-waveform"></i>
             <span>Create Page</span>
         </button>
-        <button class="suggestion-btn" id="deepBtn">
-            <i class="ph ph-sparkle"></i>
-            <span>Improve</span>
-        </button>
+        <div style="position:relative;">
+            <button class="suggestion-btn" id="deepBtn" onclick="window.toggleDeepMenu(event)">
+                <i class="ph ph-magnifying-glass"></i>
+                <span>Deep Search</span>
+            </button>
+        </div>
     </div>
 </div>
 <script>
