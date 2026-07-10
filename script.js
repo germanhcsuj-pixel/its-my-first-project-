@@ -448,7 +448,7 @@ function checkDeepLimit() {
 const modelMap = {
     'solifon-flux': 'flux',
     'solifon-soul': 'solifon-soul',
-    'solifon-ultra': 'github',
+    'solifon-alpha': 'github',
     'solifon-air': 'gemini',
     'solifon-unbound': 'qwen',
     'solifon-motion': 'video',
@@ -499,7 +499,12 @@ function typeEffect(element, text) {
     }
     
     let i = 0;
+    window.currentTypingElement = typeSpan;
+    window.currentTypingText = cleanText;
     const interval = setInterval(() => {
+    window.currentTypingInterval = interval;
+    const stopBtn = document.getElementById('stopBtn');
+    if(stopBtn) stopBtn.style.display = 'inline-block';
         if (i < cleanText.length) {
             i += Math.floor(Math.random() * 4) + 3; 
             if (i > cleanText.length) i = cleanText.length;
@@ -512,6 +517,9 @@ function typeEffect(element, text) {
             if (container) container.scrollTop = container.scrollHeight;
         } else {
             clearInterval(interval);
+            window.currentTypingInterval = null;
+            const stopBtn = document.getElementById('stopBtn');
+            if(stopBtn) stopBtn.style.display = 'none';
             if (typeof addMinimalDock === 'function') {
                 addMinimalDock(textContainer);
             }
@@ -798,14 +806,11 @@ window.openFilePicker = function() {
 
 window.openModal = function(id) {
     if (id === 'aboutModal') {
-        window.currentViewBg = 'about';
-        window.applyWallpaper();
+        
     } else if (id === 'upgradeModal') {
-        window.currentViewBg = 'sub';
-        window.applyWallpaper();
+        
     } else if (id === 'whatsNewModal') {
-        window.currentViewBg = 'whatsnew';
-        window.applyWallpaper();
+        
     }
     const navToggle = document.getElementById('nav-toggle');
     if (navToggle) {
@@ -830,8 +835,7 @@ window.openModal = function(id) {
 
 window.closeModal = function(id) {
     if (['aboutModal', 'upgradeModal', 'whatsNewModal', 'fullscreenLayerModal'].includes(id)) {
-        window.currentViewBg = 'main';
-        window.applyWallpaper('main');
+        
     }
     const m = document.getElementById(id);
     if (m) {
@@ -1045,9 +1049,12 @@ if (chatTrigger) {
         formData.append('user_email', currentUser ? currentUser.email : '');
 
 
+        window.currentAbortController = new AbortController();
+        document.getElementById("stopBtn").style.display = "inline-block";
         const fetchPromise = fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
             method: "POST",
-            body: formData
+            body: formData,
+            signal: window.currentAbortController.signal
         });
 
         const minDelayPromise = new Promise(resolve => setTimeout(resolve, totalTime));
@@ -1059,10 +1066,12 @@ if (chatTrigger) {
         if (contentType && contentType.includes('image')) {
             const blob = await response.blob();
             const imageUrl = URL.createObjectURL(blob);
+            document.getElementById("stopBtn").style.display = "none";
             renderMediaInMessage(botMsgElement, imageUrl);
             saveToFirebase('ai', '[image]', targetSessionId);
         } else {
             const data = await response.json();
+            document.getElementById("stopBtn").style.display = "none";
             const reply = data.reply || '...';
             typeEffect(botMsgElement, reply);
             saveToFirebase('ai', reply, targetSessionId);
@@ -1078,6 +1087,17 @@ if (chatTrigger) {
             }
         }
     } catch (error) {
+        if (error.name === 'AbortError') {
+            document.getElementById("stopBtn").style.display = "none";
+            if (botMsgElement && botMsgElement.querySelector) {
+                const t = botMsgElement.querySelector('.text');
+                if (t && !t.innerText.trim()) {
+                    t.innerHTML = '<span style="color:#888;"><i>[Остановлено]</i></span>';
+                }
+            }
+            window.isHandlingAI = false;
+            return;
+        }
         if (isLiveMode) {
             const status = document.getElementById('liveStatus');
             if (status) status.innerText = "Ошибка... повтор через 2 сек";
@@ -1264,7 +1284,7 @@ const SLIDES = [
     skills: [{n: "Р С›Р В±РЎР‰Р ВµР С Р С—Р В°Р СРЎРЏРЎвЂљР С‘", p: 100}, {n: "Р В­Р СР С—Р В°РЎвЂљР С‘РЎРЏ Р С‘ Р С”Р С•Р Р…РЎвЂљР ВµР С”РЎРѓРЎвЂљ", p: 100}, {n: "Р В Р В°Р В±Р С•РЎвЂљР В° РЎРѓ Р Т‘Р В°Р Р…Р Р…РЎвЂ№Р СР С‘", p: 95}]
   },
   { 
-    title: "SOLIFON ULTRA", 
+    title: "SOLIFON ALPHA", 
     icon: "Р Р†Р вЂљРІР‚СњР СњРЎСџР СњРЎСџР СњРЎвЂєР СњРЎвЂєР Р†Р’ВРЎС›Р С—РЎвЂР вЂ№", 
     description: "РЎРѓР В°Р СРЎвЂ№Р в„– РЎС“Р СР Р…РЎвЂ№Р в„– Р СР С•Р Т‘Р ВµР »", 
     stats: ["Р СљРЎС“Р »РЎРЉРЎвЂљР С‘Р СР С•Р Т‘Р В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ: Р С’Р С”РЎвЂљРЎС“Р В°Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ Р Т‘Р В°Р Р…Р Р…РЎвЂ№РЎвЂ¦", "Р РЋРЎвЂљР В°Р В±Р С‘Р »РЎРЉР Р…Р С•РЎРѓРЎвЂљРЎРЉ: 100%"],
@@ -2787,6 +2807,9 @@ function showInstallGuide() {
       window.closeDownloadModal();
       return;
     }
+    if (['aboutModal', 'upgradeModal', 'whatsNewModal', 'fullscreenLayerModal', 'dastanModal'].includes(id)) {
+        
+    }
     const modal = document.getElementById(id);
     if (modal) {
       modal.classList.remove('active');
@@ -3177,9 +3200,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: 'КУ™сіпТ›ойлар мен У™зірлеушілер ТЇшін',
     tariff2_btn: 'Pro таТЈдау',
-    tariff3_type: "Ultra",
+    tariff3_type: "Alpha",
     tariff3_desc: 'ЕшТ›андай шектеусіз максималды кТЇш',
-    tariff3_btn: 'Ultra таТЈдау',
+    tariff3_btn: 'Alpha таТЈдау',
   },
   kz: {
     select_model: "Модель таТЈдаТЈыз",
@@ -3199,9 +3222,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "Р С™Р Р€РІвЂћСћРЎРѓРЎвЂ“Р С—Р СћРІР‚С”Р С•Р в„–Р »Р В°РЎР‚ Р СР ВµР Р… Р Р€РІвЂћСћР В·РЎвЂ“РЎР‚Р »Р ВµРЎС“РЎв‚¬РЎвЂ“Р »Р ВµРЎР‚ Р СћР вЂЎРЎв‚¬РЎвЂ“Р Р…",
     tariff2_btn: "Pro таТЈдау",
-    tariff3_type: "Ultra",
+    tariff3_type: "Alpha",
     tariff3_desc: "Р вЂўРЎв‚¬Р СћРІР‚С”Р В°Р Р…Р Т‘Р В°Р в„– РЎв‚¬Р ВµР С”РЎвЂљР ВµРЎС“РЎРѓРЎвЂ“Р В· Р СР В°Р С”РЎРѓР С‘Р СР В°Р »Р Т‘РЎвЂ№ Р С”Р СћР вЂЎРЎв‚¬",
-    tariff3_btn: "Ultra таТЈдау",
+    tariff3_btn: "Alpha таТЈдау",
   },
   en: {
     select_model: "Select Model",
@@ -3221,9 +3244,9 @@ const langDict = {
     tariff2_type: "Pro",
     tariff2_desc: "For professionals and developers",
     tariff2_btn: "Choose Pro",
-    tariff3_type: "Ultra",
+    tariff3_type: "Alpha",
     tariff3_desc: "Maximum power without limits",
-    tariff3_btn: "Choose Ultra",
+    tariff3_btn: "Choose Alpha",
   }
 };
 
@@ -4582,4 +4605,30 @@ window.readAloud = async function(text) {
         console.error("TTS Error:", e);
         alert("Сервер озвучки (app.py) недоступен на порту 7860. Пожалуйста, запустите его!");
     }
+};
+
+window.stopGeneration = function() {
+    if (window.currentAbortController) {
+        window.currentAbortController.abort();
+        window.currentAbortController = null;
+    }
+    if (window.currentTypingInterval) {
+        clearInterval(window.currentTypingInterval);
+        window.currentTypingInterval = null;
+        if (window.currentTypingElement) {
+            window.currentTypingElement.innerHTML = window.currentTypingText
+                .replace(/\*\*(.*?)\*\*/g, '<strong style="color: #00c8ff;">$1</strong>')
+                .replace(/\n/g, '<br>');
+            const container = document.getElementById('messagesContainer');
+            if (container) container.scrollTop = container.scrollHeight;
+            if (typeof addMinimalDock === 'function') {
+                const textContainer = window.currentTypingElement.closest('.text');
+                if (textContainer && !textContainer.querySelector('.dock-container')) {
+                    addMinimalDock(textContainer);
+                }
+            }
+        }
+    }
+    const stopBtn = document.getElementById('stopBtn');
+    if(stopBtn) stopBtn.style.display = 'none';
 };
