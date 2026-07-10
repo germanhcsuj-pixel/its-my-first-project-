@@ -3,47 +3,18 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-  SOLIFON AI — PWA PATCH
-  
-  INSTRUCTION: Add these blocks to index.html
 
-  в‘  Block 1 в†’ insert inside <head>
-<meta charset="UTF-8"> ... </head>
-
-<script>
-window.addEventListener('message', function(event) {
-    if (event.data === 'toggleCamera') {
-        if (window.toggleAirCanvas) window.toggleAirCanvas();
-    }
-    if (event.data === 'startCamera') {
-        if (window.startHeroCamera) window.startHeroCamera();
-    }
-    if (event.data === 'stopCamera') {
-        if (window.stopHeroCamera) window.stopHeroCamera();
-    }
-    if (event.data === 'closeNewFeatureModal') {
-        if (window.closeModal) window.closeModal('newFeatureModal');
-    }
-});
-</script>
 
     
 
 
 
 
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-</body>
-
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 
-<!-- в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
-     BLOCK 1 — Insert into <head>
+
+
 <meta charset="UTF-8">
-в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ -->
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ffffff">
@@ -63,15 +34,7 @@ window.addEventListener('message', function(event) {
 
   
   <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
 <!-- End Google Tag Manager -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SOLIFON AI</title>
@@ -86,6 +49,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 
+    <!-- Google API & GIS -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </head>
 <body class="no-select">
   <!-- Google Tag Manager (noscript) -->
@@ -114,30 +80,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <nav class="menu">
                         <div class="menu-section-title">System</div>
             <div class="menu-item" onclick="openModal('whatsNewModal')">
-    <i class="ph ph-megaphone"></i><span>What's New</span>
+    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span><span class="stylish-first-letter">W</span>hat's New</span>
 </div>
 
             <div class="menu-item" onclick="openModal('aboutModal')">
-                <i class="ph ph-info"></i><span>About SOLIFON</span>
+                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span><span class="stylish-first-letter">A</span>bout SOLIFON</span>
             </div>
 
             <div class="menu-section-title">Features</div>           
           <div class="menu-item active" id="chatTrigger">
 
-<i class="ph ph-chat-circle-dots"></i><span>Chat</span>
+<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span><span class="stylish-first-letter">C</span>hat</span>
 
           </div>
             
             <div class="menu-item" id="libraryTrigger">
-                <i class="ph ph-books"></i><span>Library</span>
+                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter">L</span>ibrary</span>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
             <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code"></i><span>Solifon AI Code</span>
+    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span><span class="stylish-first-letter">S</span>olifon AI Code</span>
 </div>
 <div class="menu-item" onclick="openModal('newFeatureModal')">
-    <i class="ph ph-camera"></i><span>new feature</span>
+    <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter">N</span>ew feature</span>
 </div>
 
             
@@ -322,6 +288,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             letter-spacing: 0.5px;
             border: 1px solid rgba(255,255,255,0.05);
         }
+        
+        /* ===== STYLISH FIRST LETTER ===== */
+        .stylish-first-letter {
+            font-family: 'Georgia', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-right: 1px;
+            display: inline-block;
+            transform: translateY(1px);
+        }
+        
+        /* ===== ANIMATION FOR FAV ICON ===== */
+        @keyframes starBurst {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.6) rotate(20deg); filter: drop-shadow(0 0 12px #ffcf33); color: #ffcf33; }
+            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 5px #ffcf33); color: #ffcf33; }
+        }
     </style>
     <div style="position: relative; width: 100%; height: 0; display: flex; justify-content: center; z-index: 10000;">
         <!-- Autocomplete Suggestions Dropdown -->
@@ -342,6 +329,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="left-actions">
                 <button type="button" class="action-icon-btn" onclick="document.getElementById('fileInput').click()" title="Attach file">
                     <i class="ph ph-paperclip"></i>
+                </button>
+                <button type="button" class="action-icon-btn" id="googleDriveBtn" onclick="handleAuthClick()" title="Google Drive">
+                    <i class="ph ph-google-drive-logo"></i>
                 </button>
                 <button type="button" class="action-icon-btn" id="micBtn" title="Voice Input">
                     <i class="ph ph-microphone"></i>
@@ -404,6 +394,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         border-radius: 50%;
                         box-shadow: 0 0 6px #fff;
                     }
+                    .mmd-option.locked {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                    }
+                    .mmd-option.locked:hover {
+                        background: transparent;
+                        padding-left: 14px;
+                    }
+                    .mmd-pro-badge {
+                        margin-left: auto;
+                        font-size: 10px;
+                        background: linear-gradient(90deg, #c7fe42, #7efde3);
+                        color: #000;
+                        padding: 2px 6px;
+                        border-radius: 6px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        display: flex;
+                        align-items: center;
+                        gap: 3px;
+                    }
+
                     #modelMiniBtn {
                         border-radius: 14px;
                         padding: 0 16px;
@@ -444,9 +456,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </button>
                     <div id="modelMiniDropdown" class="mmd-dropdown">
                         <div class="mmd-option active" data-value="gemini">Solifon Air</div>
-                        <div class="mmd-option" data-value="solifon-souldrive">Solifon SoulDrive</div>
-                        <div class="mmd-option" data-value="github">Solifon Ultra</div>
-                        <div class="mmd-option" data-value="solifon-pulse">Solifon Pulse</div>
+                        <div class="mmd-option locked" data-value="solifon-souldrive">Solifon SoulDrive <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="github">Solifon Alpha <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="solifon-pulse">Solifon Pulse <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
+                        <div class="mmd-option locked" data-value="solifon-loom">Solifon Loom <div class="mmd-pro-badge"><i class="ph ph-lock"></i> Pro</div></div>
                     </div>
                 </div>
 
@@ -513,8 +526,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const mmdShortNames = {
             'gemini': 'Air',
             'solifon-pulse': 'Pulse',
-            'github': 'Ultra',
-            'solifon-souldrive': 'SoulDrive'
+            'github': 'Alpha',
+            'solifon-souldrive': 'SoulDrive',
+            'solifon-loom': 'Loom'
         };
 
         if (miniBtn && mmdDropdown) {
@@ -526,7 +540,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             });
 
             mmdDropdown.querySelectorAll('.mmd-option').forEach(opt => {
-                opt.addEventListener('click', () => {
+                opt.addEventListener('click', (e) => {
+                    if (opt.classList.contains('locked')) {
+                        e.stopPropagation();
+                        if (typeof openModal === 'function') {
+                            openModal('upgradeModal');
+                        } else {
+                            alert("This is a Premium model! Pro subscription is required.");
+                        }
+                        mmdDropdown.classList.remove('open');
+                        miniBtn.classList.remove('open');
+                        return;
+                    }
                     const val = opt.getAttribute('data-value');
                     const shortName = mmdShortNames[val] || val;
                     if (miniName) miniName.textContent = shortName;
@@ -795,7 +820,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="model-option" onclick="setVoice('rachel')">
                     <i class="ph ph-user-circle"></i> Rachel (Clear & Warm)
                 </div>
-                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs API v1</p>
+                <p style="font-size: 10px; margin-top: 15px; opacity: 0.5;">Powered by ElevenLabs v1</p>
             </div>
         </div>
     </div>
@@ -830,6 +855,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     
     <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"
       style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
+
+    <div style="text-align: right; margin-bottom: 14px;">
+        <a href="#" onclick="resetPassword()" style="color: #00c8ff; font-size: 13px; text-decoration: none;">Forgot password?</a>
+    </div>
 
     <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
 
@@ -867,81 +896,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="billing-toggle">
                     <button class="billing-btn active" data-period="month">1 Month</button>
                     <button class="billing-btn" data-period="year">1 Year</button>
-                    <button class="billing-btn" data-period="custom">Custom Selection</button>
-                </div>
-            </div>
-
-            <!-- Custom Months Slider UI -->
-            <style>
-                .premium-slider-container {
-                    text-align: center;
-                    margin-bottom: 40px;
-                    animation: fadeIn 0.4s ease;
-                }
-                .premium-slider-label {
-                    color: rgba(255,255,255,0.8);
-                    font-family: 'Inter', sans-serif;
-                    font-size: 15px;
-                    display: block;
-                    margin-bottom: 20px;
-                }
-                .premium-slider-value {
-                    color: #fff;
-                    font-weight: 700;
-                    font-size: 18px;
-                }
-                .premium-slider-wrapper {
-                    position: relative;
-                    width: 80%;
-                    max-width: 300px;
-                    margin: 0 auto;
-                }
-                .premium-slider {
-                    -webkit-appearance: none;
-                    width: 100%;
-                    height: 8px;
-                    background: linear-gradient(90deg, #9c40ff, #ffaa40);
-                    border-radius: 10px;
-                    outline: none;
-                    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5), 0 0 12px rgba(156, 64, 255, 0.4);
-                }
-                .premium-slider::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    appearance: none;
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #9c40ff;
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
-                    cursor: pointer;
-                    transition: transform 0.25s ease, box-shadow 0.25s ease;
-                }
-                .premium-slider::-webkit-slider-thumb:hover {
-                    transform: scale(1.2);
-                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
-                }
-                .premium-slider::-moz-range-thumb {
-                    width: 26px;
-                    height: 26px;
-                    border-radius: 50%;
-                    background: #ffffff;
-                    border: 2px solid #9c40ff;
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 4px 10px rgba(0,0,0,0.5);
-                    cursor: pointer;
-                    transition: transform 0.25s ease, box-shadow 0.25s ease;
-                }
-                .premium-slider::-moz-range-thumb:hover {
-                    transform: scale(1.2);
-                    box-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 6px 14px rgba(0,0,0,0.6);
-                }
-            </style>
-            <div id="custom-months-container" class="premium-slider-container" style="display: none;">
-                <label for="customMonthsRange" class="premium-slider-label">
-                    Selected: <span id="customMonthsValue" class="premium-slider-value">5 Months</span>
-                </label>
-                <div class="premium-slider-wrapper">
-                    <input type="range" id="customMonthsRange" class="premium-slider" min="2" max="24" value="5">
                 </div>
             </div>
 
@@ -952,11 +906,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__gradient"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type first__tariff-type">Basic</span>
-                                <div class="tariff__price tariff__free">Free</div>
-                                <p class="tariff__description">For casual use & one-on-one meetings</p>
+                                <span class="tariff__type first__tariff-type">Solifon Pro</span>
+                                <div class="tariff__price"><span class="tariff__number">$14.99</span><span class="tariff__period">/month</span></div>
+                                <p class="tariff__description">Perfect for daily tasks and creative exploration.</p>
                             </div>
-                            <button class="tariff__button first__tariff-button">Select plan</button>
+                            <button class="tariff__button first__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/0531fd1d-0682-4b30-9796-2de86b760449'">Buy Pro</button>
                             <div class="tariff__list first__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -964,7 +918,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Up to 2 participants</p>
+                                    <p class="tariff__item-text">Pulse and SoulDrive Models</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -972,7 +926,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">40-minute meeting limit</p>
+                                    <p class="tariff__item-text">Image Generation (15 per day)</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -980,7 +934,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Standard video quality</p>
+                                    <p class="tariff__item-text">Smart Web Context</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -988,7 +942,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Screen sharing</p>
+                                    <p class="tariff__item-text">Standard Processing Speed</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1007,11 +961,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__gradient"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Corporate</span><span class="tariff__tag">Most Popular</span></div>
-                                <div class="tariff__price"><span class="tariff__number">$60</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">Ideal for small teams & regular meetings</p>
+                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Solifon Max</span><span class="tariff__tag">Most Popular</span></div>
+                                <div class="tariff__price"><span class="tariff__number">$39.99</span><span class="tariff__period">/month</span></div>
+                                <p class="tariff__description">Advanced tools for serious creators</p>
                             </div>
-                            <button class="tariff__button second__tariff-button">Select plan</button>
+                            <button class="tariff__button second__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/66d88b1f-de18-43f2-b0c7-0a71467ba1fe'">Buy Max</button>
                             <div class="tariff__list second__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1019,7 +973,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Up to 25 participants</p>
+                                    <p class="tariff__item-text">Unrestricted access to Alpha and Loom</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1027,7 +981,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Unlimited meeting duration</p>
+                                    <p class="tariff__item-text">Image Generation (50 per day)</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1035,7 +989,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">HD video quality</p>
+                                    <p class="tariff__item-text">Voice Synthesis (ElevenLabs)</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1043,7 +997,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Screen sharing & file sharing</p>
+                                    <p class="tariff__item-text">Smart Web Context</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1051,7 +1005,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Meeting recording (limited storage)</p>
+                                    <p class="tariff__item-text">Fast Processing</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1059,123 +1013,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                             <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
                                         </svg>
                                     </div>
-                                    <p class="tariff__item-text">Custom meeting links</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Priority email support</p>
+                                    <p class="tariff__item-text">Priority chat support</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Third Tariff-->
-                    <div class="tariff third-tariff">
-                        <div class="tariff__gradient"></div>
+                    <div class="tariff third-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(255, 215, 0, 0.3);">
+                        <style>
+                            @keyframes pulseGlow { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
+                        </style>
+                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #FFD700, #ff8c00, #ff0080); animation: pulseGlow 3s infinite alternate;"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type third__tariff-type">Premium</span>
-                                <div class="tariff__price"><span class="tariff__number">$90</span><span class="tariff__period">/month</span></div>
-                                <p class="tariff__description">Built for businesses & corporations</p>
+                                <span class="tariff__type third__tariff-type" style="color: #FFD700; text-shadow: 0 0 10px rgba(255,215,0,0.5);">Solifon Alpha</span>
+                                <div class="tariff__price"><span class="tariff__number">$119.99</span><span class="tariff__period">/month</span></div>
+                                <p class="tariff__description">The ultimate AI workspace for creators and businesses. Maximum power without limits.</p>
                             </div>
-                            <button class="tariff__button third__tariff-button">Select plan</button>
+                            <button class="tariff__button third__tariff-button" style="background: linear-gradient(90deg, #ff8c00, #ff0080); box-shadow: 0 0 15px rgba(255, 0, 128, 0.6); border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/a07f7b65-bd2c-4a86-b909-f3ea8a56d390'">Buy Alpha</button>
                             <div class="tariff__list third__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">All features from Corporate Plan</p>
+                                    <p class="tariff__item-text">All features from Max Plan</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">Cloud recording with storage</p>
+                                    <p class="tariff__item-text">Unlimited Image Generation</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">Branding & custom backgrounds</p>
+                                    <p class="tariff__item-text">Advanced Computer Vision</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    </div>
+                                    <p class="tariff__item-text">Priority Processing</p>
+                                </div>
+                                <div class="tariff__item">
+                                    <div class="tariff__checkbox">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
                                     <p class="tariff__item-text">Dedicated account manager</p>
                                 </div>
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                     </div>
-                                    <p class="tariff__item-text">24/7 priority support</p>
+                                    <p class="tariff__item-text">24/7 VIP support</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fourth Tariff (Coming Soon) -->
-                    <div class="tariff fourth-tariff" style="position: relative;">
-                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #ff0050, #00f2fe);"></div>
-                        <div class="tariff__content" style="pointer-events: none; opacity: 0.6; filter: grayscale(50%);">
-                            <div class="tariff__info">
-                                <div class="tariff__info-top"><span class="tariff__type fourth__tariff-type">SMM Business</span><span class="tariff__tag" style="background: #ff0050; color: white;">Coming Soon</span></div>
-                                <div class="tariff__price">???<span class="tariff__period">/mo</span></div>
-                                <p class="tariff__description">AI for managing TikTok, Instagram and social networks</p>
-                            </div>
-                            <button class="tariff__button fourth__tariff-button" style="background: rgba(255, 255, 255, 0.05); color: rgba(255,255,255,0.5); border: 1px solid rgba(255, 255, 255, 0.1);">In development</button>
-                            <div class="tariff__list fourth__tariff-checkbox-list">
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Integration with TikTok & Instagram</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Auto-posting and reel generation</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">Audience and trend analytics</p>
-                                </div>
-                                <div class="tariff__item">
-                                    <div class="tariff__checkbox">
-                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.40009 10.7996L7.60009 13.9996L15.6001 5.99963" stroke="white" stroke-opacity="0.8" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <p class="tariff__item-text">SMM AI strategies</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 10; background: rgba(0,0,0,0.2); border-radius: 40px; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(1.5px);">
-                            <div style="background: rgba(255, 0, 80, 0.9); padding: 10px 25px; border-radius: 20px; font-weight: bold; color: white; transform: rotate(-5deg); box-shadow: 0 5px 15px rgba(255,0,80,0.4); border: 1px solid rgba(255,255,255,0.2); font-family: 'Poppins', sans-serif;">
-                                SOON
                             </div>
                         </div>
                     </div>
@@ -1737,80 +1630,509 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 
-<div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0d0d0f; flex-direction:column; font-family:'Inter',sans-serif;">
+<style>
+/* ===== SOLIFON AI CODE — PREMIUM REDESIGN ===== */
+#presentation-screen {
+    font-family: 'Inter', sans-serif;
+    --ide-bg: #0a0a0c;
+    --ide-sidebar: #111114;
+    --ide-bar: #0f0f12;
+    --ide-border: rgba(255,255,255,0.06);
+    --ide-accent: #4f8ef7;
+    --ide-accent-soft: rgba(79,142,247,0.12);
+    --ide-text: #e8e8f0;
+    --ide-muted: #555568;
+    --ide-tab-active: #1a1a22;
+}
 
-    <!-- TOP BAR: macOS-style -->
-    <div id="ide-topbar" style="background:#161618; display:flex; align-items:center; padding:0 16px; height:48px; border-bottom:1px solid #2a2a2e; flex-shrink:0; gap:12px;">
-        <!-- Traffic Lights -->
-        <div style="display:flex; gap:7px; align-items:center; margin-right:8px;">
-            <div onclick="closePresentation()" title="Close" style="width:13px;height:13px;border-radius:50%;background:#ff5f57;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">вЂ‹</div>
-            <div style="width:13px;height:13px;border-radius:50%;background:#febc2e;">вЂ‹</div>
-            <div onclick="window.setIDELayout('preview')" title="Full screen preview" style="width:13px;height:13px;border-radius:50%;background:#28c840;cursor:pointer;transition:filter 0.15s;" onmouseover="this.style.filter='brightness(1.3)'" onmouseout="this.style.filter=''">вЂ‹</div>
+#ide-topbar-v2 {
+    background: var(--ide-bar);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--ide-border);
+    gap: 16px;
+    flex-shrink: 0;
+    backdrop-filter: blur(20px);
+}
+
+.ide-traffic {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.ide-traffic-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.2s;
+}
+.ide-traffic-dot:hover { filter: brightness(1.4); transform: scale(1.1); }
+
+.ide-title-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.ide-project-name {
+    font-size: 13px;
+    color: var(--ide-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.01em;
+}
+.ide-project-name strong {
+    color: #c8c8d8;
+    font-weight: 600;
+}
+
+.ide-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ide-layout-group {
+    display: flex;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--ide-border);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 2px;
+}
+.ide-layout-btn {
+    background: transparent;
+    border: none;
+    color: var(--ide-muted);
+    padding: 5px 11px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+.ide-layout-btn:hover, .ide-layout-btn.active {
+    background: rgba(79,142,247,0.15);
+    color: #4f8ef7;
+}
+
+.ide-run-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #4f8ef7;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(79,142,247,0.35);
+}
+.ide-run-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(79,142,247,0.5);
+    background: #5f9eff;
+}
+
+.ide-close-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(255,85,75,0.1);
+    border: 1px solid rgba(255,85,75,0.2);
+    color: #ff6b60;
+    padding: 7px 16px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.ide-close-btn:hover {
+    background: rgba(255,85,75,0.2);
+    border-color: rgba(255,85,75,0.5);
+}
+
+/* === BODY LAYOUT === */
+#ide-body-v2 {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* === LEFT FILE EXPLORER === */
+#ide-explorer {
+    width: 220px;
+    background: var(--ide-sidebar);
+    border-right: 1px solid var(--ide-border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+}
+.ide-explorer-header {
+    padding: 14px 16px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ide-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--ide-border);
+}
+.ide-explorer-section {
+    padding: 6px 0;
+}
+.ide-explorer-section-label {
+    padding: 8px 16px 4px;
+    font-size: 10px;
+    color: #333345;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+.ide-file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 16px 7px 24px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.15s;
+    position: relative;
+    color: #888899;
+}
+.ide-file-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: #c8c8d8;
+}
+.ide-file-item.active {
+    background: var(--ide-accent-soft);
+    color: var(--ide-accent);
+}
+.ide-file-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--ide-accent);
+    border-radius: 0 2px 2px 0;
+}
+.ide-file-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+.ide-explorer-footer {
+    margin-top: auto;
+    padding: 12px 16px;
+    border-top: 1px solid var(--ide-border);
+    font-size: 11px;
+    color: #333345;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* === EDITOR PANE === */
+#ide-editor-v2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: #1a1a24;
+    position: relative;
+}
+
+#ide-tabs-v2 {
+    display: flex;
+    align-items: stretch;
+    background: var(--ide-bg);
+    border-bottom: 1px solid var(--ide-border);
+    overflow-x: auto;
+    flex-shrink: 0;
+    height: 42px;
+    scrollbar-width: none;
+}
+#ide-tabs-v2::-webkit-scrollbar { display: none; }
+
+.ide-tab-v2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--ide-muted);
+    white-space: nowrap;
+    border-right: 1px solid var(--ide-border);
+    transition: all 0.15s;
+    position: relative;
+    flex-shrink: 0;
+}
+.ide-tab-v2:hover {
+    background: rgba(255,255,255,0.03);
+    color: #a0a0b8;
+}
+.ide-tab-v2.active {
+    background: #1a1a24;
+    color: #e0e0f0;
+    border-top: 2px solid var(--ide-accent);
+    padding-top: 2px;
+}
+
+.ide-breadcrumb-v2 {
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--ide-border);
+    font-size: 12px;
+    color: #444455;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.ide-breadcrumb-v2 span { color: #666680; }
+
+#ide-editor-content-v2 {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.ide-statusbar {
+    background: var(--ide-accent);
+    height: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 16px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    flex-shrink: 0;
+}
+.ide-statusbar-right {
+    margin-left: auto;
+    opacity: 0.75;
+}
+
+/* === PREVIEW PANE === */
+#ide-preview-v2 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--ide-border);
+    min-width: 0;
+    background: #fff;
+}
+#ide-preview-header {
+    background: var(--ide-bar);
+    border-bottom: 1px solid var(--ide-border);
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.ide-preview-url {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--ide-border);
+    border-radius: 8px;
+    padding: 5px 14px;
+    font-size: 12px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ide-preview-url-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2ea043;
+    box-shadow: 0 0 6px rgba(46,160,67,0.5);
+}
+
+/* ── CodeMirror: fill every available pixel ── */
+#presentation-screen .CodeMirror {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
+    font-size: 14px !important;
+    line-height: 1.75 !important;
+    background: #1a1a24 !important;
+    /* Height cascade: fill the flex parent */
+    height: 100% !important;
+    min-height: 0 !important;
+}
+/* The wrapper must also stretch */
+#presentation-screen .CodeMirror-wrap {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+#presentation-screen .CodeMirror-scroll {
+    height: 100% !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+}
+#presentation-screen .CodeMirror-sizer {
+    min-height: 0 !important;
+}
+/* Gutter colours */
+#presentation-screen .CodeMirror-gutters {
+    background: #14141e !important;
+    border-right: 1px solid rgba(255,255,255,0.04) !important;
+    height: 100% !important;
+}
+#presentation-screen .CodeMirror-linenumber { color: #3a3a5c !important; }
+#presentation-screen .CodeMirror-cursor { border-left: 2px solid #4f8ef7 !important; }
+#presentation-screen .CodeMirror-selected { background: rgba(79,142,247,0.15) !important; }
+#presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.025) !important; }
+
+/* editor-tab-content and its parents must form a proper flex chain */
+#ide-editor-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+}
+#ide-editor-content-v2 {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+#editor-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+.editor-tab-content {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: none;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+.editor-tab-content.show {
+    display: flex !important;
+}
+/* Remove any pointer-events overlay that might block clicks on text */
+#presentation-screen::before,
+#presentation-screen::after {
+    pointer-events: none !important;
+}
+
+
+</style>
+<div id="presentation-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
+
+    <!-- TOP BAR v2 -->
+    <div id="ide-topbar-v2" style="height:48px; background:#0f0f12; border-bottom:1px solid #222; display:flex; align-items:center; padding:0 16px; flex-shrink:0;">
+        <!-- Traffic lights -->
+        <div class="ide-traffic" style="display:flex; gap:8px;">
+            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#ff5f57; cursor:pointer;" onclick="closePresentation()" title="Close"></div>
+            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#febc2e;"></div>
+            <div class="ide-traffic-dot" style="width:12px; height:12px; border-radius:50%; background:#28c840; cursor:pointer;" onclick="window.setIDELayout('preview')" title="Preview"></div>
         </div>
 
-        <!-- File Tabs -->
-        <div id="ide-file-tabs" style="display:flex; align-items:stretch; height:100%; overflow-x:auto; flex:1;">
-            <div class="ide-ftab active" onclick="openEditorTab(event,'html')" data-lang="html" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e06c75;white-space:nowrap;background:#0d0d0f;border-top:2px solid #528bff;">📄 index.html</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'css')" data-lang="css" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#61afef;white-space:nowrap;background:transparent;">🎨 style.css</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'js')" data-lang="js" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#e5c07b;white-space:nowrap;background:transparent;">⚡ script.js</div>
-            <div class="ide-ftab" onclick="openEditorTab(event,'py')" data-lang="py" style="display:flex;align-items:center;gap:7px;padding:0 18px;cursor:pointer;border-right:1px solid #222;font-size:13px;color:#c678dd;white-space:nowrap;background:transparent;">🐍 main.py</div>
+        <!-- Center: project name -->
+        <div class="ide-title-center" style="margin:0 auto; display:flex; align-items:center; gap:8px; color:#fff; font-size:13px;">
+            <div class="ide-project-name" style="display:flex; align-items:center; gap:6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4f8ef7" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                <strong>Solifon AI Code</strong>
+                <span style="color:#444;">— workspace</span>
+            </div>
+            <select style="background:#1a1a20; color:#888; border:1px solid #333; border-radius:4px; padding:2px 8px; font-size:11px; margin-left:10px;">
+                <option>Solifon Base</option>
+                <option>Solifon Loom</option>
+            </select>
         </div>
-
-        <!-- Close button -->
-        <button onclick="closePresentation()" title="Exit editor" style="display:flex;align-items:center;gap:7px;background:rgba(255,95,87,0.12);border:1px solid rgba(255,95,87,0.3);color:#ff5f57;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,95,87,0.25)';this.style.borderColor='#ff5f57'" onmouseout="this.style.background='rgba(255,95,87,0.12)';this.style.borderColor='rgba(255,95,87,0.3)'">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff5f57" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            Log Out
-        </button>
 
         <!-- Right controls -->
-        <div style="display:flex;gap:10px;align-items:center;margin-left:auto;flex-shrink:0;">
-            <div style="display:flex;background:#252529;border-radius:8px;padding:3px;gap:2px;">
-                <button id="layout-split" onclick="window.setIDELayout('split')" title="Split" style="background:#3a3a40;border:none;color:#ccc;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◧ Split</button>
-                <button id="layout-editor" onclick="window.setIDELayout('editor')" title="Editor only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◣ Code</button>
-                <button id="layout-preview" onclick="window.setIDELayout('preview')" title="Preview only" style="background:transparent;border:none;color:#666;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:all 0.15s;">◟ Preview</button>
+        <div class="ide-topbar-right" style="display:flex; gap:12px; align-items:center;">
+            <div class="ide-layout-group" style="display:flex; background:#1a1a20; border-radius:6px; padding:2px;">
+                <button class="ide-layout-btn" id="layout-split" onclick="window.setIDELayout('split')" style="background:#333; color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer;">Split</button>
+                <button class="ide-layout-btn" id="layout-editor" onclick="window.setIDELayout('editor')" style="background:transparent; color:#666; border:none; padding:4px 10px; cursor:pointer; font-size:11px;">Code</button>
+                <button class="ide-layout-btn" id="layout-preview" onclick="window.setIDELayout('preview')" style="background:transparent; color:#666; border:none; padding:4px 10px; cursor:pointer; font-size:11px;">Preview</button>
             </div>
-            <div id="ide-status-pill" style="background:#1a1a1e;border:1px solid #333;border-radius:20px;padding:5px 14px;font-size:12px;color:#888;"><span id="ide-cursor-pos">Ln 1, Col 1</span></div>
-            <button onclick="runEditorCode()" style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2ea043,#1a7a30);color:#fff;border:none;padding:8px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;box-shadow:0 4px 14px rgba(46,160,67,0.4);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform=''">▶ Run</button>
+            <button class="ide-run-btn" onclick="runEditorCode()" style="background:#2ea043; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                Run
+            </button>
+            <button class="ide-close-btn" onclick="closePresentation()" style="background:transparent; color:#ff5f57; border:1px solid #ff5f57; padding:5px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Exit</button>
         </div>
     </div>
 
-    <!-- BODY: Sidebar + Editor + Preview -->
-    <div style="display:flex;flex:1;overflow:hidden;">
+    <!-- BODY -->
+    <div id="ide-body-v2" style="display:flex; flex:1; overflow:hidden;">
 
-        <!-- LEFT SIDEBAR -->
-        <div id="ide-sidebar" style="width:200px;background:#141416;border-right:1px solid #222;display:flex;flex-direction:column;flex-shrink:0;">
-            <div style="padding:8px 14px;font-size:10px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:1.5px;border-bottom:1px solid #1e1e1e;">Files</div>
-            <div style="padding:6px 0;">
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e06c75;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">📄 index.html</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" style="padding:6px 14px 6px 24px;font-size:13px;color:#61afef;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🎨 style.css</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" style="padding:6px 14px 6px 24px;font-size:13px;color:#e5c07b;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">⚡ script.js</div>
-                <div onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" style="padding:6px 14px 6px 24px;font-size:13px;color:#c678dd;cursor:pointer;display:flex;align-items:center;gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background=''">🐍 main.py</div>
+        <!-- LEFT FILE EXPLORER -->
+        <div id="ide-explorer" style="width:200px; background:#0d0d0f; border-right:1px solid #222; display:flex; flex-direction:column;">
+            <div class="ide-explorer-header" style="padding:12px; font-size:10px; color:#555; text-transform:uppercase;">Explorer</div>
+            <div class="ide-explorer-section">
+                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=html]')},'html')" id="fitem-html" style="padding:8px 16px; color:#e06c75; cursor:pointer;">📄 index.html</div>
+                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=css]')},'css')" id="fitem-css" style="padding:8px 16px; color:#61afef; cursor:pointer;">🎨 style.css</div>
+                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=js]')},'js')" id="fitem-js" style="padding:8px 16px; color:#e5c07b; cursor:pointer;">⚡ script.js</div>
+                <div class="ide-file-item" onclick="openEditorTab({currentTarget:document.querySelector('[data-lang=py]')},'py')" id="fitem-py" style="padding:8px 16px; color:#c678dd; cursor:pointer;">🐍 main.py</div>
             </div>
-            <div style="margin-top:auto;padding:10px 14px;border-top:1px solid #1e1e1e;font-size:11px;color:#444;">Solifon Code v2.6</div>
         </div>
 
         <!-- EDITOR PANE -->
-        <div id="ide-editor-pane" style="flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;">
-            <div style="background:#181820;padding:4px 16px;font-size:12px;color:#555;border-bottom:1px solid #222;display:flex;align-items:center;gap:6px;">
-                <span style="color:#444;">solifon вЂє</span> <span id="ide-breadcrumb" style="color:#888;">index.html</span>
+        <div id="ide-editor-v2" style="flex:1; display:flex; flex-direction:column; background:#1a1a24;">
+            <div id="ide-tabs-v2" style="display:flex; background:#0f0f12; border-bottom:1px solid #222;">
+                <div class="ide-tab-v2 active" onclick="openEditorTab(event,'html')" data-lang="html" style="padding:10px 20px; font-size:13px; color:#fff; border-right:1px solid #222;">index.html</div>
+                <div class="ide-tab-v2" onclick="openEditorTab(event,'css')" data-lang="css" style="padding:10px 20px; font-size:13px; color:#777;">style.css</div>
+                <div class="ide-tab-v2" onclick="openEditorTab(event,'js')" data-lang="js" style="padding:10px 20px; font-size:13px; color:#777;">script.js</div>
+                <div class="ide-tab-v2" onclick="openEditorTab(event,'py')" data-lang="py" style="padding:10px 20px; font-size:13px; color:#777;">main.py</div>
             </div>
-            <div id="editor-container" style="flex:1;overflow:hidden;position:relative;">
-                <div id="html-editor-box" class="editor-tab-content show" style="height:100%;"><textarea id="html-edit-area"></textarea></div>
-                <div id="css-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="css-edit-area"></textarea></div>
-                <div id="js-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="js-edit-area"></textarea></div>
-                <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
+            <div id="ide-editor-content-v2" style="flex:1; overflow:hidden; position:relative;">
+                <div id="editor-container" style="height:100%; display:flex; flex-direction:column;">
+                    <div id="html-editor-box" class="editor-tab-content show" style="height:100%;"><textarea id="html-edit-area"></textarea></div>
+                    <div id="css-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="css-edit-area"></textarea></div>
+                    <div id="js-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="js-edit-area"></textarea></div>
+                    <div id="py-editor-box" class="editor-tab-content" style="display:none;height:100%;"><textarea id="py-edit-area"></textarea></div>
+                </div>
             </div>
-            <div style="background:#2ea043;padding:3px 16px;display:flex;align-items:center;gap:16px;font-size:11px;color:#fff;flex-shrink:0;">
-                <span>✔ Solifon Code</span>
-                <span style="margin-left:auto;" id="ide-lines-count"></span>
+            <div class="ide-statusbar" style="background:#4f8ef7; height:24px; display:flex; align-items:center; padding:0 16px; gap:16px; font-size:11px; color:rgba(255,255,255,0.85); font-weight:500; flex-shrink:0;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+                Solifon Code
+                <span style="opacity:0.6;">&middot;</span>
+                <span id="ide-lang-indicator">HTML</span>
+                <div style="margin-left:auto; opacity:0.75;"><span id="ide-lines-count"></span></div>
             </div>
         </div>
 
         <!-- PREVIEW PANE -->
-        <div id="ide-preview-pane" style="flex:1;display:flex;flex-direction:column;border-left:1px solid #222;min-width:0;">
-            <div style="background:#181820;padding:6px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #222;flex-shrink:0;">
-                <span style="font-size:12px;color:#555;">🔒 Sneak peek</span>
-                <button onclick="runEditorCode()" title="Refresh" style="margin-left:auto;background:none;border:none;color:#666;cursor:pointer;font-size:16px;padding:4px 8px;border-radius:4px;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#666'">↻</button>
+        <div id="ide-preview-v2" style="flex:1; display:flex; flex-direction:column; border-left:1px solid #222; min-width:0;">
+            <div id="ide-preview-header" style="background:#0f0f12; border-bottom:1px solid #222; height:42px; display:flex; align-items:center; padding:0 16px; gap:10px; flex-shrink:0;">
+                <div class="ide-preview-url" style="flex:1; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:5px 14px; font-size:12px; color:#666; display:flex; align-items:center; gap:8px;">
+                    <div style="width:8px; height:8px; border-radius:50%; background:#2ea043; box-shadow:0 0 6px rgba(46,160,67,0.5);"></div>
+                    <span>localhost &middot; preview</span>
+                </div>
+                <button onclick="runEditorCode()" title="Refresh" style="background:none;border:none;color:#666;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:6px;transition:all 0.15s;" onmouseover="this.style.color='#4f8ef7'" onmouseout="this.style.color='#666'">&#8635;</button>
             </div>
             <iframe id="editor-preview-window" style="width:100%;flex:1;border:none;"></iframe>
         </div>
@@ -1818,14 +2140,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
 
     <style>
+        /* Essential editor styles */
         .ide-ftab { transition: background 0.15s !important; }
         .ide-ftab.active { background: #0d0d0f !important; border-top: 2px solid #528bff !important; }
         .ide-ftab:not(.active):hover { background: rgba(255,255,255,0.05) !important; }
 
-        /* Make editor-container a proper flex column */
         #editor-container {
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
         .editor-tab-content {
             flex: 1;
@@ -1836,38 +2159,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         .editor-tab-content.show {
             display: flex !important;
         }
-
-        /* CodeMirror fills 100% */
-        #presentation-screen .CodeMirror {
-            flex: 1;
-            width: 100% !important;
-            height: 100% !important;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Courier New', monospace !important;
-            font-size: 14px !important;
-            line-height: 1.7 !important;
-            background: #1e1e2e !important;
-        }
-        #presentation-screen .CodeMirror-wrap { height: 100% !important; }
-        #presentation-screen .CodeMirror-scroll {
-            height: 100% !important;
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-        }
-        #presentation-screen .CodeMirror-sizer { min-height: 100% !important; }
-        #presentation-screen .CodeMirror-gutters {
-            background: #181825 !important;
-            border-right: 1px solid #252530 !important;
-            min-width: 48px;
-            height: 100% !important;
-        }
-        #presentation-screen .CodeMirror-linenumber { color: #3d3d5c !important; padding: 0 12px 0 8px !important; }
-        #presentation-screen .CodeMirror-cursor { border-left: 2px solid #528bff !important; }
-        #presentation-screen .CodeMirror-selected { background: rgba(82,139,255,0.2) !important; }
-        #presentation-screen .CodeMirror-activeline-background { background: rgba(255,255,255,0.03) !important; }
-
-        /* No black gap — fill with editor bg color */
-        #ide-editor-pane { background: #1e1e2e; }
-        #editor-container { background: #1e1e2e; }
     </style>
 </div>
 
@@ -2362,6 +2653,97 @@ window.addEventListener('message', function(event) {
 
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+
+        <script>
+            // --- Premium Logic ---
+            function unlockPremiumModels() {
+                const lockedModels = document.querySelectorAll('.mmd-option.locked');
+                lockedModels.forEach(model => {
+                    model.classList.remove('locked');
+                    const badge = model.querySelector('.mmd-pro-badge');
+                    if (badge) badge.style.display = 'none';
+                });
+            }
+            
+            function checkUserPremiumStatus(user) {
+                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
+                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
+                if (user) {
+                    unlockPremiumModels();
+                }
+            }
+            
+            // Хук для проверки авторизации
+            document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => {
+                    if (typeof firebase !== 'undefined') {
+                        firebase.auth().onAuthStateChanged((user) => {
+                            checkUserPremiumStatus(user);
+                        });
+                    }
+                }, 2000);
+            });
+            // ---------------------
+        </script>
+    <script>
+window.addEventListener('message', function(event) {
+    if (event.data === 'toggleCamera') {
+        if (window.toggleAirCanvas) window.toggleAirCanvas();
+    }
+    if (event.data === 'startCamera') {
+        if (window.startHeroCamera) window.startHeroCamera();
+    }
+    if (event.data === 'stopCamera') {
+        if (window.stopHeroCamera) window.stopHeroCamera();
+    }
+    if (event.data === 'closeNewFeatureModal') {
+        if (window.closeModal) window.closeModal('newFeatureModal');
+    }
+});
+</script>
+
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+
+        <script>
+            // --- Premium Logic ---
+            function unlockPremiumModels() {
+                const lockedModels = document.querySelectorAll('.mmd-option.locked');
+                lockedModels.forEach(model => {
+                    model.classList.remove('locked');
+                    const badge = model.querySelector('.mmd-pro-badge');
+                    if (badge) badge.style.display = 'none';
+                });
+            }
+            
+            function checkUserPremiumStatus(user) {
+                // В будущем здесь будет проверка тарифа из БД (например, user.plan === 'Alpha')
+                // Пока делаем так: если пользователь просто авторизован, считаем его Premium для тестов!
+                if (user) {
+                    unlockPremiumModels();
+                }
+            }
+            
+            // Хук для проверки авторизации
+            document.addEventListener("DOMContentLoaded", () => {
+                setTimeout(() => {
+                    if (typeof firebase !== 'undefined') {
+                        firebase.auth().onAuthStateChanged((user) => {
+                            checkUserPremiumStatus(user);
+                        });
+                    }
+                }, 2000);
+            });
+            // ---------------------
+        </script>
+
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P5MZ4C6S');</script>
+
 </body>
+
 
 </html>
