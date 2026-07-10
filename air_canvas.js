@@ -17,8 +17,8 @@ let isDarkMode = true;
 
 // НЕЗАВИСИМЫЕ состояния для двух рук
 const handStates = [
-    { x: 0, y: 0, px: 0, py: 0, isDrawing: false, color: '#ef4444', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 },
-    { x: 0, y: 0, px: 0, py: 0, isDrawing: false, color: '#3b82f6', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 }
+    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0, isDrawing: false, color: '#ef4444', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 },
+    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0, isDrawing: false, color: '#3b82f6', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 }
 ];
 
 // Данные для 3D Ленты
@@ -31,10 +31,14 @@ const MAX_HISTORY = 10;
 let lastSaveTime = 0;
 
 let lastClearTime = 0;
-let lastPaletteTime = [0, 0]; 
+let lastPaletteTime = [0, 0];
+let lastSnapshotTime = 0;
+
+let currentLevel = 1;
+let currentColor = '#ef4444';
 
 const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#a855f7', '#ec4899'];
-let colorIndex = [0, 0]; 
+let colorIndex = [0, 0];
 
 function initAirCanvasElite() {
     if (!videoElement || !uiCanvas || !drawCanvas) return;
@@ -48,6 +52,9 @@ function initAirCanvasElite() {
     hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
     hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
     hands.onResults(onResultsElite);
+
+    currentColor = handStates[0].color;
+    updatePaletteUI(currentColor);
 
     camera = new Camera(videoElement, {
         onFrame: async () => { if (isRunning) await hands.send({ image: videoElement }); },
@@ -92,6 +99,83 @@ function getFingerStates(landmarks) {
     return states;
 }
 
+function normalizeColor(value) {
+    const temp = document.createElement('div');
+    temp.style.color = value;
+    document.body.appendChild(temp);
+    const normalized = getComputedStyle(temp).color;
+    document.body.removeChild(temp);
+    return normalized;
+}
+
+function updatePaletteUI(selectedColor) {
+    const normalizedSelected = normalizeColor(selectedColor);
+    document.querySelectorAll('.cb-swatch, .color-btn').forEach((el) => {
+        const dataColor = el.dataset.color || el.getAttribute('data-color') || el.style.backgroundColor || el.style.color || '';
+        if (normalizeColor(dataColor) === normalizedSelected) {
+            el.classList.add('active');
+        } else {
+            el.classList.remove('active');
+        }
+    });
+}
+
+function ensureSnapshotFlash() {
+    let flash = document.getElementById('snapshotFlashOverlay');
+    if (!flash) {
+        flash = document.createElement('div');
+        flash.id = 'snapshotFlashOverlay';
+        flash.className = 'snapshot-flash';
+        document.body.appendChild(flash);
+    }
+    return flash;
+}
+
+function flashSnapshot() {
+    const flash = ensureSnapshotFlash();
+    flash.style.transition = 'opacity 0.25s ease-out';
+    flash.style.opacity = '0.8';
+    setTimeout(() => { flash.style.opacity = '0'; }, 80);
+}
+
+function takeSnapshot() {
+    if (!drawCanvas || !videoElement) return;
+    const width = drawCanvas.width;
+    const height = drawCanvas.height;
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
+
+    if (videoElement.readyState >= 2) {
+        tempCtx.drawImage(videoElement, 0, 0, width, height);
+    }
+    tempCtx.drawImage(drawCanvas, 0, 0, width, height);
+    tempCanvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Solifon_Air_Art.png';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1500);
+    }, 'image/png');
+
+    flashSnapshot();
+}
+
+function switchAirCanvasLevel(level) {
+    currentLevel = level === 2 ? 2 : 1;
+    if (currentLevel === 1) {
+        handStates[1].action = '00000';
+        handStates[1].isDrawing = false;
+        galleryRotation = 0;
+    }
+    console.log('Switched to Air Canvas level', currentLevel);
+}
+
 function executeDrawingLogic(state, x, y, gestureString) {
     if (!drawCtx) return;
     drawCtx.globalCompositeOperation = 'source-over';
@@ -124,8 +208,8 @@ function executeDrawingLogic(state, x, y, gestureString) {
 }
 
 // Защищенная функция обработки жестов (без крашей)
-function processGestures(state, handIndex, landmarks, w, h) {
-    const targetX = w - (landmarks[8].x * w); 
+function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
+    const targetX = w - (landmarks[8].x * w);
     const targetY = landmarks[8].y * h;
 
     if (state.x === 0 && state.y === 0) {
@@ -139,11 +223,12 @@ function processGestures(state, handIndex, landmarks, w, h) {
     const fStr = states.slice(1).join('');
 
     let actionStr = '';
-    if (fStr === '1000') actionStr = '01000'; 
-    else if (fStr === '1100') actionStr = '01100'; 
-    else if (fStr === '1001') actionStr = '10001'; 
-    else if (states.join('') === '11111') actionStr = '11111'; 
-    else actionStr = '00000'; 
+    if (fStr === '1000') actionStr = '01000';
+    else if (fStr === '1100') actionStr = '01100';
+    else if (fStr === '1001') actionStr = '10001';
+    else if (states.join('') === '11111') actionStr = '11111';
+    else if (states.join('') === '10000') actionStr = '10000';
+    else actionStr = '00000';
 
     state.action = actionStr;
 
@@ -159,24 +244,49 @@ function processGestures(state, handIndex, landmarks, w, h) {
             colorIndex[handIndex] = (colorIndex[handIndex] + 1) % PREMIUM_COLORS.length;
             state.color = PREMIUM_COLORS[colorIndex[handIndex]];
             lastPaletteTime[handIndex] = Date.now();
+            if (handIndex === 0) {
+                currentColor = state.color;
+                updatePaletteUI(currentColor);
+            }
         }
         state.isDrawing = false;
-    } else if (actionStr === '00000') {
+    } else if (currentLevel === 2 && actionStr === '01000') {
+        if (state.lastX !== 0 || state.lastY !== 0) {
+            galleryRotation += (state.x - state.lastX) * 0.003;
+        }
+        state.isDrawing = false;
+    } else if (currentLevel === 2 && actionStr === '01100' && numHands === 1) {
+        if (Date.now() - lastClearTime > 1000) {
+            uploadedAssets = [];
+            lastClearTime = Date.now();
+        }
+        state.isDrawing = false;
+    } else if (actionStr === '00000' || actionStr === '10000') {
         state.isDrawing = false;
     } else {
-        state.isDrawing = true;
-        executeDrawingLogic(state, state.x, state.y, actionStr);
+        if (currentLevel === 1) {
+            state.isDrawing = true;
+            executeDrawingLogic(state, state.x, state.y, actionStr);
+        } else {
+            state.isDrawing = false;
+        }
     }
 
-    // Отрисовка курсора
+    if (actionStr === '01100') {
+        uiCtx.fillStyle = '#ffffff';
+    } else {
+        uiCtx.fillStyle = state.color;
+    }
+
     uiCtx.beginPath();
     uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
-    uiCtx.fillStyle = actionStr === '01100' ? '#ffffff' : state.color;
     uiCtx.fill();
     uiCtx.shadowBlur = 0;
 
     if (!state.isDrawing) { state.px = 0; state.py = 0; } 
     else { state.px = state.x; state.py = state.y; }
+    state.lastX = state.x;
+    state.lastY = state.y;
 }
 
 // 3D Гармошка (Стиль TouchDesigner)
@@ -243,14 +353,21 @@ function onResultsElite(results) {
 
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const numHands = results.multiHandLandmarks.length;
-        
-        for (let i = 0; i < numHands && i < 2; i++) {
-            // МЫ УБРАЛИ БАГОВАННЫЙ HANDEDNESS ЗДЕСЬ!
-            processGestures(handStates[i], i, results.multiHandLandmarks[i], w, h);
-        }
-        
-        if (numHands === 2) {
-            processTwoHands(w, h);
+
+        if (currentLevel === 1) {
+            processGestures(handStates[0], 0, results.multiHandLandmarks[0], w, h, numHands);
+        } else {
+            for (let i = 0; i < numHands && i < 2; i++) {
+                processGestures(handStates[i], i, results.multiHandLandmarks[i], w, h, numHands);
+            }
+            if (numHands === 2) {
+                processTwoHands(w, h);
+                const snapshotPose = (action) => action === '00000' || action === '10000';
+                if (snapshotPose(handStates[0].action) && snapshotPose(handStates[1].action) && Date.now() - lastSnapshotTime > 1500) {
+                    takeSnapshot();
+                    lastSnapshotTime = Date.now();
+                }
+            }
         }
     } else {
         for (let i = 0; i < 2; i++) {
