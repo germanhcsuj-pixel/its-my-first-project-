@@ -4157,7 +4157,7 @@ body::before { display: none; content: none; }
 :root {
 	--tariff-color-black: #09090c;
 	--tariff-color-blue: #86fdd1;
-	--tariff-color-green: #bffe52;
+	--tariff-color-green: #00f2ff;
 }
 
 .base-template__wrapper {
@@ -4457,7 +4457,7 @@ body::before { display: none; content: none; }
 }
 
 .second__tariff-checkbox-list .tariff__checkbox {
-	border: 1px solid rgba(199, 254, 66, 0.6);
+	border: 1px solid rgba(0, 242, 255, 0.6);
 }
 
 .third__tariff-type {
