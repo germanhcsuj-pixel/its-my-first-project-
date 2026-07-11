@@ -33,12 +33,37 @@ let lastSaveTime = 0;
 let lastClearTime = 0;
 let lastPaletteTime = [0, 0];
 let lastSnapshotTime = 0;
+let lastOpenPalmTime = [0, 0]; // Для отслеживания открытой ладони на Level 2
 
-let currentLevel = 1;
+// === СИСТЕМА УРОВНЕЙ ===
+let currentLevel = 1; // Level 1: Рисование | Level 2: 3D Галерея
 let currentColor = '#ef4444';
 
 const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#a855f7', '#ec4899'];
 let colorIndex = [0, 0];
+
+// === ДОБАВЛЯЕМ CSS СТИЛИ ДЛЯ ВСПЫШКИ ===
+(function() {
+    const style = document.createElement('style');
+    style.textContent = `
+        #snapshotFlashOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        #levelSwitcherBtn:hover {
+            transition: all 0.3s ease;
+        }
+    `;
+    document.head.appendChild(style);
+})();
 
 function initAirCanvasElite() {
     if (!videoElement || !uiCanvas || !drawCanvas) return;
@@ -60,6 +85,52 @@ function initAirCanvasElite() {
         onFrame: async () => { if (isRunning) await hands.send({ image: videoElement }); },
         width: 1280, height: 720
     });
+
+    // === СОЗДАНИЕ UI-КНОПКИ ПЕРЕКЛЮЧЕНИЯ УРОВНЕЙ ===
+    createLevelSwitcher();
+}
+
+function createLevelSwitcher() {
+    // Если кнопка уже существует, не создаем новую
+    if (document.getElementById('levelSwitcherBtn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'levelSwitcherBtn';
+    btn.textContent = 'Level 1: Drawing';
+    btn.style.position = 'fixed';
+    btn.style.top = '20px';
+    btn.style.right = '20px';
+    btn.style.zIndex = '10000';
+    btn.style.padding = '12px 20px';
+    btn.style.borderRadius = '8px';
+    btn.style.border = 'none';
+    btn.style.backgroundColor = '#ef4444';
+    btn.style.color = '#ffffff';
+    btn.style.fontSize = '14px';
+    btn.style.fontWeight = '600';
+    btn.style.cursor = 'pointer';
+    btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    btn.style.transition = 'all 0.3s ease';
+    btn.style.fontFamily = '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif';
+
+    btn.addEventListener('mouseenter', () => {
+        btn.style.transform = 'scale(1.05)';
+        btn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+    });
+    btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'scale(1)';
+        btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    });
+
+    btn.addEventListener('click', () => {
+        if (currentLevel === 1) {
+            switchAirCanvasLevel(2);
+        } else {
+            switchAirCanvasLevel(1);
+        }
+    });
+
+    document.body.appendChild(btn);
 }
 
 function saveHistory() {
@@ -171,12 +242,32 @@ function switchAirCanvasLevel(level) {
     if (currentLevel === 1) {
         handStates[1].action = '00000';
         handStates[1].isDrawing = false;
+        handStates[1].x = 0;
+        handStates[1].y = 0;
+        handStates[1].px = 0;
+        handStates[1].py = 0;
         galleryRotation = 0;
+    } else {
+        // Очищаем состояния рук для Level 2
+        for (let i = 0; i < 2; i++) {
+            handStates[i].isDrawing = false;
+        }
     }
+
+    // Обновляем текст кнопки
+    const btn = document.getElementById('levelSwitcherBtn');
+    if (btn) {
+        btn.textContent = currentLevel === 1 ? 'Level 1: Drawing' : 'Level 2: Gallery';
+        btn.style.backgroundColor = currentLevel === 1 ? '#ef4444' : '#a855f7';
+    }
+
     console.log('Switched to Air Canvas level', currentLevel);
 }
 
 function executeDrawingLogic(state, x, y, gestureString) {
+    // БЛОКИРУем рисование на Level 2
+    if (currentLevel === 2) return;
+
     if (!drawCtx) return;
     drawCtx.globalCompositeOperation = 'source-over';
     switch (gestureString) {
@@ -232,56 +323,78 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
 
     state.action = actionStr;
 
-    if (actionStr === '11111') {
-        if (Date.now() - lastClearTime > 1000) {
-            drawCtx.clearRect(0, 0, w, h);
-            canvasHistory = [];
-            lastClearTime = Date.now();
-        }
-        state.isDrawing = false;
-    } else if (actionStr === '10001') {
-        if (Date.now() - lastPaletteTime[handIndex] > 500) {
-            colorIndex[handIndex] = (colorIndex[handIndex] + 1) % PREMIUM_COLORS.length;
-            state.color = PREMIUM_COLORS[colorIndex[handIndex]];
-            lastPaletteTime[handIndex] = Date.now();
-            if (handIndex === 0) {
-                currentColor = state.color;
-                updatePaletteUI(currentColor);
+    // ===== LEVEL 1: РЕЖИМ РИСОВАНИЯ =====
+    if (currentLevel === 1) {
+        if (actionStr === '11111') {
+            if (Date.now() - lastClearTime > 1000) {
+                drawCtx.clearRect(0, 0, w, h);
+                canvasHistory = [];
+                lastClearTime = Date.now();
             }
-        }
-        state.isDrawing = false;
-    } else if (currentLevel === 2 && actionStr === '01000') {
-        if (state.lastX !== 0 || state.lastY !== 0) {
-            galleryRotation += (state.x - state.lastX) * 0.003;
-        }
-        state.isDrawing = false;
-    } else if (currentLevel === 2 && actionStr === '01100' && numHands === 1) {
-        if (Date.now() - lastClearTime > 1000) {
-            uploadedAssets = [];
-            lastClearTime = Date.now();
-        }
-        state.isDrawing = false;
-    } else if (actionStr === '00000' || actionStr === '10000') {
-        state.isDrawing = false;
-    } else {
-        if (currentLevel === 1) {
+            state.isDrawing = false;
+        } else if (actionStr === '10001') {
+            if (Date.now() - lastPaletteTime[handIndex] > 500) {
+                colorIndex[handIndex] = (colorIndex[handIndex] + 1) % PREMIUM_COLORS.length;
+                state.color = PREMIUM_COLORS[colorIndex[handIndex]];
+                lastPaletteTime[handIndex] = Date.now();
+                if (handIndex === 0) {
+                    currentColor = state.color;
+                    updatePaletteUI(currentColor);
+                }
+            }
+            state.isDrawing = false;
+        } else if (actionStr === '00000' || actionStr === '10000') {
+            state.isDrawing = false;
+        } else {
             state.isDrawing = true;
             executeDrawingLogic(state, state.x, state.y, actionStr);
-        } else {
+        }
+    }
+    // ===== LEVEL 2: РЕЖИМ 3D ГАЛЕРЕИ =====
+    else if (currentLevel === 2) {
+        // Открытая ладонь (11111) - очистка галереи после 1 сек
+        if (actionStr === '11111') {
+            if (Date.now() - lastOpenPalmTime[handIndex] > 1000) {
+                uploadedAssets = [];
+                lastOpenPalmTime[handIndex] = Date.now();
+            }
+            state.isDrawing = false;
+        }
+        // Указательный палец (01000) на одной руке - прокрутка (свайп)
+        else if (actionStr === '01000' && numHands === 1) {
+            if (state.lastX !== 0 || state.lastY !== 0) {
+                galleryRotation += (state.x - state.lastX) * 0.003;
+            }
+            state.isDrawing = false;
+        }
+        // Остальные жесты на Level 2 - блокируем рисование
+        else {
             state.isDrawing = false;
         }
     }
 
+    // === ОТРИСОВКА КУРСОРА ===
     if (actionStr === '01100') {
         uiCtx.fillStyle = '#ffffff';
     } else {
         uiCtx.fillStyle = state.color;
     }
 
-    uiCtx.beginPath();
-    uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
-    uiCtx.fill();
-    uiCtx.shadowBlur = 0;
+    // LEVEL 1: Рисуем курсор ТОЛЬКО для первой руки
+    // LEVEL 2: Рисуем курсор для обеих рук
+    let shouldDrawCursor = false;
+    if (currentLevel === 1 && handIndex === 0) {
+        shouldDrawCursor = true;
+    } else if (currentLevel === 2) {
+        shouldDrawCursor = true;
+    }
+
+    if (shouldDrawCursor) {
+        uiCtx.beginPath();
+        uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
+        uiCtx.fill();
+        uiCtx.shadowBlur = 0;
+    }
 
     if (!state.isDrawing) { state.px = 0; state.py = 0; } 
     else { state.px = state.x; state.py = state.y; }
@@ -289,10 +402,23 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
     state.lastY = state.y;
 }
 
-// 3D Гармошка (Стиль TouchDesigner)
+// 3D Гармошка (Стиль TouchDesigner) + жесты для двух рук
 function processTwoHands(w, h) {
     const s1 = handStates[0];
     const s2 = handStates[1];
+    
+    // === СКРИНШОТ: обе руки показывают щепотку (10000) ===
+    if (s1.action === '10000' && s2.action === '10000') {
+        if (Date.now() - lastSnapshotTime > 1500) {
+            takeSnapshot();
+            lastSnapshotTime = Date.now();
+        }
+        s1.isDrawing = false;
+        s2.isDrawing = false;
+        return;
+    }
+
+    // === ГОЛОГРАФИЧЕСКАЯ ЛЕНТА: кулак (00000) + Peace/Selfie (01100) ===
     const isRibbon = (s1.action === '00000' && s2.action === '01100') || (s1.action === '01100' && s2.action === '00000');
 
     if (isRibbon) {
@@ -354,24 +480,36 @@ function onResultsElite(results) {
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const numHands = results.multiHandLandmarks.length;
 
+        // === LEVEL 1: ОБРАБАТЫВАЕМ СТРОГО ТОЛЬКО ПЕРВУЮ РУКУ ===
         if (currentLevel === 1) {
+            // Обнуляем вторую руку полностью
+            handStates[1].action = '00000';
+            handStates[1].isDrawing = false;
+            handStates[1].x = 0;
+            handStates[1].y = 0;
+            handStates[1].px = 0;
+            handStates[1].py = 0;
+
+            // Обрабатываем ТОЛЬКО первую руку
             processGestures(handStates[0], 0, results.multiHandLandmarks[0], w, h, numHands);
-        } else {
+        } 
+        // === LEVEL 2: ОБРАБАТЫВАЕМ ОБЕ РУКИ ===
+        else {
             for (let i = 0; i < numHands && i < 2; i++) {
                 processGestures(handStates[i], i, results.multiHandLandmarks[i], w, h, numHands);
             }
+            // Жесты для двух рук
             if (numHands === 2) {
                 processTwoHands(w, h);
-                const snapshotPose = (action) => action === '00000' || action === '10000';
-                if (snapshotPose(handStates[0].action) && snapshotPose(handStates[1].action) && Date.now() - lastSnapshotTime > 1500) {
-                    takeSnapshot();
-                    lastSnapshotTime = Date.now();
-                }
             }
         }
     } else {
+        // Нет рук в кадре - обнуляем все состояния
         for (let i = 0; i < 2; i++) {
-            handStates[i].px = 0; handStates[i].py = 0;
+            handStates[i].px = 0; 
+            handStates[i].py = 0;
+            handStates[i].x = 0;
+            handStates[i].y = 0;
         }
     }
 }
