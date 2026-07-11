@@ -42,7 +42,7 @@ let currentColor = '#ef4444';
 const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#a855f7', '#ec4899'];
 let colorIndex = [0, 0];
 
-// === ДОБАВЛЯЕМ CSS СТИЛИ ДЛЯ ВСПЫШКИ ===
+// === ДОБАВЛЯЕМ CSS СТИЛИ ДЛЯ ВСПЫШКИ И КНОПОК ===
 (function() {
     const style = document.createElement('style');
     style.textContent = `
@@ -56,6 +56,19 @@ let colorIndex = [0, 0];
             opacity: 0;
             pointer-events: none;
             z-index: 9999;
+        }
+        
+        .cb-swatch, .color-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .cb-swatch.active, .color-btn.active {
+            transform: scale(1.2);
+            box-shadow: 0 0 12px currentColor;
+        }
+        
+        #levelSwitcherBtn {
+            transition: all 0.3s ease;
         }
         
         #levelSwitcherBtn:hover {
@@ -170,23 +183,20 @@ function getFingerStates(landmarks) {
     return states;
 }
 
-function normalizeColor(value) {
-    const temp = document.createElement('div');
-    temp.style.color = value;
-    document.body.appendChild(temp);
-    const normalized = getComputedStyle(temp).color;
-    document.body.removeChild(temp);
-    return normalized;
-}
-
 function updatePaletteUI(selectedColor) {
-    const normalizedSelected = normalizeColor(selectedColor);
+    const selectedNorm = selectedColor.toLowerCase();
     document.querySelectorAll('.cb-swatch, .color-btn').forEach((el) => {
-        const dataColor = el.dataset.color || el.getAttribute('data-color') || el.style.backgroundColor || el.style.color || '';
-        if (normalizeColor(dataColor) === normalizedSelected) {
+        const dataColor = el.dataset.color || el.getAttribute('data-color') || '';
+        const dataNorm = dataColor.toLowerCase();
+        
+        if (dataNorm === selectedNorm && dataNorm !== '') {
             el.classList.add('active');
+            el.style.transform = 'scale(1.2)';
+            el.style.boxShadow = `0 0 12px ${dataColor}`;
         } else {
             el.classList.remove('active');
+            el.style.transform = 'scale(1)';
+            el.style.boxShadow = 'none';
         }
     });
 }
@@ -323,7 +333,7 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
 
     state.action = actionStr;
 
-    // ===== LEVEL 1: РЕЖИМ РИСОВАНИЯ =====
+    // ===== LEVEL 1: РЕЖИМ РИСОВАНИЯ (ТОЛЬКО ПЕРВАЯ РУКА) =====
     if (currentLevel === 1) {
         if (actionStr === '11111') {
             if (Date.now() - lastClearTime > 1000) {
@@ -373,15 +383,15 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
         }
     }
 
-    // === ОТРИСОВКА КУРСОРА ===
+    // === ОТРИСОВКА КУРСОРА (НАДЕЖНАЯ И ЗАЩИЩЕННАЯ) ===
+    // Определяем цвет курсора
+    let cursorColor = state.color;
     if (actionStr === '01100') {
-        uiCtx.fillStyle = '#ffffff';
-    } else {
-        uiCtx.fillStyle = state.color;
+        cursorColor = '#ffffff';
     }
-
-    // LEVEL 1: Рисуем курсор ТОЛЬКО для первой руки
-    // LEVEL 2: Рисуем курсор для обеих рук
+    
+    // LEVEL 1: Рисуем курсор ТОЛЬКО для первой руки (handIndex === 0)
+    // LEVEL 2: Рисуем курсоры для обеих рук
     let shouldDrawCursor = false;
     if (currentLevel === 1 && handIndex === 0) {
         shouldDrawCursor = true;
@@ -389,11 +399,18 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
         shouldDrawCursor = true;
     }
 
-    if (shouldDrawCursor) {
-        uiCtx.beginPath();
-        uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
-        uiCtx.fill();
-        uiCtx.shadowBlur = 0;
+    if (shouldDrawCursor && uiCtx) {
+        try {
+            uiCtx.fillStyle = cursorColor;
+            uiCtx.globalAlpha = 0.85;
+            uiCtx.beginPath();
+            uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
+            uiCtx.fill();
+            uiCtx.globalAlpha = 1.0;
+            uiCtx.shadowBlur = 0;
+        } catch(e) {
+            console.error('Cursor render error:', e);
+        }
     }
 
     if (!state.isDrawing) { state.px = 0; state.py = 0; } 
