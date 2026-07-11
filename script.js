@@ -4851,9 +4851,8 @@ async function _callPdfCreate(prompt) {
     addMessageToUI('user', '📄 /pdf create: ' + prompt);
     const botEl = addMessageToUI('bot', '⏳ Создаю PDF...');
     try {
-        const BASE = location.hostname.includes('hf.space') || location.hostname.includes('huggingface.co')
-            ? 'https://germanhcsuj-itssoimportandforme.hf.space'
-            : (location.protocol === 'file:' || location.hostname === 'localhost' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
+        const isLocal = location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const BASE = isLocal ? 'http://127.0.0.1:7860' : 'https://germanhcsuj-itssoimportandforme.hf.space';
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
@@ -4884,9 +4883,8 @@ async function _callPdfEdit(prompt, pdfFile) {
     addMessageToUI('user', '✏️ /pdf edit: ' + prompt + ' [' + pdfFile.name + ']');
     const botEl = addMessageToUI('bot', '⏳ Читаю PDF и применяю изменения...');
     try {
-        const BASE = location.hostname.includes('hf.space') || location.hostname.includes('huggingface.co')
-            ? 'https://germanhcsuj-itssoimportandforme.hf.space'
-            : (location.protocol === 'file:' || location.hostname === 'localhost' ? 'http://127.0.0.1:7860' : location.protocol + '//' + location.hostname + ':7860');
+        const isLocal = location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const BASE = isLocal ? 'http://127.0.0.1:7860' : 'https://germanhcsuj-itssoimportandforme.hf.space';
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
