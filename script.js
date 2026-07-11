@@ -957,7 +957,6 @@ if (chatTrigger) {
     } else {
         saveToFirebase('user', text, targetSessionId);
     }
-    
 
     if (userInput) userInput.value = "";
     selectedFiles = [];
@@ -967,16 +966,16 @@ if (chatTrigger) {
     const rand = Math.random();
     let numSteps = 5;
     if (rand < 0.10) numSteps = 4;
-    else if (rand < 0.40) numSteps = 6; // 30% chance (since rand between 0.1 and 0.4 is 0.3)
-    else numSteps = 5; // 60% chance
+    else if (rand < 0.40) numSteps = 6;
+    else numSteps = 5;
 
     let totalTime = 0;
     if (Math.random() < 0.50) {
-        totalTime = 20000; // 50% chance of taking 20 seconds
+        totalTime = 20000;
     } else {
-        totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000; // random 6s to 12s
+        totalTime = Math.floor(Math.random() * (12000 - 6000 + 1)) + 6000;
     }
-        const stage1 = ['Initializing neural cores...', 'Loading contextual modules...', 'Analyzing user query...'];
+    const stage1 = ['Initializing neural cores...', 'Loading contextual modules...', 'Analyzing user query...'];
     const stage2 = ['Scanning multi-dimensional databases...', 'Extracting relevant context blocks...', 'Accessing long-term memory modules...', 'Synchronizing information streams...', 'Filtering excessive noise...', 'Searching for intersections in vector space...', 'Extracting associative patterns...', 'Gathering verified facts...'];
     const stage3 = ['Cross-verifying found sources...', 'Resolving logical contradictions...', 'Safety Check...', 'Cascading argument validation...', 'Evaluating metadata reliability...', 'Weighing probabilistic outcomes...', 'Optimizing reasoning chain...'];
     const stage4 = ['Starting language synthesis processes...', 'Formulating structural final theses...', 'Adapting stylistics to conversation context...', 'Selecting precise linguistic formulations...', 'Calibrating text output parameters...', 'Final rendering of model response...', 'Checking grammatical patterns...'];
@@ -4861,13 +4860,23 @@ async function _callPdfCreate(prompt) {
         const ct = resp.headers.get('content-type') || '';
         if (ct.includes('application/pdf')) {
             const blob = await resp.blob();
-            const url  = URL.createObjectURL(blob);
-            const a    = document.createElement('a');
-            a.href     = url;
-            a.download = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pdf';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 5000);
-            _updateBotMsg(botEl, '📄 <strong style="color:#63b3ed">PDF готов!</strong> Файл скачался автоматически. Проверь папку Загрузки.');
+            const pdfUrl  = URL.createObjectURL(blob);
+            const pdfName = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pdf';
+            _updateBotMsg(botEl, `
+                <div style="background:rgba(99,179,237,0.08);border:1px solid rgba(99,179,237,0.3);border-radius:14px;padding:16px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                        <span style="font-size:26px;">📄</span>
+                        <div>
+                            <div style="color:#63b3ed;font-weight:700;font-size:15px;">PDF готов!</div>
+                            <div style="color:rgba(255,255,255,0.5);font-size:12px;">${pdfName}</div>
+                        </div>
+                    </div>
+                    <iframe src="${pdfUrl}" style="width:100%;height:440px;border:none;border-radius:10px;background:#fff;" title="PDF"></iframe>
+                    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+                        <a href="${pdfUrl}" download="${pdfName}" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#63b3ed,#4299e1);color:#fff;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(99,179,237,0.35);">💾 Сохранить PDF</a>
+                        <a href="${pdfUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);color:#fff;padding:10px 20px;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600;border:1px solid rgba(255,255,255,0.2);">🔗 Открыть в вкладке</a>
+                    </div>
+                </div>`);
         } else {
             const data = await resp.json();
             _updateBotMsg(botEl, data.reply || data.error || 'Готово!');
@@ -4917,3 +4926,93 @@ function _updateBotMsg(el, html) {
     const textEl = el.querySelector && el.querySelector('.text') || el;
     if (textEl) textEl.innerHTML = html;
 }
+
+// ============================================================
+// PEXELS / PIXABAY IMAGE SEARCH (for non-Air models + /image)
+// ============================================================
+async function _callImageSearch(query) {
+    const provider = window.selectedProvider || window.currentProvider || 'gemini';
+    const isAir = !provider || provider === 'gemini';
+
+    addMessageToUI('user', '🖼️ /image: ' + query);
+    const botEl = addMessageToUI('bot', '🔍 Ищу фото...');
+
+    try {
+        // Fetch photo from Pexels (free, no key needed for limited use via proxy)
+        const pexelsKey = 'P0WLSVc5eoJVKB0AYbgjGWQC1aovyFV2h0mhKfSfomJerCbDRZp2uSvv'; // public demo key
+        const q = encodeURIComponent(query);
+        const pexResp = await fetch(`https://api.pexels.com/v1/search?query=${q}&per_page=3`, {
+            headers: { Authorization: pexelsKey }
+        });
+
+        let photoUrl = null;
+        let photoCredit = '';
+        if (pexResp.ok) {
+            const pexData = await pexResp.json();
+            if (pexData.photos && pexData.photos.length > 0) {
+                const photo = pexData.photos[0];
+                photoUrl = photo.src.large;
+                photoCredit = photo.photographer;
+            }
+        }
+
+        // Also ask AI to describe/write about the topic
+        const BASE = (location.hostname === 'localhost' || location.protocol === 'file:' || location.hostname === '127.0.0.1')
+            ? 'http://127.0.0.1:7860'
+            : 'https://germanhcsuj-itssoimportandforme.hf.space';
+        const fd = new FormData();
+        fd.append('prompt', 'Напиши короткий красивый текст (2-3 предложения) про: ' + query + '. Без заголовков.');
+        fd.append('provider', provider);
+        let aiText = '';
+        try {
+            const aiResp = await fetch(BASE + '/chat', { method: 'POST', body: fd });
+            if (aiResp.ok) {
+                const aiData = await aiResp.json();
+                aiText = aiData.reply || '';
+            }
+        } catch(e) { /* ignore */ }
+
+        let html = '';
+        if (photoUrl) {
+            html += `<img src="${photoUrl}" alt="${query}" style="width:100%;max-width:480px;border-radius:14px;margin-bottom:12px;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.4);">\n`;
+            if (photoCredit) html += `<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px;">📷 ${photoCredit} / Pexels</div>\n`;
+        }
+        if (aiText) html += `<div style="font-size:14px;line-height:1.65;">${aiText}</div>`;
+        if (!html) html = '❌ Не удалось найти фото или получить ответ.';
+
+        _updateBotMsg(botEl, html);
+    } catch(err) {
+        _updateBotMsg(botEl, '❌ Ошибка поиска фото: ' + err.message);
+    }
+
+    const ta = document.getElementById('userInput');
+    if (ta) { ta.value = ''; ta.dispatchEvent(new Event('input')); }
+}
+
+// Intercept /image command for non-Air models
+window.addEventListener('DOMContentLoaded', function() {
+    const sendBtn = document.getElementById('sendBtn');
+    const ta = document.getElementById('userInput');
+    if (!sendBtn || !ta) return;
+    sendBtn.addEventListener('click', function(e) {
+        const text = ta.value.trim();
+        const provider = window.selectedProvider || window.currentProvider || 'gemini';
+        const isAir = !provider || provider === 'gemini';
+        if (!isAir && text.toLowerCase().startsWith('/image ')) {
+            e.stopImmediatePropagation();
+            const query = text.slice(7).trim();
+            if (query) _callImageSearch(query);
+        }
+    }, true);
+    ta.addEventListener('keydown', function(e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        const text = ta.value.trim();
+        const provider = window.selectedProvider || window.currentProvider || 'gemini';
+        const isAir = !provider || provider === 'gemini';
+        if (!isAir && text.toLowerCase().startsWith('/image ')) {
+            e.stopImmediatePropagation();
+            const query = text.slice(7).trim();
+            if (query) _callImageSearch(query);
+        }
+    }, true);
+});
