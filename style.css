@@ -2252,7 +2252,7 @@ input:focus, .input-main-wrapper:focus-within {
     border: 1px solid rgba(255,255,255,0.08) !important;
     border-radius: 12px !important;
   }
-}
+/* removed extra bracket */
 
 /* ===== MODEL DROPDOWN — ЧИСТЫЙ КОД ===== */
 .model-dropdown {
@@ -3817,7 +3817,7 @@ body::before { display: none; content: none; }
 }
 
   min-height: 0;
-}
+/* removed extra bracket */
 
 .mh-role-btn,
 .mh-info-card,
@@ -4479,9 +4479,10 @@ body::before { display: none; content: none; }
 }
 
 @media (hover: hover) and (pointer: fine) {
-	.tariff:hover .tariff__gradient {
+	/* Disabled generic move-gradient so custom pulse animations work */
+	/* .tariff:hover .tariff__gradient {
 		animation: move-gradient 0.6s linear;
-	}
+	} */
 
 	.first__tariff-button:hover,
 	.second__tariff-button:hover,
@@ -4543,9 +4544,37 @@ body::before { display: none; content: none; }
 
 #upgradeModal .tariff:hover {
   transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 30px rgba(134, 253, 209, 0.15) !important;
-  border-color: rgba(134, 253, 209, 0.6) !important;
   z-index: 2;
+}
+
+#upgradeModal .first-tariff:hover {
+  box-shadow: 0 12px 30px rgba(192, 192, 192, 0.5) !important;
+  border-color: rgba(192, 192, 192, 0.9) !important;
+}
+
+#upgradeModal .first-tariff:hover .tariff__gradient {
+  background: linear-gradient(135deg, #a8a8a8, #e0e0e0, #8a8a8a) !important;
+  animation: pulseSilver 1.2s infinite alternate !important;
+}
+
+#upgradeModal .second-tariff:hover {
+  box-shadow: 0 12px 30px rgba(0, 191, 255, 0.4) !important;
+  border-color: rgba(0, 191, 255, 0.8) !important;
+}
+
+#upgradeModal .second-tariff:hover .tariff__gradient {
+  background: linear-gradient(135deg, #4d84ff, #80f6ff, #4dd2ff) !important;
+  animation: pulseBlue 1.2s infinite alternate !important;
+}
+
+#upgradeModal .third-tariff:hover {
+  box-shadow: 0 12px 30px rgba(210, 105, 30, 0.5) !important;
+  border-color: rgba(210, 105, 30, 0.9) !important;
+}
+
+#upgradeModal .third-tariff:hover .tariff__gradient {
+  background: linear-gradient(135deg, #ff8c00, #d2691e, #cd853f) !important;
+  animation: pulseGlow 1.2s infinite alternate !important;
 }
 
 #upgradeModal .upgrade-tariff-close {
@@ -5510,4 +5539,44 @@ body.chat-started .suggestion-btn {
 }
 .thinking-step.completed .step-title {
     color: rgba(255,255,255,0.9);
+}
+
+/* SHIMMER EFFECT FOR TARIFFS (METAL REFLECTION LINE) */
+#upgradeModal .tariff::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  transform: skewX(-25deg);
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#upgradeModal .tariff:hover::after {
+  opacity: 1;
+  animation: shine-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes shine-sweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Pro shimmer - Silver/White line */
+#upgradeModal .first-tariff::after {
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0) 100%);
+}
+
+/* Max shimmer - Blue line */
+#upgradeModal .second-tariff::after {
+  background: linear-gradient(to right, rgba(0, 191, 255, 0) 0%, rgba(0, 191, 255, 0.7) 50%, rgba(0, 191, 255, 0) 100%);
+}
+
+/* Alpha shimmer - Brown/Orange line */
+#upgradeModal .third-tariff::after {
+  background: linear-gradient(to right, rgba(255, 140, 0, 0) 0%, rgba(255, 140, 0, 0.7) 50%, rgba(255, 140, 0, 0) 100%);
 }
