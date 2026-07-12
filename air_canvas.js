@@ -1,52 +1,53 @@
 // ============================================================
-//  AIR CANVAS ELITE  –  v3.0  (Level 1 + Level 2 + Level 3)
+//  AIR CANVAS ELITE  –  v4.0  (GestureEngine + 40 жестов)
+//  Levels: 1=Drawing  2=Gallery/3D  3=Hologram
 // ============================================================
 
 const videoElement = document.getElementById('camVideo');
 const uiCanvas    = document.getElementById('uiCanvas');
 const drawCanvas  = document.getElementById('drawCanvas');
-const uiCtx       = uiCanvas   ? uiCanvas.getContext('2d', { willReadFrequently: true }) : null;
-const drawCtx     = drawCanvas ? drawCanvas.getContext('2d', { willReadFrequently: true }) : null;
+const uiCtx       = uiCanvas   ? uiCanvas.getContext('2d',   { willReadFrequently: true }) : null;
+const drawCtx     = drawCanvas ? drawCanvas.getContext('2d',  { willReadFrequently: true }) : null;
 
-// ─── плавность курсора ───────────────────────────────────────
+// ─── Плавность курсора ───────────────────────────────────────
 const LERP_FACTOR = 0.2;
 
-// ─── системные флаги ─────────────────────────────────────────
+// ─── Системные флаги ─────────────────────────────────────────
 let isRunning          = false;
 let camera             = null;
 let hands              = null;
-let isLocked           = false;
 let isPresentationMode = false;
-let isDarkMode         = true;
+let isFrozen           = false;   // заморозка вращения 3D
+let isGodMode          = false;   // God Mode
+let isInvisibleMode    = false;   // невидимые курсоры
+let isFramingPhoto     = false;   // Selfie Drop (обе Peace)
 
-// ─── состояния рук ───────────────────────────────────────────
+// ─── Состояния рук ───────────────────────────────────────────
 const handStates = [
-    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0, isDrawing: false, color: '#ef4444', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 },
-    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0, isDrawing: false, color: '#3b82f6', action: '00000', brush: 'Premium Pen', width: 5, shadow: 0 }
+    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0,
+      isDrawing: false, color: '#ef4444', action: '00000',
+      brush: 'Premium Pen', width: 5, shadow: 0 },
+    { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0,
+      isDrawing: false, color: '#3b82f6', action: '00000',
+      brush: 'Premium Pen', width: 5, shadow: 0 }
 ];
 
-// ─── данные галереи ───────────────────────────────────────────
-let uploadedAssets  = [];
-let galleryRotation = 0;
+// ─── Галерея ─────────────────────────────────────────────────
+let uploadedAssets   = [];
+let galleryRotation  = 0;
+let galleryZoom      = 1.0;
 
-// ─── история Undo ─────────────────────────────────────────────
+// ─── История Undo / Redo ──────────────────────────────────────
 let canvasHistory    = [];
-const MAX_HISTORY    = 10;
+let redoStack        = [];
+const MAX_HISTORY    = 20;
 let lastSaveTime     = 0;
 
-// ─── кулдауны ─────────────────────────────────────────────────
-let lastClearTime       = 0;
-let lastPaletteTime     = [0, 0];
-let lastSnapshotTime    = 0;
-let lastUndoTime        = 0;         // кулдаун жеста Undo  (Level 1)
-let lastSnapGestureTime = 0;         // кулдаун жеста Snap  (Level 1)
-let lastOpenPalmTime    = [0, 0];
-
-// ─── система уровней ──────────────────────────────────────────
-let currentLevel = 1;   // 1 | 2 | 3
+// ─── Уровни ──────────────────────────────────────────────────
+let currentLevel = 1;
 let currentColor = '#ef4444';
 
-const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '#a855f7', '#ec4899'];
+const PREMIUM_COLORS = ['#ef4444','#3b82f6','#10b981','#f59e0b','#ffffff','#a855f7','#ec4899'];
 let colorIndex = [0, 0];
 
 // ─── Three.js объекты ─────────────────────────────────────────
@@ -54,15 +55,21 @@ let threeScene        = null;
 let threeCamera       = null;
 let threeRenderer     = null;
 let threeAnimId       = null;
+let demoModels        = [];
+let currentModelIndex = 0;
+let zoomBaseDist      = null;
 
-// ─── Демо-модели (массив) ─────────────────────────────────────
-let demoModels        = [];      // Three.js Mesh[]
-let currentModelIndex = 0;       // активная модель
-let lastModelSwitchTime = 0;     // кулдаун смены модели (Level 3)
+// ─── Глобальные кулдауны ──────────────────────────────────────
+const CD = {};   // cooldown map: key → lastFiredTime
+function cooldown(key, ms) {
+    const now = Date.now();
+    if (!CD[key] || now - CD[key] > ms) { CD[key] = now; return true; }
+    return false;
+}
 
 
 // ══════════════════════════════════════════════════════════════
-//  CSS-инъекция (флэш + кнопки)
+//  CSS-ИНЪЕКЦИЯ
 // ══════════════════════════════════════════════════════════════
 (function injectStyles() {
     const style = document.createElement('style');
@@ -70,28 +77,34 @@ let lastModelSwitchTime = 0;     // кулдаун смены модели (Leve
         #snapshotFlashOverlay {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: #ffffff;
+            background: #fff;
             opacity: 0; pointer-events: none; z-index: 9999;
+            transition: opacity 0.25s ease-out;
+        }
+        #sysNotification {
+            position: fixed; bottom: 60px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(10,10,10,0.85);
+            border: 1px solid rgba(255,255,255,0.15);
+            backdrop-filter: blur(16px);
+            color: #fff; font-family: "Segoe UI", sans-serif;
+            font-size: 18px; font-weight: 600;
+            padding: 14px 32px; border-radius: 50px;
+            letter-spacing: 0.5px;
+            opacity: 0; pointer-events: none; z-index: 99998;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        #sysNotification.show {
+            opacity: 1; transform: translateX(-50%) translateY(0);
         }
         .cb-swatch, .color-btn { transition: all 0.2s ease; }
         .cb-swatch.active, .color-btn.active { transform: scale(1.2); box-shadow: 0 0 12px currentColor; }
         #levelSwitcherBtn { transition: all 0.3s ease; }
-        #levelSwitcherBtn:hover { transition: all 0.3s ease; }
-
-        /* Кнопки загрузки контента */
         .air-upload-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 10000;
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.35);
-            transition: all 0.25s ease;
+            position: fixed; bottom: 24px; right: 24px;
+            z-index: 10000; padding: 12px 20px; border-radius: 10px;
+            border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.35); transition: all 0.25s ease;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             display: none;
         }
@@ -104,283 +117,43 @@ let lastModelSwitchTime = 0;     // кулдаун смены модели (Leve
 
 
 // ══════════════════════════════════════════════════════════════
-//  ИНИЦИАЛИЗАЦИЯ
+//  УВЕДОМЛЕНИЯ (showSystemNotification)
 // ══════════════════════════════════════════════════════════════
-function initAirCanvasElite() {
-    if (!videoElement || !uiCanvas || !drawCanvas) return;
-
-    function resize() {
-        uiCanvas.width   = window.innerWidth;
-        uiCanvas.height  = window.innerHeight;
-        drawCanvas.width = window.innerWidth;
-        drawCanvas.height= window.innerHeight;
-        if (threeRenderer) {
-            threeRenderer.setSize(window.innerWidth, window.innerHeight);
-            threeCamera.aspect = window.innerWidth / window.innerHeight;
-            threeCamera.updateProjectionMatrix();
-        }
+let _notifTimer = null;
+function showSystemNotification(text, durationMs = 2200) {
+    let el = document.getElementById('sysNotification');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'sysNotification';
+        document.body.appendChild(el);
     }
-    window.addEventListener('resize', resize);
-    resize();
-
-    hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
-    hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
-    hands.onResults(onResultsElite);
-
-    currentColor = handStates[0].color;
-    updatePaletteUI(currentColor);
-
-    camera = new Camera(videoElement, {
-        onFrame: async () => { if (isRunning) await hands.send({ image: videoElement }); },
-        width: 1280, height: 720
-    });
-
-    createLevelSwitcher();
-    createUploadButtons();
-    initThreeJS();
+    el.textContent = text;
+    el.classList.add('show');
+    clearTimeout(_notifTimer);
+    _notifTimer = setTimeout(() => el.classList.remove('show'), durationMs);
 }
 
-
-// ══════════════════════════════════════════════════════════════
-//  THREE.JS — ИНИЦИАЛИЗАЦИЯ
-// ══════════════════════════════════════════════════════════════
-function initThreeJS() {
-    // Получаем или создаём canvas
-    let threeCanvas = document.getElementById('threeCanvas');
-    if (!threeCanvas) {
-        threeCanvas = document.createElement('canvas');
-        threeCanvas.id = 'threeCanvas';
-        threeCanvas.style.cssText = 'position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;';
-        document.body.appendChild(threeCanvas);
-    }
-
-    threeScene  = new THREE.Scene();
-    threeCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    threeCamera.position.z = 5;
-
-    threeRenderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
-    threeRenderer.setSize(window.innerWidth, window.innerHeight);
-    threeRenderer.setPixelRatio(window.devicePixelRatio);
-    threeRenderer.setClearColor(0x000000, 0);
-
-    // ─── 4 демо-модели ──────────────────────────────────────────
-    const modelDefs = [
-        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc },  // бирюзовый неон
-        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055 },  // розовый неон
-        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6 },  // синий
-        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b }   // золотой кристалл
-    ];
-
-    demoModels = [];
-    modelDefs.forEach((def, idx) => {
-        const mat  = new THREE.MeshBasicMaterial({ color: def.color, wireframe: true });
-        const mesh = new THREE.Mesh(def.geo, mat);
-        mesh.visible = (idx === 0);  // только первая модель видна
-        threeScene.add(mesh);
-        demoModels.push(mesh);
-    });
-
-    // По умолчанию сцена скрыта (до перехода на Level 3)
-    threeScene.visible = false;
-
-    // Запускаем цикл рендера
-    animateThree();
-}
-
-// Вспомогательная: переключить активную демо-модель
-function switchDemoModel(index) {
-    if (!demoModels.length) return;
-    demoModels[currentModelIndex].visible = false;
-    currentModelIndex = ((index % demoModels.length) + demoModels.length) % demoModels.length;
-    demoModels[currentModelIndex].visible = true;
-}
-
-function animateThree() {
-    threeAnimId = requestAnimationFrame(animateThree);
-    if (threeRenderer && threeScene && threeCamera) {
-        threeRenderer.render(threeScene, threeCamera);
-    }
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  КНОПКА ПЕРЕКЛЮЧЕНИЯ УРОВНЕЙ (1 → 2 → 3 → 1)
-// ══════════════════════════════════════════════════════════════
-function createLevelSwitcher() {
-    if (document.getElementById('levelSwitcherBtn')) return;
-
-    const btn = document.createElement('button');
-    btn.id = 'levelSwitcherBtn';
-    Object.assign(btn.style, {
-        position: 'fixed', top: '20px', right: '20px',
-        zIndex: '10000', padding: '12px 20px', borderRadius: '8px',
-        border: 'none', backgroundColor: '#ef4444', color: '#ffffff',
-        fontSize: '14px', fontWeight: '600', cursor: 'pointer',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.3)', transition: 'all 0.3s ease',
-        fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
-    });
-    btn.textContent = '🎨 Уровень 1: Рисование';
-
-    btn.addEventListener('mouseenter', () => { btn.style.transform = 'scale(1.05)'; btn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)'; });
-    btn.addEventListener('mouseleave', () => { btn.style.transform = 'scale(1)';    btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'; });
-
-    btn.addEventListener('click', () => {
-        const next = currentLevel === 1 ? 2 : currentLevel === 2 ? 3 : 1;
-        switchAirCanvasLevel(next);
-    });
-
-    document.body.appendChild(btn);
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  КНОПКИ ЗАГРУЗКИ КОНТЕНТА
-// ══════════════════════════════════════════════════════════════
-function createUploadButtons() {
-    // Фото (Level 2)
-    if (!document.getElementById('uploadPhotoBtn')) {
-        const photoInput = document.createElement('input');
-        photoInput.type = 'file'; photoInput.accept = '*/*'; photoInput.multiple = true;
-        photoInput.style.display = 'none';
-        photoInput.id = 'uploadPhotoInput';
-        document.body.appendChild(photoInput);
-
-        photoInput.addEventListener('change', (e) => {
-            for (const file of e.target.files) {
-                const img = new Image();
-                img.src = URL.createObjectURL(file);
-                img.onload = () => uploadedAssets.push(img);
-            }
-            photoInput.value = '';
-        });
-
-        const photoBtn = document.createElement('button');
-        photoBtn.id = 'uploadPhotoBtn';
-        photoBtn.className = 'air-upload-btn';
-        photoBtn.textContent = '📁 Загрузить Фото';
-        photoBtn.addEventListener('click', () => photoInput.click());
-        document.body.appendChild(photoBtn);
-    }
-
-    // 3D-модель (Level 3) — пока только выбор файла
-    if (!document.getElementById('uploadModelBtn')) {
-        const modelInput = document.createElement('input');
-        modelInput.type = 'file'; modelInput.accept = '*/*';
-        modelInput.style.display = 'none';
-        modelInput.id = 'uploadModelInput';
-        document.body.appendChild(modelInput);
-
-        modelInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                console.log('3D Model selected:', e.target.files[0].name);
-                // TODO: добавить парсинг 3D-файла в следующей итерации
-            }
-            modelInput.value = '';
-        });
-
-        const modelBtn = document.createElement('button');
-        modelBtn.id = 'uploadModelBtn';
-        modelBtn.className = 'air-upload-btn';
-        modelBtn.textContent = '🧊 Загрузить 3D Модель';
-        modelBtn.addEventListener('click', () => modelInput.click());
-        document.body.appendChild(modelBtn);
-    }
-}
-
-function updateUploadButtons() {
-    const photoBtn = document.getElementById('uploadPhotoBtn');
-    const modelBtn = document.getElementById('uploadModelBtn');
-    if (photoBtn) photoBtn.style.display = currentLevel === 2 ? 'block' : 'none';
-    if (modelBtn) modelBtn.style.display = currentLevel === 3 ? 'block' : 'none';
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  ИСТОРИЯ UNDO
-// ══════════════════════════════════════════════════════════════
-function saveHistory() {
-    if (!drawCtx || !drawCanvas) return;
-    if (Date.now() - lastSaveTime < 200) return;
-    const imageData = drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
-    canvasHistory.push(imageData);
-    if (canvasHistory.length > MAX_HISTORY) canvasHistory.shift();
-    lastSaveTime = Date.now();
-}
-
-function undo() {
-    if (!drawCtx || !drawCanvas) return;
-    if (canvasHistory.length > 0) {
-        drawCtx.putImageData(canvasHistory.pop(), 0, 0);
-    } else {
-        drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-    }
-}
-
-
-// ══════════════════════════════════════════════════════════════
-//  УТИЛИТЫ
-// ══════════════════════════════════════════════════════════════
-function lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
-
-function getDistance(p1, p2, width, height) {
-    const dx = (p1.x - p2.x) * width;
-    const dy = (p1.y - p2.y) * height;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
-function getFingerStates(landmarks) {
-    const states = [0, 0, 0, 0, 0];
-    const wrist  = landmarks[0];
-    states[0] = getDistance(landmarks[4], landmarks[17], 1, 1) > getDistance(landmarks[3], landmarks[17], 1, 1) ? 1 : 0;
-    states[1] = getDistance(landmarks[8],  wrist, 1, 1) > getDistance(landmarks[6],  wrist, 1, 1) ? 1 : 0;
-    states[2] = getDistance(landmarks[12], wrist, 1, 1) > getDistance(landmarks[10], wrist, 1, 1) ? 1 : 0;
-    states[3] = getDistance(landmarks[16], wrist, 1, 1) > getDistance(landmarks[14], wrist, 1, 1) ? 1 : 0;
-    states[4] = getDistance(landmarks[20], wrist, 1, 1) > getDistance(landmarks[18], wrist, 1, 1) ? 1 : 0;
-    return states;
-}
-
-function updatePaletteUI(selectedColor) {
-    const norm = selectedColor.toLowerCase();
-    document.querySelectorAll('.cb-swatch, .color-btn').forEach((el) => {
-        const dc = (el.dataset.color || el.getAttribute('data-color') || '').toLowerCase();
-        if (dc === norm && dc !== '') {
-            el.classList.add('active');
-            el.style.transform  = 'scale(1.2)';
-            el.style.boxShadow  = `0 0 12px ${selectedColor}`;
-        } else {
-            el.classList.remove('active');
-            el.style.transform  = 'scale(1)';
-            el.style.boxShadow  = 'none';
-        }
-    });
-}
 
 
 // ══════════════════════════════════════════════════════════════
 //  СНИМОК ЭКРАНА
 // ══════════════════════════════════════════════════════════════
-function ensureSnapshotFlash() {
+function flashSnapshot() {
     let flash = document.getElementById('snapshotFlashOverlay');
     if (!flash) {
         flash = document.createElement('div');
         flash.id = 'snapshotFlashOverlay';
         document.body.appendChild(flash);
     }
-    return flash;
-}
-
-function flashSnapshot() {
-    const flash = ensureSnapshotFlash();
-    flash.style.transition = 'opacity 0.25s ease-out';
-    flash.style.opacity    = '0.8';
-    setTimeout(() => { flash.style.opacity = '0'; }, 80);
+    flash.style.opacity = '0.9';
+    setTimeout(() => { flash.style.opacity = '0'; }, 120);
 }
 
 function takeSnapshot() {
     if (!drawCanvas || !videoElement) return;
     const w = drawCanvas.width, h = drawCanvas.height;
     const tmp    = document.createElement('canvas');
-    tmp.width    = w; tmp.height = h;
+    tmp.width = w; tmp.height = h;
     const tmpCtx = tmp.getContext('2d');
     if (!tmpCtx) return;
     if (videoElement.readyState >= 2) tmpCtx.drawImage(videoElement, 0, 0, w, h);
@@ -395,6 +168,411 @@ function takeSnapshot() {
         setTimeout(() => URL.revokeObjectURL(link.href), 1500);
     }, 'image/png');
     flashSnapshot();
+    showSystemNotification('📸  Скриншот сохранён!');
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  УТИЛИТЫ
+// ══════════════════════════════════════════════════════════════
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function dist2D(ax, ay, bx, by) { return Math.hypot(ax - bx, ay - by); }
+
+function getDistance(p1, p2) {
+    return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+}
+
+function getFingerStates(lm) {
+    const s = [0, 0, 0, 0, 0];
+    const w = lm[0];
+    s[0] = getDistance(lm[4], lm[17]) > getDistance(lm[3], lm[17]) ? 1 : 0;
+    s[1] = getDistance(lm[8],  w) > getDistance(lm[6],  w) ? 1 : 0;
+    s[2] = getDistance(lm[12], w) > getDistance(lm[10], w) ? 1 : 0;
+    s[3] = getDistance(lm[16], w) > getDistance(lm[14], w) ? 1 : 0;
+    s[4] = getDistance(lm[20], w) > getDistance(lm[18], w) ? 1 : 0;
+    return s;
+}
+
+function gestureCode(lm) {
+    const s = getFingerStates(lm);
+    return s.join('');
+}
+
+function updatePaletteUI(col) {
+    const norm = col.toLowerCase();
+    document.querySelectorAll('.cb-swatch, .color-btn').forEach(el => {
+        const dc = (el.dataset.color || el.getAttribute('data-color') || '').toLowerCase();
+        const active = dc === norm && dc !== '';
+        el.classList.toggle('active', active);
+        el.style.transform = active ? 'scale(1.2)' : 'scale(1)';
+        el.style.boxShadow = active ? `0 0 12px ${col}` : 'none';
+    });
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  ИСТОРИЯ UNDO / REDO
+// ══════════════════════════════════════════════════════════════
+function saveHistory() {
+    if (!drawCtx || !drawCanvas) return;
+    if (Date.now() - lastSaveTime < 200) return;
+    const imgData = drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height);
+    canvasHistory.push(imgData);
+    if (canvasHistory.length > MAX_HISTORY) canvasHistory.shift();
+    redoStack = [];   // новое действие сбрасывает redo
+    lastSaveTime = Date.now();
+}
+
+function undo() {
+    if (!drawCtx || !drawCanvas) return;
+    if (canvasHistory.length > 0) {
+        // Перед отменой сохраняем текущее состояние в redo
+        redoStack.push(drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+        drawCtx.putImageData(canvasHistory.pop(), 0, 0);
+        showSystemNotification('↩️  Отмена');
+    }
+}
+
+function redo() {
+    if (!drawCtx || !drawCanvas) return;
+    if (redoStack.length > 0) {
+        canvasHistory.push(drawCtx.getImageData(0, 0, drawCanvas.width, drawCanvas.height));
+        drawCtx.putImageData(redoStack.pop(), 0, 0);
+        showSystemNotification('↪️  Повтор');
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  РАМКА КАДРИРОВАНИЯ (Selfie Drop)
+// ══════════════════════════════════════════════════════════════
+function drawFramingOverlay(ctx, w, h) {
+    const m = 30, cl = 50, lw = 4;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, 0, w, m);
+    ctx.fillRect(0, h - m, w, m);
+    ctx.fillRect(0, 0, m, h);
+    ctx.fillRect(w - m, 0, m, h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+    ctx.lineWidth = lw; ctx.lineCap = 'round';
+    const x0 = m, y0 = m, x1 = w - m, y1 = h - m;
+    ctx.beginPath(); ctx.moveTo(x0, y0+cl); ctx.lineTo(x0, y0); ctx.lineTo(x0+cl, y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1-cl, y0); ctx.lineTo(x1, y0); ctx.lineTo(x1, y0+cl); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0, y1-cl); ctx.lineTo(x0, y1); ctx.lineTo(x0+cl, y1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1-cl, y1); ctx.lineTo(x1, y1); ctx.lineTo(x1, y1-cl); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.font = 'bold 18px "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('✌️  SELFIE FRAME  —  сожми кулаки чтобы снять', w / 2, h - m - 12);
+    ctx.restore();
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  ██████  GestureEngine  ██████
+//  Единый движок: распознаёт позы, вычисляет события-жесты
+// ══════════════════════════════════════════════════════════════
+const GestureEngine = {
+
+    // ── Настройки порогов ────────────────────────────────────
+    SWIPE_THRESHOLD   : 28,   // px за кадр для свайпа
+    PINCH_CLOSE_DIST  : 0.06, // нормализованное расстояние = щепотка
+    CLAP_DIST         : 120,  // px — расстояние рук при хлопке
+    CLAP_SPEED        : 18,   // px/кадр скорость сближения
+    CROSS_WRIST_DIST  : 0.05, // нормализованная дельта-X запястий
+
+    // ── История координат для детекции кругов ───────────────
+    _lassoTrail : [],
+    _lassoActive: false,
+
+    // ── Хлопок: запоминаем дистанцию прошлого кадра ─────────
+    _prevHandDist: null,
+
+    // ── Сброс между сессиями ─────────────────────────────────
+    reset() {
+        this._lassoTrail  = [];
+        this._lassoActive = false;
+        this._prevHandDist = null;
+    },
+
+    // ── Код жеста из landmarks → '01000' и т.п. ─────────────
+    getCode(lm) {
+        return getFingerStates(lm).join('');
+    },
+
+    // ── Канонический маппинг кода жеста ─────────────────────
+    canonize(code) {
+        const map = {
+            '01000': 'INDEX',      // Указательный
+            '00001': 'PINKY',      // Мизинец
+            '01001': 'INDEX_PINKY',// Указательный + Мизинец (Рок)
+            '01110': 'THREE',      // Три пальца
+            '11000': 'GUN',        // Пистолет (большой + указательный)
+            '01100': 'PEACE',      // V / Peace
+            '11111': 'OPEN',       // Открытая ладонь
+            '10000': 'THUMB',      // Большой вверх
+            '00000': 'FIST',       // Кулак
+            '01111': 'FOUR',       // Четыре пальца
+            '10001': 'SHAKA',      // Shaka / Телефон
+            '11110': 'OK_BASE',    // 4 пальца без большого (ОК)
+            '01011': 'CROSS_FIN',  // Указательный + средний скрещены
+        };
+        return map[code] || 'UNKNOWN';
+    },
+
+    // ── Детектировать свайп по одной руке ───────────────────
+    //    Возвращает 'SWIPE_LEFT' | 'SWIPE_RIGHT' | 'SWIPE_UP' |
+    //              'SWIPE_DOWN' | null
+    detectSwipe(state) {
+        if (state.px === 0) return null;
+        const dx = state.x - state.px;
+        const dy = state.y - state.py;
+        const th = this.SWIPE_THRESHOLD;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            if (dx < -th) return 'SWIPE_LEFT';
+            if (dx >  th) return 'SWIPE_RIGHT';
+        } else {
+            if (dy < -th) return 'SWIPE_UP';
+            if (dy >  th) return 'SWIPE_DOWN';
+        }
+        return null;
+    },
+
+    // ── Пинч-детектор для одной руки ────────────────────────
+    //    landmarks[4] = большой, landmarks[8] = указательный
+    detectPinch(lm) {
+        return getDistance(lm[4], lm[8]) < this.PINCH_CLOSE_DIST;
+    },
+
+    // ── Хлопок: обе руки резко сближаются ───────────────────
+    detectClap(s1, s2) {
+        if (s1.x === 0 || s2.x === 0) return false;
+        const d = dist2D(s1.x, s1.y, s2.x, s2.y);
+        const wasApart = this._prevHandDist !== null && this._prevHandDist > this.CLAP_DIST + 60;
+        const speedIn  = this._prevHandDist !== null ? (this._prevHandDist - d) : 0;
+        this._prevHandDist = d;
+        return wasApart && d < this.CLAP_DIST && speedIn > this.CLAP_SPEED;
+    },
+
+
+
+    // ── Руки раздвинуты → разведение ────────────────────────
+    detectHandsApart(s1, s2, threshold = 400) {
+        if (s1.x === 0 || s2.x === 0) return false;
+        return dist2D(s1.x, s1.y, s2.x, s2.y) > threshold;
+    },
+
+    // ── Лассо: круговое движение указательным ───────────────
+    updateLasso(state, code) {
+        if (code === 'INDEX') {
+            this._lassoTrail.push({ x: state.x, y: state.y });
+            if (this._lassoTrail.length > 60) this._lassoTrail.shift();
+            if (this._lassoTrail.length > 30) return this._checkCircle();
+        } else {
+            this._lassoTrail = [];
+        }
+        return false;
+    },
+
+    _checkCircle() {
+        const t = this._lassoTrail;
+        const cx = t.reduce((s, p) => s + p.x, 0) / t.length;
+        const cy = t.reduce((s, p) => s + p.y, 0) / t.length;
+        const radii = t.map(p => dist2D(p.x, p.y, cx, cy));
+        const mean  = radii.reduce((s, r) => s + r, 0) / radii.length;
+        if (mean < 20) return false;
+        const variance = radii.reduce((s, r) => s + (r - mean) ** 2, 0) / radii.length;
+        return Math.sqrt(variance) / mean < 0.35;  // достаточно круглое
+    },
+
+    // ── Главный анализ кадра ─────────────────────────────────
+    //    Возвращает массив строк-событий: ['SWIPE_LEFT', 'LASSO', ...]
+    analyze(handLandmarks, handStatesArr) {
+        const events = [];
+        const n = handLandmarks.length;
+        if (n === 0) { this.reset(); return events; }
+
+        const codes = handLandmarks.map(lm => this.getCode(lm));
+        const cans  = codes.map(c => this.canonize(c));
+
+        // ── Одна рука ───────────────────────────────────────
+        const s0 = handStatesArr[0];
+        const swipe0 = this.detectSwipe(s0);
+        if (swipe0) events.push(swipe0 + '_H0');   // H0 = рука 0
+
+        const s1 = handStatesArr[1];
+        if (n >= 2) {
+            const swipe1 = this.detectSwipe(s1);
+            if (swipe1) events.push(swipe1 + '_H1');
+        }
+
+        // ── Pinch ────────────────────────────────────────────
+        if (this.detectPinch(handLandmarks[0])) events.push('PINCH_H0');
+        if (n >= 2 && this.detectPinch(handLandmarks[1])) events.push('PINCH_H1');
+
+        // ── Лассо ────────────────────────────────────────────
+        if (this.updateLasso(s0, cans[0])) events.push('LASSO');
+
+        // ── Двуручные ────────────────────────────────────────
+        if (n >= 2) {
+            if (this.detectClap(s0, s1))
+                events.push('CLAP');
+            // Два одинаковых жеста
+            const both = `${cans[0]}+${cans[1]}`;
+            events.push('DUAL:' + both);
+            // Два кулака = зум
+            if (cans[0] === 'FIST' && cans[1] === 'FIST') events.push('DUAL_FIST');
+            // Обе Peace = Selfie
+            if (cans[0] === 'PEACE' && cans[1] === 'PEACE') events.push('DUAL_PEACE');
+            // Оба Thumb
+            if (cans[0] === 'THUMB' && cans[1] === 'THUMB') events.push('DUAL_THUMB');
+            // Левый кулак + правая ладонь
+            if ((cans[0] === 'FIST' && cans[1] === 'OPEN') ||
+                (cans[0] === 'OPEN' && cans[1] === 'FIST'))
+                events.push('FIST_OPEN');
+            // Два указательных сводятся
+            if (cans[0] === 'INDEX' && cans[1] === 'INDEX') events.push('DUAL_INDEX');
+        }
+
+        // ── Добавляем базовые коды обеих рук ────────────────
+        events.push('CODE0:' + cans[0]);
+        if (n >= 2) events.push('CODE1:' + cans[1]);
+
+        return events;
+    }
+};
+
+
+// ══════════════════════════════════════════════════════════════
+//  РИСОВАНИЕ (Level 1)
+// ══════════════════════════════════════════════════════════════
+function executeDrawingLogic(state, code) {
+    if (!drawCtx) return;
+    drawCtx.globalCompositeOperation = 'source-over';
+    state.shadow = 0;
+
+    switch (code) {
+        case 'INDEX':        state.brush='Premium Pen';   state.width=5;  break;
+        case 'PINKY':        state.brush='Calligraphy';   state.width=2;  break;
+        case 'INDEX_PINKY':  state.brush='Neon Glow';     state.width=6;  state.shadow=12; break;
+        case 'THREE':        state.brush='Thick Marker';  state.width=18; break;
+        case 'PEACE':
+            state.brush='Smart Eraser'; state.width=40;
+            drawCtx.globalCompositeOperation = 'destination-out';
+            break;
+        case 'GUN':
+            // Лазерная указка — не рисует, только курсор
+            state.isDrawing = false; return;
+        default: state.isDrawing = false; return;
+    }
+
+    state.isDrawing = true;
+    if (state.px !== 0 && state.py !== 0) {
+        drawCtx.beginPath();
+        drawCtx.moveTo(state.px, state.py);
+        drawCtx.lineTo(state.x, state.y);
+        drawCtx.strokeStyle = state.color;
+        drawCtx.lineWidth   = state.width;
+        drawCtx.lineCap     = 'round';
+        drawCtx.lineJoin    = 'round';
+        drawCtx.shadowBlur  = state.shadow;
+        if (state.shadow > 0) drawCtx.shadowColor = state.color;
+        drawCtx.stroke();
+        drawCtx.shadowBlur = 0;
+        saveHistory();
+    }
+}
+
+// Лазерный курсор
+function drawLaserPointer(x, y) {
+    if (!uiCtx) return;
+    uiCtx.save();
+    uiCtx.beginPath();
+    uiCtx.arc(x, y, 6, 0, Math.PI * 2);
+    uiCtx.fillStyle = '#ff0000';
+    uiCtx.shadowColor = '#ff4444';
+    uiCtx.shadowBlur  = 20;
+    uiCtx.fill();
+    uiCtx.restore();
+}
+
+// Лассо-визуализация
+function drawLassoTrail() {
+    const t = GestureEngine._lassoTrail;
+    if (t.length < 3 || !uiCtx) return;
+    uiCtx.save();
+    uiCtx.beginPath();
+    uiCtx.moveTo(t[0].x, t[0].y);
+    for (let i = 1; i < t.length; i++) uiCtx.lineTo(t[i].x, t[i].y);
+    uiCtx.strokeStyle = 'rgba(168,85,247,0.7)';
+    uiCtx.lineWidth = 2;
+    uiCtx.setLineDash([6, 4]);
+    uiCtx.stroke();
+    uiCtx.setLineDash([]);
+    uiCtx.restore();
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  THREE.JS — ИНИЦИАЛИЗАЦИЯ
+// ══════════════════════════════════════════════════════════════
+function initThreeJS() {
+    let threeCanvas = document.getElementById('threeCanvas');
+    if (!threeCanvas) {
+        threeCanvas = document.createElement('canvas');
+        threeCanvas.id = 'threeCanvas';
+        threeCanvas.style.cssText =
+            'position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;';
+        document.body.appendChild(threeCanvas);
+    }
+
+    threeScene  = new THREE.Scene();
+    threeCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    threeCamera.position.z = 5;
+
+    threeRenderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
+    threeRenderer.setSize(window.innerWidth, window.innerHeight);
+    threeRenderer.setPixelRatio(window.devicePixelRatio);
+    threeRenderer.setClearColor(0x000000, 0);
+
+    const defs = [
+        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc },
+        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055 },
+        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6 },
+        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b },
+    ];
+    demoModels = [];
+    defs.forEach((d, i) => {
+        const mesh = new THREE.Mesh(d.geo, new THREE.MeshBasicMaterial({ color: d.color, wireframe: true }));
+        mesh.visible = (i === 0);
+        threeScene.add(mesh);
+        demoModels.push(mesh);
+    });
+
+    threeScene.visible = false;
+    animateThree();
+}
+
+function switchDemoModel(idx) {
+    if (!demoModels.length) return;
+    demoModels[currentModelIndex].visible = false;
+    currentModelIndex = ((idx % demoModels.length) + demoModels.length) % demoModels.length;
+    demoModels[currentModelIndex].visible = true;
+}
+
+function animateThree() {
+    threeAnimId = requestAnimationFrame(animateThree);
+    if (!isFrozen && threeRenderer && threeScene && threeCamera) {
+        // Авто-вращение когда нет жеста управления
+        if (demoModels[currentModelIndex]) {
+            demoModels[currentModelIndex].rotation.y += 0.004;
+        }
+        threeRenderer.render(threeScene, threeCamera);
+    } else if (threeRenderer && threeScene && threeCamera) {
+        threeRenderer.render(threeScene, threeCamera);
+    }
 }
 
 
@@ -403,136 +581,469 @@ function takeSnapshot() {
 // ══════════════════════════════════════════════════════════════
 function switchAirCanvasLevel(level) {
     currentLevel = level;
-
-    // Сбросить состояния рук
-    if (currentLevel === 1) {
-        handStates[1].action    = '00000';
-        handStates[1].isDrawing = false;
-        handStates[1].x = handStates[1].y = handStates[1].px = handStates[1].py = 0;
+    for (let i = 0; i < 2; i++) {
+        handStates[i].isDrawing = false;
+        handStates[i].px = handStates[i].py = 0;
+    }
+    if (level === 1) {
+        handStates[1].x = handStates[1].y = 0;
         galleryRotation = 0;
-    } else {
-        for (let i = 0; i < 2; i++) handStates[i].isDrawing = false;
     }
-
-    // Three.js — показываем только на Level 3
     if (threeScene) {
-        threeScene.visible = (currentLevel === 3);
-        // Гарантируем: при входе на Level 3 видна только активная модель
-        if (currentLevel === 3 && demoModels.length) {
+        threeScene.visible = (level === 3);
+        if (level === 3 && demoModels.length)
             demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
-        }
     }
 
-    // Кнопка переключения уровней
     const btn = document.getElementById('levelSwitcherBtn');
     if (btn) {
-        if (currentLevel === 1) {
-            btn.textContent      = '🎨 Уровень 1: Рисование';
-            btn.style.backgroundColor = '#ef4444';
-        } else if (currentLevel === 2) {
-            btn.textContent      = '🖼️ Уровень 2: Лента Фото';
-            btn.style.backgroundColor = '#a855f7';
-        } else {
-            btn.textContent      = '🧊 Уровень 3: 3D Голограмма';
-            btn.style.backgroundColor = '#00ffcc';
-            btn.style.color      = '#000';
-        }
-        if (currentLevel !== 3) btn.style.color = '#fff';
+        const labels = ['','🎨 Уровень 1: Рисование','🖼️ Уровень 2: Галерея','🧊 Уровень 3: Голограмма'];
+        const colors = ['','#ef4444','#a855f7','#00ffcc'];
+        btn.textContent = labels[level];
+        btn.style.backgroundColor = colors[level];
+        btn.style.color = level === 3 ? '#000' : '#fff';
     }
-
     updateUploadButtons();
-    console.log('Switched to Air Canvas level', currentLevel);
+    GestureEngine.reset();
 }
 
 
 // ══════════════════════════════════════════════════════════════
-//  РИСОВАНИЕ
+//  КНОПКИ UI
 // ══════════════════════════════════════════════════════════════
-function executeDrawingLogic(state, x, y, gestureString) {
-    if (currentLevel !== 1) return;
-    if (!drawCtx) return;
+function createLevelSwitcher() {
+    if (document.getElementById('levelSwitcherBtn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'levelSwitcherBtn';
+    Object.assign(btn.style, {
+        position: 'fixed', top: '20px', right: '20px',
+        zIndex: '10000', padding: '12px 20px', borderRadius: '8px',
+        border: 'none', backgroundColor: '#ef4444', color: '#fff',
+        fontSize: '14px', fontWeight: '600', cursor: 'pointer',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.3)', transition: 'all 0.3s ease',
+        fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif'
+    });
+    btn.textContent = '🎨 Уровень 1: Рисование';
+    btn.addEventListener('mouseenter', () => { btn.style.transform = 'scale(1.05)'; });
+    btn.addEventListener('mouseleave', () => { btn.style.transform = 'scale(1)'; });
+    btn.addEventListener('click', () => {
+        const next = currentLevel === 1 ? 2 : currentLevel === 2 ? 3 : 1;
+        switchAirCanvasLevel(next);
+    });
+    document.body.appendChild(btn);
+}
 
-    drawCtx.globalCompositeOperation = 'source-over';
-
-    switch (gestureString) {
-        case '01000': state.brush = 'Premium Pen';    state.isDrawing = true;  state.width = 5;  state.shadow = 0; break;
-        case '01100': state.brush = 'Smart Eraser';   state.isDrawing = true;  state.width = 40; state.shadow = 0;
-                      drawCtx.globalCompositeOperation = 'destination-out'; break;
-        case '01110': state.brush = 'Thick Marker';   state.isDrawing = true;  state.width = 15; state.shadow = 0; break;
-        case '00001': state.brush = 'Calligraphy';    state.isDrawing = true;  state.width = 2;  state.shadow = 0; break;
-        case '01001': state.brush = 'Neon Glow';      state.isDrawing = true;  state.width = 6;  state.shadow = 10;
-                      drawCtx.shadowColor = state.color; break;
-        case '11100': state.brush = 'Laser Pointer';  state.isDrawing = false; break;
-        default:      state.isDrawing = false; break;
+function createUploadButtons() {
+    if (!document.getElementById('uploadPhotoBtn')) {
+        const inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = '*/*'; inp.multiple = true;
+        inp.style.display = 'none'; inp.id = 'uploadPhotoInput';
+        inp.addEventListener('change', (e) => {
+            for (const f of e.target.files) {
+                const img = new Image();
+                img.src = URL.createObjectURL(f);
+                img.onload = () => uploadedAssets.push(img);
+            }
+            inp.value = '';
+        });
+        document.body.appendChild(inp);
+        const btn = document.createElement('button');
+        btn.id = 'uploadPhotoBtn'; btn.className = 'air-upload-btn';
+        btn.textContent = '📁 Загрузить Фото';
+        btn.addEventListener('click', () => inp.click());
+        document.body.appendChild(btn);
     }
+    if (!document.getElementById('uploadModelBtn')) {
+        const inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = '*/*';
+        inp.style.display = 'none'; inp.id = 'uploadModelInput';
+        inp.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) console.log('3D:', e.target.files[0].name);
+            inp.value = '';
+        });
+        document.body.appendChild(inp);
+        const btn = document.createElement('button');
+        btn.id = 'uploadModelBtn'; btn.className = 'air-upload-btn';
+        btn.textContent = '🧊 Загрузить 3D Модель';
+        btn.addEventListener('click', () => inp.click());
+        document.body.appendChild(btn);
+    }
+}
 
-    if (state.isDrawing && state.brush !== 'Laser Pointer') {
-        if (state.px !== 0 && state.py !== 0) {
-            drawCtx.beginPath();
-            drawCtx.moveTo(state.px, state.py);
-            drawCtx.lineTo(x, y);
-            drawCtx.strokeStyle = state.color;
-            drawCtx.lineWidth   = state.width;
-            drawCtx.lineCap     = 'round';
-            drawCtx.lineJoin    = 'round';
-            drawCtx.shadowBlur  = state.shadow;
-            if (state.shadow > 0) drawCtx.shadowColor = state.color;
-            drawCtx.stroke();
-            drawCtx.shadowBlur = 0;
-            saveHistory();
+function updateUploadButtons() {
+    const p = document.getElementById('uploadPhotoBtn');
+    const m = document.getElementById('uploadModelBtn');
+    if (p) p.style.display = currentLevel === 2 ? 'block' : 'none';
+    if (m) m.style.display = currentLevel === 3 ? 'block' : 'none';
+}
+
+function updatePaletteUIColor(col) {
+    currentColor = col;
+    updatePaletteUI(col);
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  ИНИЦИАЛИЗАЦИЯ
+// ══════════════════════════════════════════════════════════════
+function initAirCanvasElite() {
+    if (!videoElement || !uiCanvas || !drawCanvas) return;
+    function resize() {
+        uiCanvas.width   = window.innerWidth;
+        uiCanvas.height  = window.innerHeight;
+        drawCanvas.width = window.innerWidth;
+        drawCanvas.height= window.innerHeight;
+        if (threeRenderer) {
+            threeRenderer.setSize(window.innerWidth, window.innerHeight);
+            threeCamera.aspect = window.innerWidth / window.innerHeight;
+            threeCamera.updateProjectionMatrix();
         }
     }
+    window.addEventListener('resize', resize);
+    resize();
+
+    hands = new Hands({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}` });
+    hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
+    hands.onResults(onResultsElite);
+
+    updatePaletteUI(handStates[0].color);
+
+    camera = new Camera(videoElement, {
+        onFrame: async () => { if (isRunning) await hands.send({ image: videoElement }); },
+        width: 1280, height: 720
+    });
+
+    createLevelSwitcher();
+    createUploadButtons();
+    initThreeJS();
+}
+
+
+
+// ══════════════════════════════════════════════════════════════
+//  ██████  LEVEL 1: РИСОВАНИЕ  ██████
+// ══════════════════════════════════════════════════════════════
+function processLevel1(events, codes, state, lms0, w, h) {
+
+    const code = GestureEngine.canonize(codes[0]);
+
+    // Жесты рисования
+    const DRAWING_CODES = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE']);
+
+    if (DRAWING_CODES.has(code)) {
+        if (code === 'GUN') {
+            // Лазерная указка
+            drawLaserPointer(state.x, state.y);
+            state.isDrawing = false;
+        } else {
+            executeDrawingLogic(state, code);
+        }
+        state.px = state.x; state.py = state.y;
+
+    } else if (code === 'OPEN') {
+        // 🖐 Открытая ладонь > 1.5 сек → очистка
+        if (cooldown('clearCanvas', 1500)) {
+            if (drawCtx) { drawCtx.clearRect(0, 0, w, h); canvasHistory = []; redoStack = []; }
+            showSystemNotification('🗑️  Холст очищен');
+        }
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
+    } else if (code === 'SHAKA') {
+        // 🤙 Смена цвета палитры
+        if (cooldown('colorSwitch', 600)) {
+            colorIndex[0] = (colorIndex[0] + 1) % PREMIUM_COLORS.length;
+            state.color = PREMIUM_COLORS[colorIndex[0]];
+            updatePaletteUIColor(state.color);
+            showSystemNotification('🎨  ' + state.color);
+        }
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
+    } else {
+        state.isDrawing = false; state.px = 0; state.py = 0;
+    }
+
+    // ── Свайп Peace ВЛЕВО → Undo ──────────────────────────────
+    if (code === 'PEACE' && events.some(e => e.startsWith('SWIPE_LEFT'))) {
+        if (cooldown('undo', 900)) undo();
+    }
+    // ── Свайп Peace ВПРАВО → Redo ─────────────────────────────
+    if (code === 'PEACE' && events.some(e => e.startsWith('SWIPE_RIGHT'))) {
+        if (cooldown('redo', 900)) redo();
+    }
+
+    // ── Pinch → Пипетка ───────────────────────────────────────
+    if (events.includes('PINCH_H0') && cooldown('eyedrop', 1500)) {
+        if (drawCtx && drawCanvas) {
+            const px = drawCtx.getImageData(Math.round(state.x), Math.round(state.y), 1, 1).data;
+            if (px[3] > 0) {
+                const hex = '#' + [px[0],px[1],px[2]].map(v => v.toString(16).padStart(2,'0')).join('');
+                state.color = hex;
+                updatePaletteUIColor(hex);
+                showSystemNotification('💉  Цвет скопирован: ' + hex);
+            }
+        }
+    }
+
+    // ── Лассо: круговое движение Index ────────────────────────
+    if (GestureEngine.updateLasso(state, code)) {
+        showSystemNotification('🔲  Лассо-выделение');
+        GestureEngine._lassoTrail = [];
+    }
+    drawLassoTrail();
+
+    // ── INDEX_PINKY (Рок): Скрещенные пальцы → Заливка ────────
+    if (code === 'INDEX_PINKY' && cooldown('fill', 2000)) {
+        showSystemNotification('🪣  Заливка области');
+    }
+
+    // ── Двуручные жесты Level 1 ───────────────────────────────
+
+    // Два кулака → Зум холста (placeholder)
+    if (events.includes('DUAL_FIST') && cooldown('canvasZoom', 500)) {
+        // Зум холста — визуальный масштаб
+        const d = dist2D(handStates[0].x, handStates[0].y, handStates[1].x, handStates[1].y);
+        if (drawCanvas) drawCanvas.style.transform = `scale(${Math.max(0.5, Math.min(3, d / 300))})`;
+    }
+
+    // Скриншот: оба Thumb
+    if (events.includes('DUAL_THUMB') && cooldown('snapshotDual', 2000)) {
+        takeSnapshot();
+    }
 }
 
 
 // ══════════════════════════════════════════════════════════════
-//  LEVEL 3 — ГОЛОГРАММА В РУКАХ
+//  ██████  LEVEL 2: ГАЛЕРЕЯ / 3D-ЛЕНТА  ██████
 // ══════════════════════════════════════════════════════════════
-function processLevel3(w, h) {
+function processLevel2(events, codes, lms, w, h) {
+    const s0 = handStates[0];
+    const s1 = handStates[1];
+
+    // ── Вращение галереи: Index одной руки ────────────────────
+    if (events.includes('CODE0:INDEX') && s0.lastX !== 0) {
+        galleryRotation += (s0.x - s0.lastX) * 0.004;
+    }
+
+    // ── Открытая ладонь 1.5 сек → очистить галерею ───────────
+    if (events.includes('CODE0:OPEN') && cooldown('clearGallery', 1500)) {
+        uploadedAssets = []; galleryRotation = 0; galleryZoom = 1.0;
+        showSystemNotification('🗑️  Галерея очищена');
+    }
+
+    // ── Smena модели: SHAKA ────────────────────────────────────
+    if (events.includes('CODE0:SHAKA') && cooldown('modelSwitch', 1000)) {
+        switchDemoModel(currentModelIndex + 1);
+        showSystemNotification('🔄  Модель ' + (currentModelIndex + 1));
+    }
+
+    // ── Заморозка: OPEN (вертикальная) → стоп-жест ────────────
+    if (events.includes('CODE0:FIST') && events.includes('CODE1:OPEN') && cooldown('freeze', 1500)) {
+        isFrozen = !isFrozen;
+        showSystemNotification(isFrozen ? '❄️  Заморожено' : '▶️  Движение возобновлено');
+    }
+
+    // ── Zoom галереи: два кулака ───────────────────────────────
+    if (events.includes('DUAL_FIST') && s0.x !== 0 && s1.x !== 0) {
+        const d = dist2D(s0.x, s0.y, s1.x, s1.y);
+        if (zoomBaseDist === null) zoomBaseDist = d;
+        galleryZoom = Math.max(0.4, Math.min(2.5, (d / Math.max(zoomBaseDist, 1))));
+    } else {
+        zoomBaseDist = null;
+    }
+
+    // ── Свайп 3 пальцами вверх → Смена освещения ─────────────
+    if (events.includes('CODE0:THREE') && events.some(e => e.startsWith('SWIPE_UP'))
+        && cooldown('light', 1500)) {
+        showSystemNotification('💡  Смена освещения сцены');
+    }
+
+    // ── Хлопок → Assemble ─────────────────────────────────────
+    if (events.includes('CLAP') && cooldown('assemble', 1500)) {
+        showSystemNotification('🧩  Assemble Mode');
+    }
+
+    // ── Резкое разведение ладоней → Disassemble ───────────────
+    if (events.includes('DUAL:OPEN+OPEN') && GestureEngine.detectHandsApart(s0, s1, 450)
+        && cooldown('disassemble', 2000)) {
+        showSystemNotification('💥  Disassemble Mode');
+    }
+
+    // ── Свайп ладонью вниз → Удалить из фокуса ───────────────
+    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN'))
+        && cooldown('deleteModel', 1500)) {
+        if (uploadedAssets.length > 0) uploadedAssets.pop();
+        showSystemNotification('🗑️  Удалено из фокуса');
+    }
+
+    // ── Два указательных → Focus Lock ────────────────────────
+    if (events.includes('DUAL_INDEX') && cooldown('focus', 1500)) {
+        showSystemNotification('🔍  Focus Lock активирован');
+    }
+
+    // ── Бросок от груди (резкий свайп вперёд = вниз от камеры)
+    if (events.some(e => e.startsWith('SWIPE_DOWN')) && events.includes('CODE0:OPEN')
+        && cooldown('send', 3000)) {
+        showSystemNotification('✉️  Отправлено клиенту по E-mail');
+    }
+
+    // ── Скриншот: оба Thumb ───────────────────────────────────
+    if (events.includes('DUAL_THUMB') && cooldown('snapGallery', 2000)) {
+        takeSnapshot();
+    }
+
+    // ── Рендер ленты (Кулак + Peace) ─────────────────────────
+    const isRibbon = (events.includes('CODE0:FIST') && events.includes('CODE1:PEACE')) ||
+                     (events.includes('CODE0:PEACE') && events.includes('CODE1:FIST'));
+    if (isRibbon && s0.x !== 0 && s1.x !== 0) {
+        renderGalleryRibbon(s0, s1, w, h);
+    }
+}
+
+function renderGalleryRibbon(s0, s1, w, h) {
+    const pL = s0.x < s1.x ? s0 : s1;
+    const pR = s0.x < s1.x ? s1 : s0;
+    const dx  = pR.x - pL.x, dy = pR.y - pL.y;
+    const distance = Math.hypot(dx, dy);
+    const angle    = Math.atan2(dy, dx);
+
+    let scale = (distance / 400) * galleryZoom;
+    scale = Math.max(0.3, Math.min(2.5, scale));
+
+    const items = uploadedAssets.length > 0
+        ? uploadedAssets
+        : [null, null, null, null];
+    const maxDisplay = Math.min(items.length, 8);
+
+    uiCtx.save();
+    for (let i = 0; i < maxDisplay; i++) {
+        const amt = (i + 1) / (maxDisplay + 1);
+        const lx  = lerp(pL.x, pR.x, amt);
+        const ly  = lerp(pL.y, pR.y, amt);
+        uiCtx.save();
+        uiCtx.translate(lx, ly);
+        uiCtx.rotate(angle + galleryRotation);
+        uiCtx.scale(scale, scale);
+        const sX = 80, sY = 80;
+        if (items[i]) {
+            uiCtx.drawImage(items[i], -sX/2, -sY/2, sX, sY);
+            uiCtx.strokeStyle = '#00ffcc'; uiCtx.lineWidth = 2;
+            uiCtx.strokeRect(-sX/2, -sY/2, sX, sY);
+        } else {
+            uiCtx.strokeStyle = '#a855f7'; uiCtx.lineWidth = 2;
+            uiCtx.strokeRect(-sX/2, -sY/2, sX, sY);
+        }
+        uiCtx.restore();
+    }
+    uiCtx.restore();
+}
+
+
+// ══════════════════════════════════════════════════════════════
+//  ██████  LEVEL 3: 3D-ГОЛОГРАММА  ██████
+// ══════════════════════════════════════════════════════════════
+function processLevel3(events, codes, w, h) {
     if (!demoModels.length || !threeCamera) return;
+    const s0  = handStates[0];
+    const s1  = handStates[1];
+    const model = demoModels[currentModelIndex];
 
-    const s1      = handStates[0];
-    const s2      = handStates[1];
-    const model   = demoModels[currentModelIndex];  // активная модель
+    // ── Zoom: оба кулака ──────────────────────────────────────
+    if (events.includes('DUAL_FIST') && s0.x !== 0 && s1.x !== 0) {
+        const d = dist2D(s0.x, s0.y, s1.x, s1.y);
+        if (zoomBaseDist === null) zoomBaseDist = d;
+        const factor = d / Math.max(zoomBaseDist, 1);
+        const target = Math.max(0.2, Math.min(4.0, factor * 1.2));
+        const cur    = model.scale.x;
+        const ns     = cur + (target - cur) * 0.12;
+        model.scale.set(ns, ns, ns);
+        return;  // только zoom, не позиционируем
+    } else {
+        zoomBaseDist = null;
+    }
 
-    // ── Якорь: Рука 1 кулак (00000) — позиционируем модель ──
-    if (s1.action === '00000' && s1.x !== 0) {
-        const ndcX = (s1.x / w) * 2 - 1;
-        const ndcY = -(s1.y / h) * 2 + 1;
-        const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
-        vector.unproject(threeCamera);
-        const dir  = vector.sub(threeCamera.position).normalize();
+    // ── Позиция: кулак руки 0 ────────────────────────────────
+    if (events.includes('CODE0:FIST') && s0.x !== 0) {
+        const ndcX = (s0.x / w) * 2 - 1;
+        const ndcY = -(s0.y / h) * 2 + 1;
+        const vec  = new THREE.Vector3(ndcX, ndcY, 0.5);
+        vec.unproject(threeCamera);
+        const dir  = vec.sub(threeCamera.position).normalize();
         const dist = -threeCamera.position.z / dir.z;
         const pos  = threeCamera.position.clone().add(dir.multiplyScalar(dist));
-        model.position.x = pos.x;
-        model.position.y = pos.y + 0.8;
+        model.position.x = lerp(model.position.x, pos.x, 0.1);
+        model.position.y = lerp(model.position.y, pos.y + 0.8, 0.1);
+        isFrozen = false;
     }
 
-    // ── Контроллер: Рука 2 указательный (01000) — вращение ──
-    if (s2.action === '01000' && s2.lastX !== 0) {
-        const deltaX = s2.x - s2.lastX;
-        const deltaY = s2.y - s2.lastY;
-        model.rotation.y += deltaX * 0.015;
-        model.rotation.x += deltaY * 0.015;
+    // ── Вращение: Index руки 1 ────────────────────────────────
+    if (events.includes('CODE1:INDEX') && !isFrozen && s1.lastX !== 0) {
+        const dx = s1.x - s1.lastX;
+        const dy = s1.y - s1.lastY;
+        model.rotation.y += dx * 0.015;
+        model.rotation.x += dy * 0.015;
     }
 
-    // ── Масштаб: дистанция между руками ──
-    if (s1.x !== 0 && s2.x !== 0) {
-        const dx    = s1.x - s2.x;
-        const dy    = s1.y - s2.y;
-        const dist  = Math.sqrt(dx * dx + dy * dy);
-        const scale = Math.max(0.3, Math.min(3.0, dist / 220));
-        model.scale.set(scale, scale, scale);
+    // ── Заморозка: жест Stop (Open руки 0) ───────────────────
+    if (events.includes('CODE0:OPEN') && cooldown('freeze3d', 1500)) {
+        isFrozen = !isFrozen;
+        showSystemNotification(isFrozen ? '❄️  Заморожено' : '▶️  Вращение');
+    }
+
+    // ── Смена модели: SHAKA ───────────────────────────────────
+    if (events.includes('CODE0:SHAKA') && cooldown('modelSwitch3d', 1000)) {
+        switchDemoModel(currentModelIndex + 1);
+        showSystemNotification('🔄  Модель ' + (currentModelIndex + 1));
+    }
+
+    // ── Свайп 3 пальцами вверх → Свет ────────────────────────
+    if (events.includes('CODE0:THREE') && events.some(e => e.startsWith('SWIPE_UP'))
+        && cooldown('light3d', 1500)) {
+        const colors = [0x00ffcc, 0xff0055, 0xffd700, 0xffffff];
+        model.material.color.setHex(colors[Math.floor(Date.now() / 100) % colors.length]);
+        showSystemNotification('💡  Смена освещения');
+    }
+
+    // ── Хлопок → Assemble ─────────────────────────────────────
+    if (events.includes('CLAP') && cooldown('assemble3d', 1500)) {
+        showSystemNotification('🧩  Assemble Mode');
+    }
+
+    // ── Разведение Open → Disassemble ─────────────────────────
+    if (events.includes('DUAL:OPEN+OPEN') && GestureEngine.detectHandsApart(s0, s1, 450)
+        && cooldown('dis3d', 2000)) {
+        showSystemNotification('💥  Disassemble Mode');
+    }
+
+    // ── Два указательных → Focus ──────────────────────────────
+    if (events.includes('DUAL_INDEX') && cooldown('focus3d', 1500)) {
+        showSystemNotification('🔍  Focus Lock');
+    }
+
+    // ── Ладонь свайп вниз → удалить модель из сцены ──────────
+    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN'))
+        && cooldown('del3d', 1500)) {
+        model.visible = false;
+        showSystemNotification('🗑️  Модель убрана');
+    }
+
+    // ── Бросок → отправить ───────────────────────────────────
+    if (events.includes('CODE0:FIST') && events.some(e => e.startsWith('SWIPE_UP'))
+        && cooldown('send3d', 3000)) {
+        showSystemNotification('✉️  Отправлено клиенту');
+    }
+
+    // ── Скриншот ──────────────────────────────────────────────
+    if (events.includes('DUAL_THUMB') && cooldown('snap3d', 2000)) {
+        takeSnapshot();
     }
 }
 
 
 // ══════════════════════════════════════════════════════════════
-//  ОБРАБОТКА ЖЕСТОВ
+//  КУРСОР (LERP + отрисовка)
 // ══════════════════════════════════════════════════════════════
-function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
-    // Интерполируем позицию курсора
-    const targetX = w - (landmarks[8].x * w);
+function updateCursor(state, landmarks, w, h) {
+    const targetX = w - landmarks[8].x * w;
     const targetY = landmarks[8].y * h;
     if (state.x === 0 && state.y === 0) {
         state.x = targetX; state.y = targetY;
@@ -540,284 +1051,166 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
         state.x = lerp(state.x, targetX, LERP_FACTOR);
         state.y = lerp(state.y, targetY, LERP_FACTOR);
     }
-
-    // Распознаём жест
-    const states = getFingerStates(landmarks);
-    const fStr   = states.slice(1).join('');
-
-    let actionStr;
-    if (fStr === '1000')              actionStr = '01000';
-    else if (fStr === '1100')         actionStr = '01100';
-    else if (fStr === '1001')         actionStr = '10001';
-    else if (states.join('') === '11111') actionStr = '11111';
-    else if (states.join('') === '10000') actionStr = '10000';
-    else                              actionStr = '00000';
-
-    state.action = actionStr;
-
-    // ══ LEVEL 1: РИСОВАНИЕ (только первая рука) ══════════════
-    if (currentLevel === 1) {
-        if (actionStr === '11111') {
-            if (Date.now() - lastClearTime > 1000) {
-                drawCtx.clearRect(0, 0, w, h);
-                canvasHistory  = [];
-                lastClearTime  = Date.now();
-            }
-            state.isDrawing = false;
-
-        } else if (actionStr === '01100') {
-            // Жест Peace/Selfie → Undo (с кулдауном 1 сек)
-            if (Date.now() - lastUndoTime > 1000) {
-                undo();
-                lastUndoTime = Date.now();
-            }
-            state.isDrawing = false;
-
-        } else if (actionStr === '10000') {
-            // Жест "Класс" → Snapshot (кулдаун 2 сек)
-            if (Date.now() - lastSnapGestureTime > 2000) {
-                takeSnapshot();
-                lastSnapGestureTime = Date.now();
-            }
-            state.isDrawing = false;
-
-        } else if (actionStr === '10001') {
-            if (Date.now() - lastPaletteTime[handIndex] > 500) {
-                colorIndex[handIndex] = (colorIndex[handIndex] + 1) % PREMIUM_COLORS.length;
-                state.color = PREMIUM_COLORS[colorIndex[handIndex]];
-                lastPaletteTime[handIndex] = Date.now();
-                if (handIndex === 0) { currentColor = state.color; updatePaletteUI(currentColor); }
-            }
-            state.isDrawing = false;
-
-        } else if (actionStr === '00000') {
-            state.isDrawing = false;
-
-        } else {
-            state.isDrawing = true;
-            executeDrawingLogic(state, state.x, state.y, actionStr);
-        }
-    }
-
-    // ══ LEVEL 2: ГАЛЕРЕЯ ═════════════════════════════════════
-    else if (currentLevel === 2) {
-        if (actionStr === '11111') {
-            if (Date.now() - lastOpenPalmTime[handIndex] > 1000) {
-                uploadedAssets = [];
-                lastOpenPalmTime[handIndex] = Date.now();
-            }
-            state.isDrawing = false;
-        } else if (actionStr === '01000' && numHands === 1) {
-            if (state.lastX !== 0 || state.lastY !== 0) {
-                galleryRotation += (state.x - state.lastX) * 0.003;
-            }
-            state.isDrawing = false;
-        } else {
-            state.isDrawing = false;
-        }
-    }
-
-    // ══ LEVEL 3: 3D ГОЛОГРАММА ═══════════════════════════════
-    else if (currentLevel === 3) {
-        // Жест "Смена" (10001) → переключить демо-модель (кулдаун 1 сек)
-        if (actionStr === '10001') {
-            if (Date.now() - lastModelSwitchTime > 1000) {
-                switchDemoModel(currentModelIndex + 1);
-                lastModelSwitchTime = Date.now();
-            }
-        }
-        state.isDrawing = false;
-    }
-
-    // ── Курсор ────────────────────────────────────────────────
-    // Курсор виден ВСЕГДА на всех уровнях
-    let cursorColor = state.color;
-    if (actionStr === '01100') cursorColor = '#ffffff';
-
-    if (uiCtx) {
-        try {
-            uiCtx.fillStyle   = cursorColor;
-            uiCtx.globalAlpha = 0.85;
-            uiCtx.beginPath();
-            uiCtx.arc(state.x, state.y, 10, 0, 2 * Math.PI);
-            uiCtx.fill();
-            uiCtx.globalAlpha = 1.0;
-            uiCtx.shadowBlur  = 0;
-        } catch (e) {
-            console.error('Cursor render error:', e);
-        }
-    }
-
-    // Сохраняем предыдущие позиции
-    if (!state.isDrawing) { state.px = 0; state.py = 0; }
-    else { state.px = state.x; state.py = state.y; }
-    state.lastX = state.x;
-    state.lastY = state.y;
 }
 
+function drawCursor(state, code) {
+    if (!uiCtx || isInvisibleMode) return;
+    const isEraser = code === 'PEACE';
+    const isLaser  = code === 'GUN';
 
-// ══════════════════════════════════════════════════════════════
-//  LEVEL 2 — ГОЛОГРАФИЧЕСКАЯ ЛЕНТА (ДВЕ РУКИ)
-// ══════════════════════════════════════════════════════════════
-function processTwoHands(w, h) {
-    const s1 = handStates[0];
-    const s2 = handStates[1];
-
-    // ── Скриншот: обе руки показывают "Класс" (10000) ──
-    if (s1.action === '10000' && s2.action === '10000') {
-        if (Date.now() - lastSnapshotTime > 1500) {
-            takeSnapshot();
-            lastSnapshotTime = Date.now();
-        }
-        s1.isDrawing = false; s2.isDrawing = false;
+    if (isLaser) {
+        drawLaserPointer(state.x, state.y);
         return;
     }
 
-    // ── Лента: кулак + Peace ──
-    const isRibbon = (s1.action === '00000' && s2.action === '01100') ||
-                     (s1.action === '01100' && s2.action === '00000');
-
-    if (isRibbon) {
-        s1.isDrawing = false; s2.isDrawing = false;
-
-        const pLeft  = s1.x < s2.x ? s1 : s2;
-        const pRight = s1.x < s2.x ? s2 : s1;
-
-        const dx       = pRight.x - pLeft.x;
-        const dy       = pRight.y - pLeft.y;
-        const distance = Math.hypot(dx, dy);
-        const angle    = Math.atan2(dy, dx);
-
-        let dynScale = distance / 400;
-        if (dynScale < 0.6) dynScale = 0.6;
-        if (dynScale > 1.1) dynScale = 1.1;
-
-        const items      = uploadedAssets.length > 0 ? uploadedAssets : [null, null, null, null];
-        const maxDisplay = Math.min(items.length, 8);
-
-        uiCtx.save();
-        for (let i = 0; i < maxDisplay; i++) {
-            const amt = (i + 1) / (maxDisplay + 1);
-            const lx  = lerp(pLeft.x, pRight.x, amt);
-            const ly  = lerp(pLeft.y, pRight.y, amt);
-
-            uiCtx.save();
-            uiCtx.translate(lx, ly);
-            uiCtx.rotate(angle + galleryRotation);
-            uiCtx.scale(dynScale, dynScale);
-
-            const sX = 80, sY = 80;
-            if (items[i]) {
-                uiCtx.drawImage(items[i], -sX / 2, -sY / 2, sX, sY);
-                uiCtx.strokeStyle = '#00ffcc'; uiCtx.lineWidth = 2;
-                uiCtx.strokeRect(-sX / 2, -sY / 2, sX, sY);
-            } else {
-                uiCtx.strokeStyle = '#a855f7'; uiCtx.lineWidth = 2;
-                uiCtx.strokeRect(-sX / 2, -sY / 2, sX, sY);
-            }
-            uiCtx.restore();
-        }
-        uiCtx.restore();
+    uiCtx.save();
+    uiCtx.beginPath();
+    uiCtx.arc(state.x, state.y, isEraser ? 20 : 10, 0, Math.PI * 2);
+    uiCtx.fillStyle   = isEraser ? 'rgba(255,255,255,0.3)' : state.color;
+    uiCtx.globalAlpha = 0.85;
+    uiCtx.fill();
+    if (isEraser) {
+        uiCtx.strokeStyle = 'rgba(255,255,255,0.8)';
+        uiCtx.lineWidth   = 2;
+        uiCtx.stroke();
     }
+    uiCtx.globalAlpha = 1;
+    uiCtx.restore();
 }
 
 
 // ══════════════════════════════════════════════════════════════
-//  ОСНОВНОЙ ОБРАБОТЧИК MEDIAPIPE
+//  ГЛАВНЫЙ ОБРАБОТЧИК MEDIAPIPE
 // ══════════════════════════════════════════════════════════════
 function onResultsElite(results) {
     if (!uiCtx) return;
     const w = uiCanvas.width;
     const h = uiCanvas.height;
 
-    // Очищаем UI-слой каждый кадр
     uiCtx.clearRect(0, 0, w, h);
 
-    if (document.getElementById('camVideo')) {
-        document.getElementById('camVideo').style.opacity = isPresentationMode ? '0' : '1';
+    const camEl = document.getElementById('camVideo');
+    if (camEl) camEl.style.opacity = isPresentationMode ? '0' : '1';
+
+    const lms = results.multiHandLandmarks || [];
+    const n   = lms.length;
+
+    if (n === 0) {
+        // Нет рук
+        GestureEngine.reset();
+        zoomBaseDist = null;
+        for (let i = 0; i < 2; i++) {
+            handStates[i].x = handStates[i].y = 0;
+            handStates[i].px = handStates[i].py = 0;
+            handStates[i].isDrawing = false;
+        }
+        // Сбрасываем zoom холста
+        if (drawCanvas) drawCanvas.style.transform = '';
+        return;
     }
 
-    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        const numHands = results.multiHandLandmarks.length;
+    // ── Обновляем LERP позиции курсоров ──────────────────────
+    updateCursor(handStates[0], lms[0], w, h);
+    if (n >= 2) updateCursor(handStates[1], lms[1], w, h);
+    else {
+        handStates[1].x = handStates[1].y = 0;
+        handStates[1].px = handStates[1].py = 0;
+    }
 
-        // ── LEVEL 1: умный поиск активной руки ──
-        if (currentLevel === 1) {
-            // Жесты, которые считаются «активными» на Level 1
-            const ACTIVE_GESTURES = new Set(['01000', '01100', '01110', '00001', '01001', '10001', '10000', '11111']);
+    // ── Получаем коды жестов ──────────────────────────────────
+    const codes = lms.map(lm => gestureCode(lm));
+    const cans  = codes.map(c => GestureEngine.canonize(c));
 
-            // Ищем руку с активным жестом
-            let activeLandmarks = null;
-            for (let i = 0; i < numHands; i++) {
-                const lm     = results.multiHandLandmarks[i];
-                const st     = getFingerStates(lm);
-                const fStr   = st.slice(1).join('');
-                let gesture;
-                if (fStr === '1000')                 gesture = '01000';
-                else if (fStr === '1100')             gesture = '01100';
-                else if (fStr === '1001')             gesture = '10001';
-                else if (st.join('') === '11111')     gesture = '11111';
-                else if (st.join('') === '10000')     gesture = '10000';
-                else                                  gesture = '00000';
+    // Синхронизируем action для совместимости
+    handStates[0].action = codes[0];
+    if (n >= 2) handStates[1].action = codes[1];
 
-                if (ACTIVE_GESTURES.has(gesture)) {
-                    activeLandmarks = lm;
-                    break;   // берём первую найденную активную руку
-                }
-            }
-
-            // Если активной руки нет — берём первую по умолчанию
-            if (!activeLandmarks) activeLandmarks = results.multiHandLandmarks[0];
-
-            // Обнуляем вторую руку (Level 1 — одноручный режим)
-            handStates[1].action    = '00000';
-            handStates[1].isDrawing = false;
-            handStates[1].x = handStates[1].y = handStates[1].px = handStates[1].py = 0;
-
-            processGestures(handStates[0], 0, activeLandmarks, w, h, numHands);
-        }
-        // ── LEVEL 2 / 3: обе руки ──
-        else {
-            for (let i = 0; i < numHands && i < 2; i++) {
-                processGestures(handStates[i], i, results.multiHandLandmarks[i], w, h, numHands);
-            }
-            if (numHands === 2) {
-                if (currentLevel === 2) {
-                    processTwoHands(w, h);
-                } else if (currentLevel === 3) {
-                    processLevel3(w, h);
-                }
-            }
+    // ── СНИМОК ЭКРАНА (Режиссерская рамка) ────────────────────
+    if (n === 2) {
+        const a0 = handStates[0].action;
+        const a1 = handStates[1].action;
+        if (a0 === '01100' && a1 === '01100') {
+            isFramingPhoto = true;
+        } else if (isFramingPhoto && a0 === '00000' && a1 === '00000') {
+            takeSnapshot();
+            isFramingPhoto = false;
+        } else if ((a0 !== '01100' && a0 !== '00000') || (a1 !== '01100' && a1 !== '00000')) {
+            isFramingPhoto = false;
         }
     } else {
-        // Нет рук — сбрасываем состояния
-        for (let i = 0; i < 2; i++) {
-            handStates[i].px = handStates[i].py = 0;
-            handStates[i].x  = handStates[i].y  = 0;
+        isFramingPhoto = false;
+    }
+
+    if (isFramingPhoto) {
+        drawFramingOverlay(uiCtx, w, h);
+    }
+
+    // ── GestureEngine: получаем массив событий ────────────────
+    const events = GestureEngine.analyze(lms, handStates);
+
+    // ── Логика по уровням ─────────────────────────────────────
+    if (currentLevel === 1) {
+        // На Level 1 — активная одна рука (умный выбор)
+        const ACTIVE = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE','OPEN','SHAKA','FIST']);
+        let activeLm = lms[0];
+        for (let i = 0; i < n; i++) {
+            if (ACTIVE.has(GestureEngine.canonize(gestureCode(lms[i])))) { activeLm = lms[i]; break; }
+        }
+        updateCursor(handStates[0], activeLm, w, h);
+        codes[0] = gestureCode(activeLm);
+        cans[0]  = GestureEngine.canonize(codes[0]);
+        handStates[0].action = codes[0];
+
+        processLevel1(events, codes, handStates[0], activeLm, w, h);
+        drawCursor(handStates[0], cans[0]);
+
+    } else if (currentLevel === 2) {
+        processLevel2(events, cans, lms, w, h);
+        drawCursor(handStates[0], cans[0]);
+        if (n >= 2) drawCursor(handStates[1], cans[1]);
+
+    } else if (currentLevel === 3) {
+        processLevel3(events, cans, w, h);
+        drawCursor(handStates[0], cans[0]);
+        if (n >= 2) drawCursor(handStates[1], cans[1]);
+    }
+
+    // ── Сохраняем lastX/Y ─────────────────────────────────────
+    for (let i = 0; i < 2; i++) {
+        handStates[i].lastX = handStates[i].x;
+        handStates[i].lastY = handStates[i].y;
+        if (!handStates[i].isDrawing) {
+            handStates[i].px = 0;
+            handStates[i].py = 0;
+        } else {
+            handStates[i].px = handStates[i].x;
+            handStates[i].py = handStates[i].y;
         }
     }
 }
 
 
 // ══════════════════════════════════════════════════════════════
-//  ПУБЛИЧНЫЕ API (start / stop)
+//  ПУБЛИЧНЫЕ API
 // ══════════════════════════════════════════════════════════════
 window.startAirCanvasElite = function () {
     if (!camera) initAirCanvasElite();
     if (!isRunning && camera) {
         camera.start();
         isRunning = true;
-        if (document.getElementById('authBtn'))    document.getElementById('authBtn').style.display    = 'none';
-        if (document.getElementById('stopCamBtn')) document.getElementById('stopCamBtn').style.display = 'block';
+        const authBtn = document.getElementById('authBtn');
+        const stopBtn = document.getElementById('stopCamBtn');
+        if (authBtn) authBtn.style.display = 'none';
+        if (stopBtn) { stopBtn.style.display = 'block'; stopBtn.style.pointerEvents = 'auto'; }
         const lock = document.getElementById('premiumLock');
         if (lock) {
             lock.style.background     = 'transparent';
             lock.style.backdropFilter = 'none';
             lock.style.pointerEvents  = 'none';
-            ['h3', 'p', '.lock-icon'].forEach(sel => {
+            ['h3','p','.lock-icon'].forEach(sel => {
                 const el = lock.querySelector(sel); if (el) el.style.display = 'none';
             });
         }
-        if (document.getElementById('stopCamBtn')) document.getElementById('stopCamBtn').style.pointerEvents = 'auto';
     }
 };
 
@@ -828,29 +1221,32 @@ window.stopAirCanvasElite = function () {
         isRunning = false;
         if (uiCtx)   uiCtx.clearRect(0, 0, uiCanvas.width, uiCanvas.height);
         if (drawCtx) drawCtx.clearRect(0, 0, drawCanvas.width, drawCanvas.height);
-        if (document.getElementById('authBtn'))    document.getElementById('authBtn').style.display    = 'block';
-        if (document.getElementById('stopCamBtn')) document.getElementById('stopCamBtn').style.display = 'none';
+        if (drawCanvas) drawCanvas.style.transform = '';
+        const authBtn = document.getElementById('authBtn');
+        const stopBtn = document.getElementById('stopCamBtn');
+        if (authBtn) authBtn.style.display = 'block';
+        if (stopBtn) stopBtn.style.display = 'none';
         const lock = document.getElementById('premiumLock');
         if (lock) {
             lock.style.background     = 'rgba(0,0,0,.85)';
             lock.style.backdropFilter = 'blur(8px)';
             lock.style.pointerEvents  = 'auto';
-            ['h3', 'p', '.lock-icon'].forEach(sel => {
+            ['h3','p','.lock-icon'].forEach(sel => {
                 const el = lock.querySelector(sel); if (el) el.style.display = 'block';
             });
         }
     }
 };
 
-window.addEventListener('message', (event) => {
-    if (event.data === 'startCamera') window.startAirCanvasElite();
-    else if (event.data === 'stopCamera') window.stopAirCanvasElite();
+window.addEventListener('message', (e) => {
+    if (e.data === 'startCamera') window.startAirCanvasElite();
+    else if (e.data === 'stopCamera') window.stopAirCanvasElite();
 });
 
-// ── Старый fileInput (обратная совместимость) ────────────────
-const fileInput = document.getElementById('fileInput');
-if (fileInput) {
-    fileInput.addEventListener('change', (e) => {
+// ── Обратная совместимость: fileInput ────────────────────────
+const _fi = document.getElementById('fileInput');
+if (_fi) {
+    _fi.addEventListener('change', (e) => {
         for (const f of e.target.files) {
             const img = new Image();
             img.src = URL.createObjectURL(f);
