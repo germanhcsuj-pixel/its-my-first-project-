@@ -50,11 +50,15 @@ const PREMIUM_COLORS = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#ffffff', '
 let colorIndex = [0, 0];
 
 // ─── Three.js объекты ─────────────────────────────────────────
-let threeScene    = null;
-let threeCamera   = null;
-let threeRenderer = null;
-let torusKnot     = null;
-let threeAnimId   = null;
+let threeScene        = null;
+let threeCamera       = null;
+let threeRenderer     = null;
+let threeAnimId       = null;
+
+// ─── Демо-модели (массив) ─────────────────────────────────────
+let demoModels        = [];      // Three.js Mesh[]
+let currentModelIndex = 0;       // активная модель
+let lastModelSwitchTime = 0;     // кулдаун смены модели (Level 3)
 
 
 // ══════════════════════════════════════════════════════════════
@@ -159,17 +163,36 @@ function initThreeJS() {
     threeRenderer.setPixelRatio(window.devicePixelRatio);
     threeRenderer.setClearColor(0x000000, 0);
 
-    // TorusKnot — главный 3D-объект
-    const geometry = new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
-    torusKnot = new THREE.Mesh(geometry, material);
-    threeScene.add(torusKnot);
+    // ─── 4 демо-модели ──────────────────────────────────────────
+    const modelDefs = [
+        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc },  // бирюзовый неон
+        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055 },  // розовый неон
+        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6 },  // синий
+        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b }   // золотой кристалл
+    ];
 
-    // По умолчанию сцена скрыта
+    demoModels = [];
+    modelDefs.forEach((def, idx) => {
+        const mat  = new THREE.MeshBasicMaterial({ color: def.color, wireframe: true });
+        const mesh = new THREE.Mesh(def.geo, mat);
+        mesh.visible = (idx === 0);  // только первая модель видна
+        threeScene.add(mesh);
+        demoModels.push(mesh);
+    });
+
+    // По умолчанию сцена скрыта (до перехода на Level 3)
     threeScene.visible = false;
 
     // Запускаем цикл рендера
     animateThree();
+}
+
+// Вспомогательная: переключить активную демо-модель
+function switchDemoModel(index) {
+    if (!demoModels.length) return;
+    demoModels[currentModelIndex].visible = false;
+    currentModelIndex = ((index % demoModels.length) + demoModels.length) % demoModels.length;
+    demoModels[currentModelIndex].visible = true;
 }
 
 function animateThree() {
@@ -217,7 +240,7 @@ function createUploadButtons() {
     // Фото (Level 2)
     if (!document.getElementById('uploadPhotoBtn')) {
         const photoInput = document.createElement('input');
-        photoInput.type = 'file'; photoInput.accept = 'image/*'; photoInput.multiple = true;
+        photoInput.type = 'file'; photoInput.accept = '*/*'; photoInput.multiple = true;
         photoInput.style.display = 'none';
         photoInput.id = 'uploadPhotoInput';
         document.body.appendChild(photoInput);
@@ -242,7 +265,7 @@ function createUploadButtons() {
     // 3D-модель (Level 3) — пока только выбор файла
     if (!document.getElementById('uploadModelBtn')) {
         const modelInput = document.createElement('input');
-        modelInput.type = 'file'; modelInput.accept = '.glb,.gltf,.obj,.fbx';
+        modelInput.type = 'file'; modelInput.accept = '*/*';
         modelInput.style.display = 'none';
         modelInput.id = 'uploadModelInput';
         document.body.appendChild(modelInput);
@@ -392,7 +415,13 @@ function switchAirCanvasLevel(level) {
     }
 
     // Three.js — показываем только на Level 3
-    if (threeScene) threeScene.visible = (currentLevel === 3);
+    if (threeScene) {
+        threeScene.visible = (currentLevel === 3);
+        // Гарантируем: при входе на Level 3 видна только активная модель
+        if (currentLevel === 3 && demoModels.length) {
+            demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
+        }
+    }
 
     // Кнопка переключения уровней
     const btn = document.getElementById('levelSwitcherBtn');
@@ -460,44 +489,40 @@ function executeDrawingLogic(state, x, y, gestureString) {
 //  LEVEL 3 — ГОЛОГРАММА В РУКАХ
 // ══════════════════════════════════════════════════════════════
 function processLevel3(w, h) {
-    if (!torusKnot || !threeCamera) return;
+    if (!demoModels.length || !threeCamera) return;
 
-    const s1 = handStates[0];
-    const s2 = handStates[1];
+    const s1      = handStates[0];
+    const s2      = handStates[1];
+    const model   = demoModels[currentModelIndex];  // активная модель
 
-    // ── Якорь: Рука 1 кулак (00000) — позиционируем TorusKnot ──
+    // ── Якорь: Рука 1 кулак (00000) — позиционируем модель ──
     if (s1.action === '00000' && s1.x !== 0) {
-        // Перевод 2D экранных координат → NDC → 3D позицию на z=0
         const ndcX = (s1.x / w) * 2 - 1;
         const ndcY = -(s1.y / h) * 2 + 1;
-
-        // Проецируем точку на плоскость z=0 в мировом пространстве
         const vector = new THREE.Vector3(ndcX, ndcY, 0.5);
         vector.unproject(threeCamera);
         const dir  = vector.sub(threeCamera.position).normalize();
         const dist = -threeCamera.position.z / dir.z;
         const pos  = threeCamera.position.clone().add(dir.multiplyScalar(dist));
-
-        torusKnot.position.x = pos.x;
-        torusKnot.position.y = pos.y + 0.8; // немного выше руки
+        model.position.x = pos.x;
+        model.position.y = pos.y + 0.8;
     }
 
     // ── Контроллер: Рука 2 указательный (01000) — вращение ──
     if (s2.action === '01000' && s2.lastX !== 0) {
         const deltaX = s2.x - s2.lastX;
         const deltaY = s2.y - s2.lastY;
-        torusKnot.rotation.y += deltaX * 0.015;
-        torusKnot.rotation.x += deltaY * 0.015;
+        model.rotation.y += deltaX * 0.015;
+        model.rotation.x += deltaY * 0.015;
     }
 
     // ── Масштаб: дистанция между руками ──
     if (s1.x !== 0 && s2.x !== 0) {
-        const dx   = s1.x - s2.x;
-        const dy   = s1.y - s2.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        // Нормируем: 100px → 0.4, 600px → 2.5
+        const dx    = s1.x - s2.x;
+        const dy    = s1.y - s2.y;
+        const dist  = Math.sqrt(dx * dx + dy * dy);
         const scale = Math.max(0.3, Math.min(3.0, dist / 220));
-        torusKnot.scale.set(scale, scale, scale);
+        model.scale.set(scale, scale, scale);
     }
 }
 
@@ -592,8 +617,15 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
         }
     }
 
-    // ══ LEVEL 3: 3D ГОЛОГРАММА — жесты обрабатываются в processLevel3 ══
+    // ══ LEVEL 3: 3D ГОЛОГРАММА ═══════════════════════════════
     else if (currentLevel === 3) {
+        // Жест "Смена" (10001) → переключить демо-модель (кулдаун 1 сек)
+        if (actionStr === '10001') {
+            if (Date.now() - lastModelSwitchTime > 1000) {
+                switchDemoModel(currentModelIndex + 1);
+                lastModelSwitchTime = Date.now();
+            }
+        }
         state.isDrawing = false;
     }
 
