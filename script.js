@@ -798,6 +798,16 @@ window.clearChat = function() {
     selectedFiles = [];
     const preview = document.getElementById('imagePreviewContainer');
     if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
+    
+    // Fix: reset scroll position and header animation state
+    const chatWrapper = document.getElementById('chatWrapper');
+    if (chatWrapper) chatWrapper.scrollTop = 0;
+    
+    const animatedChatHeader = document.getElementById('animatedChatHeader');
+    if (animatedChatHeader) {
+        animatedChatHeader.classList.remove('sent-hidden');
+        animatedChatHeader.classList.remove('typing-active');
+    }
 };
 
 window.openFilePicker = function() {
@@ -2672,7 +2682,28 @@ function showInstallGuide() {
 
   function q(sel) { return document.querySelector(sel); }
   function qa(sel) { return Array.from(document.querySelectorAll(sel)); }
-  function set(el, text) { if (el && typeof text === 'string') el.textContent = text; }
+  function set(el, text) { 
+      if (el && typeof text === 'string') {
+          if (el.closest && (el.closest('.menu-item') || el.querySelector('.stylish-first-letter'))) {
+              const firstChar = text.charAt(0);
+              const rest = text.slice(1);
+              let grad = "linear-gradient(135deg, #ffd700, #ff8c00)";
+              const p = el.closest('.menu-item') || el.parentElement;
+              if (p) {
+                  const html = p.outerHTML;
+                  if (html.includes('whatsNewModal')) grad = "linear-gradient(135deg, #ff9f43, #feca57)";
+                  else if (html.includes('aboutModal')) grad = "linear-gradient(135deg, #00d2d3, #0984e3)";
+                  else if (html.includes('chatTrigger')) grad = "linear-gradient(135deg, #5f27cd, #a29bfe)";
+                  else if (html.includes('libraryTrigger')) grad = "linear-gradient(135deg, #ff6b6b, #ee5253)";
+                  else if (html.includes('Game')) grad = "linear-gradient(135deg, #10ac84, #1dd1a1)";
+                  else if (html.includes('NewFeature') || html.includes('feature')) grad = "linear-gradient(135deg, #ffd32a, #ffa801)";
+              }
+              el.innerHTML = `<span class="stylish-first-letter" style="--letter-grad: ${grad};">${firstChar}</span>${rest}`;
+          } else {
+              el.textContent = text; 
+          }
+      }
+  }
   function setPlaceholder(sel, text) { const el = q(sel); if (el) el.placeholder = text; }
 
   function setMenuText(t) {
@@ -3261,12 +3292,12 @@ const langDict = {
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: 'РќРµР№СЂРѕР¶РµР»С–Р»РµСЂРґС–РўР€ Р±Р°СЂР»С‹РўвЂє РјРўР‡РјРєС–РЅРґС–РіС–РЅ Р°С€С‹РўР€С‹Р·',
-    tariff1_type: "Basic",
+    tariff1_type: "Pro",
     tariff1_desc: 'РљРўР‡РЅРґРµР»С–РєС‚С– С‚Р°РїСЃС‹СЂРјР°Р»Р°СЂ РўР‡С€С–РЅ РµРўР€ Р¶Р°РўвЂєСЃС‹ С‚Р°РўР€РґР°Сѓ',
-    tariff1_btn: 'Basic С‚Р°РўР€РґР°Сѓ',
-    tariff2_type: "Pro",
+    tariff1_btn: "Pro С‚Р°РўР€РґР°Сѓ",
+    tariff2_type: "Max",
     tariff2_desc: 'РљРЈв„ўСЃС–РїРўвЂєРѕР№Р»Р°СЂ РјРµРЅ РЈв„ўР·С–СЂР»РµСѓС€С–Р»РµСЂ РўР‡С€С–РЅ',
-    tariff2_btn: 'Pro С‚Р°РўР€РґР°Сѓ',
+    tariff2_btn: "Max С‚Р°РўР€РґР°Сѓ",
     tariff3_type: "Alpha",
     tariff3_desc: 'Р•С€РўвЂєР°РЅРґР°Р№ С€РµРєС‚РµСѓСЃС–Р· РјР°РєСЃРёРјР°Р»РґС‹ РєРўР‡С€',
     tariff3_btn: 'Alpha С‚Р°РўР€РґР°Сѓ',
@@ -3283,12 +3314,12 @@ const langDict = {
     upgrade: "Premium-РўвЂњР° РЈВ©С‚Сѓ",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Р В РЎСљР В Р’ВµР В РІвЂћвЂ“Р РЋР вЂљР В РЎвЂўР В Р’В¶Р В Р’ВµР В В»Р РЋРІР‚вЂњР В В»Р В Р’ВµР РЋР вЂљР В РўвЂР РЋРІР‚вЂњР В РЎС›Р В РІвЂљВ¬ Р В Р’В±Р В Р’В°Р РЋР вЂљР В В»Р РЋРІР‚в„–Р В РЎС›Р Р†Р вЂљРЎвЂќ Р В РЎВР В РЎС›Р В РІР‚РЋР В РЎВР В РЎвЂќР РЋРІР‚вЂњР В Р вЂ¦Р В РўвЂР РЋРІР‚вЂњР В РЎвЂ“Р РЋРІР‚вЂњР В Р вЂ¦ Р В Р’В°Р РЋРІвЂљВ¬Р РЋРІР‚в„–Р В РЎС›Р В РІвЂљВ¬Р РЋРІР‚в„–Р В Р’В·",
-    tariff1_type: "Basic",
+    tariff1_type: "Pro",
     tariff1_desc: "Р В РЎв„ўР В РЎС›Р В РІР‚РЋР В Р вЂ¦Р В РўвЂР В Р’ВµР В В»Р РЋРІР‚вЂњР В РЎвЂќР РЋРІР‚С™Р РЋРІР‚вЂњ Р РЋРІР‚С™Р В Р’В°Р В РЎвЂ”Р РЋР С“Р РЋРІР‚в„–Р РЋР вЂљР В РЎВР В Р’В°Р В В»Р В Р’В°Р РЋР вЂљ Р В РЎС›Р В РІР‚РЋР РЋРІвЂљВ¬Р РЋРІР‚вЂњР В Р вЂ¦ Р В Р’ВµР В РЎС›Р В РІвЂљВ¬ Р В Р’В¶Р В Р’В°Р В РЎС›Р Р†Р вЂљРЎвЂќР РЋР С“Р РЋРІР‚в„– Р РЋРІР‚С™Р В Р’В°Р В РЎС›Р В РІвЂљВ¬Р В РўвЂР В Р’В°Р РЋРЎвЂњ",
-    tariff1_btn: "Basic С‚Р°РўР€РґР°Сѓ",
-    tariff2_type: "Pro",
+    tariff1_btn: "Pro С‚Р°РўР€РґР°Сѓ",
+    tariff2_type: "Max",
     tariff2_desc: "Р В РЎв„ўР В Р в‚¬Р Р†РІР‚С›РЎС›Р РЋР С“Р РЋРІР‚вЂњР В РЎвЂ”Р В РЎС›Р Р†Р вЂљРЎвЂќР В РЎвЂўР В РІвЂћвЂ“Р В В»Р В Р’В°Р РЋР вЂљ Р В РЎВР В Р’ВµР В Р вЂ¦ Р В Р в‚¬Р Р†РІР‚С›РЎС›Р В Р’В·Р РЋРІР‚вЂњР РЋР вЂљР В В»Р В Р’ВµР РЋРЎвЂњР РЋРІвЂљВ¬Р РЋРІР‚вЂњР В В»Р В Р’ВµР РЋР вЂљ Р В РЎС›Р В РІР‚РЋР РЋРІвЂљВ¬Р РЋРІР‚вЂњР В Р вЂ¦",
-    tariff2_btn: "Pro С‚Р°РўР€РґР°Сѓ",
+    tariff2_btn: "Max С‚Р°РўР€РґР°Сѓ",
     tariff3_type: "Alpha",
     tariff3_desc: "Р В РІР‚СћР РЋРІвЂљВ¬Р В РЎС›Р Р†Р вЂљРЎвЂќР В Р’В°Р В Р вЂ¦Р В РўвЂР В Р’В°Р В РІвЂћвЂ“ Р РЋРІвЂљВ¬Р В Р’ВµР В РЎвЂќР РЋРІР‚С™Р В Р’ВµР РЋРЎвЂњР РЋР С“Р РЋРІР‚вЂњР В Р’В· Р В РЎВР В Р’В°Р В РЎвЂќР РЋР С“Р В РЎвЂР В РЎВР В Р’В°Р В В»Р В РўвЂР РЋРІР‚в„– Р В РЎвЂќР В РЎС›Р В РІР‚РЋР РЋРІвЂљВ¬",
     tariff3_btn: "Alpha С‚Р°РўР€РґР°Сѓ",
@@ -3305,12 +3336,12 @@ const langDict = {
     upgrade: "Upgrade to premium",
     upgrade_title: "Solifon Premium",
     upgrade_subtitle: "Unleash the full potential of AI",
-    tariff1_type: "Basic",
+    tariff1_type: "Pro",
     tariff1_desc: "Best choice for daily tasks",
-    tariff1_btn: "Choose Basic",
-    tariff2_type: "Pro",
+    tariff1_btn: "Choose Pro",
+    tariff2_type: "Max",
     tariff2_desc: "For professionals and developers",
-    tariff2_btn: "Choose Pro",
+    tariff2_btn: "Choose Max",
     tariff3_type: "Alpha",
     tariff3_desc: "Maximum power without limits",
     tariff3_btn: "Choose Alpha",
@@ -3347,7 +3378,23 @@ window.changeLang = function(lang, btnElement) {
 
   const updateText = (selector, key) => {
     const el = document.querySelector(selector);
-    if (el && dict[key]) el.textContent = dict[key];
+    if (el && dict[key]) {
+        const txt = dict[key];
+        if (selector.includes('.menu-item') || selector.includes('#chatTrigger') || selector.includes('#libraryTrigger') || selector.includes('Game')) {
+            const firstChar = txt.charAt(0);
+            const rest = txt.slice(1);
+            let grad = "linear-gradient(135deg, #ffd700, #ff8c00)";
+            if (selector.includes('whatsNewModal')) grad = "linear-gradient(135deg, #ff9f43, #feca57)";
+            else if (selector.includes('aboutModal')) grad = "linear-gradient(135deg, #00d2d3, #0984e3)";
+            else if (selector.includes('chatTrigger')) grad = "linear-gradient(135deg, #5f27cd, #a29bfe)";
+            else if (selector.includes('libraryTrigger')) grad = "linear-gradient(135deg, #ff6b6b, #ee5253)";
+            else if (selector.includes('Game')) grad = "linear-gradient(135deg, #10ac84, #1dd1a1)";
+            else if (selector.includes('NewFeature') || selector.includes('feature')) grad = "linear-gradient(135deg, #ffd32a, #ffa801)";
+            el.innerHTML = `<span class="stylish-first-letter" style="--letter-grad: ${grad};">${firstChar}</span>${rest}`;
+        } else {
+            el.textContent = txt;
+        }
+    }
   };
 
   updateText("#currentModel", "select_model");
@@ -3393,42 +3440,63 @@ document.addEventListener('DOMContentLoaded', () => {
     const customValueDisplay = document.getElementById('customMonthsValue');
     
     // Default base prices per month
-    const prices = {
-        second: 60,
-        third: 90
+    const basePrices = {
+        first: 14.99,
+        second: 39.99,
+        third: 119.99
+    };
+    
+    const yearlyPrices = {
+        first: 143.9,
+        second: 359.9,
+        third: 1000.9
     };
     
     const updatePrices = (period, months = 1) => {
-        let multiplier = 1;
-        let suffix = '/РјРµСЃ';
+        let suffix = '/month';
+        let isYearly = false;
         
         if (period === 'year') {
-            multiplier = 12 * 0.8; // 20% discount
-            suffix = '/Р·Р° 1 РіРѕРґ';
+            suffix = '/year';
+            isYearly = true;
         } else if (period === 'custom') {
-            multiplier = months;
-            // Pluralization for English
-            let monthLabel = months === 1 ? 'РјРµСЃСЏС†РµРІ' : 'months';
-            suffix = `/per ${months} ${monthLabel}`;
-            customValueDisplay.textContent = `${months} ${monthLabel}`;
+            suffix = `/per ${months} months`;
+            if (customValueDisplay) customValueDisplay.textContent = `${months} months`;
         }
         
         const priceEls = {
+            first: document.querySelector('.first-tariff .tariff__number'),
             second: document.querySelector('.second-tariff .tariff__number'),
             third: document.querySelector('.third-tariff .tariff__number')
         };
         const periodEls = {
+            first: document.querySelector('.first-tariff .tariff__period'),
             second: document.querySelector('.second-tariff .tariff__period'),
             third: document.querySelector('.third-tariff .tariff__period')
         };
+        const yearlyInfoEls = {
+            first: document.querySelector('.first-tariff .tariff__yearly-info'),
+            second: document.querySelector('.second-tariff .tariff__yearly-info'),
+            third: document.querySelector('.third-tariff .tariff__yearly-info')
+        };
         
+        if (priceEls.first && periodEls.first) {
+            let p = isYearly ? yearlyPrices.first : (period === 'custom' ? basePrices.first * months : basePrices.first);
+            priceEls.first.textContent = '$' + p;
+            periodEls.first.textContent = suffix;
+            if(yearlyInfoEls.first) yearlyInfoEls.first.style.display = isYearly ? 'flex' : 'none';
+        }
         if (priceEls.second && periodEls.second) {
-            priceEls.second.textContent = '$' + Math.round(prices.second * multiplier);
+            let p = isYearly ? yearlyPrices.second : (period === 'custom' ? basePrices.second * months : basePrices.second);
+            priceEls.second.textContent = '$' + p;
             periodEls.second.textContent = suffix;
+            if(yearlyInfoEls.second) yearlyInfoEls.second.style.display = isYearly ? 'flex' : 'none';
         }
         if (priceEls.third && periodEls.third) {
-            priceEls.third.textContent = '$' + Math.round(prices.third * multiplier);
+            let p = isYearly ? yearlyPrices.third : (period === 'custom' ? basePrices.third * months : basePrices.third);
+            priceEls.third.textContent = '$' + p;
             periodEls.third.textContent = suffix;
+            if(yearlyInfoEls.third) yearlyInfoEls.third.style.display = isYearly ? 'flex' : 'none';
         }
     };
     
@@ -3442,10 +3510,11 @@ document.addEventListener('DOMContentLoaded', () => {
             currentPeriod = btn.dataset.period;
             
             if (currentPeriod === 'custom') {
-                customContainer.style.display = 'block';
-                updatePrices('custom', parseInt(customRange.value));
+                if (customContainer) customContainer.style.display = 'block';
+                let months = customRange ? parseInt(customRange.value) : 1;
+                updatePrices('custom', months);
             } else {
-                customContainer.style.display = 'none';
+                if (customContainer) customContainer.style.display = 'none';
                 updatePrices(currentPeriod);
             }
         });
