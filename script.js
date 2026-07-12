@@ -2046,6 +2046,66 @@ window.openPresentation = function() {
     }
 };
 
+window.openGameScreen = function() {
+    const navToggle = document.getElementById('nav-toggle');
+    if (navToggle) {
+        navToggle.checked = false;
+        navToggle.dispatchEvent(new Event('change'));
+    }
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.transform = '';
+    const bd = document.getElementById('__sbd__');
+    if (bd) bd.style.display = 'none';
+    
+    const gameScreen = document.getElementById('game-screen');
+    if(gameScreen) {
+        gameScreen.style.setProperty('display', 'flex', 'important');
+        gameScreen.style.setProperty('opacity', '1', 'important');
+        gameScreen.style.setProperty('pointer-events', 'auto', 'important');
+        gameScreen.style.setProperty('visibility', 'visible', 'important');
+    }
+};
+
+window.closeGameScreen = function() {
+    const gameScreen = document.getElementById('game-screen');
+    if(gameScreen) {
+        gameScreen.style.setProperty('display', 'none', 'important');
+        gameScreen.style.setProperty('opacity', '0', 'important');
+        gameScreen.style.setProperty('pointer-events', 'none', 'important');
+        gameScreen.style.setProperty('visibility', 'hidden', 'important');
+    }
+};
+
+window.openNewFeatureScreen = function() {
+    const navToggle = document.getElementById('nav-toggle');
+    if (navToggle) {
+        navToggle.checked = false;
+        navToggle.dispatchEvent(new Event('change'));
+    }
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) sidebar.style.transform = '';
+    const bd = document.getElementById('__sbd__');
+    if (bd) bd.style.display = 'none';
+    
+    const featureScreen = document.getElementById('new-feature-screen');
+    if(featureScreen) {
+        featureScreen.style.setProperty('display', 'flex', 'important');
+        featureScreen.style.setProperty('opacity', '1', 'important');
+        featureScreen.style.setProperty('pointer-events', 'auto', 'important');
+        featureScreen.style.setProperty('visibility', 'visible', 'important');
+    }
+};
+
+window.closeNewFeatureScreen = function() {
+    const featureScreen = document.getElementById('new-feature-screen');
+    if(featureScreen) {
+        featureScreen.style.setProperty('display', 'none', 'important');
+        featureScreen.style.setProperty('opacity', '0', 'important');
+        featureScreen.style.setProperty('pointer-events', 'none', 'important');
+        featureScreen.style.setProperty('visibility', 'hidden', 'important');
+    }
+};
+
 window.closePresentation = function() {
     const presScreen = document.getElementById('presentation-screen');
     if(presScreen) {
