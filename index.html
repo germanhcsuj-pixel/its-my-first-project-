@@ -103,10 +103,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
-            <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span><span class="stylish-first-letter">S</span>olifon AI Code</span>
+            <div class="menu-item" onclick="openGameScreen()">
+    <i class="ph ph-game-controller" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter">A</span>bout Game</span>
 </div>
-<div class="menu-item" onclick="openModal('newFeatureModal')">
+<div class="menu-item" onclick="openNewFeatureScreen()">
     <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter">N</span>ew feature</span>
 </div>
 
@@ -643,24 +643,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </style>
 
     <div class="chat-suggestion-buttons" style="position:relative;">
-        <button class="suggestion-btn" onclick="document.getElementById('imageInput').click()">
-            <i class="ph ph-image"></i>
-            <span>Clone UI</span>
-        </button>
-        <button class="suggestion-btn" onclick="alert('Скоро!')">
-            <i class="ph ph-link"></i>
-            <span>Import Figma</span>
-        </button>
-        <div class="suggestion-spacer"></div>
-        <button class="suggestion-btn" id="elevenLabsStatus" onclick="openModal('voiceSettingsModal')">
-            <i class="ph ph-waveform"></i>
-            <span>Create Page</span>
-        </button>
-        <div style="position:relative;">
-            <button class="suggestion-btn" id="deepBtn" onclick="window.toggleDeepMenu(event)">
-                <i class="ph ph-magnifying-glass"></i>
-                <span>Deep Search</span>
+        <div class="suggestion-group">
+            <button class="suggestion-btn" onclick="document.getElementById('imageInput').click()" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-image"></i>
+                <span>Clone UI</span>
             </button>
+            <button class="suggestion-btn" onclick="alert('!')" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-link"></i>
+                <span>Import Figma</span>
+            </button>
+        </div>
+        <div class="suggestion-spacer"></div>
+        <div class="suggestion-group">
+            <button class="suggestion-btn" id="elevenLabsStatus" onclick="openModal('voiceSettingsModal')" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-waveform"></i>
+                <span>Create Page</span>
+            </button>
+            <div style="position:relative;">
+                <button class="suggestion-btn" id="deepBtn" onclick="window.toggleDeepMenu(event)" style="background: transparent; border: none; box-shadow: none;">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <span>Deep Search</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -670,7 +674,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const sb = document.getElementById('sendBtn');
         if(ta && sb) {
             ta.addEventListener('input', function() {
-                this.style.height = '60px';
+                this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
                 if(this.value.trim().length > 0) sb.classList.add('active');
                 else sb.classList.remove('active');
@@ -3110,6 +3114,51 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
 </div>
+
+<style>
+.screen-close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 40px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+.screen-close-btn:hover {
+    color: #fff;
+    transform: rotate(90deg) scale(1.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+</style>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
+    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div style="font-size: 18px; font-weight: 600; color: #fff;">About Game</div>
+        <button onclick="closeGameScreen()" class="screen-close-btn" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color=''">&times;</button>
+    </div>
+    <div style="flex: 1; padding: 20px; color: #888;">
+        <!-- Пусто, как просили -->
+    </div>
+</div>
+
+<!-- NEW FEATURE SCREEN -->
+<div id="new-feature-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
+    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div style="font-size: 18px; font-weight: 600; color: #fff;">New feature</div>
+        <button onclick="closeNewFeatureScreen()" class="screen-close-btn" onmouseover="this.style.color='#feca57'" onmouseout="this.style.color=''">&times;</button>
+    </div>
+    <div style="flex: 1; padding: 20px; color: #888;">
+        <!-- Пусто, как просили -->
+    </div>
+</div>
+
 </body>
 
 
