@@ -41,19 +41,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link rel="stylesheet" href="style.css?v=20260706_1">
+    <link rel="stylesheet" href="style.css?v=20260712_5">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
     <!-- Ananyn Zhuregi MediaPipe Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <!-- Three.js для Level 3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script>
 
     <!-- Google API & GIS -->
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </head>
 <body class="no-select">
+    <!-- Canvas для 3D Голограммы -->
+    <canvas id="threeCanvas" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;"></canvas>
   <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P5MZ4C6S"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -80,30 +84,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <nav class="menu">
                         <div class="menu-section-title">System</div>
             <div class="menu-item" onclick="openModal('whatsNewModal')">
-    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span><span class="stylish-first-letter">W</span>hat's New</span>
+    <i class="ph ph-megaphone" style="color: #ff9f43; filter: drop-shadow(0 0 5px rgba(255,159,67,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #ff9f43, #feca57);">W</span>hat's New</span>
 </div>
 
             <div class="menu-item" onclick="openModal('dastanModal')">
-                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span><span class="stylish-first-letter">A</span>bout SOLIFON</span>
+                <i class="ph ph-info" style="color: #00d2d3; filter: drop-shadow(0 0 5px rgba(0,210,211,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #00d2d3, #0984e3);">A</span>bout SOLIFON</span>
             </div>
 
             <div class="menu-section-title">Features</div>           
           <div class="menu-item active" id="chatTrigger">
 
-<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span><span class="stylish-first-letter">C</span>hat</span>
+<i class="ph ph-chat-circle-dots" style="color: #5f27cd; filter: drop-shadow(0 0 5px rgba(95,39,205,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #5f27cd, #a29bfe);">C</span>hat</span>
 
           </div>
             
             <div class="menu-item" id="libraryTrigger">
-                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter">L</span>ibrary</span>
+                <i class="ph ph-books" style="color: #ff6b6b; filter: drop-shadow(0 0 5px rgba(255,107,107,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #ff6b6b, #ee5253);">L</span>ibrary</span>
             </div>
 
             <div class="menu-section-title">Workspaces</div>
-            <div class="menu-item" onclick="openPresentation()">
-    <i class="ph ph-code" style="color: #1dd1a1; filter: drop-shadow(0 0 5px rgba(29,209,161,0.5));"></i><span><span class="stylish-first-letter">S</span>olifon AI Code</span>
+            <div class="menu-item" onclick="openGameScreen()">
+    <i class="ph ph-game-controller" style="color: #10ac84; filter: drop-shadow(0 0 5px rgba(16,172,132,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #10ac84, #1dd1a1);">A</span>bout Game</span>
 </div>
-<div class="menu-item" onclick="openModal('newFeatureModal')">
-    <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter">N</span>ew feature</span>
+<div class="menu-item" onclick="openNewFeatureScreen()">
+    <i class="ph ph-camera" style="color: #feca57; filter: drop-shadow(0 0 5px rgba(254,202,87,0.5));"></i><span><span class="stylish-first-letter" style="--letter-grad: linear-gradient(135deg, #ffd32a, #ffa801);">N</span>ew feature</span>
 </div>
 
 
@@ -296,7 +300,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             font-family: 'Georgia', serif;
             font-size: 1.3em;
             font-weight: 700;
-            background: linear-gradient(135deg, #ffd700, #ff8c00, #ff0080);
+            background: var(--letter-grad, linear-gradient(135deg, #ffd700, #ff8c00, #ff0080));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -639,24 +643,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </style>
 
     <div class="chat-suggestion-buttons" style="position:relative;">
-        <button class="suggestion-btn" onclick="document.getElementById('imageInput').click()">
-            <i class="ph ph-image"></i>
-            <span>Clone UI</span>
-        </button>
-        <button class="suggestion-btn" onclick="alert('Скоро!')">
-            <i class="ph ph-link"></i>
-            <span>Import Figma</span>
-        </button>
-        <div class="suggestion-spacer"></div>
-        <button class="suggestion-btn" id="elevenLabsStatus" onclick="openModal('voiceSettingsModal')">
-            <i class="ph ph-waveform"></i>
-            <span>Create Page</span>
-        </button>
-        <div style="position:relative;">
-            <button class="suggestion-btn" id="deepBtn" onclick="window.toggleDeepMenu(event)">
-                <i class="ph ph-magnifying-glass"></i>
-                <span>Deep Search</span>
+        <div class="suggestion-group">
+            <button class="suggestion-btn" onclick="document.getElementById('imageInput').click()" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-image"></i>
+                <span>Clone UI</span>
             </button>
+            <button class="suggestion-btn" onclick="alert('!')" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-link"></i>
+                <span>Import Figma</span>
+            </button>
+        </div>
+        <div class="suggestion-spacer"></div>
+        <div class="suggestion-group">
+            <button class="suggestion-btn" id="elevenLabsStatus" onclick="openModal('voiceSettingsModal')" style="background: transparent; border: none; box-shadow: none;">
+                <i class="ph ph-waveform"></i>
+                <span>Create Page</span>
+            </button>
+            <div style="position:relative;">
+                <button class="suggestion-btn" id="deepBtn" onclick="window.toggleDeepMenu(event)" style="background: transparent; border: none; box-shadow: none;">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <span>Deep Search</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -666,7 +674,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const sb = document.getElementById('sendBtn');
         if(ta && sb) {
             ta.addEventListener('input', function() {
-                this.style.height = '60px';
+                this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
                 if(this.value.trim().length > 0) sb.classList.add('active');
                 else sb.classList.remove('active');
@@ -1035,8 +1043,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </button>
   </div>
 </div>
-    <script src="script.js?v=23" charset="utf-8"></script>
-    <script src="air_canvas_v5.js" charset="utf-8" defer></script>
+    <script src="script.js?v=20260712_6" charset="utf-8"></script>
+    <script src="air_canvas.js" charset="utf-8" defer></script>
   
 
 <!-- в”Ђв”Ђ UPGRADE MODAL в”Ђв”Ђ -->
@@ -1069,15 +1077,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="base-template__content">
                 <div class="tariffs">
                     <!-- First Tariff-->
-                    <div class="tariff first-tariff">
-                        <div class="tariff__gradient"></div>
+                    <div class="tariff first-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(192, 192, 192, 0.3); transition: all 0.3s ease;">
+                        <style>
+                            @keyframes pulseSilver { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 0.8; transform: scale(1.03); } }
+                        </style>
+                        <div class="tariff__gradient" style="background: linear-gradient(135deg, #757575, #b0b0b0, #616161); animation: pulseSilver 3.5s infinite alternate;"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <span class="tariff__type first__tariff-type">Solifon Pro</span>
-                                <div class="tariff__price"><span class="tariff__number">$14.99</span><span class="tariff__period">/month</span></div>
+                                <span class="tariff__type first__tariff-type">Pro</span>
+                                <div class="tariff__price">
+                                    <div class="tariff__yearly-info" style="display:none; margin-bottom: 5px; align-items: center; justify-content: flex-start; gap: 8px;">
+                                        <span class="tariff__old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em;">$179.88</span>
+                                        <span class="tariff__discount" style="background: rgba(0, 255, 0, 0.15); color: #00ff00; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold;">20% OFF</span>
+                                    </div>
+                                    <div><span class="tariff__number">$14.99</span><span class="tariff__period">/month</span></div>
+                                </div>
                                 <p class="tariff__description">Perfect for daily tasks and creative exploration.</p>
                             </div>
-                            <button class="tariff__button first__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/0531fd1d-0682-4b30-9796-2de86b760449'">Buy Pro</button>
+                            <button class="tariff__button first__tariff-button" onclick="window.location.href='https://1016222879782.gumroad.com/l/fezmui?_gl=1*wrq9k0*_ga*MTQwMTU2MTQ3MC4xNzgzNTA4MTQ4*_ga_6LJN6D94N6*czE3ODM4NjY0NzMkbzE0JGcxJHQxNzgzODY2NDc2JGo1NyRsMCRoMA..'">Choose Pro</button>
                             <div class="tariff__list first__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1124,18 +1141,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                     <!-- Second Tariff-->
-                    <div class="tariff second-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(0, 242, 255, 0.3);">
+                    <div class="tariff second-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(0, 242, 255, 0.3); transition: all 0.3s ease;">
                         <style>
                             @keyframes pulseBlue { 0% { opacity: 0.7; transform: scale(1); } 100% { opacity: 1; transform: scale(1.03); } }
                         </style>
                         <div class="tariff__gradient" style="background: linear-gradient(135deg, #0051ff, #00f2ff, #00bfff); animation: pulseBlue 3.5s infinite alternate;"></div>
                         <div class="tariff__content">
                             <div class="tariff__info">
-                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Pro</span><span class="tariff__tag">Most Popular</span></div>
-                                <div class="tariff__price"><span class="tariff__number">$39.99</span><span class="tariff__period">/month</span></div>
+                                <div class="tariff__info-top"><span class="tariff__type second__tariff-type">Max</span><span class="tariff__tag">Most Popular</span></div>
+                                <div class="tariff__price">
+                                    <div class="tariff__yearly-info" style="display:none; margin-bottom: 5px; align-items: center; justify-content: flex-start; gap: 8px;">
+                                        <span class="tariff__old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em;">$479.88</span>
+                                        <span class="tariff__discount" style="background: rgba(0, 255, 0, 0.15); color: #00ff00; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold;">25% OFF</span>
+                                    </div>
+                                    <div><span class="tariff__number">$39.99</span><span class="tariff__period">/month</span></div>
+                                </div>
                                 <p class="tariff__description">Advanced tools for serious creators</p>
                             </div>
-                            <button class="tariff__button second__tariff-button" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/66d88b1f-de18-43f2-b0c7-0a71467ba1fe'">Choose Pro</button>
+                            <button class="tariff__button second__tariff-button" onclick="window.location.href='https://1016222879782.gumroad.com/l/dylepj?_gl=1*wrq9k0*_ga*MTQwMTU2MTQ3MC4xNzgzNTA4MTQ4*_ga_6LJN6D94N6*czE3ODM4NjY0NzMkbzE0JGcxJHQxNzgzODY2NDc2JGo1NyRsMCRoMA..'">Choose Max</button>
                             <div class="tariff__list second__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -1190,7 +1213,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                     <!-- Third Tariff-->
-                    <div class="tariff third-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(210, 105, 30, 0.3);">
+                    <div class="tariff third-tariff" style="position:relative; overflow:hidden; border: 1px solid rgba(210, 105, 30, 0.3); transition: all 0.3s ease;">
                         <style>
                             @keyframes pulseGlow { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
                         </style>
@@ -1198,10 +1221,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         <div class="tariff__content">
                             <div class="tariff__info">
                                 <span class="tariff__type third__tariff-type" style="color: #d2691e; text-shadow: 0 0 10px rgba(210,105,30,0.5);">Alpha</span>
-                                <div class="tariff__price"><span class="tariff__number">$119.99</span><span class="tariff__period">/month</span></div>
+                                <div class="tariff__price">
+                                    <div class="tariff__yearly-info" style="display:none; margin-bottom: 5px; align-items: center; justify-content: flex-start; gap: 8px;">
+                                        <span class="tariff__old-price" style="text-decoration: line-through; opacity: 0.6; font-size: 0.8em;">$1439.88</span>
+                                        <span class="tariff__discount" style="background: rgba(0, 255, 0, 0.15); color: #00ff00; padding: 2px 6px; border-radius: 4px; font-size: 0.7em; font-weight: bold;">30% OFF</span>
+                                    </div>
+                                    <div><span class="tariff__number">$119.99</span><span class="tariff__period">/month</span></div>
+                                </div>
                                 <p class="tariff__description">The ultimate AI workspace for creators and businesses. Maximum power without limits.</p>
                             </div>
-                            <button class="tariff__button third__tariff-button" style="background: linear-gradient(90deg, #a0522d, #8b4513); box-shadow: 0 0 15px rgba(139, 69, 19, 0.6); border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='https://solifonai.lemonsqueezy.com/checkout/buy/a07f7b65-bd2c-4a86-b909-f3ea8a56d390'">Buy Alpha</button>
+                            <button class="tariff__button third__tariff-button" style="background: linear-gradient(90deg, #a0522d, #8b4513); box-shadow: 0 0 15px rgba(139, 69, 19, 0.6); border:none; color:white; font-weight:bold; cursor:pointer;" onclick="window.location.href='https://1016222879782.gumroad.com/l/ftjcdv?_gl=1*1urzgv*_ga*MTQwMTU2MTQ3MC4xNzgzNTA4MTQ4*_ga_6LJN6D94N6*czE3ODM4NjY0NzMkbzE0JGcxJHQxNzgzODY2NDc2JGo1NyRsMCRoMA..'">Choose Alpha</button>
                             <div class="tariff__list third__tariff-checkbox-list">
                                 <div class="tariff__item">
                                     <div class="tariff__checkbox">
@@ -3106,6 +3135,436 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
     </div>
 </div>
+
+<style>
+.screen-close-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 40px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+.screen-close-btn:hover {
+    color: #fff;
+    transform: rotate(90deg) scale(1.2);
+    background: rgba(255, 255, 255, 0.1);
+}
+</style>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
+    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div style="font-size: 18px; font-weight: 600; color: #fff;">About Game</div>
+        <button onclick="closeGameScreen()" class="screen-close-btn" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color=''">&times;</button>
+    </div>
+    <div style="flex: 1; padding: 20px; color: #888;">
+        <!-- Пусто, как просили -->
+    </div>
+</div>
+
+<!-- NEW FEATURE SCREEN -->
+<div id="new-feature-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#000; flex-direction:column; font-family:'Inter',sans-serif; overflow-y: auto; overflow-x: hidden;">
+    
+    <style>
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(50px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .new-feature-animate {
+            animation: slideUpFade 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .cool-close-btn {
+            background: transparent; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; color: #a3a3a3; position: relative; z-index: 100;
+        }
+        .cool-close-btn:hover {
+            color: #fff; background: rgba(255,255,255,0.1);
+        }
+        
+        @keyframes textShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        .magic-text {
+            background: linear-gradient(to right, #fff 20%, #a78bfa 40%, #f472b6 60%, #fff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 4s linear infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(236,72,153,0.2); border-color: rgba(236,72,153,0.3); }
+            50% { box-shadow: 0 0 30px rgba(236,72,153,0.6); border-color: rgba(236,72,153,0.8); }
+            100% { box-shadow: 0 0 15px rgba(236,72,153,0.2); border-color: rgba(236,72,153,0.3); }
+        }
+        .level-4-card {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+        <button onclick="closeNewFeatureScreen()" class="cool-close-btn">
+            <i class="ph ph-x" style="font-size: 24px;"></i>
+        </button>
+    </div>
+
+    <!-- MERIDIAN EXACT COPY -->
+    <div class="new-feature-animate" style="position: relative; width: 100%; min-height: 100vh; background: #000; color: #fff; overflow: hidden; display: flex; justify-content: center;">
+        
+        <!-- Bottom Fade overlay -->
+        <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, #000 100%); z-index: 30; pointer-events: none;"></div>
+
+        <div style="width: 100%; max-width: 1400px; padding: 140px 40px 40px 40px; position: relative; z-index: 20;">
+            
+            <!-- Hero Content -->
+            <div style="max-width: 700px; position: relative; z-index: 40;">
+                <h1 class="magic-text" style="font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 600; letter-spacing: -0.04em; line-height: 0.95; color: #fff; margin-bottom: 24px; padding-bottom: 5px;">
+                    One console for your holograms, metrics, and UI
+                </h1>
+                <p style="font-size: 1.25rem; font-weight: 400; color: #a3a3a3; max-width: 550px; line-height: 1.5; margin-bottom: 32px;">
+                    Air Canvas replaces noisy headsets with a single spatial console that only tracks you when it matters.
+                </p>
+                
+                <div style="display: flex; gap: 16px; align-items: center;">
+                    <button onclick="window.openVirtualBoard()" style="background: #fff; color: #000; border-radius: 999px; padding: 0 32px; height: 52px; font-weight: 600; font-size: 1.05rem; border: none; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 0 0 2px rgba(255,255,255,0.2);" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                        Start free trial
+                    </button>
+                    <button style="background: transparent; color: #fff; border-radius: 999px; padding: 0 32px; height: 52px; font-weight: 600; font-size: 1.05rem; border: 1.5px solid rgba(255,255,255,0.15); cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='scale(1.02)';" onmouseout="this.style.background='transparent'; this.style.transform='scale(1)';">
+                        See how it works
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 3D Tilted Dashboard Mockup (Meridian Style) -->
+            <div style="position: absolute; top: -140px; right: -400px; width: 1400px; height: 1800px; perspective: 4000px; z-index: 10; pointer-events: none;">
+                <div style="width: 100%; height: 100%; transform-origin: top left; transform: scale(0.7) rotateX(47deg) rotateY(21deg) rotateZ(330deg); background: #111; border: 1px solid #333; border-radius: 16px; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8); overflow: hidden; display: flex; flex-direction: column;">
+                    
+                    <!-- Mockup Header -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222; padding: 16px 24px; background: #0a0a0a;">
+                        <div style="display: flex; gap: 8px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #333;"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #333;"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #333;"></div>
+                        </div>
+                        <div style="font-family: monospace; font-size: 12px; color: #666;">air-canvas · workspace</div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #333; background: #1a1a1a;"></div>
+                    </div>
+                    
+                    <!-- Mockup Body -->
+                    <div style="display: flex; flex: 1;">
+                        <!-- Sidebar -->
+                        <div style="width: 240px; border-right: 1px solid #222; padding: 24px 16px; display: flex; flex-direction: column; gap: 12px; background: #0a0a0a;">
+                            <div style="height: 32px; background: #1a1a1a; border-radius: 6px; width: 100%; border-left: 2px solid #a3a3a3;"></div>
+                            <div style="height: 32px; background: transparent; border-radius: 6px; width: 90%;"></div>
+                            <div style="height: 32px; background: transparent; border-radius: 6px; width: 80%;"></div>
+                            <div style="height: 32px; background: transparent; border-radius: 6px; width: 85%;"></div>
+                        </div>
+                        <!-- Main Content -->
+                        <div style="flex: 1; padding: 32px; display: flex; flex-direction: column; gap: 24px; background: #050505;">
+                            <!-- Tabs -->
+                            <div style="display: flex; gap: 24px; border-bottom: 1px solid #222; padding-bottom: 16px;">
+                                <div style="height: 16px; width: 80px; background: #fff; border-radius: 4px;"></div>
+                                <div style="height: 16px; width: 60px; background: #333; border-radius: 4px;"></div>
+                                <div style="height: 16px; width: 90px; background: #333; border-radius: 4px;"></div>
+                            </div>
+                            <!-- Stats Row -->
+                            <div style="display: flex; gap: 16px;">
+                                <div style="flex: 1; height: 120px; background: transparent; border: 1px solid #222; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+                                    <div style="height: 12px; width: 80px; background: #444; border-radius: 4px;"></div>
+                                    <div style="height: 32px; width: 120px; background: #fff; border-radius: 4px;"></div>
+                                </div>
+                                <div style="flex: 1; height: 120px; background: transparent; border: 1px solid #222; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+                                    <div style="height: 12px; width: 80px; background: #444; border-radius: 4px;"></div>
+                                    <div style="height: 32px; width: 120px; background: #fff; border-radius: 4px;"></div>
+                                </div>
+                                <div style="flex: 1; height: 120px; background: transparent; border: 1px solid #222; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: center; gap: 12px;">
+                                    <div style="height: 12px; width: 80px; background: #444; border-radius: 4px;"></div>
+                                    <div style="height: 32px; width: 120px; background: #fff; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <!-- Graph Area -->
+                            <div style="display: flex; gap: 16px;">
+                                <div style="flex: 2; height: 400px; background: transparent; border: 1px solid #222; border-radius: 12px; padding: 24px; display: flex; align-items: flex-end; gap: 8px;">
+                                    <!-- Bar chart bars -->
+                                    <div style="flex: 1; height: 40%; background: #333; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="flex: 1; height: 60%; background: #333; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="flex: 1; height: 80%; background: #fff; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="flex: 1; height: 50%; background: #333; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="flex: 1; height: 90%; background: #333; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="flex: 1; height: 100%; background: #333; border-radius: 4px 4px 0 0;"></div>
+                                </div>
+                                <div style="flex: 1; height: 400px; background: transparent; border: 1px solid #222; border-radius: 12px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <!-- We keep the Gestures and Architecture sections below the fold so the user still has them if they scroll down -->
+        
+        <div style="position: relative; z-index: 10; padding: 0 40px 100px 40px; max-width: 1200px; margin: -100px auto 0 auto; width: 100%; display: flex; flex-direction: column; gap: 40px;">
+            
+            <!-- We keep the Gestures Guide below -->
+            <div style="margin-top: 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 50px; text-align: left; transition: all 0.4s;" onmouseover="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.08)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='rgba(255,255,255,0.05)';">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.2rem; color: #fff; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.5px;">Master the Gestures</h2>
+                <p style="color: #888; font-size: 1.1rem;">A complete guide to controlling the Solifon Air UI with your hands.</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <!-- LEVEL 1: ELITE CANVAS -->
+                <div style="background: rgba(10,10,10,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 24px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #c084fc;"></div>
+                    <div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #c084fc; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;">Level 1</div>
+                        <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">🎨 Elite Canvas</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">2D Рисование и Заметки — для работы с контрактами, схемами или брейнштормами.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">☝️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Перо (Указательный)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Классическое письмо тонкими, плавными линиями.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">✌️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Ластик-Губка (Peace)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Мягкое стирание области под пальцами.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤙</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Каллиграфия (Мизинец)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Тонкий маркер для подписи документов.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">☝️🤙</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Неоновый маркер</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Указательный + Мизинец. Выделение важных деталей светящимся маркером.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤞</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Лазерная указка</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Большой + Указательный (Пистолет). Точка для презентаций, не оставляет следов.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">✌️👈</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Быстрый Undo</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Свайп влево двумя пальцами. Отменить последнее действие.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">✌️👉</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Быстрый Redo</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Свайп вправо двумя пальцами. Вернуть отмененное действие.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤌</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Пипетка (Щепотка)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Сжатие всех пальцев. Захват цвета с любого места на экране.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤞</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Заливка</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Скрещенные указательный и средний пальцы. Мгновенная заливка контура премиальным градиентом.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">☝️🔄</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Lasso-выделение</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Указательный палец + движение по кругу. Выделение области для перемещения.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">☝️💥</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Штамп Логотипа</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Резкий тап указательным пальцем. Оставляет фирменный водяной знак или логотип.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🖐️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Очистка (Открытая ладонь)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Держать 2 секунды. Элегантное растворение всех записей на экране.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">🤌🤌</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Масштаб холста</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Щепотка двумя руками и разведение. Приблизить деталь схемы (Zoom In).</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEVEL 2: HOLO-MATRIX -->
+                <div style="background: rgba(10,10,10,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 24px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #60a5fa;"></div>
+                    <div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px;">Level 2</div>
+                        <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">🧊 Holo-Matrix</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">3D Галерея и Презентации — для демонстрации продуктов, архитектуры или графиков инвесторам.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">✊🖐️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Вызов ленты</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Левый кулак + Правая ладонь. Появление 3D-гармошки с файлами.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">☝️↔️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Holo-Scroll</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Указательный влево/вправо. Элегантная прокрутка карусели 3D-моделей.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">✊</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Захват объекта</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Сжатие кулака. Взять 3D-модель и перенести её в центр экрана.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">☝️🔄</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Свободное вращение</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Указательный палец правой руки. Крутить 3D-модель на 360 градусов.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">✊↔️✊</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Zoom-Контроль</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Разведение двух кулаков. Увеличить 3D-модель.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🛑</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Заморозка (Стоп)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Открытая ладонь вертикально. Заблокировать 3D-объект на месте.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">🤌⬇️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Рентген-режим</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Щепотка + оттягивание вниз. Сделать 3D-объект полупрозрачным (эффект стекла).</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🔃</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Смена оси вращения</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Поворот кисти на 90°. Переключение с оси Y на ось X.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">👐💥</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Disassemble</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Резкое разведение раскрытых ладоней. Эффектный взрыв-схема 3D-модели.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">👏</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Assemble (Хлопок)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Хлопок в ладоши в воздухе. Мгновенная сборка 3D-модели обратно.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🖐️⬇️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Удалить модель</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Свайп открытой ладонью вниз. Смахнуть модель в "корзину".</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">🤌🤌</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Скриншот-Презентация</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Две щепотки одновременно. Вспышка, фиксация кадра и сохранение отчёта.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 22px;">☝️☝️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Фокус на детали</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Два указательных пальца в одну точку. Камера резко приближается к ней.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🌟☝️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Смена освещения</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Свайп тремя пальцами вверх. Переключение студийного света (тёплый → холодный).</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤲➡️</div>
+                            <div><h4 style="color: #fff; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Отправка клиенту</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Бросок от груди вперёд. Анимация "отправки" модели или документа по почте/Telegram.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIP LEVEL -->
+                <div style="background: rgba(10,5,5,0.8); border: 1px solid rgba(251,191,36,0.2); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 24px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at top left, rgba(251,191,36,0.06) 0%, transparent 60%); pointer-events: none; z-index: 0;"></div>
+                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, #fbbf24, #f59e0b);"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: #fbbf24; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; background: rgba(251,191,36,0.08); padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(251,191,36,0.2);">💎 VIP Уровень</div>
+                        <h3 style="color: #fff; font-size: 1.5rem; font-weight: 700; margin-top: 8px; margin-bottom: 4px;">Управление системой и Приватность</h3>
+                        <p style="color: #666; font-size: 0.9rem; margin: 0;">Жесты для владельца: скрытность, безопасность и полный контроль интерфейса.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; position: relative; z-index: 1;">
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">👍👍</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Режим Бога</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Два больших пальца вверх. Полная разблокировка скрытых премиум-функций.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🙅</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Privacy Lock (Х-жест)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Скрещенные руки. Мгновенное затемнение экрана — полезно при посторонних.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">👌</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Unlock Screen (ОК)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Жест "ОК" правой рукой. Снятие приватной блокировки (интеграция FaceID).</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤙</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Вызов Ассистента (Shaka)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Жест "Телефонная трубка". Активация голосового ИИ Solifon Pulse.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤫</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Mute (Тссс)</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Указательный палец к губам. Мгновенное отключение микрофона и звука.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🖐️↑</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Режим Презентации</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Четыре пальца вверх. Скрывает все меню, оставляя чистый контент на чёрном фоне.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🤲</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Split Screen</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Ладонь над ладонью. Разделить экран (слева 3D модель, справа контракт/код).</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">✋👈</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Смена Темы</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Свайп тремя пальцами влево. Переключение Dark Mode ↔ Glassmorphism.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">✊✊⏱️</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Режим Невидимки</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Сжатие обоих кулаков 3 секунды. Полный эффект телекинеза — курсоры исчезают.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">📊☝️</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Вызов статистики</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Жест "Ступеньки" пальцами. Графики и аналитика поверх 3D-модели.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🙌💥</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Panic Button</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Резкий взмах обеими руками крест-накрест. Закрытие приложения + удаление кэша.</p></div>
+                        </div>
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="min-width:52px; height:52px; background: rgba(251,191,36,0.08); padding: 10px; border-radius: 14px; border: 1px solid rgba(251,191,36,0.2); display: flex; align-items: center; justify-content: center; font-size: 26px;">🙇‍♂️</div>
+                            <div><h4 style="color: #fbbf24; font-weight: 600; margin-bottom: 3px; font-size: 1rem;">Exit Workspace</h4><p style="color: #888; font-size: 0.85rem; line-height: 1.5; margin: 0;">Жест поклона. Красивое завершение сессии, сохранение в облако и выключение камеры.</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEVEL 4 (Coming Soon) -->
+                <div class="level-4-card" style="background: rgba(20,5,15,0.8); border: 1px solid rgba(236,72,153,0.3); border-radius: 20px; padding: 40px 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px; position: relative; overflow: hidden;">
+                    <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(236,72,153,0.1) 0%, transparent 70%); z-index: 0;"></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: #f472b6; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; background: rgba(236,72,153,0.1); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(236,72,153,0.2);">
+                            <span style="display: block; width: 6px; height: 6px; background: #f472b6; border-radius: 50%; box-shadow: 0 0 10px #f472b6;"></span>
+                            Level 4 — Скоро
+                        </div>
+                        <h3 style="color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; text-shadow: 0 0 20px rgba(236,72,153,0.5);">The Ultimate Interaction</h3>
+                        <p style="color: #fbcfe8; font-size: 1.1rem; line-height: 1.5; max-width: 500px; margin: 0 auto; font-weight: 500;">
+                            Coming extremely soon. Мы строим нечто, что полностью потрясёт тебя. Готовься к следующему поколению пространственных вычислений.
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- Architecture Section -->
+        <div style="margin-top: 20px; background: linear-gradient(135deg, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 50px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+            <div style="position: absolute; right: -10%; top: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(52,211,153,0.15) 0%, transparent 70%); filter: blur(50px); pointer-events: none;"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 40px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px; position: relative; z-index: 1;">
+                    <h2 style="font-size: 2rem; color: #fff; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px;">Powered by Silicon Valley Tech</h2>
+                    <p style="color: #888; line-height: 1.7; font-size: 1.1rem; margin-bottom: 24px; max-width: 600px;">
+                        Air Canvas Elite utilizes state-of-the-art spatial computing infrastructure typically reserved for $3,500 VR headsets. 
+                        By combining highly-optimized machine learning models with a custom 3D rendering pipeline, we deliver perfect hand tracking directly in your browser. No hardware required.
+                    </p>
+                    <div style="display: flex; gap: 12px;">
+                        <span style="padding: 8px 16px; background: rgba(255,255,255,0.05); border-radius: 20px; color: #ccc; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); font-weight: 500;">Advanced 3D Engine</span>
+                        <span style="padding: 8px 16px; background: rgba(255,255,255,0.05); border-radius: 20px; color: #ccc; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); font-weight: 500;">Zero Latency AI</span>
+                        <span style="padding: 8px 16px; background: rgba(255,255,255,0.05); border-radius: 20px; color: #ccc; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); font-weight: 500;">Spatial Tracking</span>
+                    </div>
+                </div>
+                <div style="width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 1;">
+                    <i class="ph-fill ph-cpu" style="font-size: 64px; color: #34d399; filter: drop-shadow(0 0 15px rgba(52,211,153,0.8));"></i>
+                    <!-- orbiting dot -->
+                    <div style="position: absolute; width: 100%; height: 100%; animation: slowSpin 4s linear infinite;">
+                        <div style="width: 12px; height: 12px; background: #34d399; border-radius: 50%; box-shadow: 0 0 20px #34d399; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 </body>
 
 
