@@ -598,21 +598,11 @@ function processGestures(state, handIndex, landmarks, w, h, numHands = 1) {
     }
 
     // ── Курсор ────────────────────────────────────────────────
-    // Level 1: курсор полностью скрыт (чернила из пальца!)
-    // Level 2/3: показываем курсор
-    let shouldDrawCursor = false;
-    if (currentLevel === 1) {
-        shouldDrawCursor = false;          // ← магия: невидимый курсор
-    } else if (currentLevel === 2) {
-        shouldDrawCursor = true;
-    } else if (currentLevel === 3) {
-        shouldDrawCursor = true;
-    }
-
+    // Курсор виден ВСЕГДА на всех уровнях
     let cursorColor = state.color;
     if (actionStr === '01100') cursorColor = '#ffffff';
 
-    if (shouldDrawCursor && uiCtx) {
+    if (uiCtx) {
         try {
             uiCtx.fillStyle   = cursorColor;
             uiCtx.globalAlpha = 0.85;
@@ -718,12 +708,40 @@ function onResultsElite(results) {
     if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
         const numHands = results.multiHandLandmarks.length;
 
-        // ── LEVEL 1: только первая рука ──
+        // ── LEVEL 1: умный поиск активной руки ──
         if (currentLevel === 1) {
+            // Жесты, которые считаются «активными» на Level 1
+            const ACTIVE_GESTURES = new Set(['01000', '01100', '01110', '00001', '01001', '10001', '10000', '11111']);
+
+            // Ищем руку с активным жестом
+            let activeLandmarks = null;
+            for (let i = 0; i < numHands; i++) {
+                const lm     = results.multiHandLandmarks[i];
+                const st     = getFingerStates(lm);
+                const fStr   = st.slice(1).join('');
+                let gesture;
+                if (fStr === '1000')                 gesture = '01000';
+                else if (fStr === '1100')             gesture = '01100';
+                else if (fStr === '1001')             gesture = '10001';
+                else if (st.join('') === '11111')     gesture = '11111';
+                else if (st.join('') === '10000')     gesture = '10000';
+                else                                  gesture = '00000';
+
+                if (ACTIVE_GESTURES.has(gesture)) {
+                    activeLandmarks = lm;
+                    break;   // берём первую найденную активную руку
+                }
+            }
+
+            // Если активной руки нет — берём первую по умолчанию
+            if (!activeLandmarks) activeLandmarks = results.multiHandLandmarks[0];
+
+            // Обнуляем вторую руку (Level 1 — одноручный режим)
             handStates[1].action    = '00000';
             handStates[1].isDrawing = false;
             handStates[1].x = handStates[1].y = handStates[1].px = handStates[1].py = 0;
-            processGestures(handStates[0], 0, results.multiHandLandmarks[0], w, h, numHands);
+
+            processGestures(handStates[0], 0, activeLandmarks, w, h, numHands);
         }
         // ── LEVEL 2 / 3: обе руки ──
         else {
