@@ -18,8 +18,6 @@ let camera             = null;
 let hands              = null;
 let isPresentationMode = false;
 let isFrozen           = false;   // заморозка вращения 3D
-let isGodMode          = false;   // God Mode
-let isInvisibleMode    = false;   // невидимые курсоры
 let isFramingPhoto     = false;   // Selfie Drop (обе Peace)
 
 // ─── Состояния рук ───────────────────────────────────────────
@@ -770,45 +768,6 @@ function processLevel1(events, codes, state, lms0, w, h) {
     if (code === 'PEACE' && events.some(e => e.startsWith('SWIPE_RIGHT'))) {
         if (cooldown('redo', 900)) redo();
     }
-
-    // ── Pinch → Пипетка ───────────────────────────────────────
-    if (events.includes('PINCH_H0') && cooldown('eyedrop', 1500)) {
-        if (drawCtx && drawCanvas) {
-            const px = drawCtx.getImageData(Math.round(state.x), Math.round(state.y), 1, 1).data;
-            if (px[3] > 0) {
-                const hex = '#' + [px[0],px[1],px[2]].map(v => v.toString(16).padStart(2,'0')).join('');
-                state.color = hex;
-                updatePaletteUIColor(hex);
-                showSystemNotification('💉  Цвет скопирован: ' + hex);
-            }
-        }
-    }
-
-    // ── Лассо: круговое движение Index ────────────────────────
-    if (GestureEngine.updateLasso(state, code)) {
-        showSystemNotification('🔲  Лассо-выделение');
-        GestureEngine._lassoTrail = [];
-    }
-    drawLassoTrail();
-
-    // ── INDEX_PINKY (Рок): Скрещенные пальцы → Заливка ────────
-    if (code === 'INDEX_PINKY' && cooldown('fill', 2000)) {
-        showSystemNotification('🪣  Заливка области');
-    }
-
-    // ── Двуручные жесты Level 1 ───────────────────────────────
-
-    // Два кулака → Зум холста (placeholder)
-    if (events.includes('DUAL_FIST') && cooldown('canvasZoom', 500)) {
-        // Зум холста — визуальный масштаб
-        const d = dist2D(handStates[0].x, handStates[0].y, handStates[1].x, handStates[1].y);
-        if (drawCanvas) drawCanvas.style.transform = `scale(${Math.max(0.5, Math.min(3, d / 300))})`;
-    }
-
-    // Скриншот: оба Thumb
-    if (events.includes('DUAL_THUMB') && cooldown('snapshotDual', 2000)) {
-        takeSnapshot();
-    }
 }
 
 
@@ -818,6 +777,27 @@ function processLevel1(events, codes, state, lms0, w, h) {
 function processLevel2(events, codes, lms, w, h) {
     const s0 = handStates[0];
     const s1 = handStates[1];
+    const n = lms.length;
+
+    // ── СНИМОК ЭКРАНА (Режиссерская рамка) ТОЛЬКО ТУТ ──────────
+    if (n === 2) {
+        const a0 = s0.action;
+        const a1 = s1.action;
+        if (a0 === '01100' && a1 === '01100') {
+            isFramingPhoto = true;
+        } else if (isFramingPhoto && a0 === '00000' && a1 === '00000') {
+            if (cooldown('snapshotDirector', 2000)) takeSnapshot();
+            isFramingPhoto = false;
+        } else if ((a0 !== '01100' && a0 !== '00000') || (a1 !== '01100' && a1 !== '00000')) {
+            isFramingPhoto = false;
+        }
+    } else {
+        isFramingPhoto = false;
+    }
+
+    if (isFramingPhoto) {
+        drawFramingOverlay(uiCtx, w, h);
+    }
 
     // ── Вращение галереи: Index одной руки ────────────────────
     if (events.includes('CODE0:INDEX') && s0.lastX !== 0) {
@@ -830,18 +810,6 @@ function processLevel2(events, codes, lms, w, h) {
         showSystemNotification('🗑️  Галерея очищена');
     }
 
-    // ── Smena модели: SHAKA ────────────────────────────────────
-    if (events.includes('CODE0:SHAKA') && cooldown('modelSwitch', 1000)) {
-        switchDemoModel(currentModelIndex + 1);
-        showSystemNotification('🔄  Модель ' + (currentModelIndex + 1));
-    }
-
-    // ── Заморозка: OPEN (вертикальная) → стоп-жест ────────────
-    if (events.includes('CODE0:FIST') && events.includes('CODE1:OPEN') && cooldown('freeze', 1500)) {
-        isFrozen = !isFrozen;
-        showSystemNotification(isFrozen ? '❄️  Заморожено' : '▶️  Движение возобновлено');
-    }
-
     // ── Zoom галереи: два кулака ───────────────────────────────
     if (events.includes('DUAL_FIST') && s0.x !== 0 && s1.x !== 0) {
         const d = dist2D(s0.x, s0.y, s1.x, s1.y);
@@ -849,46 +817,6 @@ function processLevel2(events, codes, lms, w, h) {
         galleryZoom = Math.max(0.4, Math.min(2.5, (d / Math.max(zoomBaseDist, 1))));
     } else {
         zoomBaseDist = null;
-    }
-
-    // ── Свайп 3 пальцами вверх → Смена освещения ─────────────
-    if (events.includes('CODE0:THREE') && events.some(e => e.startsWith('SWIPE_UP'))
-        && cooldown('light', 1500)) {
-        showSystemNotification('💡  Смена освещения сцены');
-    }
-
-    // ── Хлопок → Assemble ─────────────────────────────────────
-    if (events.includes('CLAP') && cooldown('assemble', 1500)) {
-        showSystemNotification('🧩  Assemble Mode');
-    }
-
-    // ── Резкое разведение ладоней → Disassemble ───────────────
-    if (events.includes('DUAL:OPEN+OPEN') && GestureEngine.detectHandsApart(s0, s1, 450)
-        && cooldown('disassemble', 2000)) {
-        showSystemNotification('💥  Disassemble Mode');
-    }
-
-    // ── Свайп ладонью вниз → Удалить из фокуса ───────────────
-    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN'))
-        && cooldown('deleteModel', 1500)) {
-        if (uploadedAssets.length > 0) uploadedAssets.pop();
-        showSystemNotification('🗑️  Удалено из фокуса');
-    }
-
-    // ── Два указательных → Focus Lock ────────────────────────
-    if (events.includes('DUAL_INDEX') && cooldown('focus', 1500)) {
-        showSystemNotification('🔍  Focus Lock активирован');
-    }
-
-    // ── Бросок от груди (резкий свайп вперёд = вниз от камеры)
-    if (events.some(e => e.startsWith('SWIPE_DOWN')) && events.includes('CODE0:OPEN')
-        && cooldown('send', 3000)) {
-        showSystemNotification('✉️  Отправлено клиенту по E-mail');
-    }
-
-    // ── Скриншот: оба Thumb ───────────────────────────────────
-    if (events.includes('DUAL_THUMB') && cooldown('snapGallery', 2000)) {
-        takeSnapshot();
     }
 
     // ── Рендер ленты (Кулак + Peace) ─────────────────────────
@@ -961,7 +889,7 @@ function processLevel3(events, codes, w, h) {
         zoomBaseDist = null;
     }
 
-    // ── Позиция: кулак руки 0 ────────────────────────────────
+    // ── Позиция (Якорь): FIST левой руки (руки 0) ─────────────
     if (events.includes('CODE0:FIST') && s0.x !== 0) {
         const ndcX = (s0.x / w) * 2 - 1;
         const ndcY = -(s0.y / h) * 2 + 1;
@@ -975,7 +903,7 @@ function processLevel3(events, codes, w, h) {
         isFrozen = false;
     }
 
-    // ── Вращение: Index руки 1 ────────────────────────────────
+    // ── Вращение: INDEX правой руки (руки 1) ──────────────────
     if (events.includes('CODE1:INDEX') && !isFrozen && s1.lastX !== 0) {
         const dx = s1.x - s1.lastX;
         const dy = s1.y - s1.lastY;
@@ -983,7 +911,14 @@ function processLevel3(events, codes, w, h) {
         model.rotation.x += dy * 0.015;
     }
 
-    // ── Заморозка: жест Stop (Open руки 0) ───────────────────
+    // ── Свайп вниз жестом OPEN: Скрыть модель ─────────────────
+    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN')) && cooldown('del3d', 1500)) {
+        model.visible = false;
+        showSystemNotification('🗑️  Модель убрана');
+        return;
+    }
+
+    // ── Заморозка/Разморозка: OPEN одной руки ─────────────────
     if (events.includes('CODE0:OPEN') && cooldown('freeze3d', 1500)) {
         isFrozen = !isFrozen;
         showSystemNotification(isFrozen ? '❄️  Заморожено' : '▶️  Вращение');
@@ -993,48 +928,7 @@ function processLevel3(events, codes, w, h) {
     if (events.includes('CODE0:SHAKA') && cooldown('modelSwitch3d', 1000)) {
         switchDemoModel(currentModelIndex + 1);
         showSystemNotification('🔄  Модель ' + (currentModelIndex + 1));
-    }
-
-    // ── Свайп 3 пальцами вверх → Свет ────────────────────────
-    if (events.includes('CODE0:THREE') && events.some(e => e.startsWith('SWIPE_UP'))
-        && cooldown('light3d', 1500)) {
-        const colors = [0x00ffcc, 0xff0055, 0xffd700, 0xffffff];
-        model.material.color.setHex(colors[Math.floor(Date.now() / 100) % colors.length]);
-        showSystemNotification('💡  Смена освещения');
-    }
-
-    // ── Хлопок → Assemble ─────────────────────────────────────
-    if (events.includes('CLAP') && cooldown('assemble3d', 1500)) {
-        showSystemNotification('🧩  Assemble Mode');
-    }
-
-    // ── Разведение Open → Disassemble ─────────────────────────
-    if (events.includes('DUAL:OPEN+OPEN') && GestureEngine.detectHandsApart(s0, s1, 450)
-        && cooldown('dis3d', 2000)) {
-        showSystemNotification('💥  Disassemble Mode');
-    }
-
-    // ── Два указательных → Focus ──────────────────────────────
-    if (events.includes('DUAL_INDEX') && cooldown('focus3d', 1500)) {
-        showSystemNotification('🔍  Focus Lock');
-    }
-
-    // ── Ладонь свайп вниз → удалить модель из сцены ──────────
-    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN'))
-        && cooldown('del3d', 1500)) {
-        model.visible = false;
-        showSystemNotification('🗑️  Модель убрана');
-    }
-
-    // ── Бросок → отправить ───────────────────────────────────
-    if (events.includes('CODE0:FIST') && events.some(e => e.startsWith('SWIPE_UP'))
-        && cooldown('send3d', 3000)) {
-        showSystemNotification('✉️  Отправлено клиенту');
-    }
-
-    // ── Скриншот ──────────────────────────────────────────────
-    if (events.includes('DUAL_THUMB') && cooldown('snap3d', 2000)) {
-        takeSnapshot();
+        demoModels[currentModelIndex].visible = true;
     }
 }
 
@@ -1054,7 +948,7 @@ function updateCursor(state, landmarks, w, h) {
 }
 
 function drawCursor(state, code) {
-    if (!uiCtx || isInvisibleMode) return;
+    if (!uiCtx) return;
     const isEraser = code === 'PEACE';
     const isLaser  = code === 'GUN';
 
@@ -1125,26 +1019,6 @@ function onResultsElite(results) {
     handStates[0].action = codes[0];
     if (n >= 2) handStates[1].action = codes[1];
 
-    // ── СНИМОК ЭКРАНА (Режиссерская рамка) ────────────────────
-    if (n === 2) {
-        const a0 = handStates[0].action;
-        const a1 = handStates[1].action;
-        if (a0 === '01100' && a1 === '01100') {
-            isFramingPhoto = true;
-        } else if (isFramingPhoto && a0 === '00000' && a1 === '00000') {
-            takeSnapshot();
-            isFramingPhoto = false;
-        } else if ((a0 !== '01100' && a0 !== '00000') || (a1 !== '01100' && a1 !== '00000')) {
-            isFramingPhoto = false;
-        }
-    } else {
-        isFramingPhoto = false;
-    }
-
-    if (isFramingPhoto) {
-        drawFramingOverlay(uiCtx, w, h);
-    }
-
     // ── GestureEngine: получаем массив событий ────────────────
     const events = GestureEngine.analyze(lms, handStates);
 
@@ -1200,17 +1074,18 @@ window.startAirCanvasElite = function () {
         isRunning = true;
         const authBtn = document.getElementById('authBtn');
         const stopBtn = document.getElementById('stopCamBtn');
-        if (authBtn) authBtn.style.display = 'none';
-        if (stopBtn) { stopBtn.style.display = 'block'; stopBtn.style.pointerEvents = 'auto'; }
         const lock = document.getElementById('premiumLock');
+        if (authBtn) authBtn.style.display = 'none';
         if (lock) {
-            lock.style.background     = 'transparent';
+            lock.style.background = 'transparent';
             lock.style.backdropFilter = 'none';
-            lock.style.pointerEvents  = 'none';
-            ['h3','p','.lock-icon'].forEach(sel => {
-                const el = lock.querySelector(sel); if (el) el.style.display = 'none';
+            lock.style.pointerEvents = 'none';
+            ['h3', 'p', '.lock-icon'].forEach(sel => {
+                const el = lock.querySelector(sel);
+                if (el) el.style.display = 'none';
             });
         }
+        if (stopBtn) { stopBtn.style.display = 'block'; stopBtn.style.pointerEvents = 'auto'; }
     }
 };
 
@@ -1224,17 +1099,18 @@ window.stopAirCanvasElite = function () {
         if (drawCanvas) drawCanvas.style.transform = '';
         const authBtn = document.getElementById('authBtn');
         const stopBtn = document.getElementById('stopCamBtn');
-        if (authBtn) authBtn.style.display = 'block';
-        if (stopBtn) stopBtn.style.display = 'none';
         const lock = document.getElementById('premiumLock');
+        if (authBtn) authBtn.style.display = 'block';
         if (lock) {
-            lock.style.background     = 'rgba(0,0,0,.85)';
+            lock.style.background = 'rgba(0,0,0,.85)';
             lock.style.backdropFilter = 'blur(8px)';
-            lock.style.pointerEvents  = 'auto';
-            ['h3','p','.lock-icon'].forEach(sel => {
-                const el = lock.querySelector(sel); if (el) el.style.display = 'block';
+            lock.style.pointerEvents = 'auto';
+            ['h3', 'p', '.lock-icon'].forEach(sel => {
+                const el = lock.querySelector(sel);
+                if (el) el.style.display = 'block';
             });
         }
+        if (stopBtn) stopBtn.style.display = 'none';
     }
 };
 
