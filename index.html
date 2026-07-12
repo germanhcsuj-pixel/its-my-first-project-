@@ -48,12 +48,16 @@
     <!-- Ananyn Zhuregi MediaPipe Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <!-- Three.js для Level 3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r132/three.min.js"></script>
 
     <!-- Google API & GIS -->
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </head>
 <body class="no-select">
+    <!-- Canvas для 3D Голограммы -->
+    <canvas id="threeCanvas" style="position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;"></canvas>
   <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P5MZ4C6S"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
