@@ -19,6 +19,7 @@ let hands              = null;
 let isPresentationMode = false;
 let isFrozen           = false;   // заморозка вращения 3D
 let isFramingPhoto     = false;   // Selfie Drop (обе Peace)
+let isGridVisible      = false;
 
 // ─── Состояния рук ───────────────────────────────────────────
 const handStates = [
@@ -362,6 +363,24 @@ const GestureEngine = {
         return dist2D(s1.x, s1.y, s2.x, s2.y) > threshold;
     },
 
+    detectOKSign(lm) {
+        const w = lm[0];
+        const isPinch = getDistance(lm[4], lm[8]) < this.PINCH_CLOSE_DIST;
+        const midUp = getDistance(lm[12], w) > getDistance(lm[10], w);
+        const ringUp = getDistance(lm[16], w) > getDistance(lm[14], w);
+        const pinkyUp = getDistance(lm[20], w) > getDistance(lm[18], w);
+        return isPinch && midUp && ringUp && pinkyUp ? 'OK_SIGN' : null;
+    },
+
+    detectCrossedFingers(lm) {
+        const w = lm[0];
+        const indUp = getDistance(lm[8], w) > getDistance(lm[6], w);
+        const midUp = getDistance(lm[12], w) > getDistance(lm[10], w);
+        const crossX = Math.abs(lm[8].x - lm[12].x) < 0.02;
+        const crossY = Math.abs(lm[8].y - lm[12].y) < 0.05;
+        return indUp && midUp && crossX && crossY ? 'CROSS_FIN' : null;
+    },
+
     // ── Лассо: круговое движение указательным ───────────────
     updateLasso(state, code) {
         if (code === 'INDEX') {
@@ -397,6 +416,12 @@ const GestureEngine = {
 
         // ── Одна рука ───────────────────────────────────────
         const s0 = handStatesArr[0];
+        
+        const ok0 = this.detectOKSign(handLandmarks[0]);
+        const cross0 = this.detectCrossedFingers(handLandmarks[0]);
+        if (ok0) cans[0] = ok0;
+        else if (cross0) cans[0] = cross0;
+
         const swipe0 = this.detectSwipe(s0);
         if (swipe0) events.push(swipe0 + '_H0');   // H0 = рука 0
 
@@ -756,6 +781,18 @@ function processLevel1(events, codes, state, lms0, w, h) {
         }
         state.isDrawing = false; state.px = 0; state.py = 0;
 
+    } else if (code === 'CROSS_FIN') {
+        if (cooldown('magicFill', 2000)) showSystemNotification('🪣 Магическая заливка цветом');
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
+    } else if (code === 'OK_SIGN') {
+        if (cooldown('smartFocus', 2000)) showSystemNotification('🔍 Умное выделение (Фокус)');
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
+    } else if (code === 'FOUR') {
+        if (cooldown('gridToggle', 1500)) isGridVisible = !isGridVisible;
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
     } else {
         state.isDrawing = false; state.px = 0; state.py = 0;
     }
@@ -983,6 +1020,17 @@ function onResultsElite(results) {
 
     uiCtx.clearRect(0, 0, w, h);
 
+    if (currentLevel === 1 && isGridVisible === true) {
+        uiCtx.save();
+        uiCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        uiCtx.lineWidth = 1;
+        uiCtx.beginPath();
+        for (let x = 0; x < w; x += 50) { uiCtx.moveTo(x, 0); uiCtx.lineTo(x, h); }
+        for (let y = 0; y < h; y += 50) { uiCtx.moveTo(0, y); uiCtx.lineTo(w, y); }
+        uiCtx.stroke();
+        uiCtx.restore();
+    }
+
     const camEl = document.getElementById('camVideo');
     if (camEl) camEl.style.opacity = isPresentationMode ? '0' : '1';
 
@@ -1025,7 +1073,7 @@ function onResultsElite(results) {
     // ── Логика по уровням ─────────────────────────────────────
     if (currentLevel === 1) {
         // На Level 1 — активная одна рука (умный выбор)
-        const ACTIVE = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE','OPEN','SHAKA','FIST']);
+        const ACTIVE = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE','OPEN','SHAKA','FIST', 'OK_SIGN', 'CROSS_FIN', 'FOUR']);
         let activeLm = lms[0];
         for (let i = 0; i < n; i++) {
             if (ACTIVE.has(GestureEngine.canonize(gestureCode(lms[i])))) { activeLm = lms[i]; break; }
