@@ -20,6 +20,8 @@ let isPresentationMode = false;
 let isFrozen           = false;   // заморозка вращения 3D
 let isFramingPhoto     = false;   // Selfie Drop (обе Peace)
 let isGridVisible      = false;
+let fillHoldTimer      = 0;
+let isFilling          = false;
 
 // ─── Состояния рук ───────────────────────────────────────────
 const handStates = [
@@ -250,23 +252,25 @@ function floodFill(ctx, startX, startY, fillColorHex) {
     
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fillColorHex);
     if (!result) return;
-    const r = parseInt(result[1], 16);
-    const g = parseInt(result[2], 16);
-    const b = parseInt(result[3], 16);
-    const a = 255;
+    const fillR = parseInt(result[1], 16);
+    const fillG = parseInt(result[2], 16);
+    const fillB = parseInt(result[3], 16);
 
     const imgData = ctx.getImageData(0, 0, w, h);
     const data = imgData.data;
     const startPos = (startY * w + startX) * 4;
-    const startR = data[startPos];
-    const startG = data[startPos+1];
-    const startB = data[startPos+2];
-    const startA = data[startPos+3];
+    const targetR = data[startPos];
+    const targetG = data[startPos+1];
+    const targetB = data[startPos+2];
 
-    if (r === startR && g === startG && b === startB && a === startA) return;
+    const initDiff = Math.abs(fillR - targetR) + Math.abs(fillG - targetG) + Math.abs(fillB - targetB);
+    if (initDiff <= 80) return;
+
+    const tolerance = 80;
 
     function colorMatch(pos) {
-        return data[pos] === startR && data[pos+1] === startG && data[pos+2] === startB && data[pos+3] === startA;
+        const diff = Math.abs(data[pos] - targetR) + Math.abs(data[pos+1] - targetG) + Math.abs(data[pos+2] - targetB);
+        return diff <= tolerance;
     }
 
     const pixelStack = [[startX, startY]];
@@ -286,10 +290,10 @@ function floodFill(ctx, startX, startY, fillColorHex) {
         let reachRight = false;
         
         while(y++ < h-1 && colorMatch(pixelPos)) {
-            data[pixelPos] = r;
-            data[pixelPos+1] = g;
-            data[pixelPos+2] = b;
-            data[pixelPos+3] = a;
+            data[pixelPos] = fillR;
+            data[pixelPos+1] = fillG;
+            data[pixelPos+2] = fillB;
+            data[pixelPos+3] = 255;
 
             if (x > 0) {
                 if (colorMatch(pixelPos - 4)) {
@@ -820,6 +824,11 @@ function processLevel1(events, codes, state, lms0, w, h) {
 
     state.isLoupeActive = (code === 'OK_SIGN');
 
+    if (code !== 'CROSS_FIN') {
+        fillHoldTimer = 0;
+        isFilling = false;
+    }
+
     // Жесты рисования
     const DRAWING_CODES = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE']);
 
@@ -852,10 +861,14 @@ function processLevel1(events, codes, state, lms0, w, h) {
         state.isDrawing = false; state.px = 0; state.py = 0;
 
     } else if (code === 'CROSS_FIN') {
-        if (cooldown('magicFill', 1500)) {
+        if (fillHoldTimer === 0) {
+            fillHoldTimer = Date.now();
+            isFilling = false;
+        } else if (Date.now() - fillHoldTimer > 600 && !isFilling) {
             floodFill(drawCtx, Math.floor(state.x), Math.floor(state.y), state.color);
             saveHistory();
-            showSystemNotification('🪣 Заливка');
+            showSystemNotification('🪣 Заливка применена');
+            isFilling = true;
         }
         state.isDrawing = false; state.px = 0; state.py = 0;
 
