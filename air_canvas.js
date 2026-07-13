@@ -748,7 +748,9 @@ function initAirCanvasElite() {
 // ══════════════════════════════════════════════════════════════
 function processLevel1(events, codes, state, lms0, w, h) {
 
-    const code = GestureEngine.canonize(codes[0]);
+    let code = GestureEngine.canonize(codes[0]);
+    if (GestureEngine.detectOKSign(lms0)) code = 'OK_SIGN';
+    else if (GestureEngine.detectCrossedFingers(lms0)) code = 'CROSS_FIN';
 
     // Жесты рисования
     const DRAWING_CODES = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE']);
