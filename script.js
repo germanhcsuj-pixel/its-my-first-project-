@@ -71,15 +71,15 @@ window.switchAuthTab = function(mode) {
         btnLogin.style.color = '#000';
         btnReg.style.background = 'transparent';
         btnReg.style.color = '#fff';
-        submitBtn.textContent = 'РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚';
-        title.textContent = 'Р РµРіРёСЃС‚СЂР°С†РёСЏ';
+        submitBtn.textContent = 'Sign In';
+        title.textContent = 'Welcome back';
     } else {
         btnReg.style.background = '#fff';
         btnReg.style.color = '#000';
         btnLogin.style.background = 'transparent';
         btnLogin.style.color = '#fff';
-        submitBtn.textContent = 'РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚';
-        title.textContent = 'Р РµРіРёСЃС‚СЂР°С†РёСЏ';
+        submitBtn.textContent = 'Sign Up';
+        title.textContent = 'Create an account';
     }
     document.getElementById('authError').textContent = '';
 };
@@ -5145,3 +5145,52 @@ window.addEventListener('DOMContentLoaded', function() {
         }
     }, true);
 });
+
+window.signInWithGoogle = function() {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then((result) => {
+            if (typeof closeModal === 'function') closeModal('authModal');
+        }).catch(err => {
+            const errorEl = document.getElementById('authError');
+            if (errorEl) errorEl.textContent = err.message;
+        });
+    } else if (typeof tokenClient !== 'undefined' && tokenClient) {
+        tokenClient.requestAccessToken({prompt: 'consent'});
+        if (typeof closeModal === 'function') closeModal('authModal');
+    } else {
+        const errorEl = document.getElementById('authError');
+        if (errorEl) errorEl.textContent = 'Google API is loading... Please wait a second and try again.';
+        else alert('Google API is loading... Please try again.');
+    }
+};
+
+window.signInWithProvider = function(providerName) {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        let provider;
+        if (providerName === 'github') provider = new firebase.auth.GithubAuthProvider();
+        else if (providerName === 'apple') provider = new firebase.auth.OAuthProvider('apple.com');
+        else {
+             const errorEl = document.getElementById('authError');
+             if (errorEl) errorEl.textContent = providerName.charAt(0).toUpperCase() + providerName.slice(1) + ' login is coming soon!';
+             return;
+        }
+        
+        if (provider) {
+            firebase.auth().signInWithPopup(provider).then((result) => {
+                if (typeof closeModal === 'function') closeModal('authModal');
+            }).catch(err => {
+                const errorEl = document.getElementById('authError');
+                if (errorEl) errorEl.textContent = err.message;
+            });
+        }
+    } else {
+        const errorEl = document.getElementById('authError');
+        if (errorEl) {
+            errorEl.textContent = providerName.charAt(0).toUpperCase() + providerName.slice(1) + ' Sign-In is coming soon.';
+        } else {
+            alert(providerName + ' Sign-In is coming soon.');
+        }
+    }
+};
+
