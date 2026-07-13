@@ -25,10 +25,10 @@ let isGridVisible      = false;
 const handStates = [
     { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0,
       isDrawing: false, color: '#ef4444', action: '00000',
-      brush: 'Premium Pen', width: 5, shadow: 0 },
+      brush: 'Premium Pen', width: 5, shadow: 0, isLoupeActive: false },
     { x: 0, y: 0, px: 0, py: 0, lastX: 0, lastY: 0,
       isDrawing: false, color: '#3b82f6', action: '00000',
-      brush: 'Premium Pen', width: 5, shadow: 0 }
+      brush: 'Premium Pen', width: 5, shadow: 0, isLoupeActive: false }
 ];
 
 // ─── Галерея ─────────────────────────────────────────────────
@@ -242,6 +242,72 @@ function redo() {
     }
 }
 
+function floodFill(ctx, startX, startY, fillColorHex) {
+    if (!ctx || !ctx.canvas) return;
+    const w = ctx.canvas.width;
+    const h = ctx.canvas.height;
+    if (startX < 0 || startY < 0 || startX >= w || startY >= h) return;
+    
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fillColorHex);
+    if (!result) return;
+    const r = parseInt(result[1], 16);
+    const g = parseInt(result[2], 16);
+    const b = parseInt(result[3], 16);
+    const a = 255;
+
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+    const startPos = (startY * w + startX) * 4;
+    const startR = data[startPos];
+    const startG = data[startPos+1];
+    const startB = data[startPos+2];
+    const startA = data[startPos+3];
+
+    if (r === startR && g === startG && b === startB && a === startA) return;
+
+    function colorMatch(pos) {
+        return data[pos] === startR && data[pos+1] === startG && data[pos+2] === startB && data[pos+3] === startA;
+    }
+
+    const pixelStack = [[startX, startY]];
+
+    while(pixelStack.length > 0) {
+        const newPos = pixelStack.pop();
+        let x = newPos[0];
+        let y = newPos[1];
+        let pixelPos = (y * w + x) * 4;
+        
+        while(y-- >= 0 && colorMatch(pixelPos)) {
+            pixelPos -= w * 4;
+        }
+        pixelPos += w * 4;
+        ++y;
+        let reachLeft = false;
+        let reachRight = false;
+        
+        while(y++ < h-1 && colorMatch(pixelPos)) {
+            data[pixelPos] = r;
+            data[pixelPos+1] = g;
+            data[pixelPos+2] = b;
+            data[pixelPos+3] = a;
+
+            if (x > 0) {
+                if (colorMatch(pixelPos - 4)) {
+                    if (!reachLeft) { pixelStack.push([x - 1, y]); reachLeft = true; }
+                } else if (reachLeft) { reachLeft = false; }
+            }
+
+            if (x < w - 1) {
+                if (colorMatch(pixelPos + 4)) {
+                    if (!reachRight) { pixelStack.push([x + 1, y]); reachRight = true; }
+                } else if (reachRight) { reachRight = false; }
+            }
+
+            pixelPos += w * 4;
+        }
+    }
+    ctx.putImageData(imgData, 0, 0);
+}
 
 // ══════════════════════════════════════════════════════════════
 //  РАМКА КАДРИРОВАНИЯ (Selfie Drop)
@@ -752,6 +818,8 @@ function processLevel1(events, codes, state, lms0, w, h) {
     if (GestureEngine.detectOKSign(lms0)) code = 'OK_SIGN';
     else if (GestureEngine.detectCrossedFingers(lms0)) code = 'CROSS_FIN';
 
+    state.isLoupeActive = (code === 'OK_SIGN');
+
     // Жесты рисования
     const DRAWING_CODES = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE']);
 
@@ -784,7 +852,11 @@ function processLevel1(events, codes, state, lms0, w, h) {
         state.isDrawing = false; state.px = 0; state.py = 0;
 
     } else if (code === 'CROSS_FIN') {
-        if (cooldown('magicFill', 2000)) showSystemNotification('🪣 Магическая заливка цветом');
+        if (cooldown('magicFill', 1500)) {
+            floodFill(drawCtx, Math.floor(state.x), Math.floor(state.y), state.color);
+            saveHistory();
+            showSystemNotification('🪣 Заливка');
+        }
         state.isDrawing = false; state.px = 0; state.py = 0;
 
     } else if (code === 'OK_SIGN') {
@@ -990,6 +1062,33 @@ function drawCursor(state, code) {
     if (!uiCtx) return;
     const isEraser = code === 'PEACE';
     const isLaser  = code === 'GUN';
+
+    if (state.isLoupeActive) {
+        const size = 100;
+        const scale = 2;
+        uiCtx.save();
+        uiCtx.beginPath();
+        uiCtx.arc(state.x, state.y, size / 2, 0, Math.PI * 2);
+        uiCtx.clip();
+
+        if (drawCanvas) {
+            uiCtx.drawImage(
+                drawCanvas,
+                state.x - size / (2 * scale), state.y - size / (2 * scale),
+                size / scale, size / scale,
+                state.x - size / 2, state.y - size / 2,
+                size, size
+            );
+        }
+
+        uiCtx.lineWidth = 4;
+        uiCtx.strokeStyle = state.color;
+        uiCtx.shadowBlur = 15;
+        uiCtx.shadowColor = state.color;
+        uiCtx.stroke();
+        uiCtx.restore();
+        return;
+    }
 
     if (isLaser) {
         drawLaserPointer(state.x, state.y);
