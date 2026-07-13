@@ -116,8 +116,9 @@ function cooldown(key, ms) {
             position: fixed; bottom: 20px; left: 50%;
             transform: translateX(-50%);
             display: none; flex-direction: column; align-items: center;
-            z-index: 10001;
+            z-index: 10000;
             transition: transform 0.3s ease;
+            margin: 0; padding: 0;
         }
         #modelLibraryContainer.hidden {
             transform: translate(-50%, 150%);
