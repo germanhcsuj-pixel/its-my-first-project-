@@ -2,13 +2,13 @@
     --bg: #000000; 
     --sidebar-bg: #000000;
     --blue-glow: #ffffff; 
-    --cyan-glow: #ffffff; /* Ð¡Ð²ÐµÑ‚Ð»Ð¾-ÑÐµÑ€Ñ‹Ð¹/ÑÐµÑ€ÐµÐ±Ñ€Ð¸ÑÑ‚Ñ‹Ð¹ */
+    --cyan-glow: #ffffff; /* Светло-серый/серебристый */
     --border: rgba(255, 255, 255, 0.08);
     --glass: rgba(255, 255, 255, 0.03);
     --sidebar-w: 280px;
 }
 
-/* === Ð‘ÐÐ—ÐžÐ’Ð«Ð• Ð˜Ð¡ÐŸÐ ÐÐ’Ð›Ð•ÐÐ˜Ð¯ === */
+/* === БАЗОВЫЕ ИСПРАВЛЕНИЯ === */
 * { 
     margin: 0; 
     padding: 0; 
@@ -19,11 +19,11 @@
 body { 
     background: var(--bg); 
     color: #fff; 
-    /* Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÐ¼ dvh Ð´Ð»Ñ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ Ð±ÐµÐ»Ñ‹Ñ… Ð¿Ð¾Ð»Ð¾Ñ Ð¸ Ð¿Ñ€Ñ‹Ð¶ÐºÐ¾Ð² Ð²Ñ‹ÑÐ¾Ñ‚Ñ‹ */
+    /* Используем dvh для исключения белых полос и прыжков высоты */
     height: 100dvh; 
     width: 100%;
     overflow: hidden; 
-    position: fixed; /* Ð¤Ð¸ÐºÑ Ð´Ð»Ñ iOS, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð½Ðµ Ð´ÐµÑ€Ð³Ð°Ð»ÑÑ ÑÐºÑ€Ð°Ð½ */
+    position: fixed; /* Фикс для iOS, чтобы не дергался экран */
 }
 
 .app-layout { 
@@ -33,7 +33,7 @@ body {
     position: relative; 
 }
 
-/* === Ð›ÐžÐ“ÐžÐ¢Ð˜ÐŸ === */
+/* === ЛОГОТИП === */
 .white-square-icon {
     width: 16px; height: 16px; background: #fff; border-radius: 4px;
     box-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.3);
@@ -42,21 +42,21 @@ body {
 .sidebar { 
     position: fixed; 
     top: 0; 
-    left: -280px; /* Ð˜ÑÑ…Ð¾Ð´Ð½Ð¾Ðµ Ð¿Ð¾Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð·Ð° ÑÐºÑ€Ð°Ð½Ð¾Ð¼ */
-    height: 100dvh; /* Ð”Ð¸Ð½Ð°Ð¼Ð¸Ñ‡ÐµÑÐºÐ°Ñ Ð²Ñ‹ÑÐ¾Ñ‚Ð° Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ñ… */
+    left: -280px; /* Исходное положение за экраном */
+    height: 100dvh; /* Динамическая высота для мобильных */
     width: var(--sidebar-w);
     background: var(--sidebar-bg);
     z-index: 1000;
     
-    /* === Ð“Ð›ÐÐ’ÐÐžÐ•: Ð›ÐžÐ“Ð˜ÐšÐ Ð›Ð˜Ð¤Ð¢Ð === */
-    overflow-y: auto !important; /* Ð Ð°Ð·Ñ€ÐµÑˆÐ°ÐµÐ¼ ÑÐºÑ€Ð¾Ð»Ð» Ð²Ð½ÑƒÑ‚Ñ€Ð¸ */
+    /* === ГЛАВНОЕ: ЛОГИКА ЛИФТА === */
+    overflow-y: auto !important; /* Разрешаем скролл внутри */
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     
-    /* ÐŸÐ»Ð°Ð²Ð½Ð¾ÑÑ‚ÑŒ */
+    /* Плавность */
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    -webkit-overflow-scrolling: touch; /* ÐœÑÐ³ÐºÐ¸Ð¹ ÑÐºÑ€Ð¾Ð»Ð» Ð½Ð° iPhone */
+    -webkit-overflow-scrolling: touch; /* Мягкий скролл на iPhone */
 }
 
 
@@ -86,14 +86,14 @@ body {
 }
 
 .sidebar.library-active .library-panel { transform: translateX(-100%); }
-/* 1. Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð¾Ð±Ñ‰ÐµÐµ ÑÐºÑ€Ñ‹Ñ‚Ð¸Ðµ ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð° */
+/* 1. Убираем общее скрытие контента */
 .sidebar.library-active .sidebar-content,
 .sidebar.chat-active .sidebar-content {
-    opacity: 1; /* ÐšÐ¾Ð½Ñ‚ÐµÐ¹Ð½ÐµÑ€ Ð²ÑÐµÐ³Ð´Ð° Ð²Ð¸Ð´Ð¸Ð¼ */
+    opacity: 1; /* Контейнер всегда видим */
     transform: none;
 }
 
-/* 2. Ð¡ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð²Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¾ÑÑ‚Ð¸, ÐºÑ€Ð¾Ð¼Ðµ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿Ð° */
+/* 2. Скрываем только внутренности, кроме логотипа */
 .sidebar.chat-active .new-chat-btn,
 .sidebar.chat-active .menu,
 .sidebar.chat-active .upgrade-card,
@@ -106,18 +106,18 @@ body {
     transition: 0.3s ease;
 }
 
-/* 3. Ð¤Ð¸ÐºÑÐ¸Ñ€ÑƒÐµÐ¼ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿ ÑÐ²ÐµÑ€Ñ…Ñƒ */
+/* 3. Фиксируем логотип сверху */
 .sidebar .logo {
     position: relative;
-    z-index: 1001; /* Ð’Ñ‹ÑˆÐµ Ñ‡ÐµÐ¼ Ð¿Ð°Ð½ÐµÐ»Ð¸ */
+    z-index: 1001; /* Выше чем панели */
     opacity: 1 !important;
     visibility: visible !important;
 }
 
-/* 4. ÐŸÐ°Ð½ÐµÐ»Ð¸ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ‹Ñ‚ÑŒ Ð¿Ð¾Ð´ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿Ð¾Ð¼, Ð½Ð¾ Ð½Ð°Ð´ Ð¼ÐµÐ½ÑŽ */
+/* 4. Панели должны быть под логотипом, но над меню */
 .library-panel, .chat-panel {
     z-index: 1000; 
-    /* Ð¾ÑÑ‚Ð°Ð»ÑŒÐ½Ð¾Ð¹ Ñ‚Ð²Ð¾Ð¹ ÐºÐ¾Ð´ Ð´Ð»Ñ Ð¿Ð°Ð½ÐµÐ»ÐµÐ¹... */
+    /* остальной твой код для панелей... */
 }
 
 
@@ -159,7 +159,7 @@ body {
 .upgrade-btn { width: 100%; padding: 8px; border-radius: 10px; border: none; background: rgba(255, 255, 255, 0.1); color: #fff; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.3s; }
 .upgrade-btn:hover { background: #fff; color: #000; }
 
-/* === ÐžÐ¡ÐÐžÐ’ÐÐžÐ™ ÐšÐžÐÐ¢Ð•ÐÐ¢ === */
+/* === ОСНОВНОЙ КОНТЕНТ === */
 .main-content { flex: 1; display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; min-height: 0; overflow: hidden; }
 .app-header { position: absolute; top: 0; left: 0; width: 100%; height: 80px; display: flex; align-items: center; padding: 0 20px; z-index: 10; pointer-events: none; }
 .app-header * { pointer-events: auto; }
@@ -172,7 +172,7 @@ body {
 .custom-select { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 0 15px; height: 42px; min-width: 160px; display: flex; align-items: center; cursor: pointer; }
 .select-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; font-size: 0.85rem; gap: 8px; font-weight: 500; }
 
-/* === Ð§ÐÐ¢ Ð˜ Ð—Ð’Ð•Ð—Ð”Ð === */
+/* === ЧАТ И ЗВЕЗДА === */
 .chat-wrapper { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; position: relative; min-height: 0; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding-top: 90px; padding-bottom: 220px; }
 .welcome-screen { margin: auto; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
@@ -188,11 +188,11 @@ body {
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* === ÐŸÐžÐ›Ð• Ð’Ð’ÐžÐ”Ð === */
+/* === ПОЛЕ ВВОДА === */
 .input-area { width: 100%; max-width: 850px; margin: 0 auto; padding: 20px; }
 .input-main-wrapper { position: relative; padding: 1.5px; border-radius: 26px; overflow: hidden; background: transparent; }
 
-/* Ð ÐÐœÐšÐ Ð’Ð’ÐžÐ”Ð: ÐŸÐ•Ð Ð•ÐšÐ›Ð®Ð§Ð•ÐÐ˜Ð• Ð¦Ð’Ð•Ð¢Ð */
+/* РАМКА ВВОДА: ПЕРЕКЛЮЧЕНИЕ ЦВЕТА */
 
 .deep-mode 
 
@@ -210,7 +210,7 @@ body {
 
 .input-actions-right { display: flex; align-items: center; gap: 14px !important; }
 
-/* Ð”Ð¸ÐºÑ‚Ð¾Ñ„Ð¾Ð½ */
+/* Диктофон */
 .mic-wrapper { position: relative; width: 50px !important; height: 50px !important; border-radius: 50%; overflow: hidden; padding: 1.2px; }
 
 .deep-mode 
@@ -220,7 +220,7 @@ body {
 
 .mic-btn.recording { color: #ff4b4b !important; background: rgba(255, 75, 75, 0.1) !important; box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: pulse-red 1.5s infinite; }
 
-/* === ÐšÐÐžÐŸÐšÐ ÐžÐ¢ÐŸÐ ÐÐ’ÐšÐ˜ (SEND) - Ð”Ð›Ð˜ÐÐÐÐ¯ 200px === */
+/* === КНОПКА ОТПРАВКИ (SEND) - ДЛИННАЯ 200px === */
 .send-btn-wrapper { 
     position: relative; 
     width: 200px; 
@@ -248,14 +248,14 @@ body {
 
 .send-btn-main:active { transform: scale(0.96); }
 
-/* ÐšÐÐžÐŸÐšÐ Ð’ ÐšÐ ÐÐ¡ÐÐžÐœ Ð Ð•Ð–Ð˜ÐœÐ• */
+/* КНОПКА В КРАСНОМ РЕЖИМЕ */
 .app-layout.deep-mode .send-btn-wrapper { background: #FF0000 !important; }
 .app-layout.deep-mode 
 .app-layout.deep-mode .send-btn-main { 
     background:linear-gradient(135deg,#000000,#000000) !important
 }
 
-/* === ÐÐÐ˜ÐœÐÐ¦Ð˜Ð˜ Ð—Ð’Ð•Ð—Ð”Ð« (+2px Ð¢ÐžÐ›Ð©Ð˜ÐÐ«) === */
+/* === АНИМАЦИИ ЗВЕЗДЫ (+2px ТОЛЩИНЫ) === */
 .white-big { fill: none; stroke: #fff; stroke-width: 9.5px; stroke-linejoin: round; } 
 .white-small { fill: none; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; } 
 
@@ -272,7 +272,7 @@ body {
 .color-blue { stroke: #ffffff; filter: drop-shadow(0 0 2px #ffffff); stroke-dasharray: 67 133; } 
 .color-cyan { stroke: #ffffff; filter: drop-shadow(0 0 2px #ffffff); animation-delay: -2.25s; stroke-dasharray: 45 155; }
 
-/* Ð—Ð’Ð•Ð—Ð”Ð Ð’ DEEP MODE */
+/* ЗВЕЗДА В DEEP MODE */
 .deep-mode .color-blue { stroke: #FF0000 !important; filter: drop-shadow(0 0 8px #FF0000) !important; } 
 .deep-mode .color-cyan { stroke: #000000 !important; filter: drop-shadow(0 0 2px rgba(255,255,255,0.4)) !important; }
 .deep-mode h1 { color: #FF0000 !important; }
@@ -282,7 +282,7 @@ body {
 .deep-mode #userInput { color: #FF0000 !important; }
 .deep-mode .tool-btn i, .deep-mode .mic-btn i { color: #FF0000 !important; }
 
-/* === ÐšÐÐ Ð¢ÐžÐ§ÐšÐ˜ DEEP MODE (Ð˜Ð¡ÐŸÐ ÐÐ’Ð›Ð•ÐÐÐ«Ð™ ÐšÐ ÐÐ¡ÐÐ«Ð™) === */
+/* === КАРТОЧКИ DEEP MODE (ИСПРАВЛЕННЫЙ КРАСНЫЙ) === */
 .hero-visual { display: none; position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: 10; }
 .deep-mode .hero-visual { display: block; animation: fadeInCards 1s ease; }
 
@@ -291,15 +291,15 @@ body {
     position: absolute; padding: 10px 16px; border-radius: 20px; 
     background: rgba(0, 0, 0, 0.9); display: flex; align-items: center; gap: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.8); white-space: nowrap;
-    border: 1.5px solid #ff0000 !important; /* Ð£ Ð²ÑÐµÑ… ÐºÑ€Ð°ÑÐ½Ð°Ñ Ñ€Ð°Ð¼ÐºÐ° */
-    color: #ff0000 !important; /* Ð£ Ð²ÑÐµÑ… ÐºÑ€Ð°ÑÐ½Ñ‹Ð¹ Ñ‚ÐµÐºÑÑ‚ */
+    border: 1.5px solid #ff0000 !important; /* У всех красная рамка */
+    color: #ff0000 !important; /* У всех красный текст */
 }
 
 .card-1 { top: -40px; left: -80px; animation: floatCard 3s infinite ease-in-out; }
 .card-2 { top: 60px; right: -120px; animation: floatCard 4s infinite ease-in-out; }
 .card-3 { bottom: -20px; left: 0px; animation: floatCard 3.5s infinite ease-in-out; }
 
-/* === Ð’Ð¡Ð• ÐÐÐ˜ÐœÐÐ¦Ð˜Ð˜ === */
+/* === ВСЕ АНИМАЦИИ === */
 @keyframes floatCard { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes fadeInCards { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -313,14 +313,14 @@ body {
 .g-p { animation: float-stars 4s ease-in-out infinite; }
 .g-s { animation: float-stars 3.5s ease-in-out infinite; }
 
-/* ÐœÐžÐ‘Ð˜Ð›Ð¬ÐÐÐ¯ ÐÐ”ÐÐŸÐ¢ÐÐ¦Ð˜Ð¯ */
+/* МОБИЛЬНАЯ АДАПТАЦИЯ */
 @media (max-width: 480px) {
     .send-btn-wrapper { width: 150px; height: 44px; }
 }
-/* Ð¤Ð¸Ð½Ð°Ð»ÑŒÐ½Ñ‹Ð¹ ÑˆÑ‚Ñ€Ð¸Ñ… Ð´Ð»Ñ ÑÑ‚Ð¸Ð»Ñ */
+/* Финальный штрих для стиля */
 .white-text {
     color: #ffffff !important;
-    font-weight: 800; /* ÐœÐ¾Ð¶Ð½Ð¾ ÑÐ´ÐµÐ»Ð°Ñ‚ÑŒ Ñ‡ÑƒÑ‚ÑŒ Ð¶Ð¸Ñ€Ð½ÐµÐµ Ð´Ð»Ñ Ð°ÐºÑ†ÐµÐ½Ñ‚Ð° */
+    font-weight: 800; /* Можно сделать чуть жирнее для акцента */
 }
 .app-screen {
     position: absolute;
@@ -328,10 +328,10 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #000; /* Ð“Ð»ÑƒÐ±Ð¾ÐºÐ¸Ð¹ Ñ‡ÐµÑ€Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½ */
+    background: #000; /* Глубокий черный фон */
     z-index: 10;
     padding: 20px;
-    animation: fadeIn 0.3s ease; /* ÐŸÐ»Ð°Ð²Ð½Ð¾Ðµ Ð¿Ð¾ÑÐ²Ð»ÐµÐ½Ð¸Ðµ */
+    animation: fadeIn 0.3s ease; /* Плавное появление */
 }
 
 @keyframes fadeIn {
@@ -347,7 +347,7 @@ body {
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
-/* Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ ÑÑ‚Ð¸Ð»ÑŒ Ð´Ð»Ñ Ð¿Ð°Ð½ÐµÐ»Ð¸ Ñ‡Ð°Ñ‚Ð° (ÐºÐ¾Ð¿Ð¸Ñ Ð±Ð¸Ð±Ð»Ð¸Ð¾Ñ‚ÐµÐºÐ¸) */
+/* Создаем стиль для панели чата (копия библиотеки) */
 .chat-panel {
     position: absolute;
     top: 0;
@@ -362,11 +362,11 @@ body {
     z-index: 2;
 }
 
-/* Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð²Ñ‹ÐµÐ·Ð´Ð° Ð¿Ñ€Ð¸ Ð°ÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ð¸ ÐºÐ»Ð°ÑÑÐ° */
+/* Эффект выезда при активации класса */
 .sidebar.chat-active .chat-panel { 
     transform: translateX(-100%); 
 }
-/* Ð˜Ð¡ÐŸÐ ÐÐ’Ð›Ð•ÐÐ˜Ð•: Ð¡ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð¼ÐµÐ½ÑŽ, Ð½Ð¾ ÐÐ• Ñ‚Ñ€Ð¾Ð³Ð°ÐµÐ¼ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿ */
+/* ИСПРАВЛЕНИЕ: Скрываем элементы меню, но НЕ трогаем логотип */
 .sidebar.chat-active .new-chat-btn,
 .sidebar.chat-active .menu,
 .sidebar.chat-active .upgrade-card,
@@ -379,7 +379,7 @@ body {
     transition: 0.3s ease;
 }
 
-/* Ð¤Ð¸ÐºÑ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿Ð°, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¾Ð½ Ð½Ðµ Ð¸ÑÑ‡ÐµÐ·Ð°Ð» */
+/* Фикс логотипа, чтобы он не исчезал */
 .sidebar .logo {
     position: relative;
     z-index: 1010; 
@@ -390,10 +390,10 @@ body {
     visibility: visible !important;
 }
 
-/* Ð¤Ð¸ÐºÑ Ð¿Ð°Ð½ÐµÐ»ÐµÐ¹ */
+/* Фикс панелей */
 .chat-panel, .library-panel {
     position: absolute;
-    top: 0; /* ÐžÑÑ‚Ð°Ð²Ð»ÑÐµÐ¼ Ð¼ÐµÑÑ‚Ð¾ Ð¿Ð¾Ð´ Ð»Ð¾Ð³Ð¾Ñ‚Ð¸Ð¿ */
+    top: 0; /* Оставляем место под логотип */
     left: 100%; 
     width: 100%;
     height: 100%;
@@ -408,7 +408,7 @@ body {
 .sidebar.chat-active .chat-panel { transform: translateX(-100%); }
 .sidebar.library-active .library-panel { transform: translateX(-100%); }
 
-/* ÐŸÐ»Ð°Ð²Ð½Ð¾Ðµ ÑÐºÑ€Ñ‹Ñ‚Ð¸Ðµ Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð³Ð¾ Ð¼ÐµÐ½ÑŽ */
+/* Плавное скрытие основного меню */
 .sidebar.chat-active .menu, 
 .sidebar.chat-active .new-chat-btn,
 .sidebar.library-active .menu {
@@ -417,7 +417,7 @@ body {
     transition: 0.2s;
 }
 
- /* Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÑÐµÐ¼ Ð¿Ñ€Ð¾Ð±ÐµÐ»Ñ‹ Ð¸ Ð¿ÐµÑ€ÐµÐ½Ð¾ÑÑ‹ ÑÑ‚Ñ€Ð¾Ðº Ð¾Ñ‚ Ð½ÐµÐ¹Ñ€Ð¾ÑÐµÑ‚Ð¸ */
+ /* Сохраняем пробелы и переносы строк от нейросети */
 .message .text {
     white-space: pre-wrap !important; 
     word-wrap: break-word !important;
@@ -425,24 +425,24 @@ body {
     width: 100%;
 }
 
-/* Ð”Ð¾Ð±Ð°Ð²Ð¸Ð¼ Ð½ÐµÐ±Ð¾Ð»ÑŒÑˆÐ¾Ð¹ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ñ‚ÐµÐºÑÑ‚ Ð½Ðµ Ð¿Ñ€Ð¸Ð»Ð¸Ð¿Ð°Ð» Ðº ÐºÑ€Ð°ÑÐ¼ Ð¿ÑƒÐ·Ñ‹Ñ€Ñ */
+/* Добавим небольшой отступ, чтобы текст не прилипал к краям пузыря */
 .ai-message .text, .user-message .text {
     line-height: 1.5;
     letter-spacing: 0.2px;
 }
-/* === ÐŸÐžÐ›ÐÐžÐ­ÐšÐ ÐÐÐÐ«Ð• ÐœÐžÐ”ÐÐ›Ð¬ÐÐ«Ð• ÐžÐšÐÐ === */
+/* === ПОЛНОЭКРАННЫЕ МОДАЛЬНЫЕ ОКНА === */
 .custom-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: var(--bg); /* Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÐ¼ Ñ‚Ð²Ð¾Ð¹ Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð¹ Ñ‚ÐµÐ¼Ð½Ñ‹Ð¹ Ñ„Ð¾Ð½ */
+    background: var(--bg); /* Используем твой основной темный фон */
     display: none;
     z-index: 9999;
     opacity: 0;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    transform: translateY(20px); /* Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð²Ñ‹Ð»ÐµÑ‚Ð° ÑÐ½Ð¸Ð·Ñƒ */
+    transform: translateY(20px); /* Эффект вылета снизу */
 }
 
 .custom-modal.active {
@@ -457,7 +457,7 @@ body {
     padding: 40px 20px;
     display: flex;
     flex-direction: column;
-    max-width: 800px; /* ÐžÐ³Ñ€Ð°Ð½Ð¸Ñ‡Ð¸Ð²Ð°ÐµÐ¼ ÑˆÐ¸Ñ€Ð¸Ð½Ñƒ ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð° Ð´Ð»Ñ ÐºÑ€Ð°ÑÐ¾Ñ‚Ñ‹ Ð½Ð° ÐŸÐš */
+    max-width: 800px; /* Ограничиваем ширину контента для красоты на ПК */
     margin: 0 auto;
     overflow-y: auto !important;
 }
@@ -479,7 +479,7 @@ body {
     gap: 15px;
 }
 
-/* ÐšÐ½Ð¾Ð¿ÐºÐ° Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ñ ÐºÐ°Ðº Ð² ÑÑ‚Ð¸Ð»Ðµ Lumifex */
+/* Кнопка закрытия как в стиле Lumifex */
 .close-modal {
     background: var(--glass);
     border: 1px solid var(--border);
@@ -505,17 +505,17 @@ body {
     line-height: 1.6;
     color: #ccc;
 }
-/* === ÐŸÐžÐ›ÐÐ«Ð™ Ð¤Ð˜ÐšÐ¡ Ð“Ð•ÐžÐœÐ•Ð¢Ð Ð˜Ð˜ ÐœÐ˜ÐšÐ ÐžÐ¤ÐžÐÐ === */
+/* === ПОЛНЫЙ ФИКС ГЕОМЕТРИИ МИКРОФОНА === */
 .mic-wrapper { 
     position: relative; 
-    width: 48px !important;       /* Ð–ÐµÑÑ‚ÐºÐ¾ Ð·Ð°Ð´Ð°Ð½Ð½Ð°Ñ ÑˆÐ¸Ñ€Ð¸Ð½Ð° */
-    height: 48px !important;      /* Ð–ÐµÑÑ‚ÐºÐ¾ Ð·Ð°Ð´Ð°Ð½Ð½Ð°Ñ Ð²Ñ‹ÑÐ¾Ñ‚Ð° */
-    min-width: 48px !important;   /* Ð—Ð°Ð¿Ñ€ÐµÑ‚ Ð½Ð° ÑÐ¶Ð°Ñ‚Ð¸Ðµ Ð²Ð¾ Flexbox */
-    max-width: 48px !important;   /* Ð—Ð°Ð¿Ñ€ÐµÑ‚ Ð½Ð° Ñ€Ð°ÑÑ‚ÑÐ¶ÐµÐ½Ð¸Ðµ */
+    width: 48px !important;       /* Жестко заданная ширина */
+    height: 48px !important;      /* Жестко заданная высота */
+    min-width: 48px !important;   /* Запрет на сжатие во Flexbox */
+    max-width: 48px !important;   /* Запрет на растяжение */
     border-radius: 50% !important; 
     overflow: hidden; 
     padding: 1.5px; 
-    flex-shrink: 0 !important;    /* ÐšÐ»ÑŽÑ‡ÐµÐ²Ð¾Ðµ: Ð·Ð°Ð¿Ñ€ÐµÑ‰Ð°ÐµÑ‚ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñƒ Ð´ÐµÑ„Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒÑÑ */
+    flex-shrink: 0 !important;    /* Ключевое: запрещает элементу деформироваться */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -534,7 +534,7 @@ body {
     align-items: center; 
     justify-content: center; 
     cursor: pointer; 
-    padding: 0 !important;        /* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð²Ð½ÑƒÑ‚Ñ€ÐµÐ½Ð½Ð¸Ðµ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿Ñ‹ */
+    padding: 0 !important;        /* Убираем внутренние отступы */
 }
 
 .mic-btn i { 
@@ -543,16 +543,16 @@ body {
     line-height: 1;
 }
 
-/* Ð¤Ð¸ÐºÑ Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÑŒÑÐºÐ¾Ð³Ð¾ ÐºÐ¾Ð½Ñ‚ÐµÐ¹Ð½ÐµÑ€Ð°, Ñ‡Ñ‚Ð¾Ð±Ñ‹ ÐºÐ½Ð¾Ð¿ÐºÐ° SEND Ð½Ðµ "Ð´Ð°Ð²Ð¸Ð»Ð°" Ð½Ð° Ð¼Ð¸ÐºÑ€Ð¾Ñ„Ð¾Ð½ */
+/* Фикс родительского контейнера, чтобы кнопка SEND не "давила" на микрофон */
 .input-actions-right { 
     display: flex; 
     align-items: center; 
     gap: 12px;
-    flex-wrap: nowrap;           /* Ð—Ð°Ð¿Ñ€ÐµÑ‚ Ð¿ÐµÑ€ÐµÐ½Ð¾ÑÐ° */
+    flex-wrap: nowrap;           /* Запрет переноса */
 }
 
 
-/* Ð¡Ð¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸ */
+/* Состояние записи */
 .mic-btn.recording {
     background: rgba(255, 0, 0, 0.2) !important;
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
@@ -564,13 +564,13 @@ body {
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Ð Ð°Ð·Ð´ÐµÐ»Ð¸Ñ‚ÐµÐ»ÑŒ Ð² Ð¼ÐµÐ½ÑŽ */
+/* Разделитель в меню */
 .dropdown-divider {
     height: 1px;
     background: var(--border);
     margin: 4px 8px;
 }
-/* Ð¡Ñ‚Ð¸Ð»Ð¸ Ð´Ð»Ñ Ð¼Ð¾Ð´Ð°Ð»ÑŒÐ½Ð¾Ð³Ð¾ Ð¾ÐºÐ½Ð° Ð½Ð°ÑÑ‚Ñ€Ð¾ÐµÐº Ð³Ð¾Ð»Ð¾ÑÐ° */
+/* Стили для модального окна настроек голоса */
 #voiceSettingsModal .modal-body {
     display: flex;
     flex-direction: column;
@@ -595,7 +595,7 @@ body {
     border-color: transparent;
 }
 
-/* Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð°ÐºÑ‚Ð¸Ð²Ð½Ð¾Ð³Ð¾ (Ð²Ñ‹Ð±Ñ€Ð°Ð½Ð½Ð¾Ð³Ð¾) Ð³Ð¾Ð»Ð¾ÑÐ° */
+/* Эффект активного (выбранного) голоса */
 #voiceSettingsModal .model-option.active {
     background: transparent;
     border-color: #ffffff;
@@ -612,9 +612,9 @@ body {
     opacity: 0.8;
 }
 
-/* ÐŸÐ»Ð°Ð²Ð½Ð¾Ðµ Ð¿Ð¾ÑÐ²Ð»ÐµÐ½Ð¸Ðµ Ð¼Ð¾Ð´Ð°Ð»ÐºÐ¸ */
+/* Плавное появление модалки */
 .custom-modal {
-    display: none; /* Ð¡ÐºÑ€Ñ‹Ñ‚Ð¾ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ */
+    display: none; /* Скрыто по умолчанию */
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -624,7 +624,7 @@ body {
 }
 
 
-/* Ð”ÐµÐ»Ð°ÐµÐ¼ Ð¼Ð¾Ð´Ð°Ð»ÐºÑƒ What's New Ð¿Ð¾Ð»Ð½Ð¾ÑÐºÑ€Ð°Ð½Ð½Ð¾Ð¹ */
+/* Делаем модалку What's New полноэкранной */
 #whatsNewModal.custom-modal {
     background: radial-gradient(circle at center, #000000 0%, #000000 100%);
 }
@@ -650,7 +650,7 @@ body {
     scrollbar-color: #000000 transparent;
 }
 
-/* Ð¡Ñ‚Ð¸Ð»Ð¸ Ð´Ð»Ñ 3D ÐºÐ°Ñ€ÑƒÑÐµÐ»Ð¸ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ð¼Ð¾Ð´Ð°Ð»ÐºÐ¸ */
+/* Стили для 3D карусели внутри модалки */
 .lumifex-wrapper .carousel-section {
     height: 500px;
     display: flex;
@@ -660,14 +660,14 @@ body {
     margin-bottom: 30px;
 }
 /* =========================================
-   1. Ð“Ð›ÐžÐ‘ÐÐ›Ð¬ÐÐ«Ð• ÐÐÐ¡Ð¢Ð ÐžÐ™ÐšÐ˜ (BODY & FONTS)
+   1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ (BODY & FONTS)
    ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
 
 :root {
     --glass-bg: rgba(255, 255, 255, 0.05);
-    --glass-accent: #ffffff; /* Ð“Ð¾Ð»ÑƒÐ±Ð¾Ð¹ Ð½ÐµÐ¾Ð½ */
-    --purple-accent: #ffffff; /* Ð¤Ð¸Ð¾Ð»ÐµÑ‚Ð¾Ð²Ñ‹Ð¹ Ð½ÐµÐ¾Ð½ */
+    --glass-accent: #ffffff; /* Голубой неон */
+    --purple-accent: #ffffff; /* Фиолетовый неон */
     --font-main: 'Orbitron', sans-serif;
     --font-secondary: 'Inter', sans-serif;
     --slide-width: 300px;
@@ -685,7 +685,7 @@ html, body {
     scroll-behavior: smooth;
 }
 
-/* Ð¡ÐºÑ€Ð¾Ð»Ð»Ð±Ð°Ñ€ Ð² ÑÑ‚Ð¸Ð»Ðµ ÐºÐ¸Ð±ÐµÑ€Ð¿Ð°Ð½Ðº */
+/* Скроллбар в стиле киберпанк */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -698,7 +698,7 @@ html, body {
 }
 
 /* =========================================
-   2. ÐšÐÐ Ð£Ð¡Ð•Ð›Ð¬ (3D ENGINE)
+   2. КАРУСЕЛЬ (3D ENGINE)
    ========================================= */
 .carousel-section {
     position: relative;
@@ -714,7 +714,7 @@ html, body {
 #carousel-container {
     width: 100%;
     height: 100vh;
-    perspective: 2000px; /* Ð“Ð»ÑƒÐ±Ð¸Ð½Ð° 3D */
+    perspective: 2000px; /* Глубина 3D */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -728,7 +728,7 @@ html, body {
     height: 500px;
     transform-style: preserve-3d;
     cursor: grab;
-    transition: transform 0.1s ease-out; /* Ð”Ð»Ñ Ð¿Ð»Ð°Ð²Ð½Ð¾Ð³Ð¾ ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ Ð·Ð° Ð¼Ñ‹ÑˆÐºÐ¾Ð¹ */
+    transition: transform 0.1s ease-out; /* Для плавного следования за мышкой */
 }
 
 #stellar-carousel:active {
@@ -756,7 +756,7 @@ html, body {
     user-select: none;
 }
 
-/* ÐÐºÑ‚Ð¸Ð²Ð½Ð¾Ðµ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ñ†ÐµÐ½Ñ‚Ñ€Ð°Ð»ÑŒÐ½Ð¾Ð¹ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ */
+/* Активное состояние центральной карточки */
 .carousel-slide.active {
     border-color: var(--glass-accent);
     background: rgba(255, 255, 255, 0.08);
@@ -765,7 +765,7 @@ html, body {
     z-index: 10;
 }
 
-/* Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ */
+/* Элементы внутри карточки */
 .top-label {
     position: absolute;
     top: -70px;
@@ -831,7 +831,7 @@ html, body {
 }
 
 /* =========================================
-   3. Ð˜ÐÐ¤Ðž-Ð¡Ð›ÐžÐ™ (ABOUT, SKILLS, EXPERIENCE)
+   3. ИНФО-СЛОЙ (ABOUT, SKILLS, EXPERIENCE)
    ========================================= */
 .info-section {
     position: relative;
@@ -863,7 +863,7 @@ html, body {
     background: linear-gradient(90deg, var(--glass-accent), transparent);
 }
 
-/* Ð¢ÐµÐºÑÑ‚Ð¾Ð²Ñ‹Ð¹ Ð±Ð»Ð¾Ðº ÑÐ¸ÑÑ‚ÐµÐ¼Ð½Ñ‹Ñ… Ð½Ð°Ð²Ñ‹ÐºÐ¾Ð² */
+/* Текстовый блок системных навыков */
 .simple-text-block {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(174, 225, 249, 0.2);
@@ -911,7 +911,7 @@ html, body {
     display: inline-block;
 }
 
-/* ÐŸÐ¾Ð»Ð¾ÑÐºÐ¸ Ð¿Ñ€Ð¾Ð³Ñ€ÐµÑÑÐ° Ð½Ð°Ð²Ñ‹ÐºÐ¾Ð² */
+/* Полоски прогресса навыков */
 .skill-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -946,12 +946,12 @@ html, body {
     background: linear-gradient(90deg, #ffffff, #ffffff);
     box-shadow: 0 0 15px transparent;
     border-radius: 15px;
-    width: 0%; /* ÐÐ½Ð¸Ð¼Ð¸Ñ€ÑƒÐµÑ‚ÑÑ Ñ‡ÐµÑ€ÐµÐ· JS */
+    width: 0%; /* Анимируется через JS */
     transition: width 1.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 /* =========================================
-   4. ÐÐÐ’Ð˜Ð“ÐÐ¦Ð˜Ð¯ Ð˜ ÐÐÐ˜ÐœÐÐ¦Ð˜Ð˜
+   4. НАВИГАЦИЯ И АНИМАЦИИ
    ========================================= */
 #dot-nav {
     position: absolute;
@@ -982,7 +982,7 @@ html, body {
     border-color: transparent;
 }
 
-/* ÐÐ½Ð¸Ð¼Ð°Ñ†Ð¸Ñ Ð¿Ð¾ÑÐ²Ð»ÐµÐ½Ð¸Ñ ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð° */
+/* Анимация появления контента */
 .animated-in {
     animation: slideFadeUp 0.8s ease forwards;
 }
@@ -998,7 +998,7 @@ html, body {
     }
 }
 
-/* ÐÐ´Ð°Ð¿Ñ‚Ð¸Ð²Ð½Ð¾ÑÑ‚ÑŒ Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ñ… ÑƒÑÑ‚Ñ€Ð¾Ð¹ÑÑ‚Ð² */
+/* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     :root {
         --slide-width: 260px;
@@ -1017,7 +1017,7 @@ html, body {
         font-size: 0.95rem;
     }
 }
-/* Ð‘Ð»Ð¾Ðº Ð½Ð¾Ð²Ð¾ÑÑ‚ÐµÐ¹ 03 */
+/* Блок новостей 03 */
 .news-container {
     display: flex;
     flex-direction: column;
@@ -1026,7 +1026,7 @@ html, body {
 
 .news-card {
     background: rgba(255, 255, 255, 0.02);
-    border-left: 3px solid var(--purple-accent); /* Ð¤Ð¸Ð¾Ð»ÐµÑ‚Ð¾Ð²Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ ÑÐ»ÐµÐ²Ð° ÐºÐ°Ðº Ð°ÐºÑ†ÐµÐ½Ñ‚ */
+    border-left: 3px solid var(--purple-accent); /* Фиолетовая линия слева как акцент */
     padding: 25px 35px;
     border-radius: 0 20px 20px 0;
     transition: 0.3s ease;
@@ -1035,7 +1035,7 @@ html, body {
 }
 
 .news-card:hover {
-    background: rgba(192, 132, 252, 0.05); /* Ð›ÐµÐ³ÐºÐ¸Ð¹ Ñ„Ð¸Ð¾Ð»ÐµÑ‚Ð¾Ð²Ñ‹Ð¹ Ð¾Ñ‚ÑÐ²ÐµÑ‚ Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸ */
+    background: rgba(192, 132, 252, 0.05); /* Легкий фиолетовый отсвет при наведении */
     transform: translateX(10px);
 }
 
@@ -1063,15 +1063,15 @@ html, body {
 }
 
 /* =========================================
-   Ð›ÐžÐ“Ð˜ÐšÐ: Ð¢ÐžÐ›Ð¬ÐšÐž Ð”Ð›Ð¯ ÐšÐžÐœÐŸÐ¬Ð®Ð¢Ð•Ð ÐžÐ’
+   ЛОГИКА: ТОЛЬКО ДЛЯ КОМПЬЮТЕРОВ
    ========================================= */
 
-/* 1. ÐŸÐ¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ ÑÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ ÐºÐ°Ñ€ÑƒÑÐµÐ»ÑŒ (Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»Ð¾Ðº) */
+/* 1. По умолчанию скрываем карусель (для мобилок) */
 .desktop-only {
     display: none !important;
 }
 
-/* 2. ÐŸÐ¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ Ð¿Ð¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð°Ð³Ð»ÑƒÑˆÐºÑƒ */
+/* 2. По умолчанию показываем заглушку */
 .mobile-stub {
     display: flex;
     height: 60vh;
@@ -1086,18 +1086,18 @@ html, body {
 
 .stub-content span { font-size: 3rem; display: block; margin-bottom: 20px; }
 
-/* 3. Ð•ÑÐ»Ð¸ ÑÐºÑ€Ð°Ð½ Ð±Ð¾Ð»ÑŒÑˆÐµ 1024px (ÐšÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€) */
+/* 3. Если экран больше 1024px (Компьютер) */
 @media (min-width: 1024px) {
     .desktop-only {
-        display: block !important; /* ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼ ÐºÐ°Ñ€ÑƒÑÐµÐ»ÑŒ */
+        display: block !important; /* Показываем карусель */
     }
     .mobile-stub {
-        display: none !important; /* Ð¡ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð°Ð³Ð»ÑƒÑˆÐºÑƒ */
+        display: none !important; /* Скрываем заглушку */
     }
 }
 
 body, .app-layout { 
-    /* ÑÑ‚Ð¾ Ñ‡Ð°ÑÑ‚ÑŒÐ¾Ñ‚Ð²ÐµÑ‡Ð°ÐµÑ‚ÑŒ Ð·Ð° 100hv , ÐºÐ¾Ñ‚Ð¾Ñ€Ð°Ñ ÑƒÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÑ‚ Ð°Ð´Ñ€ÐµÑÐ½ÑƒÑŽ ÑÑ‚Ñ€Ð¾ÐºÑƒ Ð¸ ÐºÐ»Ð°Ð²Ð¸Ð°Ñ‚ÑƒÑ€Ñƒ */
+    /* это частьотвечаеть за 100hv , которая учитывает адресную строку и клавиатуру */
     height: 100vh; 
     height: 100dvh; 
     overflow: hidden;
@@ -1106,32 +1106,32 @@ body, .app-layout {
 }
 
 .chat-wrapper {
-    /* ÐŸÐ¾Ð·Ð²Ð¾Ð»ÑÐµÐ¼ Ñ‡Ð°Ñ‚Ñƒ Ð·Ð°Ð½Ð¸Ð¼Ð°Ñ‚ÑŒ Ð²ÑÑ‘ ÑÐ²Ð¾Ð±Ð¾Ð´Ð½Ð¾Ðµ Ð¼ÐµÑÑ‚Ð¾ Ð¸ Ð¿Ñ€Ð¾ÐºÑ€ÑƒÑ‡Ð¸Ð²Ð°Ñ‚ÑŒÑÑ */
+    /* Позволяем чату занимать всё свободное место и прокручиваться */
     flex: 1;
     overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch; /* ÐŸÐ»Ð°Ð²Ð½Ñ‹Ð¹ ÑÐºÑ€Ð¾Ð»Ð» Ð½Ð° iOS */
+    -webkit-overflow-scrolling: touch; /* Плавный скролл на iOS */
 }
 
-/* ÑÑ‚Ð¾ Ñ‡ÐµÑ€Ð½Ð¾ ÑÐµÑ€Ð¸Ð¹ Ð»Ð¸Ñ„Ñ‚  ÐÐ°ÑÑ‚Ñ€Ð°Ð¸Ð²Ð°ÐµÐ¼ ÑÐ°Ð¼ Ð¿Ð¾Ð»Ð·ÑƒÐ½Ð¾Ðº (Ð»Ð¸Ñ„Ñ‚) */
+/* это черно серий лифт  Настраиваем сам ползунок (лифт) */
 .sidebar::-webkit-scrollbar {
-    width: 4px; /* Ð¨Ð¸Ñ€Ð¸Ð½Ð° Ð»Ð¸Ñ„Ñ‚Ð° */
+    width: 4px; /* Ширина лифта */
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background: #444444; /* Ð¡Ð¢Ð ÐžÐšÐ Ð˜Ð—ÐœÐ•ÐÐ•ÐÐ˜Ð¯: ÑÑ‚Ð°Ð²Ð¸Ð¼ ÑÐµÑ€Ñ‹Ð¹ Ñ†Ð²ÐµÑ‚ Ð²Ð¼ÐµÑÑ‚Ð¾ ÑÐ¸Ð½ÐµÐ³Ð¾ */
+    background: #444444; /* СТРОКА ИЗМЕНЕНИЯ: ставим серый цвет вместо синего */
     border-radius: 10px;
 }
 
 .sidebar::-webkit-scrollbar-track {
-    background: transparent; /* Ð”Ð¾Ñ€Ð¾Ð¶ÐºÐ° Ð»Ð¸Ñ„Ñ‚Ð° Ð±ÑƒÐ´ÐµÑ‚ Ð½ÐµÐ²Ð¸Ð´Ð¸Ð¼Ð¾Ð¹ */
+    background: transparent; /* Дорожка лифта будет невидимой */
 }
 
-/* Ð”Ð»Ñ Firefox */
+/* Для Firefox */
 .sidebar {
     scrollbar-width: thin;
     scrollbar-color: #444444 transparent;
 }
-/* ÐšÐ½Ð¾Ð¿ÐºÐ° Live */
+/* Кнопка Live */
 .live-mode-btn {
     display: flex;
     align-items: center;
@@ -1184,7 +1184,7 @@ body, .app-layout {
     justify-content: center;
     color: white;
     transition: opacity 0.3s ease;
-    pointer-events: auto !important; /* â† Ð”ÐžÐ‘ÐÐ’Ð¬ Ð­Ð¢Ð£ Ð¡Ð¢Ð ÐžÐšÐ£ */
+    pointer-events: auto !important; /* ← ДОБАВЬ ЭТУ СТРОКУ */
 }
 
 .stop-live-btn {
@@ -1196,9 +1196,9 @@ body, .app-layout {
     color: white;
     font-weight: 600;
     cursor: pointer;
-    pointer-events: auto !important; /* â† Ð˜ Ð­Ð¢Ð£ */
+    pointer-events: auto !important; /* ← И ЭТУ */
     position: relative;
-    z-index: 100000; /* â† Ð˜ Ð­Ð¢Ð£ */
+    z-index: 100000; /* ← И ЭТУ */
 }
 
 .wave-container {
@@ -1228,10 +1228,10 @@ body, .app-layout {
 
 /* ==========================================================
    LUMIFEX AI - OFFICIAL STYLESHEET
-   Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¾: Ð’ÑÐµ Ð¾Ñ€Ð¸Ð³Ð¸Ð½Ð°Ð»ÑŒÐ½Ñ‹Ðµ ÑÑ‚Ð¸Ð»Ð¸ + Ð¤Ð¸ÐºÑ Ð´Ð»Ñ ÐºÐ°Ñ€Ñ‚Ð¸Ð½Ð¾Ðº
+   Сохранено: Все оригинальные стили + Фикс для картинок
    ========================================================== */
 
-/* ÐžÐ‘Ð©Ð˜Ð• Ð¡Ð¢Ð˜Ð›Ð˜ */
+/* ОБЩИЕ СТИЛИ */
 body {
     margin: 0;
     background-color: #000000;
@@ -1252,7 +1252,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* ÐÐÐ’Ð˜Ð“ÐÐ¦Ð˜Ð¯ (Ð’ÐºÐ»Ð°Ð´ÐºÐ¸) */
+/* НАВИГАЦИЯ (Вкладки) */
 .nav-container-row {
     display: flex;
     flex-direction: row;
@@ -1290,14 +1290,14 @@ body {
 .icon-bio { color: #7ee787; }
 .icon-chem { color: #3fb950; }
 
-/* Ð¡Ð•Ð¢ÐšÐ ÐšÐÐ Ð¢ÐžÐ§Ð•Ðš */
+/* СЕТКА КАРТОЧЕК */
 .grid-container {
     display: grid;
-    /* ÐÐ° Ð¼Ð¾Ð±Ð¸Ð»ÐºÐ°Ñ… 1 ÐºÐ¾Ð»Ð¾Ð½ÐºÐ°, Ð½Ð° Ð¿Ð»Ð°Ð½ÑˆÐµÑ‚Ð°Ñ…/ÐŸÐš Ð°Ð²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¸ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑÑ Ð±Ð¾Ð»ÑŒÑˆÐµ */
+    /* На мобилках 1 колонка, на планшетах/ПК автоматически добавится больше */
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 15px;
     width: 100%;
-    max-width: 1000px; /* Ð£Ð²ÐµÐ»Ð¸Ñ‡Ð¸Ð», Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð½Ð° ÐŸÐš Ð²Ð»ÐµÐ·Ð°Ð»Ð¾ Ð±Ð¾Ð»ÑŒÑˆÐµ Ð² Ñ€ÑÐ´ */
+    max-width: 1000px; /* Увеличил, чтобы на ПК влезало больше в ряд */
 }
 
 .card {
@@ -1328,10 +1328,10 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Ð¤ÐžÐ¢Ðž Ð’ ÐšÐÐ Ð¢ÐžÐ§ÐšÐÐ¥ */
+/* ФОТО В КАРТОЧКАХ */
 .card-preview {
     width: 100%;
-    height: 160px; /* Ð’Ñ‹ÑÐ¾Ñ‚Ð° Ð¿Ñ€ÐµÐ²ÑŒÑŽ */
+    height: 160px; /* Высота превью */
     overflow: hidden;
     background: #1a1a1a;
     border-bottom: 1px solid #30363d;
@@ -1340,19 +1340,19 @@ body {
 .card-preview img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* ÐšÐ°Ñ€Ñ‚Ð¸Ð½ÐºÐ° Ð·Ð°Ð¿Ð¾Ð»Ð½ÑÐµÑ‚ Ð±Ð»Ð¾Ðº Ð±ÐµÐ· Ð¸ÑÐºÐ°Ð¶ÐµÐ½Ð¸Ð¹ */
+    object-fit: cover; /* Картинка заполняет блок без искажений */
     transition: transform 0.3s ease;
 }
 
 .card:hover .card-preview img {
-    transform: scale(1.1); /* Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð·ÑƒÐ¼Ð° Ð¿Ñ€Ð¸ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ð¸ */
+    transform: scale(1.1); /* Эффект зума при наведении */
 }
 
 .card-info { padding: 12px; }
 .card-title { font-weight: bold; font-size: 1rem; margin-bottom: 4px; color: #f0f6fc; }
 .card-desc { font-size: 0.8rem; color: #8b949e; line-height: 1.4; }
 
-/* Ð­ÐšÐ ÐÐ Ð¡Ð˜ÐœÐ£Ð›Ð¯Ð¦Ð˜Ð˜ */
+/* ЭКРАН СИМУЛЯЦИИ */
 #sim-screen {
     position: fixed;
     top: 0;
@@ -1388,7 +1388,7 @@ iframe {
     border: none;
 }
 
-/* --- Ð¡Ð¢Ð˜Ð›Ð¬ÐÐ«Ð™ Ð›ÐžÐÐ”Ð•Ð  (LUMIFEX REACTOR) --- */
+/* --- СТИЛЬНЫЙ ЛОАДЕР (LUMIFEX REACTOR) --- */
 #loader-layer {
     position: absolute;
     top: 0;
@@ -1457,7 +1457,7 @@ iframe {
     100% { transform: rotate(360deg); }
 }
 
-/* Ð—ÐÐ“Ð›Ð£Ð¨ÐšÐ ÐÐ˜Ð–ÐÐ•Ð™ ÐŸÐÐÐ•Ð›Ð˜ PHET */
+/* ЗАГЛУШКА НИЖНЕЙ ПАНЕЛИ PHET */
 #iframe-container::after {
     content: "";
     position: absolute;
@@ -1466,20 +1466,20 @@ iframe {
     right: 0;
     height: 60px; 
     background: #000;
-    z-index: 9998; /* ÐŸÐ¾ÑÑ‚Ð°Ð²Ð¸Ð» Ñ‡ÑƒÑ‚ÑŒ Ð¼ÐµÐ½ÑŒÑˆÐµ Ð»Ð¾Ð°Ð´ÐµÑ€Ð° */
+    z-index: 9998; /* Поставил чуть меньше лоадера */
     pointer-events: none;
 }
 
-/* === Ð¤Ð˜ÐšÐ¡Ð« ÐŸÐžÐ—Ð˜Ð¦Ð˜ÐžÐÐ˜Ð ÐžÐ’ÐÐÐ˜Ð¯ Ð˜ Ð“Ð›Ð£Ð‘Ð˜ÐÐ« === */
+/* === ФИКСЫ ПОЗИЦИОНИРОВАНИЯ И ГЛУБИНЫ === */
 
-/* Ð£Ð»ÑƒÑ‡ÑˆÐ°ÐµÐ¼ Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼Ð¾ÑÑ‚ÑŒ Ñ‚ÐµÐºÑÑ‚Ð° Ð² AI Ð¾Ñ‚Ð²ÐµÑ‚Ð°Ñ… (Markdown-friendly) */
+/* Улучшаем читаемость текста в AI ответах (Markdown-friendly) */
 .ai-message .text {
     font-size: 0.95rem;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.9);
 }
 
-/* Ð¡Ñ‚Ð¸Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ ÐºÐ¾Ð´Ð° Ð² ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸ÑÑ… (ÐµÑÐ»Ð¸ Ð˜Ð˜ Ð¿Ñ€Ð¸ÑˆÐ»ÐµÑ‚ ÐºÐ¾Ð´) */
+/* Стилизация кода в сообщениях (если ИИ пришлет код) */
 .message code {
     background: rgba(0, 0, 0, 0.3);
     padding: 2px 6px;
@@ -1489,7 +1489,7 @@ iframe {
     border: 1px solid var(--border);
 }
 
-/* Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð½Ð°Ð²ÐµÐ´ÐµÐ½Ð¸Ñ Ð½Ð° ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð»Ð°Ð±Ð¾Ñ€Ð°Ñ‚Ð¾Ñ€Ð¸Ð¸ (Physics/Bio/Chem) */
+/* Эффект наведения на карточки лаборатории (Physics/Bio/Chem) */
 .card {
     position: relative;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -1513,17 +1513,17 @@ iframe {
     box-shadow: 0 10px 30px transparent;
 }
 
-/* Ð¤Ð¸ÐºÑ Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ð¾Ð¹ ÐºÐ»Ð°Ð²Ð¸Ð°Ñ‚ÑƒÑ€Ñ‹: Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð²Ð²Ð¾Ð´ Ð½Ðµ Ð¿ÐµÑ€ÐµÐºÑ€Ñ‹Ð²Ð°Ð» Ñ‡Ð°Ñ‚ */
+/* Фикс для мобильной клавиатуры: чтобы ввод не перекрывал чат */
 @media (max-height: 500px) {
     .star-animation-container {
-        display: none; /* Ð¡ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ð·Ð²ÐµÐ·Ð´Ñƒ Ð½Ð° Ð¼Ð°Ð»ÐµÐ½ÑŒÐºÐ¸Ñ… ÑÐºÑ€Ð°Ð½Ð°Ñ… Ð¿Ñ€Ð¸ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¾Ð¹ ÐºÐ»Ð°Ð²Ð¸Ð°Ñ‚ÑƒÑ€Ðµ */
+        display: none; /* Скрываем звезду на маленьких экранах при открытой клавиатуре */
     }
     .welcome-screen h1 {
         font-size: 1.5rem;
     }
 }
 
-/* Ð¡Ð»Ð¾Ð¹ Ð´Ð»Ñ Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²ÐºÐ¸ ÐºÐ»Ð¸ÐºÐ¾Ð² Ð²Ð¾ Ð²Ñ€ÐµÐ¼Ñ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð³Ð¾Ð»Ð¾ÑÐ° */
+/* Слой для блокировки кликов во время записи голоса */
 .mic-btn.recording::after {
     content: '';
     position: fixed;
@@ -1533,15 +1533,15 @@ iframe {
     z-index: -1;
 }
 
-/* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð³Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ð¹ body Ð¸ Ð¿ÐµÑ€ÐµÐ½Ð¾ÑÐ¸Ð¼ ÐµÐ³Ð¾ ÑÐ²Ð¾Ð¹ÑÑ‚Ð²Ð° ÑÑ‚Ñ€Ð¾Ð³Ð¾ Ð² ÐºÐ¾Ð½Ñ‚ÐµÐ¹Ð½ÐµÑ€ Ð¿Ñ€ÐµÐ·ÐµÐ½Ñ‚Ð°Ñ†Ð¸Ð¸ */
+/* Убираем глобальный body и переносим его свойства строго в контейнер презентации */
 #presentation-screen {
     font-family: 'Segoe UI', sans-serif; 
     color: white; 
-    /* background, position, width Ð¸ height Ñƒ Ñ‚ÐµÐ±Ñ ÑƒÐ¶Ðµ Ð¿Ñ€Ð¾Ð¿Ð¸ÑÐ°Ð½Ñ‹ Ð¸Ð½Ð»Ð°Ð¹Ð½ Ð² HTML, 
-       Ð½Ð¾ ÐµÑÐ»Ð¸ Ð·Ð°Ñ…Ð¾Ñ‡ÐµÑˆÑŒ ÑƒÐ±Ñ€Ð°Ñ‚ÑŒ Ð¸Ñ… Ð¸Ð· HTML, Ð¼Ð¾Ð¶ÐµÑˆÑŒ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ Ð¸Ñ… ÑÑŽÐ´Ð° */
+    /* background, position, width и height у тебя уже прописаны инлайн в HTML, 
+       но если захочешь убрать их из HTML, можешь добавить их сюда */
 }
 
-/* ÐŸÑ€Ð¸Ð²ÑÐ·Ñ‹Ð²Ð°ÐµÐ¼ Ð²ÑÐµ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ ÑÑ‚Ñ€Ð¾Ð³Ð¾ Ðº #presentation-screen */
+/* Привязываем все элементы строго к #presentation-screen */
 #presentation-screen .tabs-bar { 
     background: #252526; 
     display: flex; 
@@ -1579,12 +1579,12 @@ iframe {
     cursor: pointer; 
 }
 
-/* Ð’ HTML Ñƒ Ñ‚ÐµÐ±Ñ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ id="editor-container", Ð¾Ð±Ñ€Ð°Ñ‰Ð°ÐµÐ¼ÑÑ Ðº Ð½ÐµÐ¼Ñƒ */
+/* В HTML у тебя используется id="editor-container", обращаемся к нему */
 #presentation-screen #editor-container { 
     position: relative; 
 }
 
-/* Ð’ HTML Ñƒ Ñ‚ÐµÐ±Ñ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐµÑ‚ÑÑ ÐºÐ»Ð°ÑÑ .editor-tab-content */
+/* В HTML у тебя используется класс .editor-tab-content */
 #presentation-screen .editor-tab-content { 
     display: none; 
     height: 100%; 
@@ -1595,47 +1595,47 @@ iframe {
     display: block; 
 }
 
-/* ÐžÐ±Ñ€Ð°Ñ‰Ð°ÐµÐ¼ÑÑ Ðº iframe Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ð¿Ñ€ÐµÐ·ÐµÐ½Ñ‚Ð°Ñ†Ð¸Ð¸ */
+/* Обращаемся к iframe только внутри презентации */
 #presentation-screen iframe { 
     width: 100%; 
     height: 100%; 
     border: none; 
-    background: #ffffff; /* Ð‘ÐµÐ»Ñ‹Ð¹ Ñ„Ð¾Ð½ Ð´Ð»Ñ Ð¿Ñ€ÐµÐ²ÑŒÑŽ ÐºÐ¾Ð´Ð° */
+    background: #ffffff; /* Белый фон для превью кода */
 }
 
-/* ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ° ÑÐ°Ð¼Ð¾Ð³Ð¾ Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€Ð° CodeMirror */
+/* Настройка самого редактора CodeMirror */
 #presentation-screen .CodeMirror { 
     height: 100% !important; 
     font-size: 14px; 
 }
 
-/* ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼ Ð¿Ð°Ð½ÐµÐ»ÑŒ Ñ‡Ð°Ñ‚Ð¾Ð², ÐºÐ¾Ð³Ð´Ð° Ñƒ ÑÐ°Ð¹Ð´Ð±Ð°Ñ€Ð° ÐµÑÑ‚ÑŒ ÐºÐ»Ð°ÑÑ chat-active */
+/* Показываем панель чатов, когда у сайдбара есть класс chat-active */
 .sidebar.chat-active .chat-panel {
-    display: block; /* Ð˜Ð»Ð¸ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐ¹ transform, ÐµÑÐ»Ð¸ Ñƒ Ñ‚ÐµÐ±Ñ Ñ‚Ð°Ð¼ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸ Ð²Ñ‹ÐµÐ·Ð´Ð° */
+    display: block; /* Или используй transform, если у тебя там анимации выезда */
     z-index: 10;
 }
 
-/* === ÐŸÐžÐ›ÐÐ«Ð™ Ð¤Ð˜ÐšÐ¡ Ð¡Ð˜ÐÐ•Ð™ Ð›Ð˜ÐÐ˜Ð˜ Ð˜ Ð ÐÐœÐžÐš Ð”Ð›Ð¯ ÐœÐžÐ‘Ð˜Ð›ÐžÐš === */
+/* === ПОЛНЫЙ ФИКС СИНЕЙ ЛИНИИ И РАМОК ДЛЯ МОБИЛОК === */
 
-/* 1. ÐžÑ‚ÐºÐ»ÑŽÑ‡Ð°ÐµÐ¼ ÑÐ¸ÑÑ‚ÐµÐ¼Ð½Ð¾Ðµ Ð¿Ð¾Ð´ÑÐ²ÐµÑ‡Ð¸Ð²Ð°Ð½Ð¸Ðµ ÐºÐ»Ð¸ÐºÐ° */
+/* 1. Отключаем системное подсвечивание клика */
 * {
     -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
     -webkit-tap-highlight-color: transparent !important;
 }
 
-/* 2. Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ñ€Ð°Ð¼ÐºÑƒ Ñ„Ð¾ÐºÑƒÑÐ° Ð´Ð»Ñ Ð²ÑÐµÑ… Ð¸Ð½Ñ‚ÐµÑ€Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ñ… ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð² */
+/* 2. Убираем рамку фокуса для всех интерактивных элементов */
 a, button, input, textarea, select, div, span {
     outline: none !important;
     outline: 0 !important;
-    -webkit-appearance: none; /* Ð£Ð±Ð¸Ñ€Ð°ÐµÑ‚ ÑÑ‚Ð°Ð½Ð´Ð°Ñ€Ñ‚Ð½Ñ‹Ðµ ÑÑ‚Ð¸Ð»Ð¸ ÐºÐ½Ð¾Ð¿Ð¾Ðº iOS */
+    -webkit-appearance: none; /* Убирает стандартные стили кнопок iOS */
 }
 
-/* 3. Ð¡Ð¿ÐµÑ†Ð¸Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ð¹ Ñ„Ð¸ÐºÑ Ð´Ð»Ñ Chrome Ð¸ Safari (Focus-visible) */
+/* 3. Специфический фикс для Chrome и Safari (Focus-visible) */
 *:focus-visible {
     outline: none !important;
 }
 
-/* 4. Ð•ÑÐ»Ð¸ Ð»Ð¸Ð½Ð¸Ñ Ð¿Ð¾ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð¿Ð¾Ð´ ÑˆÐ°Ð¿ÐºÐ¾Ð¹ Ð¸Ð»Ð¸ Ð² Ð¸Ð½Ð¿ÑƒÑ‚Ðµ (Ð¸Ð·-Ð·Ð° Ñ‚ÐµÐ½ÐµÐ¹) */
+/* 4. Если линия появляется под шапкой или в инпуте (из-за теней) */
 input:focus, .input-main-wrapper:focus-within {
     box-shadow: none !important;
 }
@@ -1646,64 +1646,64 @@ input:focus, .input-main-wrapper:focus-within {
     outline: none !important;
     box-shadow: none !important;
 }
-/* ÐŸÐ¾Ð´Ð½Ð¸Ð¼Ð°ÐµÐ¼ Ð²ÑÑŽ Ð¿Ð°Ð½ÐµÐ»ÑŒ Ð²Ð²Ð¾Ð´Ð° Ð²Ñ‹ÑˆÐµ Ð²ÑÐµÐ³Ð¾ Ð¾ÑÑ‚Ð°Ð»ÑŒÐ½Ð¾Ð³Ð¾ */
+/* Поднимаем всю панель ввода выше всего остального */
 .input-area {
     position: relative;
     z-index: 9999 !important;
     pointer-events: auto !important;
 }
 
-/* Ð“Ð°Ñ€Ð°Ð½Ñ‚Ð¸Ñ€ÑƒÐµÐ¼ ÐºÐ»Ð¸ÐºÐ°Ð±ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ ÐºÐ¾Ð½ÐºÑ€ÐµÑ‚Ð½Ñ‹Ñ… ÐºÐ½Ð¾Ð¿Ð¾Ðº */
+/* Гарантируем кликабельность конкретных кнопок */
 #micBtn, #liveToggle, #sendBtn {
     cursor: pointer !important;
     pointer-events: auto !important;
     z-index: 10000 !important;
 }
 
-/* Ð•ÑÐ»Ð¸ Ð¿Ñ€Ð¸Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ñ‹Ð¹ ÑÐºÑ€Ð°Ð½ Ð±Ð»Ð¾ÐºÐ¸Ñ€ÑƒÐµÑ‚ ÐºÐ»Ð¸ÐºÐ¸ Ð² Ð½Ð¸Ð¶Ð½ÐµÐ¹ Ñ‡Ð°ÑÑ‚Ð¸ */
+/* Если приветственный экран блокирует клики в нижней части */
 .welcome-screen {
-    pointer-events: none; /* ÐŸÑ€Ð¾Ð¿ÑƒÑÐºÐ°ÐµÑ‚ ÐºÐ»Ð¸ÐºÐ¸ ÑÐºÐ²Ð¾Ð·ÑŒ ÑÐµÐ±Ñ */
+    pointer-events: none; /* Пропускает клики сквозь себя */
 }
 
 .welcome-screen * {
-    pointer-events: auto; /* ÐÐ¾ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ð½ÐµÐ³Ð¾ (ÐµÑÐ»Ð¸ ÐµÑÑ‚ÑŒ ÐºÐ½Ð¾Ð¿ÐºÐ¸) ÑÐ½Ð¾Ð²Ð° ÐºÐ»Ð¸ÐºÐ°Ð±ÐµÐ»ÑŒÐ½Ñ‹ */
+    pointer-events: auto; /* Но элементы внутри него (если есть кнопки) снова кликабельны */
 }
 
-/* 1. Ð“Ð°Ñ€Ð°Ð½Ñ‚Ð¸Ñ€ÑƒÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð¾Ð±ÐµÑ€Ñ‚ÐºÐ° Ñ‡Ð°Ñ‚Ð° Ð½Ðµ Ð±Ð»Ð¾ÐºÐ¸Ñ€ÑƒÐµÑ‚ÑÑ Ñ„Ð¾Ð½Ð¾Ð¼ */
+/* 1. Гарантируем, что обертка чата не блокируется фоном */
 .chat-wrapper {
     position: relative;
-    z-index: 1; /* ÐžÑÑ‚Ð°Ð²Ð»ÑÐµÐ¼ Ð½Ð¸Ð·ÐºÐ¸Ð¼, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¼Ð¾Ð´Ð°Ð»ÐºÐ¸ Ð±Ñ‹Ð»Ð¸ Ð²Ñ‹ÑˆÐµ */
+    z-index: 1; /* Оставляем низким, чтобы модалки были выше */
     pointer-events: auto;
 }
 
-/* 2. Ð˜ÑÐ¿Ñ€Ð°Ð²Ð»ÑÐµÐ¼ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸ÑŽ Ð·Ð²ÐµÐ·Ð´ Ð¸ Ð¿Ñ€Ð¸Ð²ÐµÑ‚ÑÑ‚Ð²Ð¸Ðµ */
+/* 2. Исправляем анимацию звезд и приветствие */
 .star-animation-container {
-    pointer-events: none; /* Ð—Ð²ÐµÐ·Ð´Ð° Ð½Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð° Ð¼ÐµÑˆÐ°Ñ‚ÑŒ ÐºÐ»Ð¸ÐºÐ°Ð¼ Ð¿Ð¾ Ñ‚ÐµÐºÑÑ‚Ñƒ Ð¸Ð»Ð¸ ÐºÐ½Ð¾Ð¿ÐºÐ°Ð¼ */
+    pointer-events: none; /* Звезда не должна мешать кликам по тексту или кнопкам */
 }
 
-/* 3. Ð¤Ð¸ÐºÑ Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ñ…: ÑƒÐ±Ð¸Ñ€Ð°ÐµÐ¼ Ð»Ð¸ÑˆÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿Ñ‹, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð¼Ð¾Ð³ÑƒÑ‚ "ÑÑŠÐµÐ´Ð°Ñ‚ÑŒ" ÐºÐ»Ð¸ÐºÐ¸ */
+/* 3. Фикс для мобильных: убираем лишние отступы, которые могут "съедать" клики */
 .app-layout {
     overflow: hidden;
-    touch-action: manipulation; /* Ð£Ð±Ð¸Ñ€Ð°ÐµÑ‚ Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÑƒ ÐºÐ»Ð¸ÐºÐ° Ð½Ð° iOS */
+    touch-action: manipulation; /* Убирает задержку клика на iOS */
 }
 
-/* 4. Ð¯Ð²Ð½Ð¾ Ð¿Ñ€Ð¾Ð¿Ð¸ÑÑ‹Ð²Ð°ÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð¼Ð¾Ð´Ð°Ð»ÑŒÐ½Ñ‹Ðµ Ð¾ÐºÐ½Ð° Ð² ÑÐºÑ€Ñ‹Ñ‚Ð¾Ð¼ ÑÐ¾ÑÑ‚Ð¾ÑÐ½Ð¸Ð¸ Ð½Ðµ Ð·Ð°Ð½Ð¸Ð¼Ð°ÑŽÑ‚ Ð¼ÐµÑÑ‚Ð° */
+/* 4. Явно прописываем, что модальные окна в скрытом состоянии не занимают места */
 .custom-modal:not(.active) {
     visibility: hidden;
     pointer-events: none;
-    display: none; /* Ð£Ð±ÐµÐ´Ð¸Ñ‚ÐµÑÑŒ, Ñ‡Ñ‚Ð¾ JS Ð¼ÐµÐ½ÑÐµÑ‚ Ð¸Ð¼ÐµÐ½Ð½Ð¾ ÑÑ‚Ð¾ */
+    display: none; /* Убедитесь, что JS меняет именно это */
 }
 
-/* 5. Ð•ÑÐ»Ð¸ ÐµÑÑ‚ÑŒ "Ñ„Ð°Ð½Ñ‚Ð¾Ð¼Ð½Ð°Ñ" ÑÐ¸Ð½ÑÑ Ð»Ð¸Ð½Ð¸Ñ Ð¸Ð»Ð¸ ÑÐ»Ð¾Ð¹ ÑÐ²ÐµÑ€Ñ…Ñƒ */
+/* 5. Если есть "фантомная" синяя линия или слой сверху */
 .app-header {
-    pointer-events: none; /* ÐŸÑ€Ð¾Ð¿ÑƒÑÐºÐ°ÐµÐ¼ ÐºÐ»Ð¸ÐºÐ¸ ÑÐºÐ²Ð¾Ð·ÑŒ Ð¿ÑƒÑÑ‚Ñ‹Ðµ Ð¼ÐµÑÑ‚Ð° ÑˆÐ°Ð¿ÐºÐ¸ */
+    pointer-events: none; /* Пропускаем клики сквозь пустые места шапки */
 }
 .top-controls-pill, .icon-btn, .model-selector-container, .tubelight-navbar { pointer-events: auto !important; z-index: 9999 !important;
-    pointer-events: auto; /* Ð’Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÐ¼ ÐºÐ»Ð¸ÐºÐ°Ð±ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚ÑŒ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼ ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ */
+    pointer-events: auto; /* Возвращаем кликабельность элементам управления */
 }
-/* ÐœÐ¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ð¹ Ñ„Ð¸ÐºÑ: ÑƒÐ±Ð¸Ñ€Ð°ÐµÐ¼ Ñ‚Ð¾Ð½ÐºÐ¸Ðµ ÑÐ¸Ð½Ð¸Ðµ/Ð³Ð¾Ð»ÑƒÐ±Ñ‹Ðµ Ð»Ð¸Ð½Ð¸Ð¸ Ð¸ ÑƒÐ¿Ñ€Ð¾Ñ‰Ð°ÐµÐ¼ Ð²Ð¸Ð·ÑƒÐ°Ð» */
+/* Мобильный фикс: убираем тонкие синие/голубые линии и упрощаем визуал */
 @media (max-width: 480px) {
-  /* Ð¡ÐºÑ€Ñ‹Ñ‚ÑŒ Ð´ÐµÐºÐ¾Ñ€Ð°Ñ‚Ð¸Ð²Ð½Ñ‹Ðµ Ð³Ñ€Ð°Ð´Ð¸ÐµÐ½Ñ‚Ñ‹/ÑÐ»Ð¾Ð¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð²Ñ‹Ð³Ð»ÑÐ´ÑÑ‚ ÐºÐ°Ðº Ð³Ð¾Ñ€Ð¸Ð·Ð¾Ð½Ñ‚Ð°Ð»ÑŒÐ½Ð°Ñ Ð»Ð¸Ð½Ð¸Ñ */
+  /* Скрыть декоративные градиенты/слои, которые выглядят как горизонтальная линия */
   .star-animation-container,
   .star-animation-container svg,
   .trace,
@@ -1712,24 +1712,24 @@ input:focus, .input-main-wrapper:focus-within {
   .send-btn-wrapper::before,
   
 
-  /* Ð£Ð¼ÐµÐ½ÑŒÑˆÐ°ÐµÐ¼ Ñ€Ð°Ð·Ð¼ÐµÑ€Ñ‹ Ð·Ð²ÐµÐ·Ð´Ñ‹/Ð²Ð¸Ð·ÑƒÐ°Ð»Ð¾Ð², ÐµÑÐ»Ð¸ Ð½ÑƒÐ¶Ð½Ð¾ Ð¿Ð¾ÐºÐ°Ð·Ð°Ñ‚ÑŒ Ð¸Ñ… */
+  /* Уменьшаем размеры звезды/визуалов, если нужно показать их */
   .star-animation-container { width: 220px; height: 220px; margin-bottom: 18px; }
 
-  /* ÐŸÐ¾Ð»Ðµ Ð²Ð²Ð¾Ð´Ð° â€” Ñ€Ð°ÑÑ‚ÑÐ½ÑƒÑ‚ÑŒ Ð¿Ð¾ ÑˆÐ¸Ñ€Ð¸Ð½Ðµ, ÑƒÐ±Ñ€Ð°Ñ‚ÑŒ Ð»Ð¸ÑˆÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿Ñ‹ */
+  /* Поле ввода — растянуть по ширине, убрать лишние отступы */
   .input-area { padding: 12px; max-width: 100%; width: 100%; box-sizing: border-box; }
   .input-main-wrapper { border-radius: 20px; padding: 0.5px; }
 
-  /* ÐšÐ½Ð¾Ð¿ÐºÐ° SEND â€” ÐºÐ¾Ð¼Ð¿Ð°ÐºÑ‚Ð½ÐµÐµ Ð¸ Ð²ÑÐµÐ³Ð´Ð° Ð²Ð¸Ð´Ð½Ð° */
+  /* Кнопка SEND — компактнее и всегда видна */
   .send-btn-wrapper { width: 140px !important; height: 44px !important; padding: 2px !important; }
   .send-btn-main { font-size: 0.85rem; letter-spacing: 0.6px; }
 
-  /* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð±Ð¾Ð»ÑŒÑˆÐ¸Ðµ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿Ñ‹ Ð²Ð¾ÐºÑ€ÑƒÐ³ Ð¿Ñ€Ð¸Ð²ÐµÑ‚ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ð³Ð¾ ÑÐºÑ€Ð°Ð½Ð° */
+  /* Убираем большие отступы вокруг приветственного экрана */
   .welcome-screen { margin: 12px 0; padding: 0 8px; }
 
-  /* Ð“Ð°Ñ€Ð°Ð½Ñ‚Ð¸Ñ€ÑƒÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð·Ð²ÐµÐ·Ð´Ð° Ð½Ðµ Ð¼ÐµÑˆÐ°ÐµÑ‚ ÐºÐ»Ð¸ÐºÐ°Ð¼ Ð¿Ð¾ Ð½Ð¸Ð¶Ð½Ð¸Ð¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ð¼ */
+  /* Гарантируем, что звезда не мешает кликам по нижним элементам */
   .star-animation-container { pointer-events: none !important; }
 
-  /* ÐžÐ±ÐµÑÐ¿ÐµÑ‡Ð¸Ð²Ð°ÐµÐ¼, Ñ‡Ñ‚Ð¾ Ñ‡Ð°Ñ‚ Ð¸ Ð¿Ð¾Ð»Ðµ Ð²Ð²Ð¾Ð´Ð° Ð¾ÑÑ‚Ð°ÑŽÑ‚ÑÑ Ð½Ð°Ð´ Ð²Ð¸Ð·ÑƒÐ°Ð»Ð°Ð¼Ð¸ */
+  /* Обеспечиваем, что чат и поле ввода остаются над визуалами */
   .input-area, .input-main-wrapper, #messagesContainer {
     position: relative;
     z-index: 9999 !important;
@@ -1786,7 +1786,7 @@ input:focus, .input-main-wrapper:focus-within {
   transition: box-shadow 0.45s ease;
 }
 
-/* Ð¡ÐºÑ€Ñ‹Ñ‚ÑŒ Ð½Ð° Ð¿Ð»Ð°Ð½ÑˆÐµÑ‚Ð°Ñ…/Ð¼Ð¾Ð±Ð¸Ð»Ðµ */
+/* Скрыть на планшетах/мобиле */
 @media (max-width: 1024px) {
   .top-badges-wrapper { display: none !important; }
 }
@@ -1817,7 +1817,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 
 /* ============================================================
-   QUICK CARDS â€” Ð²Ð¾Ð¿Ñ€Ð¾ÑÑ‹ Ð½Ð° welcome ÑÐºÑ€Ð°Ð½Ðµ
+   QUICK CARDS — вопросы на welcome экране
    ============================================================ */
 
 .quick-pills-wrapper {
@@ -1836,7 +1836,7 @@ input:focus, .input-main-wrapper:focus-within {
   max-width: 720px;
 }
 
-/* --- ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ° --- */
+/* --- Карточка --- */
 .quick-card {
   display: flex;
   align-items: center;
@@ -1852,7 +1852,7 @@ input:focus, .input-main-wrapper:focus-within {
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
-  /* Ð¡Ñ‚Ð¸Ð»ÑŒÐ½Ñ‹Ð¹ Ð³Ð¾Ð»ÑƒÐ±Ð¾Ð¹ Ñ„Ð¾Ð½ */
+  /* Стильный голубой фон */
   background: transparent;
   border: 1px solid transparent;
   box-shadow:
@@ -1862,14 +1862,14 @@ input:focus, .input-main-wrapper:focus-within {
   animation: pill-float 3.5s ease-in-out infinite;
 }
 
-/* Ð˜ÐºÐ¾Ð½ÐºÐ¸ â€” ÑÐ¸Ð½Ð¸Ðµ */
+/* Иконки — синие */
 .quick-card i {
   font-size: 16px;
   color: #000000;
   transition: color 0.4s ease;
 }
 
-/* Ð¡Ð²ÐµÑ‡ÐµÐ½Ð¸Ðµ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ */
+/* Свечение внутри карточки */
 .quick-card::before {
   content: '';
   position: absolute;
@@ -1883,7 +1883,7 @@ input:focus, .input-main-wrapper:focus-within {
   transition: background 0.5s ease;
 }
 
-/* Ð Ð°Ð·Ð½Ñ‹Ðµ Ð·Ð°Ð´ÐµÑ€Ð¶ÐºÐ¸ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸ Ð´Ð»Ñ ÐºÐ°Ð¶Ð´Ð¾Ð¹ */
+/* Разные задержки анимации для каждой */
 .quick-card-1 { animation-delay: 0s; }
 .quick-card-2 { animation-delay: 0.6s; }
 .quick-card-3 { animation-delay: 1.2s; }
@@ -1902,7 +1902,7 @@ input:focus, .input-main-wrapper:focus-within {
   border-color: transparent;
 }
 
-/* --- DEEP MODE: ÑÐ¸Ð½Ð¸Ð¹ â†’ ÐºÑ€Ð°ÑÐ½Ñ‹Ð¹/Ñ‡Ñ‘Ñ€Ð½Ñ‹Ð¹ --- */
+/* --- DEEP MODE: синий → красный/чёрный --- */
 .app-layout.deep-mode .quick-card {
   background: #2a2b30;
   border-color: rgba(255, 255, 255, 0.1);
@@ -1962,16 +1962,16 @@ input:focus, .input-main-wrapper:focus-within {
     border-radius: 16px;
   }
 
-  /* Ð›ÐµÐ²Ð°Ñ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð° */
+  /* Левая сторона */
   .quick-card-1 { top: 22%; left: 2%; }
   .quick-card-3 { bottom: 27%; left: 11%; }
 
-  /* ÐŸÑ€Ð°Ð²Ð°Ñ ÑÑ‚Ð¾Ñ€Ð¾Ð½Ð° */
+  /* Правая сторона */
   .quick-card-2 { top: calc(22% + 30px); left: calc(50% + 270px); right: auto; }
   .quick-card-4 { bottom: calc(22% - 9px); left: calc(50% + 250px); right: auto; }
 }
 
-/* === ÐœÐžÐ‘Ð˜Ð›Ð¬ÐÐ«Ð™: Ð·Ð¸Ð³Ð·Ð°Ð³ ÑÐ»ÐµÐ²Ð°-ÑÐ¿Ñ€Ð°Ð²Ð° === */
+/* === МОБИЛЬНЫЙ: зигзаг слева-справа === */
 @media (max-width: 768px) {
   .quick-pills-wrapper {
     width: 100%;
@@ -1999,21 +1999,21 @@ input:focus, .input-main-wrapper:focus-within {
     position: relative;
   }
 
-  /* ÐÐµÑ‡Ñ‘Ñ‚Ð½Ñ‹Ðµ â€” ÑÐ»ÐµÐ²Ð° */
+  /* Нечётные — слева */
   .quick-card-1,
   .quick-card-3 {
     align-self: flex-start;
     margin-left: 0;
   }
 
-  /* Ð§Ñ‘Ñ‚Ð½Ñ‹Ðµ â€” ÑÐ¿Ñ€Ð°Ð²Ð° */
+  /* Чётные — справа */
   .quick-card-2,
   .quick-card-4 {
     align-self: flex-end;
     margin-right: 0;
   }
 
-  /* ÐÐ½Ð¸Ð¼Ð°Ñ†Ð¸Ñ â€” ÐºÐ°Ðº Ð½Ð° Ð´ÐµÑÐºÑ‚Ð¾Ð¿Ðµ */
+  /* Анимация — как на десктопе */
   .quick-card-1 { animation: pill-float 3.2s ease-in-out infinite 0s; }
   .quick-card-2 { animation: pill-float 3.2s ease-in-out infinite 0.6s; }
   .quick-card-3 { animation: pill-float 3.2s ease-in-out infinite 1.2s; }
@@ -2026,7 +2026,7 @@ input:focus, .input-main-wrapper:focus-within {
     animation-name: pill-float-red;
   }
 
-  /* Ð¡ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ floating-cards (100% Evidence Ð¸ Ð´Ñ€.) */
+  /* Скрываем floating-cards (100% Evidence и др.) */
   .floating-card,
   .hero-visual,
   .profile-wrapper {
@@ -2046,7 +2046,7 @@ input:focus, .input-main-wrapper:focus-within {
     display: block;
 }
 
-/* ÐœÐ¾Ð´Ð°Ð»ÐºÐ¸ Ð½Ð° Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ñ… */
+/* Модалки на мобильных */
 @media (max-width: 768px) {
     .modal-content, 
     [id$="Modal"] > div,
@@ -2060,7 +2060,7 @@ input:focus, .input-main-wrapper:focus-within {
         margin: auto !important;
     }
 
-    /* Ð¡Ð¸Ð¼ÑƒÐ»ÑÑ†Ð¸Ð¸ (lab/main-screen) */
+    /* Симуляции (lab/main-screen) */
     #main-screen {
         padding: 10px !important;
     }
@@ -2082,7 +2082,7 @@ input:focus, .input-main-wrapper:focus-within {
     .nav-container-row::-webkit-scrollbar { display: none !important; }
 }
 
-/* Ð¡ÐºÑ€Ð¾Ð»Ð»Ð±Ð°Ñ€ â€” ÑÐµÑ€Ñ‹Ð¹ */
+/* Скроллбар — серый */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { 
@@ -2095,7 +2095,7 @@ input:focus, .input-main-wrapper:focus-within {
 * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
 
 
-  /* ===== 2. LAB / NEW PROJECT â€” Ð›Ð˜Ð¤Ð¢ Ð¡ÐšÐ ÐžÐ›Ð› + Ð¡Ð•Ð Ð«Ð™ ===== */
+  /* ===== 2. LAB / NEW PROJECT — ЛИФТ СКРОЛЛ + СЕРЫЙ ===== */
   #main-screen {
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
@@ -2166,7 +2166,7 @@ input:focus, .input-main-wrapper:focus-within {
     object-fit: cover !important;
   }
 
-  /* ===== 3. WHAT'S NEW / SYSTEM CHRONICLES â€” ÐœÐžÐ‘ÐÐ™Ð› ===== */
+  /* ===== 3. WHAT'S NEW / SYSTEM CHRONICLES — МОБАЙЛ ===== */
   .custom-modal .modal-content {
     padding: 20px 16px !important;
     overflow-y: auto !important;
@@ -2185,7 +2185,7 @@ input:focus, .input-main-wrapper:focus-within {
     font-size: 1.2rem !important;
   }
 
-  /* ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð½Ð°Ð²Ñ‹ÐºÐ¾Ð² Ð² Lumifex */
+  /* Карточки навыков в Lumifex */
   .lumifex-card, [class*="lumifex"], .skill-card {
     margin-bottom: 16px !important;
     padding: 16px !important;
@@ -2197,7 +2197,7 @@ input:focus, .input-main-wrapper:focus-within {
     background: transparent !important;
   }
 
-  /* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð±ÐµÐ»Ñ‹Ð¹ Ñ„Ð¾Ð½ Ñƒ CodeMirror */
+  /* Убираем белый фон у CodeMirror */
   .CodeMirror {
     background: #12121500 !important;
     color: #e0e0e0 !important;
@@ -2216,7 +2216,7 @@ input:focus, .input-main-wrapper:focus-within {
     color: #555 !important;
   }
 
-  /* Ð¢Ð°Ð±Ñ‹ (HTML / CSS / JS / Python) */
+  /* Табы (HTML / CSS / JS / Python) */
   .editor-tabs, .tab-bar {
     background: #1a1a1c !important;
     border-bottom: 1px solid rgba(255,255,255,0.08) !important;
@@ -2236,7 +2236,7 @@ input:focus, .input-main-wrapper:focus-within {
     border-bottom: 2px solid #ffffff !important;
   }
 
-  /* ÐšÐ½Ð¾Ð¿ÐºÐ° Run */
+  /* Кнопка Run */
   .run-btn, button[onclick*="run"], #runBtn {
     background: #22c55e !important;
     color: #fff !important;
@@ -2254,7 +2254,7 @@ input:focus, .input-main-wrapper:focus-within {
   }
 /* removed extra bracket */
 
-/* ===== MODEL DROPDOWN â€” Ð§Ð˜Ð¡Ð¢Ð«Ð™ ÐšÐžÐ” ===== */
+/* ===== MODEL DROPDOWN — ЧИСТЫЙ КОД ===== */
 .model-dropdown {
     position: absolute;
     top: calc(100% + 10px);
@@ -2301,7 +2301,7 @@ input:focus, .input-main-wrapper:focus-within {
     margin: 4px 8px;
 }
 
-/* ÐžÐ²ÐµÑ€Ð»ÐµÐ¹ â€” Ð¢ÐžÐ›Ð¬ÐšÐž Ð´Ð»Ñ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ð¾Ð³Ð¾ */
+/* Оверлей — ТОЛЬКО для мобильного */
 .model-overlay {
     display: none;
     position: fixed;
@@ -2312,7 +2312,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .model-overlay.active { display: block; }
 
-/* ÐœÐžÐ‘Ð˜Ð›Ð¬ÐÐ«Ð™ â€” ÑˆÑ‚Ð¾Ñ€ÐºÐ° ÑÐ½Ð¸Ð·Ñƒ */
+/* МОБИЛЬНЫЙ — шторка снизу */
 @media (max-width: 768px) {
     .model-dropdown {
         position: fixed !important;
@@ -2365,7 +2365,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 
 /* ============================
-   MODEL DROPDOWN â€” Ð¤Ð˜ÐÐÐ›Ð¬ÐÐ«Ð™
+   MODEL DROPDOWN — ФИНАЛЬНЫЙ
    ============================ */
 
 .model-dropdown {
@@ -2429,7 +2429,7 @@ input:focus, .input-main-wrapper:focus-within {
     flex-shrink: 0;
 }
 
-/* ÐžÐ²ÐµÑ€Ð»ÐµÐ¹ */
+/* Оверлей */
 ..model-overlay {
     display: none;
     position: fixed;
@@ -2441,7 +2441,7 @@ input:focus, .input-main-wrapper:focus-within {
 
 
 /* ============================
-   ÐœÐžÐ‘Ð˜Ð›Ð¬ÐÐ«Ð™ â€” ÑˆÑ‚Ð¾Ñ€ÐºÐ° ÑÐ½Ð¸Ð·Ñƒ
+   МОБИЛЬНЫЙ — шторка снизу
    ============================ */
 @media (max-width: 768px) {
     .model-dropdown {
@@ -2519,7 +2519,7 @@ input:focus, .input-main-wrapper:focus-within {
 #upgradeModal.active,
 
 
-/* Deep mode â€” ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ ÐºÐ»Ð¸ÐºÐ°Ð±ÐµÐ»ÑŒÐ½Ñ‹ */
+/* Deep mode — карточки кликабельны */
 .deep-mode .card,
 .deep-mode .quick-card {
     pointer-events: auto !important;
@@ -2533,7 +2533,7 @@ input:focus, .input-main-wrapper:focus-within {
     -webkit-user-select: none;
 }
 
-/* ÐšÐ½Ð¾Ð¿ÐºÐ¸ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ð¼Ð¾Ð´Ð°Ð»Ð¾Ðº Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð½Ð°Ð¶Ð¸Ð¼Ð°Ñ‚ÑŒÑÑ */
+/* Кнопки внутри модалок должны нажиматься */
 .custom-modal button,
 .custom-modal a,
 #authModal button,
@@ -2582,7 +2582,7 @@ input:focus, .input-main-wrapper:focus-within {
     pointer-events: auto !important;
 }
 
-/* New Project â€” Ð´ÐµÑÐºÑ‚Ð¾Ð¿ Ð²ÐµÑ€ÑÐ¸Ñ */
+/* New Project — десктоп версия */
 @media (min-width: 768px) {
   #newProjectBtn {
     background: linear-gradient(135deg, transparent, transparent);
@@ -2606,7 +2606,7 @@ input:focus, .input-main-wrapper:focus-within {
     gap: 4px;
 }
 
-/* ÐœÐ¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ðµ: Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€ Ð¸ Ð¿Ñ€ÐµÐ²ÑŒÑŽ Ð¿Ð¾ 50% */
+/* Мобильные: редактор и превью по 50% */
 @media (max-width: 767px) {
     #presentation-screen {
         flex-direction: column;
@@ -2623,7 +2623,7 @@ input:focus, .input-main-wrapper:focus-within {
     }
 }
 
-/* Ð”ÐµÑÐºÑ‚Ð¾Ð¿: Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€ ÑÐ»ÐµÐ²Ð°, Ð¿Ñ€ÐµÐ²ÑŒÑŽ ÑÐ¿Ñ€Ð°Ð²Ð° */
+/* Десктоп: редактор слева, превью справа */
 @media (min-width: 768px) {
     #presentation-screen > div:last-child {
         flex-direction: row !important;
@@ -2757,14 +2757,14 @@ input:focus, .input-main-wrapper:focus-within {
 }
 
   /* ================================================
-   ÐœÐÐ¢Ð¬ Ð¡Ð•Ð Ð”Ð¦Ð â€” Ð¤Ð˜ÐÐÐ›Ð¬ÐÐ«Ð™ CSS
-   Ð—Ð°Ð¼ÐµÐ½Ð¸ Ð’Ð•Ð¡Ð¬ ÑÑ‚Ð°Ñ€Ñ‹Ð¹ Ð±Ð»Ð¾Ðº Ð¼Ð°Ñ‚ÑŒ ÑÐµÑ€Ð´Ñ†Ð° Ð² style.css
+   МАТЬ СЕРДЦА — ФИНАЛЬНЫЙ CSS
+   Замени ВЕСЬ старый блок мать сердца в style.css
    ================================================ */
 
-/* â”€â”€ ÐœÐžÐ”ÐÐ› â€” Ð¿Ð¾Ð»Ð½Ñ‹Ð¹ ÑÐºÑ€Ð°Ð½ Ð½Ð° Ð¼Ð¾Ð±Ð¸Ð»Ðµ â”€â”€ */
+/* ── МОДАЛ — полный экран на мобиле ── */
 
 
-/* â”€â”€ ÐšÐ½Ð¾Ð¿ÐºÐ° Ð·Ð°ÐºÑ€Ñ‹Ñ‚ÑŒ â€” Ñ„Ð¸ÐºÑ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸ â”€â”€ */
+/* ── Кнопка закрыть — фикс позиции ── */
 .mh-close {
   position: fixed;
   top: 14px; right: 14px;
@@ -2774,7 +2774,7 @@ input:focus, .input-main-wrapper:focus-within {
   width: 38px; height: 38px;
   border-radius: 50%;
   cursor: pointer;
-  z-index: 9999999 !important; /* Ð²Ñ‹ÑˆÐµ Ð²ÑÐµÐ³Ð¾ */
+  z-index: 9999999 !important; /* выше всего */
   display: flex; align-items: center; justify-content: center;
   font-size: 17px; font-weight: 700;
   transition: background 0.12s, color 0.12s;
@@ -2785,12 +2785,12 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .mh-close:hover, .mh-close:active { background: #e8325a; color: #fff; }
 
-/* â”€â”€ Ð­ÐšÐ ÐÐ 1: Ð ÐžÐ›Ð˜ â”€â”€ */
+/* ── ЭКРАН 1: РОЛИ ── */
 #mh-roleScreen {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  padding: 60px 20px 20px; /* top padding Ð¿Ð¾Ð´ ÐºÑ€ÐµÑÑ‚Ð¸Ðº */
+  padding: 60px 20px 20px; /* top padding под крестик */
   position: relative; z-index: 1;
   overflow-y: auto;
   background: #fff8f8;
@@ -2848,7 +2848,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-role-desc { font-size: 11px; color: #9b7a84; line-height: 1.4; }
 .mh-role-arrow { color: #e8325a; font-size: 19px; margin-left: auto; opacity: 0.45; flex-shrink: 0; }
 
-/* â”€â”€ ÐžÐ‘Ð©Ð˜Ð• ÐŸÐÐÐ•Ð›Ð˜ â”€â”€ */
+/* ── ОБЩИЕ ПАНЕЛИ ── */
 .mh-panel {
   display: none;
   position: absolute;
@@ -2860,18 +2860,18 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .mh-panel.mh-dark {
   background: #000000;
-  overflow: hidden; /* Ñ‡Ð°Ñ‚ Ð½Ðµ ÑÐºÑ€Ð¾Ð»Ð»Ð¸Ñ‚, ÑÐºÑ€Ð¾Ð»Ð»Ð¸Ñ‚ ÑÐ¿Ð¸ÑÐ¾Ðº */
+  overflow: hidden; /* чат не скроллит, скроллит список */
   display: none;
   flex-direction: column;
 }
 
-/* â”€â”€ Ð¨ÐÐŸÐšÐ ÐŸÐÐÐ•Ð›Ð•Ð™ â”€â”€ */
+/* ── ШАПКА ПАНЕЛЕЙ ── */
 .mh-panel-header {
   padding: 14px 16px;
   display: flex; align-items: center; gap: 12px;
   position: sticky; top: 0; background: #fff8f8;
   z-index: 10; border-bottom: 1px solid rgba(232,50,90,0.1);
-  padding-right: 52px; /* Ð¼ÐµÑÑ‚Ð¾ Ð¿Ð¾Ð´ ÐºÑ€ÐµÑÑ‚Ð¸Ðº Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ñ */
+  padding-right: 52px; /* место под крестик закрытия */
 }
 .mh-panel-header h2 {
   font-family: 'Georgia', serif;
@@ -2889,7 +2889,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .mh-back:hover, .mh-back:active { background: #e8325a; color: #fff; }
 
-/* â”€â”€ Ð¤ÐžÐ ÐœÐ â”€â”€ */
+/* ── ФОРМА ── */
 .mh-form {
   padding: 18px 18px 50px;
   display: flex; flex-direction: column; gap: 14px;
@@ -2915,7 +2915,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .mh-field textarea { resize: none; height: 78px; }
 
-/* Ð·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° */
+/* загрузка */
 .mh-upload-area {
   border: 2px dashed rgba(232,50,90,0.28);
   border-radius: 12px; padding: 18px; text-align: center; cursor: pointer;
@@ -2925,7 +2925,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-upload-area p { font-size: 12px; color: #9b7a84; margin-top: 4px; }
 #mh-fileList { font-size: 11px; color: #e8325a; margin-top: 4px; }
 
-/* Ð½Ð°Ð²Ñ‹ÐºÐ¸ */
+/* навыки */
 .mh-skills-grid { display: flex; flex-wrap: wrap; gap: 7px; }
 .mh-skill-tag {
   padding: 7px 13px;
@@ -2936,7 +2936,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 .mh-skill-tag.selected { background: #e8325a; border-color: #e8325a; color: #fff; }
 
-/* ÐºÐ½Ð¾Ð¿ÐºÐ¸ ÑÐ¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ */
+/* кнопки сохранить */
 .mh-save-btn, .mh-action-btn {
   width: 100%; padding: 15px;
   background: linear-gradient(135deg, #e8325a, #c02040);
@@ -2956,7 +2956,7 @@ input:focus, .input-main-wrapper:focus-within {
   border-radius: 8px;
 }
 
-/* Ð¸Ð½Ñ„Ð¾ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ */
+/* инфо карточки */
 .mh-info-card {
   background: rgba(232,50,90,0.05);
   border: 1px solid rgba(232,50,90,0.13);
@@ -2965,7 +2965,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-info-card h4 { font-size: 13px; color: #e8325a; margin-bottom: 6px; }
 .mh-info-card p { font-size: 12px; color: #7a5060; line-height: 1.6; }
 
-/* ÑÑ‚Ð°Ñ‚Ð¸ÑÑ‚Ð¸ÐºÐ° Ñ€ÑƒÐºÐ¾Ð²Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ */
+/* статистика руководителя */
 .mh-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .mh-stat-card {
   background: #fff; border: 1px solid rgba(232,50,90,0.13);
@@ -2974,7 +2974,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-stat-num { font-size: 26px; font-weight: 700; color: #e8325a; }
 .mh-stat-label { font-size: 10px; color: #9b7a84; margin-top: 2px; }
 
-/* â”€â”€ Ð˜Ð˜ Ð­ÐšÐ ÐÐ â€” Ð¤Ð˜ÐšÐ¡ â”€â”€ */
+/* ── ИИ ЭКРАН — ФИКС ── */
 #mh-aiScreen {
   position: absolute !important;
   top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
@@ -2984,7 +2984,7 @@ input:focus, .input-main-wrapper:focus-within {
   z-index: 3;
   overflow: hidden !important;
 }
-/* Ð”ÐµÐºÐ¾Ñ€ */
+/* Декор */
 #mh-aiScreen::before {
   content: '';
   position: absolute; top: -80px; right: -80px;
@@ -2995,7 +2995,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-ai-header {
   display: flex; align-items: center; gap: 11px;
   padding: 12px 14px;
-  padding-right: 52px; /* Ð¼ÐµÑÑ‚Ð¾ Ð¿Ð¾Ð´ ÐºÑ€ÐµÑÑ‚Ð¸Ðº */
+  padding-right: 52px; /* место под крестик */
   background: rgba(0,0,0,0.45);
   border-bottom: 1px solid rgba(232,50,90,0.18);
   backdrop-filter: blur(16px);
@@ -3028,13 +3028,13 @@ input:focus, .input-main-wrapper:focus-within {
   max-width: 110px; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0;
 }
 
-/* ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ñ */
+/* сообщения */
 .mh-ai-messages {
   flex: 1 1 0; overflow-y: auto; padding: 14px 14px 8px;
   display: flex; flex-direction: column; gap: 11px;
   position: relative; z-index: 1;
   -webkit-overflow-scrolling: touch;
-  min-height: 0; /* Ð²Ð°Ð¶Ð½Ð¾! */
+  min-height: 0; /* важно! */
 }
 .mh-msg { display: flex; gap: 8px; align-items: flex-start; }
 .mh-msg-avatar {
@@ -3070,7 +3070,7 @@ input:focus, .input-main-wrapper:focus-within {
 .mh-typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes mh-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-/* Ð¸Ð½Ð¿ÑƒÑ‚ Ñ‡Ð°Ñ‚Ð° */
+/* инпут чата */
 .mh-ai-input-area {
   padding: 10px 14px;
   background: rgba(0,0,0,0.5);
@@ -3078,7 +3078,7 @@ input:focus, .input-main-wrapper:focus-within {
   backdrop-filter: blur(16px);
   display: flex; gap: 8px; align-items: flex-end;
   position: relative; z-index: 2;
-  flex-shrink: 0; /* ÐÐ• ÑÐ¶Ð¸Ð¼Ð°Ñ‚ÑŒÑÑ */
+  flex-shrink: 0; /* НЕ сжиматься */
 }
 #mh-aiInput {
   flex: 1; padding: 11px 14px;
@@ -3102,7 +3102,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 #mh-sendBtn:active { transform: scale(0.92); }
 
-/* â”€â”€ Ð”Ð•Ð¡ÐšÐ¢ÐžÐŸ â”€â”€ */
+/* ── ДЕСКТОП ── */
 @media (min-width: 768px) {
   .mh-roles { max-width: 520px; }
   .mh-role-btn { padding: 20px 24px; }
@@ -3113,17 +3113,17 @@ input:focus, .input-main-wrapper:focus-within {
   .mh-msg-bubble { font-size: 15px; }
 }
 
-/* â”€â”€ ÐœÐžÐ‘Ð˜Ð›Ð¬ â”€â”€ */
+/* ── МОБИЛЬ ── */
 @media (max-width: 767px) {
   .mh-title { font-size: 30px; }
   
 }
 
-  /* â”€â”€ ÐœÐÐ¢Ð¬ Ð¡Ð•Ð Ð”Ð¦Ð: Ð“Ð›ÐÐ’ÐÐ«Ð™ ÐšÐžÐÐ¢Ð•Ð™ÐÐ•Ð  â”€â”€ */
+  /* ── МАТЬ СЕРДЦА: ГЛАВНЫЙ КОНТЕЙНЕР ── */
 
 
 
-  /* Ð’ÑÐµ ÑÐºÑ€Ð°Ð½Ñ‹ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ð¼Ð¾Ð´Ð°Ð»Ð° â€” ÑÐºÑ€Ñ‹Ñ‚Ñ‹ Ð¿Ð¾ ÑƒÐ¼Ð¾Ð»Ñ‡Ð°Ð½Ð¸ÑŽ */
+  /* Все экраны внутри модала — скрыты по умолчанию */
 #mh-roleScreen,
 #mh-parentScreen,
 #mh-specialistScreen,
@@ -3137,7 +3137,7 @@ input:focus, .input-main-wrapper:focus-within {
   -webkit-overflow-scrolling: touch;
 }
 
-/* ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð°ÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹ ÑÐºÑ€Ð°Ð½ */
+/* Показываем только активный экран */
 #mh-roleScreen.mh-active,
 #mh-parentScreen.mh-active,
 #mh-specialistScreen.mh-active,
@@ -3164,7 +3164,7 @@ input:focus, .input-main-wrapper:focus-within {
     text-align: center;
     margin-bottom: 30px;
 }
-  /* Ð“Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ð¹ Ñ„Ð¸ÐºÑ Ð¿Ð¾Ð»Ð½Ð¾ÑÐºÑ€Ð°Ð½Ð½Ð¾ÑÑ‚Ð¸ Ð¼Ð¾Ð´Ð°Ð»Ð¾Ðº */
+  /* Глобальный фикс полноэкранности модалок */
 .modal.active {
     display: flex !important;
 }
@@ -3184,7 +3184,7 @@ input:focus, .input-main-wrapper:focus-within {
     }
 }
 
-/* Ð§Ñ‚Ð¾Ð±Ñ‹ Ð½Ð° Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ñ‹Ñ… Ð½Ð¸Ñ‡ÐµÐ³Ð¾ Ð½Ðµ Ð²Ñ‹Ð»ÐµÐ·Ð°Ð»Ð¾ */
+/* Чтобы на мобильных ничего не вылезало */
 @media (max-width: 640px) {
     .modal-content {
         width: 96%;
@@ -3192,14 +3192,14 @@ input:focus, .input-main-wrapper:focus-within {
         border-radius: 16px;
     }
 }
-  /* ÐœÐžÐ”ÐÐ›ÐšÐ˜ â€” ÐžÐ‘Ð©Ð˜Ð• Ð˜Ð¡ÐŸÐ ÐÐ’Ð›Ð•ÐÐ˜Ð¯ */
+  /* МОДАЛКИ — ОБЩИЕ ИСПРАВЛЕНИЯ */
 .modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;           /* Ð²Ð°Ð¶Ð½Ð¾: dvh Ð²Ð¼ÐµÑÑ‚Ð¾ vh */
-    background: rgba(0, 0, 0, 0.95);   /* Ð¿Ð»Ð¾Ñ‚Ð½Ñ‹Ð¹ Ð¾Ð²ÐµÑ€Ð»ÐµÐ¹ */
+    height: 100dvh;           /* важно: dvh вместо vh */
+    background: rgba(0, 0, 0, 0.95);   /* плотный оверлей */
     display: none;
     align-items: center;
     justify-content: center;
@@ -3218,7 +3218,7 @@ input:focus, .input-main-wrapper:focus-within {
     position: relative;
 }
 
-/* Ð¡Ð¿ÐµÑ†Ð¸Ð°Ð»ÑŒÐ½Ð¾ Ð´Ð»Ñ WhatsNew / Offline Ð¼Ð¾Ð´Ð°Ð»ÐºÐ¸ */
+/* Специально для WhatsNew / Offline модалки */
 #whatsNewModal .modal-content,
 #offlineModal .modal-content {
     max-width: 520px;
@@ -3234,7 +3234,7 @@ input:focus, .input-main-wrapper:focus-within {
     -webkit-text-fill-color: transparent;
 }
  /* ============================================= */
-/* Ð¤Ð˜ÐÐÐ›Ð¬ÐÐ«Ð™ Ð¤Ð˜ÐšÐ¡ â€” ÐŸÐžÐ›ÐÐ«Ð™ Ð­ÐšÐ ÐÐ Ð”Ð›Ð¯ Ð’Ð¡Ð•Ð¥ ÐœÐžÐ”ÐÐ›ÐžÐš */
+/* ФИНАЛЬНЫЙ ФИКС — ПОЛНЫЙ ЭКРАН ДЛЯ ВСЕХ МОДАЛОК */
 /* ============================================= */
 
 .custom-modal {
@@ -3256,7 +3256,7 @@ input:focus, .input-main-wrapper:focus-within {
     display: flex !important;
 }
 
-/* === What's New (System Chronicles) â€” ÐŸÐžÐ›ÐÐ«Ð™ Ð­ÐšÐ ÐÐ === */
+/* === What's New (System Chronicles) — ПОЛНЫЙ ЭКРАН === */
 #whatsNewModal .modal-content.lumifex-fullscreen {
     width: 100vw !important;
     height: 100dvh !important;
@@ -3271,7 +3271,7 @@ input:focus, .input-main-wrapper:focus-within {
     overflow: hidden !important;
 }
 
-/* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð»Ð¸ÑˆÐ½Ð¸Ðµ Ð¾Ñ‚ÑÑ‚ÑƒÐ¿Ñ‹ Ð²Ð½ÑƒÑ‚Ñ€Ð¸ */
+/* Убираем лишние отступы внутри */
 #whatsNewModal .modal-header {
     padding: 20px 30px !important;
     background: transparent !important;
@@ -3284,7 +3284,7 @@ input:focus, .input-main-wrapper:focus-within {
     overflow-y: auto !important;
 }
 
-/* === Ð¡ÐºÐ°Ñ‡Ð¸Ð²Ð°Ð½Ð¸Ðµ Offline (downloadModal) â€” ÐŸÐžÐ›ÐÐ«Ð™ Ð­ÐšÐ ÐÐ === */
+/* === Скачивание Offline (downloadModal) — ПОЛНЫЙ ЭКРАН === */
 #downloadModal .modal-content {
     width: 100vw !important;
     height: 100dvh !important;
@@ -3303,7 +3303,7 @@ input:focus, .input-main-wrapper:focus-within {
     border: none !important;
 }
 
-/* ÐÐ½Ð¸Ð¼Ð°Ñ†Ð¸Ñ Ð¸ Ð¼Ð¾Ð±Ð¸Ð»ÑŒÐ½Ð°Ñ Ð°Ð´Ð°Ð¿Ñ‚Ð°Ñ†Ð¸Ñ */
+/* Анимация и мобильная адаптация */
 .custom-modal .modal-content {
     animation: modalFullPop 0.4s ease forwards;
 }
@@ -3320,7 +3320,7 @@ input:focus, .input-main-wrapper:focus-within {
     }
 }
   /* ============================================= */
-/* Ð¤Ð˜ÐšÐ¡ Ð”Ð›Ð¯ ABOUT SOLIFON AI â€” ÐŸÐžÐ›ÐÐ«Ð™ Ð­ÐšÐ ÐÐ      */
+/* ФИКС ДЛЯ ABOUT SOLIFON AI — ПОЛНЫЙ ЭКРАН      */
 /* ============================================= */
 
 #aboutModal.custom-modal {
@@ -3343,7 +3343,7 @@ input:focus, .input-main-wrapper:focus-within {
     overflow: hidden !important;
 }
 
-/* Ð¨Ð°Ð¿ÐºÐ° Ð¼Ð¾Ð´Ð°Ð»ÐºÐ¸ */
+/* Шапка модалки */
 #aboutModal .modal-header {
     padding: 25px 30px !important;
     background: transparent !important;
@@ -3356,7 +3356,7 @@ input:focus, .input-main-wrapper:focus-within {
     color: #ffffff !important;
 }
 
-/* ÐžÑÐ½Ð¾Ð²Ð½Ð¾Ðµ Ñ‚ÐµÐ»Ð¾ Ñ Ñ‚ÐµÐºÑÑ‚Ð¾Ð¼ */
+/* Основное тело с текстом */
 #aboutModal .modal-body {
     flex: 1 !important;
     padding: 40px 35px !important;
@@ -3366,7 +3366,7 @@ input:focus, .input-main-wrapper:focus-within {
     color: #ddd !important;
 }
 
-/* Ð—Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº SOLIFON AI Ð²Ð½ÑƒÑ‚Ñ€Ð¸ Ñ‚ÐµÐºÑÑ‚Ð° */
+/* Заголовок SOLIFON AI внутри текста */
 #aboutModal .mission-header h2 {
     font-size: 2.8rem !important;
     margin-bottom: 20px !important;
@@ -3376,12 +3376,12 @@ input:focus, .input-main-wrapper:focus-within {
     text-align: center !important;
 }
 
-/* Ð£Ð»ÑƒÑ‡ÑˆÐµÐ½Ð¸Ðµ Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼Ð¾ÑÑ‚Ð¸ Ñ‚ÐµÐºÑÑ‚Ð° */
+/* Улучшение читаемости текста */
 #aboutModal .modal-body p {
     margin-bottom: 1.4em !important;
 }
 
-/* ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ Ð²Ð½Ð¸Ð·Ñƒ (ÐœÑƒÐ»ÑŒÑ‚Ð¸-Ð¯Ð´Ñ€Ð¾ Ð¸ Code Dev) */
+/* Карточки внизу (Мульти-Ядро и Code Dev) */
 #aboutModal .feature-grid {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -3404,7 +3404,7 @@ input:focus, .input-main-wrapper:focus-within {
 }
 
 /* ============================================= */
-/* Ð¤Ð˜ÐÐÐ›Ð¬ÐÐ«Ð™ Ð§Ð˜Ð¡Ð¢Ð«Ð™ Ð¤Ð˜ÐšÐ¡ Ð’Ð«Ð‘ÐžÐ Ð ÐœÐžÐ”Ð•Ð›Ð˜ â€” 29.03.2026 */
+/* ФИНАЛЬНЫЙ ЧИСТЫЙ ФИКС ВЫБОРА МОДЕЛИ — 29.03.2026 */
 /* ============================================= */
 
 .model-overlay {
@@ -3413,8 +3413,8 @@ input:focus, .input-main-wrapper:focus-within {
     left: 0 !important;
     width: 100vw !important;
     height: 100dvh !important;
-    background: rgba(5, 5, 15, 0.68) !important;     /* Ð¿Ð¾Ð»ÑƒÐ¿Ñ€Ð¾Ð·Ñ€Ð°Ñ‡Ð½Ñ‹Ð¹ Ñ‚Ñ‘Ð¼Ð½Ñ‹Ð¹ */
-    backdrop-filter: blur(4px) !important;            /* ÑÐ»Ð°Ð±Ñ‹Ð¹ Ð±Ð»ÑŽÑ€, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ñ„Ð¾Ð½ Ð¾ÑÑ‚Ð°Ð²Ð°Ð»ÑÑ Ð²Ð¸Ð´Ð¸Ð¼Ñ‹Ð¼ */
+    background: rgba(5, 5, 15, 0.68) !important;     /* полупрозрачный тёмный */
+    backdrop-filter: blur(4px) !important;            /* слабый блюр, чтобы фон оставался видимым */
     z-index: 9960 !important;
     opacity: 0 !important;
     transition: opacity 0.25s ease !important;
@@ -3427,7 +3427,7 @@ input:focus, .input-main-wrapper:focus-within {
     opacity: 1 !important;
 }
 
-/* ÐŸÐ°Ð½ÐµÐ»ÑŒ Ð²Ñ‹Ð±Ð¾Ñ€Ð° Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹ */
+/* Панель выбора моделей */
 #modelDropdown {
     position: fixed !important;
     z-index: 9970 !important;
@@ -3439,11 +3439,11 @@ input:focus, .input-main-wrapper:focus-within {
     max-height: 78dvh !important;
     overflow-y: auto !important;
     padding: 15px 8px !important;
-    top: 70px !important;           /* Ð¿Ð¾Ð´ÑÑ‚Ñ€Ð°Ð¸Ð²Ð°ÐµÑ‚ÑÑ Ð¿Ð¾Ð´ ÑˆÐ°Ð¿ÐºÑƒ */
+    top: 70px !important;           /* подстраивается под шапку */
     left: 20px !important;
 }
 
-/* ÐžÑ‚ÐºÐ»ÑŽÑ‡Ð°ÐµÐ¼ ÑÐ¸Ð»ÑŒÐ½Ð¾Ðµ Ñ€Ð°Ð·Ð¼Ñ‹Ñ‚Ð¸Ðµ Ð¾ÑÐ½Ð¾Ð²Ð½Ð¾Ð³Ð¾ ÐºÐ¾Ð½Ñ‚ÐµÐ½Ñ‚Ð° (Ð·Ð²ÐµÐ·Ð´Ð° + Ñ‡Ð°Ñ‚) */
+/* Отключаем сильное размытие основного контента (звезда + чат) */
 body:has(.model-overlay.active) .star-glow-wrapper,
 body:has(.model-overlay.active) #chat-area,
 body:has(.model-overlay.active) .welcome-container,
@@ -3452,12 +3452,12 @@ body:has(.model-overlay.active) .star-animation {
     opacity: 1 !important;
 }
 
-/* Ð£Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð²ÑÐµ Ð»Ð¸ÑˆÐ½Ð¸Ðµ Ñ‡Ð°ÑÑ‚Ð¸Ñ†Ñ‹ */
+/* Убираем все лишние частицы */
 .star-particle, .sparkle, .particle, .blue-x, .model-sparkle {
     display: none !important;
 }
 
-/* ÐšÑ€Ð°ÑÐ¸Ð²Ñ‹Ðµ Ð¿ÑƒÐ½ÐºÑ‚Ñ‹ */
+/* Красивые пункты */
 .model-option {
     padding: 13px 18px !important;
     margin: 3px 6px !important;
@@ -3470,7 +3470,7 @@ body:has(.model-overlay.active) .star-animation {
     transform: translateX(4px);
 }
 
-/* ÐœÐ¾Ð±Ð¸Ð»ÑŒÐ½Ð°Ñ Ð²ÐµÑ€ÑÐ¸Ñ */
+/* Мобильная версия */
 @media (max-width: 640px) {
     #modelDropdown {
         width: 96% !important;
@@ -3483,9 +3483,9 @@ body:has(.model-overlay.active) .star-animation {
 }
 
 
-/* ===== Ð¤Ð˜ÐšÐ¡ DEEP MODE: Quick Cards ===== */
+/* ===== ФИКС DEEP MODE: Quick Cards ===== */
 
-/* Wrapper Ð¿Ð¾Ð²ÐµÑ€Ñ… hero-visual (z-index > 10) */
+/* Wrapper поверх hero-visual (z-index > 10) */
 .deep-mode .quick-pills-wrapper {
     position: absolute !important;
     top: 0 !important;
@@ -3503,7 +3503,7 @@ body:has(.model-overlay.active) .star-animation {
     pointer-events: none !important;
 }
 
-/* Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹ ÑÑ‚Ð¸Ð»ÑŒ ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐµÐº â€” ÐºÑ€Ð°ÑÐ½Ð°Ñ Ñ‚ÐµÐ¼Ð° */
+/* Базовый стиль карточек — красная тема */
 .deep-mode .quick-card {
     pointer-events: all !important;
     position: absolute !important;
@@ -3532,7 +3532,7 @@ body:has(.model-overlay.active) .star-animation {
     box-shadow: 0 0 25px rgba(255, 0, 0, 0.35) !important;
 }
 
-/* Ð¢Ð• Ð–Ð• ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ Ñ‡Ñ‚Ð¾ Ð¸ Ð² ÑÐ¸Ð½ÐµÐ¼ Ñ€ÐµÐ¶Ð¸Ð¼Ðµ */
+/* ТЕ ЖЕ координаты что и в синем режиме */
 .deep-mode .quick-card-1 {
     top: 28% !important;
     left: 8% !important;
@@ -3610,7 +3610,7 @@ body:has(.model-overlay.active) .star-animation {
     letter-spacing: 0.5px;
 }
 
-/* ÐŸÑƒÐ»ÑŒÑÐ°Ñ†Ð¸Ñ */
+/* Пульсация */
 .live-pulse {
     position: absolute;
     top: 50%;
@@ -4979,7 +4979,7 @@ body.chat-started .suggestion-btn {
 }
 
 /* ============================================================
-   WHAT'S NEW MODAL â€” Premium redesign
+   WHAT'S NEW MODAL — Premium redesign
    ============================================================ */
 .wn-modal-content {
     position: relative;
