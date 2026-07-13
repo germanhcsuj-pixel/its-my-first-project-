@@ -182,6 +182,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <i class="ph ph-squares-four md-hidden"></i>
                 <span class="md-inline">Explore</span>
             </div>
+            <div class="tubelight-nav-item" onclick="openModal('authModal')" data-tab="Auth">
+                <i class="ph ph-user md-hidden"></i>
+                <span class="md-inline">Sign In / Register</span>
+            </div>
             <div class="tubelight-lamp" id="tubelight-lamp">
                 <div class="lamp-core">
                     <div class="lamp-glow-1"></div>
@@ -1011,38 +1015,97 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js"></script>
-<div id="authModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center;">
-  <div style="background:#1a1a1c; border:1px solid rgba(255,255,255,0.15); border-radius:20px; max-width:360px; width:88%; padding:32px 28px; position:relative; box-sizing:border-box;">
-    
-    <button onclick="closeModal('authModal')" style="position:absolute;top:14px;right:14px;background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1;z-index:1;"><i class="ph ph-x" style="transition: transform 0.3s ease; display: inline-block;" onmouseover="this.style.transform='rotate(90deg) scale(1.1)'" onmouseout="this.style.transform='rotate(0deg) scale(1)'"></i></button>
-    
-    <div style="text-align:center;font-size:40px;margin-bottom:12px;">рџ”ђ</div>
-    <h2 id="authTitle" style="color:#fff;margin:0 0 6px 0;font-size:20px;text-align:center;">Sign in to your account</h2>
-    <p style="color:rgba(255,255,255,0.4);margin:0 0 20px 0;font-size:13px;text-align:center;">Solifon AI</p>
+<div id="authModal" style="display:none; position:fixed; inset:0; background:#040405; z-index:99999; flex-direction:row;">
+    <style>
+        #authModal.show-modal { display: flex !important; }
+        @media (max-width: 800px) {
+            #authModal { flex-direction: column !important; }
+            .auth-art-side { display: none !important; }
+            .auth-form-side { width: 100% !important; max-width: 100% !important; border-left: none !important; padding: 30px !important; }
+        }
+    </style>
+    <button onclick="closeModal('authModal')" style="position:absolute;top:30px;right:30px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:24px;cursor:pointer;width:50px;height:50px;border-radius:50%;z-index:10001;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(90deg) scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='rotate(0deg) scale(1)';"><i class="ph ph-x"></i></button>
 
-    <div style="display:flex;background:rgba(255,255,255,0.06);border-radius:10px;padding:3px;margin-bottom:20px;">
-      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:#fff;color:#000;">Log In</button>
-      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;background:transparent;color:#fff;">Sign Up</button>
+    <!-- Left Side: Branding / Abstract Art -->
+    <div class="auth-art-side" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 40px; position:relative; overflow:hidden; background: #000;">
+        <div style="position:absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(0,200,255,0.12) 0%, rgba(0,0,0,0) 70%); top: -200px; left: -200px; border-radius: 50%; filter: blur(60px); animation: float1 10s infinite alternate ease-in-out;"></div>
+        <div style="position:absolute; width: 600px; height: 600px; background: radial-gradient(circle, rgba(100,50,255,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -100px; right: -100px; border-radius: 50%; filter: blur(60px); animation: float2 12s infinite alternate ease-in-out;"></div>
+        <style>
+            @keyframes float1 { 0% { transform: translate(0, 0); } 100% { transform: translate(100px, 100px); } }
+            @keyframes float2 { 0% { transform: translate(0, 0); } 100% { transform: translate(-100px, -50px); } }
+            @keyframes floatPlanet { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } 100% { transform: translateY(0) rotate(0deg); } }
+        </style>
+        
+        <div style="z-index:2; text-align:center; max-width: 500px;">
+            <i class="ph ph-planet" style="font-size: 80px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)); animation: floatPlanet 4s ease-in-out infinite;"></i>
+            <h1 style="font-size: 48px; font-weight: 700; color: #fff; margin-bottom: 20px; line-height: 1.1; font-family: 'Inter', sans-serif;">Unlock the power of <span style="background: linear-gradient(135deg, #00c8ff, #0055ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Solifon AI</span></h1>
+            <p style="font-size: 18px; color: rgba(255,255,255,0.6); line-height: 1.5;">Experience next-generation artificial intelligence with an intuitive interface designed to elevate your productivity.</p>
+        </div>
     </div>
 
-    <input id="authEmail" type="email" placeholder="Email" autocomplete="email"
-      style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:10px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
-    
-    <input id="authPassword" type="password" placeholder="Password (min. 6 characters)" autocomplete="current-password"
-      style="display:block;width:100%;padding:13px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:15px;margin-bottom:6px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;">
+    <!-- Right Side: Form -->
+    <div class="auth-form-side" style="width: 50vw; min-width: 400px; max-width: 650px; background: #0a0a0c; display:flex; flex-direction:column; align-items:center; padding: 40px; box-sizing: border-box; border-left: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; overflow-y: auto; max-height: 100vh;">
+        <div style="width: 100%; max-width: 400px; margin: auto 0; padding: 20px 0;">
+            <div style="text-align:left; margin-bottom: 24px;">
+                <h2 id="authTitle" style="color:#fff; margin:0 0 8px 0; font-size:32px; font-weight:700;">Welcome back</h2>
+                <p style="color:rgba(255,255,255,0.5); margin:0; font-size:15px;">Please enter your details to sign in.</p>
+            </div>
 
-    <div style="text-align: right; margin-bottom: 14px;">
-        <a href="#" onclick="resetPassword()" style="color: #00c8ff; font-size: 13px; text-decoration: none;">Forgot password?</a>
+            <div style="display:flex;background:rgba(255,255,255,0.04);border-radius:14px;padding:6px;margin-bottom:30px;">
+                <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;background:#fff;color:#000;transition:0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">Log In</button>
+                <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:12px;border:none;border-radius:10px;cursor:pointer;font-size:15px;font-weight:600;background:transparent;color:#fff;transition:0.2s;">Sign Up</button>
+            </div>
+
+            <!-- Social Logins -->
+            <div style="margin-bottom:30px;">
+                <!-- Google -->
+                <button onclick="signInWithGoogle()" style="width:100%; display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(0,0,0,0.2);" onmouseover="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.3)'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.borderColor='rgba(255,255,255,0.1)'; this.style.transform='translateY(0)';">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg> Continue with Google
+                </button>
+            </div>
+            
+            <div style="display:flex;align-items:center;margin-bottom:30px;">
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+                <span style="padding:0 16px;color:rgba(255,255,255,0.3);font-size:12px;font-weight:600;letter-spacing:1px;">OR</span>
+                <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display:block; color:rgba(255,255,255,0.7); font-size:14px; margin-bottom:10px; font-weight:500;">Email Address</label>
+                <input id="authEmail" type="email" placeholder="name@example.com" autocomplete="email"
+                  style="display:block;width:100%;padding:16px 20px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:16px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;transition:border-color 0.2s, background 0.2s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2);" onfocus="this.style.borderColor='#00c8ff'; this.style.background='rgba(0,0,0,0.5)';" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(0,0,0,0.3)';">
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display:block; color:rgba(255,255,255,0.7); font-size:14px; margin-bottom:10px; font-weight:500;">Password</label>
+                <input id="authPassword" type="password" placeholder="Min. 6 characters" autocomplete="current-password"
+                  style="display:block;width:100%;padding:16px 20px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;font-size:16px;outline:none;box-sizing:border-box;-webkit-user-select:text;user-select:text;transition:border-color 0.2s, background 0.2s;box-shadow:inset 0 2px 4px rgba(0,0,0,0.2);" onfocus="this.style.borderColor='#00c8ff'; this.style.background='rgba(0,0,0,0.5)';" onblur="this.style.borderColor='rgba(255,255,255,0.1)'; this.style.background='rgba(0,0,0,0.3)';">
+            </div>
+
+            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <label style="display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.6); font-size:14px; cursor:pointer; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+                    <input type="checkbox" style="accent-color:#00c8ff; width:18px; height:18px; cursor:pointer;"> Remember me
+                </label>
+                <a href="#" onclick="resetPassword()" style="color: #00c8ff; font-size: 14px; font-weight:500; text-decoration: none; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">Forgot password?</a>
+            </div>
+
+            <p id="authError" style="color:#ff5555;font-size:14px;margin:0 0 20px 0;min-height:20px;"></p>
+
+            <button id="authSubmitBtn" onclick="submitAuth()" 
+              style="display:block;width:100%;padding:18px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:12px;color:#fff;font-size:17px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;transition:all 0.3s;box-shadow:0 6px 20px rgba(0,85,255,0.3);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 30px rgba(0,85,255,0.5)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 6px 20px rgba(0,85,255,0.3)';">
+              Sign In
+            </button>
+        </div>
     </div>
-
-    <p id="authError" style="color:#ff5555;font-size:13px;margin:0 0 14px 0;min-height:18px;text-align:center;"></p>
-
-    <button id="authSubmitBtn" onclick="submitAuth()" 
-      style="display:block;width:100%;padding:14px;background:linear-gradient(135deg,#00c8ff,#0055ff);border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;touch-action:manipulation;box-sizing:border-box;">
-      Sign In
-    </button>
-  </div>
 </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     <script src="script.js?v=20260712_6" charset="utf-8"></script>
     <script src="air_canvas.js" charset="utf-8" defer></script>
   
