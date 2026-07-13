@@ -112,6 +112,47 @@ function cooldown(key, ms) {
         .air-upload-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,0.45); }
         #uploadPhotoBtn  { background: #a855f7; color: #fff; }
         #uploadModelBtn  { background: #00ffcc; color: #000; }
+        #modelLibraryContainer {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            display: none; flex-direction: column; align-items: center;
+            z-index: 10001;
+            transition: transform 0.3s ease;
+        }
+        #modelLibraryContainer.hidden {
+            transform: translate(-50%, 150%);
+        }
+        #modelLibraryPanel {
+            display: flex; gap: 15px; padding: 15px 25px;
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .model-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white; font-size: 24px;
+            width: 50px; height: 50px; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .model-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+        .model-btn.active {
+            border-color: #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+        }
+        #toggleLibraryBtn {
+            margin-bottom: 10px; background: rgba(0,0,0,0.5);
+            color: #aaa; border: none; border-radius: 10px;
+            padding: 5px 15px; cursor: pointer; font-size: 12px;
+            transition: color 0.2s;
+        }
+        #toggleLibraryBtn:hover { color: #fff; }
     `;
     document.head.appendChild(style);
 })();
@@ -652,7 +693,28 @@ function switchDemoModel(idx) {
     if (!demoModels.length) return;
     demoModels[currentModelIndex].visible = false;
     currentModelIndex = ((idx % demoModels.length) + demoModels.length) % demoModels.length;
-    demoModels[currentModelIndex].visible = true;
+    
+    const newModel = demoModels[currentModelIndex];
+    newModel.visible = true;
+    newModel.scale.set(0.01, 0.01, 0.01);
+    
+    let targetScale = 1.0;
+    function animateSpawn() {
+        if (newModel.scale.x < targetScale - 0.01) {
+            const s = newModel.scale.x + (targetScale - newModel.scale.x) * 0.15;
+            newModel.scale.set(s, s, s);
+            requestAnimationFrame(animateSpawn);
+        } else {
+            newModel.scale.set(targetScale, targetScale, targetScale);
+        }
+    }
+    animateSpawn();
+    
+    const panelBtns = document.querySelectorAll('.model-btn');
+    if (panelBtns.length > 0) {
+        panelBtns.forEach(b => b.classList.remove('active'));
+        if (panelBtns[currentModelIndex]) panelBtns[currentModelIndex].classList.add('active');
+    }
 }
 
 function animateThree() {
@@ -697,6 +759,15 @@ function switchAirCanvasLevel(level) {
         btn.style.color = level === 3 ? '#000' : '#fff';
     }
     updateUploadButtons();
+    
+    const modelPanel = document.getElementById('modelLibraryContainer');
+    if (modelPanel) {
+        modelPanel.style.display = level === 3 ? 'flex' : 'none';
+    }
+    if (level === 3) {
+        showSystemNotification('Выберите 3D-модель внизу, чтобы начать взаимодействие!', 3000);
+    }
+    
     GestureEngine.reset();
 }
 
@@ -775,6 +846,44 @@ function updatePaletteUIColor(col) {
     updatePaletteUI(col);
 }
 
+function createModelLibraryPanel() {
+    if (document.getElementById('modelLibraryContainer')) return;
+    
+    const container = document.createElement('div');
+    container.id = 'modelLibraryContainer';
+    
+    const toggleBtn = document.createElement('button');
+    toggleBtn.id = 'toggleLibraryBtn';
+    toggleBtn.textContent = '▼ Скрыть библиотеку';
+    toggleBtn.onclick = () => {
+        container.classList.toggle('hidden');
+        toggleBtn.textContent = container.classList.contains('hidden') ? '▲ Показать библиотеку' : '▼ Скрыть библиотеку';
+    };
+    
+    const panel = document.createElement('div');
+    panel.id = 'modelLibraryPanel';
+    
+    const models = [
+        { icon: '🍩', title: 'Тор' },
+        { icon: '🧊', title: 'Куб' },
+        { icon: '🌍', title: 'Сфера' },
+        { icon: '💎', title: 'Икосаэдр' }
+    ];
+    
+    models.forEach((m, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'model-btn' + (idx === 0 ? ' active' : '');
+        btn.title = m.title;
+        btn.innerHTML = m.icon;
+        btn.onclick = () => switchDemoModel(idx);
+        panel.appendChild(btn);
+    });
+    
+    container.appendChild(toggleBtn);
+    container.appendChild(panel);
+    document.body.appendChild(container);
+}
+
 
 // ══════════════════════════════════════════════════════════════
 //  ИНИЦИАЛИЗАЦИЯ
@@ -808,6 +917,7 @@ function initAirCanvasElite() {
 
     createLevelSwitcher();
     createUploadButtons();
+    createModelLibraryPanel();
     initThreeJS();
 }
 
