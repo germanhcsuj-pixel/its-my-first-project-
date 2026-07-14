@@ -1096,9 +1096,22 @@ if (chatTrigger) {
         } else {
             const data = await response.json();
             document.getElementById("stopBtn").style.display = "none";
+            
+            if (data.image_html) {
+                const tEl = botMsgElement.querySelector('.text');
+                if (tEl) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.innerHTML = data.image_html;
+                    tEl.appendChild(imgContainer);
+                }
+            }
+            
             const reply = data.reply || '...';
             typeEffect(botMsgElement, reply);
-            saveToFirebase('ai', reply, targetSessionId);
+            
+            let saveHtml = reply;
+            if (data.image_html) saveHtml = data.image_html + reply;
+            saveToFirebase('ai', saveHtml, targetSessionId);
             if (isLiveMode) {
                 const status = document.getElementById('liveStatus');
                 if (!reply || reply === '...') {
