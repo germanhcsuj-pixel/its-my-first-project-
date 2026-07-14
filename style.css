@@ -5580,3 +5580,64 @@ body.chat-started .suggestion-btn {
 #upgradeModal .third-tariff::after {
   background: linear-gradient(to right, rgba(255, 140, 0, 0) 0%, rgba(255, 140, 0, 0.7) 50%, rgba(255, 140, 0, 0) 100%);
 }
+
+/* Кнопка сбоку */
+.holo-btn-trigger {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, #00ffcc, #3b82f6);
+    color: #000;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
+    transition: 0.3s;
+}
+.holo-btn-trigger:hover { transform: translateY(-50%) scale(1.05); }
+
+/* Полупрозрачный фон модалки */
+.holo-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(10, 10, 10, 0.5); 
+    backdrop-filter: blur(12px); 
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+.holo-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Контент внутри модалки */
+.holo-modal-content {
+    background: rgba(25, 25, 25, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    width: 80%;
+    max-width: 600px;
+    color: white;
+    text-align: center;
+}
+.holo-modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.holo-close-btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+.holo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; }
+.holo-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.holo-item:hover { background: rgba(0, 255, 204, 0.2); border-color: #00ffcc; transform: translateY(-5px); }
