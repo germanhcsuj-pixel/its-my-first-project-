@@ -1055,14 +1055,7 @@ if (chatTrigger) {
         formData.append('provider', currentProvider);
         formData.append('use_voice', isLiveMode ? 'true' : 'false');
         if (filesToSend.length > 0) formData.append('file', filesToSend[0]);
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-            try {
-                const token = await firebase.auth().currentUser.getIdToken(true);
-                formData.append('auth_token', token);
-            } catch (e) {
-                console.error("Token error:", e);
-            }
-        }
+        formData.append('user_email', currentUser ? currentUser.email : '');
 
 
         window.currentAbortController = new AbortController();
@@ -1521,20 +1514,10 @@ window.toggleLiveMode = function() {
         if (btn) btn.classList.add('active-live');
         const status = document.getElementById('liveStatus');
         if (status) status.innerText = "РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє СЃРµСЂРІРµСЂСѓ...";
-        (async () => {
-            let token = "";
-            if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-                try { token = await firebase.auth().currentUser.getIdToken(true); } catch(e) {}
-            }
-            const f = new FormData();
-            f.append('prompt', 'ping');
-            f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini');
-            f.append('auth_token', token);
-            fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
-                method: "POST",
-                body: f
-            }).finally(() => { if (isLiveMode) startLiveListening(); });
-        })();
+        fetch("https://germanhcsuj-itssoimportandforme.hf.space/chat", {
+            method: "POST",
+            body: (() => { const f = new FormData(); f.append('prompt', 'ping'); f.append('provider', modelMap[selectedProvider] || selectedProvider || 'gemini'); f.append('user_email', currentUser ? currentUser.email : ''); return f; })()
+        }).finally(() => { if (isLiveMode) startLiveListening(); });
     } else {
         window.stopLiveMode();
     }
@@ -5109,12 +5092,6 @@ async function _callImageSearch(query) {
         const fd = new FormData();
         fd.append('prompt', 'Напиши короткий красивый текст (2-3 предложения) про: ' + query + '. Без заголовков.');
         fd.append('provider', provider);
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-            try {
-                const token = await firebase.auth().currentUser.getIdToken(true);
-                fd.append('auth_token', token);
-            } catch(e) {}
-        }
         let aiText = '';
         try {
             const aiResp = await fetch(BASE + '/chat', { method: 'POST', body: fd });
@@ -5194,3 +5171,25 @@ window.signInWithProvider = function(providerName) {
         if (providerName === 'github') provider = new firebase.auth.GithubAuthProvider();
         else if (providerName === 'apple') provider = new firebase.auth.OAuthProvider('apple.com');
         else {
+             const errorEl = document.getElementById('authError');
+             if (errorEl) errorEl.textContent = providerName.charAt(0).toUpperCase() + providerName.slice(1) + ' login is coming soon!';
+             return;
+        }
+        
+        if (provider) {
+            firebase.auth().signInWithPopup(provider).then((result) => {
+                if (typeof closeModal === 'function') closeModal('authModal');
+            }).catch(err => {
+                const errorEl = document.getElementById('authError');
+                if (errorEl) errorEl.textContent = err.message;
+            });
+        }
+    } else {
+        const errorEl = document.getElementById('authError');
+        if (errorEl) {
+            errorEl.textContent = providerName.charAt(0).toUpperCase() + providerName.slice(1) + ' Sign-In is coming soon.';
+        } else {
+            alert(providerName + ' Sign-In is coming soon.');
+        }
+    }
+};
