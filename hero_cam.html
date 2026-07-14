@@ -118,6 +118,66 @@
       display: none; position: absolute; inset: 0; background: #fff; z-index: 45;
     }
 
+    /* Кнопка сбоку 3D */
+    .holo-btn-trigger {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #00ffcc, #3b82f6);
+        color: #000;
+        border: none;
+        padding: 15px 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
+        transition: 0.3s;
+    }
+    .holo-btn-trigger:hover { transform: translateY(-2px) scale(1.05); }
+
+    /* Полупрозрачный фон модалки 3D */
+    .holo-modal {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(10, 10, 10, 0.5); 
+        backdrop-filter: blur(12px); 
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    .holo-modal.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Контент внутри модалки 3D */
+    .holo-modal-content {
+        background: rgba(25, 25, 25, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 20px;
+        width: 80%;
+        max-width: 600px;
+        color: white;
+        text-align: center;
+    }
+    .holo-modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+    .holo-close-btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+    .holo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; }
+    .holo-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .holo-item:hover { background: rgba(0, 255, 204, 0.2); border-color: #00ffcc; transform: translateY(-5px); }
+
   </style>
 
   <!-- РЎС‚СЂРѕРіРѕ РѕС‚РґРµР»РµРЅРЅС‹Р№ JS РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ -->
@@ -182,6 +242,26 @@
       <div id="photoTimer">3</div>
       <div id="photoFlash"></div>
 
+    </div>
+  </div>
+</div>
+
+<!-- UI for 3D Library -->
+<button id="btnOpen3DLibrary" class="holo-btn-trigger">
+  <span>🧊</span> Выбрать 3D
+</button>
+
+<div id="modal3DLibrary" class="holo-modal hidden">
+  <div class="holo-modal-content">
+    <div class="holo-modal-header">
+      <h3>Библиотека Голограмм</h3>
+      <button id="btnClose3DLibrary" class="holo-close-btn">✕</button>
+    </div>
+    <div class="holo-grid">
+      <div class="holo-item" onclick="selectHoloModel(0)">🌀 Тор (Neon)</div>
+      <div class="holo-item" onclick="selectHoloModel(1)">📦 Куб (Pink)</div>
+      <div class="holo-item" onclick="selectHoloModel(2)">🌍 Сфера (Blue)</div>
+      <div class="holo-item" onclick="selectHoloModel(3)">💎 Кристалл (Gold)</div>
     </div>
   </div>
 </div>
