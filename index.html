@@ -1024,6 +1024,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             .auth-form-side { width: 100% !important; max-width: 100% !important; border-left: none !important; padding: 30px !important; }
         }
     </style>
+    <button onclick="closeModal('authModal')" style="position:absolute;top:30px;right:30px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:24px;cursor:pointer;width:50px;height:50px;border-radius:50%;z-index:10001;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.transform='rotate(90deg) scale(1.1)';" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.transform='rotate(0deg) scale(1)';"><i class="ph ph-x"></i></button>
+
     <!-- Left Side: Branding / Abstract Art -->
     <div class="auth-art-side" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding: 40px; position:relative; overflow:hidden; background: #000;">
         <div style="position:absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(0,200,255,0.12) 0%, rgba(0,0,0,0) 70%); top: -200px; left: -200px; border-radius: 50%; filter: blur(60px); animation: float1 10s infinite alternate ease-in-out;"></div>
@@ -1035,7 +1037,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </style>
         
         <div style="z-index:2; text-align:center; max-width: 500px;">
-            <i class="ph ph-planet" style="display: inline-block; font-size: 80px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)); animation: floatPlanet 4s ease-in-out infinite;"></i>
+            <i class="ph ph-planet" style="font-size: 80px; color: #fff; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,255,255,0.3)); animation: floatPlanet 4s ease-in-out infinite;"></i>
             <h1 style="font-size: 48px; font-weight: 700; color: #fff; margin-bottom: 20px; line-height: 1.1; font-family: 'Inter', sans-serif;">Unlock the power of <span style="background: linear-gradient(135deg, #00c8ff, #0055ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Solifon AI</span></h1>
             <p style="font-size: 18px; color: rgba(255,255,255,0.6); line-height: 1.5;">Experience next-generation artificial intelligence with an intuitive interface designed to elevate your productivity.</p>
         </div>
@@ -1043,11 +1045,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Right Side: Form -->
     <div class="auth-form-side" style="width: 50vw; min-width: 400px; max-width: 650px; background: #0a0a0c; display:flex; flex-direction:column; align-items:center; padding: 40px; box-sizing: border-box; border-left: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 10; overflow-y: auto; max-height: 100vh;">
-        <!-- Close/Back Button inside the form side for better visibility -->
-        <button onclick="closeModal('authModal')" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:rgba(255,255,255,0.5); font-size:28px; cursor:pointer; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='rgba(255,255,255,0.5)';">
-            <i class="ph ph-x"></i>
-        </button>
-
         <div style="width: 100%; max-width: 400px; margin: auto 0; padding: 20px 0;">
             <div style="text-align:left; margin-bottom: 24px;">
                 <h2 id="authTitle" style="color:#fff; margin:0 0 8px 0; font-size:32px; font-weight:700;">Welcome back</h2>
