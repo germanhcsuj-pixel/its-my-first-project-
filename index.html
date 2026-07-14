@@ -3226,14 +3226,185 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </style>
 
 <!-- GAME SCREEN -->
-<div id="game-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#0a0a0c; flex-direction:column; font-family:'Inter',sans-serif;">
-    <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <div style="font-size: 18px; font-weight: 600; color: #fff;">About Game</div>
-        <button onclick="closeGameScreen()" class="screen-close-btn" onmouseover="this.style.color='#ff6b6b'" onmouseout="this.style.color=''">&times;</button>
+<div id="game-screen" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1000; background:#000; flex-direction:column; font-family:'Outfit',sans-serif; overflow-y:auto; overflow-x:hidden;">
+    
+    <style>
+        .hl-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            /* Placeholder background image, you can change this URL to your own */
+            background: url('https://images.unsplash.com/photo-1616422285623-13ff0162193c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 80px;
+        }
+        .hl-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 60%;
+            background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+            z-index: 1;
+        }
+        .hl-hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .hl-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+            margin-bottom: 20px;
+            font-family: 'Outfit', sans-serif;
+        }
+        .hl-subtitle {
+            font-size: 1.5rem;
+            color: #ff5722;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+        .hl-btn {
+            background-color: #ff5722;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(255, 87, 34, 0.3);
+        }
+        .hl-btn:hover {
+            background-color: #f4511e;
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 87, 34, 0.5);
+        }
+        .hl-close-btn {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 2px solid rgba(255,255,255,0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .hl-close-btn:hover {
+            background: #fff;
+            color: #000;
+            transform: rotate(90deg);
+        }
+        .hl-section {
+            padding: 100px 10vw;
+            background: #000;
+            color: #ccc;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .hl-section.reversed {
+            grid-template-columns: 1fr 1fr;
+            direction: rtl;
+        }
+        .hl-section.reversed > * {
+            direction: ltr;
+        }
+        .hl-text-block h2 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+        .hl-text-block h2 span {
+            color: #ff5722;
+        }
+        .hl-text-block p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #a3a3a3;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+        }
+        .hl-image-block img {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            transition: transform 0.5s ease;
+        }
+        .hl-image-block img:hover {
+            transform: scale(1.03);
+        }
+        @media(max-width: 900px) {
+            .hl-section, .hl-section.reversed {
+                grid-template-columns: 1fr;
+                padding: 60px 5vw;
+                gap: 40px;
+            }
+        }
+    </style>
+
+    <button onclick="closeGameScreen()" class="hl-close-btn"><i class="ph ph-x"></i></button>
+
+    <div class="hl-hero">
+        <div class="hl-hero-content">
+            <div class="hl-subtitle">IN DEVELOPMENT</div>
+            <div class="hl-title">OUR NEW GAME</div>
+            <button class="hl-btn" style="pointer-events: none; background: transparent; border: 2px solid #ff5722;">POWERED BY UNREAL ENGINE 5.5</button>
+        </div>
     </div>
-    <div style="flex: 1; padding: 20px; color: #888;">
-        <!-- Пусто, как просили -->
+
+    <div class="hl-section">
+        <div class="hl-text-block">
+            <h2>Built on <span>UE5.5</span></h2>
+            <p>We are currently developing our own game from scratch using the cutting-edge Unreal Engine 5.5. This allows us to push the boundaries of visual fidelity, lighting, and physics.</p>
+            <p>Expect deep environmental interactions, next-gen graphics, and visceral gameplay as we continue to shape this world.</p>
+        </div>
+        <div class="hl-image-block">
+            <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Gameplay">
+        </div>
     </div>
+
+    <div class="hl-section reversed">
+        <div class="hl-text-block">
+            <h2>Work in <span>Progress</span></h2>
+            <p>The game is still in active development. We are adding many more details, levels, and core mechanics to ensure an unforgettable experience.</p>
+            <p>Stay tuned for behind-the-scenes updates, early access gameplay footage, and beta testing announcements as we get closer to release.</p>
+        </div>
+        <div class="hl-image-block">
+            <img src="https://images.unsplash.com/photo-1622979135240-caa6648190b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Detailed Environment">
+        </div>
+    </div>
+
+    <div style="text-align:center; padding: 120px 20px; background: #050505;">
+        <h2 style="color: #fff; font-size: 2.2rem; margin-bottom: 35px; font-weight: 800; letter-spacing: 3px;">COMING SOON</h2>
+        <button class="hl-btn" style="padding: 22px 70px; font-size: 1.4rem; background: #333; color: #888; box-shadow: none; pointer-events: none;">IN ACTIVE DEVELOPMENT</button>
+    </div>
+
 </div>
 
 <!-- NEW FEATURE SCREEN -->
