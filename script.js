@@ -5193,4 +5193,3 @@ window.signInWithProvider = function(providerName) {
         }
     }
 };
-
