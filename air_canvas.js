@@ -1405,3 +1405,44 @@ if (_fi) {
         }
     });
 }
+
+// ── Логика UI для модалки 3D ────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+    const btnOpen = document.getElementById('btnOpen3DLibrary');
+    const btnClose = document.getElementById('btnClose3DLibrary');
+    const modal = document.getElementById('modal3DLibrary');
+
+    if (btnOpen && modal) {
+        btnOpen.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+    }
+
+    if (btnClose && modal) {
+        btnClose.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
+
+    if (modal) {
+        // Закрытие при клике на прозрачный фон
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'modal3DLibrary') {
+                e.target.classList.add('hidden');
+            }
+        });
+    }
+});
+
+// Глобальная функция для сетки. Она вызывает существующую switchDemoModel
+window.selectHoloModel = function(index) {
+    if (typeof switchDemoModel === 'function') {
+        switchDemoModel(index);
+    } else {
+        console.warn('Функция switchDemoModel не найдена!');
+    }
+    const modal = document.getElementById('modal3DLibrary');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+};
