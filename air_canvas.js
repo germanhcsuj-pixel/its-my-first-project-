@@ -58,6 +58,7 @@ let threeRenderer     = null;
 let threeAnimId       = null;
 let demoModels        = [];
 let currentModelIndex = 0;
+let modelSelected = false;
 let zoomBaseDist      = null;
 
 // ─── Глобальные кулдауны ──────────────────────────────────────
@@ -167,16 +168,7 @@ function cooldown(key, ms) {
 // ══════════════════════════════════════════════════════════════
 let _notifTimer = null;
 function showSystemNotification(text, durationMs = 2200) {
-    let el = document.getElementById('sysNotification');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'sysNotification';
-        document.body.appendChild(el);
-    }
-    el.textContent = text;
-    el.classList.add('show');
-    clearTimeout(_notifTimer);
-    _notifTimer = setTimeout(() => el.classList.remove('show'), durationMs);
+    // Notifications disabled as per user request
 }
 
 
@@ -662,32 +654,122 @@ function initThreeJS() {
         threeCanvas = document.createElement('canvas');
         threeCanvas.id = 'threeCanvas';
         threeCanvas.style.cssText =
-            'position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;';
-        document.body.appendChild(threeCanvas);
+            'position:absolute;top:0;left:0;width:100%;height:100%;z-index:25;pointer-events:none;';
+    }
+    const container = document.querySelector('.tablet-screen') || document.body;
+    if (threeCanvas.parentNode !== container) {
+        container.appendChild(threeCanvas);
     }
 
     threeScene  = new THREE.Scene();
     threeCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
     threeCamera.position.z = 5;
 
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0);
+    hemiLight.position.set(0, 20, 0);
+    threeScene.add(hemiLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(10, 20, 10);
+    threeScene.add(dirLight);
+
     threeRenderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
     threeRenderer.setSize(window.innerWidth, window.innerHeight);
     threeRenderer.setPixelRatio(window.devicePixelRatio);
     threeRenderer.setClearColor(0x000000, 0);
 
-    const defs = [
-        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc },
-        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055 },
-        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6 },
-        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b },
-    ];
     demoModels = [];
-    defs.forEach((d, i) => {
-        const mesh = new THREE.Mesh(d.geo, new THREE.MeshBasicMaterial({ color: d.color, wireframe: true }));
-        mesh.visible = (i === 0);
-        threeScene.add(mesh);
-        demoModels.push(mesh);
-    });
+
+    // 0: Fox, 1: Duck, 2: House, 3: Robot, 4: Rocket, 5: Crystal
+    for (let i = 0; i < 6; i++) {
+        const g = new THREE.Group();
+        g.visible = false;
+        g.userData = { isPinned: false };
+        threeScene.add(g);
+        demoModels.push(g);
+    }
+
+    if (window.THREE && window.THREE.GLTFLoader) {
+        const loader = new THREE.GLTFLoader();
+        // Fox
+        loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb', (gltf) => {
+            const m = gltf.scene; m.scale.set(0.02, 0.02, 0.02); m.position.y = -0.5; demoModels[0].add(m);
+        });
+        // Duck
+        loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb', (gltf) => {
+            const m = gltf.scene; m.scale.set(1, 1, 1); m.position.y = -0.5; demoModels[1].add(m);
+        });
+
+        // Custom Upload Event
+        const btnCustomUpload = document.getElementById('btnCustomUpload');
+        const uploadModelInput = document.getElementById('uploadModelInput');
+        if (btnCustomUpload && uploadModelInput) {
+            btnCustomUpload.addEventListener('click', () => uploadModelInput.click());
+            uploadModelInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                loader.load(URL.createObjectURL(file), (gltf) => {
+                    const m = gltf.scene;
+                    const box = new THREE.Box3().setFromObject(m);
+                    const size = box.getSize(new THREE.Vector3()).length();
+                    const scale = 2.5 / size; 
+                    m.scale.set(scale, scale, scale);
+                    const center = box.getCenter(new THREE.Vector3());
+                    m.position.sub(center.multiplyScalar(scale));
+                    
+                    const group = new THREE.Group();
+                    group.add(m); group.visible = false; group.userData = { isPinned: false };
+                    threeScene.add(group);
+                    demoModels.push(group);
+                    
+                    const grid = document.querySelector('.holo-grid');
+                    if (grid) {
+                        const newItem = document.createElement('div');
+                        newItem.className = 'holo-item';
+                        const idx = demoModels.length - 1;
+                        newItem.innerHTML = `🌟 ${file.name.substring(0,10)}...`;
+                        newItem.onclick = () => selectHoloModel(idx);
+                        grid.insertBefore(newItem, btnCustomUpload);
+                    }
+                    showSystemNotification('✅ Модель загружена!');
+                    document.getElementById('modal3DLibrary').classList.add('hidden');
+                    switchDemoModel(demoModels.length - 1);
+                });
+                uploadModelInput.value = '';
+            });
+        }
+    }
+
+    // Procedural House
+    const mat1 = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
+    const hBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2), mat1);
+    const hRoof = new THREE.Mesh(new THREE.ConeGeometry(1.0, 1.0, 4), mat1);
+    hRoof.position.y = 1.1; hRoof.rotation.y = Math.PI / 4;
+    demoModels[2].add(hBody, hRoof);
+
+    // Procedural Robot
+    const mat2 = new THREE.MeshBasicMaterial({ color: 0xff0055, wireframe: true });
+    const rHead = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), mat2); rHead.position.y = 0.9;
+    const rBody = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.0, 8), mat2);
+    const rArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.8, 8), mat2);
+    rArmL.position.set(-0.6, 0.2, 0); rArmL.rotation.z = Math.PI / 4;
+    const rArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.8, 8), mat2);
+    rArmR.position.set(0.6, 0.2, 0); rArmR.rotation.z = -Math.PI / 4;
+    demoModels[3].add(rHead, rBody, rArmL, rArmR);
+
+    // Procedural Rocket
+    const mat3 = new THREE.MeshBasicMaterial({ color: 0x3b82f6, wireframe: true });
+    const roBody = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.5, 1.5, 8), mat3);
+    const roNose = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.6, 8), mat3); roNose.position.y = 1.05;
+    const roWing1 = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.8, 3), mat3);
+    roWing1.position.set(-0.5, -0.2, 0); roWing1.rotation.z = Math.PI / 4;
+    const roWing2 = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.8, 3), mat3);
+    roWing2.position.set(0.5, -0.2, 0); roWing2.rotation.z = -Math.PI / 4;
+    demoModels[4].add(roBody, roNose, roWing1, roWing2);
+
+    // Crystal
+    const mat4 = new THREE.MeshBasicMaterial({ color: 0xf59e0b, wireframe: true });
+    demoModels[5].add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.9, 1), mat4));
 
     threeScene.visible = false;
     animateThree();
@@ -695,11 +777,11 @@ function initThreeJS() {
 
 function switchDemoModel(idx) {
     if (!demoModels.length) return;
+    modelSelected = true;
     demoModels[currentModelIndex].visible = false;
     currentModelIndex = ((idx % demoModels.length) + demoModels.length) % demoModels.length;
     
     const newModel = demoModels[currentModelIndex];
-    newModel.visible = true;
     newModel.scale.set(0.01, 0.01, 0.01);
     
     let targetScale = 1.0;
@@ -723,13 +805,15 @@ function switchDemoModel(idx) {
 
 function animateThree() {
     requestAnimationFrame(animateThree);
-    
-    // Временно игнорируем isFrozen, чтобы проверить вращение
-    if (demoModels[currentModelIndex]) {
-        demoModels[currentModelIndex].rotation.y += 0.02; // Скорость
-        demoModels[currentModelIndex].rotation.x += 0.01;
+    if (threeScene && threeScene.visible && demoModels.length && modelSelected) {
+        const model = demoModels[currentModelIndex];
+        if (model) {
+            model.userData.vx = (model.userData.vx || 0) * 0.92;
+            model.userData.vy = (model.userData.vy || 0) * 0.92;
+            model.rotation.y += model.userData.vx;
+            model.rotation.x += model.userData.vy;
+        }
     }
-    
     threeRenderer.render(threeScene, threeCamera);
 }
 
@@ -749,8 +833,13 @@ function switchAirCanvasLevel(level) {
     }
     if (threeScene) {
         threeScene.visible = (level === 3);
-        if (level === 3 && demoModels.length)
-            demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
+        if (level === 3 && demoModels.length) {
+            if (modelSelected) {
+                demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
+            } else {
+                demoModels.forEach(m => { m.visible = false; });
+            }
+        }
     }
 
     const btn = document.getElementById('levelSwitcherBtn');
@@ -763,12 +852,18 @@ function switchAirCanvasLevel(level) {
     }
     updateUploadButtons();
     
-    const modelPanel = document.getElementById('modelLibraryContainer');
-    if (modelPanel) {
-        modelPanel.style.display = level === 3 ? 'flex' : 'none';
+    const btnOpen3DLibrary = document.getElementById('btnOpen3DLibrary');
+    if (btnOpen3DLibrary) {
+        btnOpen3DLibrary.style.display = level === 3 ? 'block' : 'none';
     }
+    
+    const colorBar = document.getElementById('colorBar');
+    if (colorBar) {
+        colorBar.style.display = level === 1 ? 'flex' : 'none';
+    }
+    
     if (level === 3) {
-        showSystemNotification('Выберите 3D-модель внизу, чтобы начать взаимодействие!', 3000);
+        // notification removed
     }
     
     GestureEngine.reset();
@@ -820,28 +915,11 @@ function createUploadButtons() {
         btn.addEventListener('click', () => inp.click());
         document.body.appendChild(btn);
     }
-    if (!document.getElementById('uploadModelBtn')) {
-        const inp = document.createElement('input');
-        inp.type = 'file'; inp.accept = '*/*';
-        inp.style.display = 'none'; inp.id = 'uploadModelInput';
-        inp.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) console.log('3D:', e.target.files[0].name);
-            inp.value = '';
-        });
-        document.body.appendChild(inp);
-        const btn = document.createElement('button');
-        btn.id = 'uploadModelBtn'; btn.className = 'air-upload-btn';
-        btn.textContent = '🧊 Загрузить 3D Модель';
-        btn.addEventListener('click', () => inp.click());
-        document.body.appendChild(btn);
-    }
 }
 
 function updateUploadButtons() {
     const p = document.getElementById('uploadPhotoBtn');
-    const m = document.getElementById('uploadModelBtn');
     if (p) p.style.display = currentLevel === 2 ? 'block' : 'none';
-    if (m) m.style.display = currentLevel === 3 ? 'block' : 'none';
 }
 
 function updatePaletteUIColor(col) {
@@ -894,13 +972,16 @@ function createModelLibraryPanel() {
 function initAirCanvasElite() {
     if (!videoElement || !uiCanvas || !drawCanvas) return;
     function resize() {
-        uiCanvas.width   = window.innerWidth;
-        uiCanvas.height  = window.innerHeight;
-        drawCanvas.width = window.innerWidth;
-        drawCanvas.height= window.innerHeight;
+        const container = document.querySelector('.tablet-screen') || document.body;
+        const w = container.clientWidth || window.innerWidth;
+        const h = container.clientHeight || window.innerHeight;
+        uiCanvas.width   = w;
+        uiCanvas.height  = h;
+        drawCanvas.width = w;
+        drawCanvas.height= h;
         if (threeRenderer) {
-            threeRenderer.setSize(window.innerWidth, window.innerHeight);
-            threeCamera.aspect = window.innerWidth / window.innerHeight;
+            threeRenderer.setSize(w, h);
+            threeCamera.aspect = w / h;
             threeCamera.updateProjectionMatrix();
         }
     }
@@ -920,7 +1001,6 @@ function initAirCanvasElite() {
 
     createLevelSwitcher();
     createUploadButtons();
-    createModelLibraryPanel();
     initThreeJS();
 }
 
@@ -1107,65 +1187,66 @@ function renderGalleryRibbon(s0, s1, w, h) {
 //  ██████  LEVEL 3: 3D-ГОЛОГРАММА  ██████
 // ══════════════════════════════════════════════════════════════
 function processLevel3(events, codes, w, h) {
-    if (!demoModels.length || !threeCamera) return;
-    const s0  = handStates[0];
-    const s1  = handStates[1];
+    if (!demoModels.length || !threeCamera || !modelSelected) return;
     const model = demoModels[currentModelIndex];
 
-    // ── Zoom: оба кулака ──────────────────────────────────────
-    if (events.includes('DUAL_FIST') && s0.x !== 0 && s1.x !== 0) {
-        const d = dist2D(s0.x, s0.y, s1.x, s1.y);
-        if (zoomBaseDist === null) zoomBaseDist = d;
-        const factor = d / Math.max(zoomBaseDist, 1);
-        const target = Math.max(0.2, Math.min(4.0, factor * 1.2));
-        const cur    = model.scale.x;
-        const ns     = cur + (target - cur) * 0.12;
-        model.scale.set(ns, ns, ns);
-        return;  // только zoom, не позиционируем
-    } else {
-        zoomBaseDist = null;
+    let fistHand = null;
+    let indexHand = null;
+
+    // Ищем кулак и указательный палец
+    if (codes[0] === 'FIST') fistHand = handStates[0];
+    else if (codes[1] === 'FIST') fistHand = handStates[1];
+
+    // Убедимся, что индексный палец не та же рука, что и кулак
+    if (codes[0] === 'INDEX' && fistHand !== handStates[0]) indexHand = handStates[0];
+    else if (codes[1] === 'INDEX' && fistHand !== handStates[1]) indexHand = handStates[1];
+
+    // Жест закрепления (PEACE)
+    if ((codes[0] === 'PEACE' || codes[1] === 'PEACE') && cooldown('pin3d', 1000)) {
+        model.userData.isPinned = !model.userData.isPinned;
+        showSystemNotification(model.userData.isPinned ? '📌 Модель закреплена' : '🔓 Модель откреплена');
     }
 
-    // ── Позиция (Якорь): FIST левой руки (руки 0) ─────────────
-    if (events.includes('CODE0:FIST') && s0.x !== 0) {
-        const ndcX = (s0.x / w) * 2 - 1;
-        const ndcY = -(s0.y / h) * 2 + 1;
+    // Видимость модели (если закреплена ИЛИ есть кулак)
+    if (!model.userData.isPinned && !fistHand) {
+        model.visible = false;
+        return;
+    }
+    
+    model.visible = true;
+
+    // Возвращаемся, если нет кулака (значит закреплена, но якорить не к чему)
+    if (!fistHand) {
+        // Мы все еще можем вращать закрепленную модель!
+        if (indexHand && indexHand.lastX !== 0 && indexHand.x !== 0) {
+            const dx = indexHand.x - indexHand.lastX;
+            const dy = indexHand.y - indexHand.lastY;
+            model.userData.vx = (model.userData.vx || 0) + dx * 0.005;
+            model.userData.vy = (model.userData.vy || 0) + dy * 0.005;
+        }
+        return;
+    }
+
+    // ── Позиция (Якорь): над кулаком ──────
+    if (fistHand.x !== 0) {
+        const ndcX = (fistHand.x / w) * 2 - 1;
+        const ndcY = -(fistHand.y / h) * 2 + 1;
         const vec  = new THREE.Vector3(ndcX, ndcY, 0.5);
         vec.unproject(threeCamera);
         const dir  = vec.sub(threeCamera.position).normalize();
         const dist = -threeCamera.position.z / dir.z;
         const pos  = threeCamera.position.clone().add(dir.multiplyScalar(dist));
-        model.position.x = lerp(model.position.x, pos.x, 0.1);
-        model.position.y = lerp(model.position.y, pos.y + 0.8, 0.1);
-        isFrozen = false;
+        
+        model.position.x = lerp(model.position.x, pos.x, 0.15);
+        model.position.y = lerp(model.position.y, pos.y + 0.5, 0.15);
     }
 
-    // ── Вращение: INDEX правой руки (руки 1) ──────────────────
-    if (events.includes('CODE1:INDEX') && !isFrozen && s1.lastX !== 0) {
-        const dx = s1.x - s1.lastX;
-        const dy = s1.y - s1.lastY;
-        model.rotation.y += dx * 0.015;
-        model.rotation.x += dy * 0.015;
-    }
-
-    // ── Свайп вниз жестом OPEN: Скрыть модель ─────────────────
-    if (events.includes('CODE0:OPEN') && events.some(e => e.startsWith('SWIPE_DOWN')) && cooldown('del3d', 1500)) {
-        model.visible = false;
-        showSystemNotification('🗑️  Модель убрана');
-        return;
-    }
-
-    // ── Заморозка/Разморозка: OPEN одной руки ─────────────────
-    if (events.includes('CODE0:OPEN') && cooldown('freeze3d', 1500)) {
-        isFrozen = !isFrozen;
-        showSystemNotification(isFrozen ? '❄️  Заморожено' : '▶️  Вращение');
-    }
-
-    // ── Смена модели: SHAKA ───────────────────────────────────
-    if (events.includes('CODE0:SHAKA') && cooldown('modelSwitch3d', 1000)) {
-        switchDemoModel(currentModelIndex + 1);
-        showSystemNotification('🔄  Модель ' + (currentModelIndex + 1));
-        demoModels[currentModelIndex].visible = true;
+    // ── Вращение: указательный палец другой руки ──────────────
+    if (indexHand && indexHand.lastX !== 0 && indexHand.x !== 0) {
+        const dx = indexHand.x - indexHand.lastX;
+        const dy = indexHand.y - indexHand.lastY;
+        model.userData.vx = (model.userData.vx || 0) + dx * 0.005;
+        model.userData.vy = (model.userData.vy || 0) + dy * 0.005;
     }
 }
 
