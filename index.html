@@ -216,8 +216,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
                 <div class="welcome-screen" id="welcomeScreen">
     <div class="animated-chat-header" id="animatedChatHeader">
-        <h1 class="chat-title" id="chatMainTitle">How can I help today?</h1>
-        <p class="chat-subtitle" id="chatSubtitle">Type a command or ask a question</p>
+        <h1 class="chat-title matrix-text" id="chatMainTitle">You took the red pill</h1>
+        <p class="chat-subtitle matrix-sub" id="chatSubtitle">Welcome to the real world</p>
     </div>
     
     
@@ -515,14 +515,35 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
-            <div class="dsm-cmd" onclick="window.selectDeepCmd('video')">
-                <div class="dsm-cmd-icon" style="background:rgba(252,129,74,0.15);color:#fc814a">
-                    <i class="ph ph-video-camera"></i>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('docx')">
+                <div class="dsm-cmd-icon" style="background:rgba(43,87,154,0.15);color:#4a90e2">
+                    <i class="ph ph-file-text"></i>
                 </div>
                 <div class="dsm-cmd-info">
-                    <span class="dsm-cmd-title">/video</span>
-                    <span class="dsm-cmd-desc">Анализ YouTube видео по ссылке</span>
+                    <span class="dsm-cmd-title">/word create</span>
+                    <span class="dsm-cmd-desc">ИИ создаст документ Word</span>
                 </div>
+                <span class="dsm-badge">NEW</span>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('xlsx')">
+                <div class="dsm-cmd-icon" style="background:rgba(33,115,70,0.15);color:#48c78e">
+                    <i class="ph ph-table"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/excel create</span>
+                    <span class="dsm-cmd-desc">ИИ создаст таблицу Excel</span>
+                </div>
+                <span class="dsm-badge">NEW</span>
+            </div>
+            <div class="dsm-cmd" onclick="window.selectDeepCmd('pptx')">
+                <div class="dsm-cmd-icon" style="background:rgba(210,71,38,0.15);color:#fc814a">
+                    <i class="ph ph-projector-screen"></i>
+                </div>
+                <div class="dsm-cmd-info">
+                    <span class="dsm-cmd-title">/ppt create</span>
+                    <span class="dsm-cmd-desc">ИИ создаст презентацию PowerPoint</span>
+                </div>
+                <span class="dsm-badge">NEW</span>
             </div>
             <div class="dsm-cmd" onclick="window.selectDeepCmd('image')">
                 <div class="dsm-cmd-icon" style="background:rgba(72,199,142,0.15);color:#48c78e">
@@ -531,15 +552,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/image</span>
                     <span class="dsm-cmd-desc">Генерация изображения по описанию</span>
-                </div>
-            </div>
-            <div class="dsm-cmd" onclick="window.selectDeepCmd('web')">
-                <div class="dsm-cmd-icon" style="background:rgba(251,211,62,0.15);color:#fbd33e">
-                    <i class="ph ph-globe"></i>
-                </div>
-                <div class="dsm-cmd-info">
-                    <span class="dsm-cmd-title">/web</span>
-                    <span class="dsm-cmd-desc">Поиск информации в интернете</span>
                 </div>
             </div>
         </div>
@@ -1137,7 +1149,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="billing-toggle-wrapper">
                 <div class="billing-toggle">
                     <button class="billing-btn active" data-period="month">1 Month</button>
-                    <button class="billing-btn" data-period="year">1 Year</button>
+                    <button class="billing-btn" data-period="year" disabled style="opacity: 0.5; cursor: not-allowed; position: relative;">
+                        1 Year <span style="position: absolute; top: -8px; right: -10px; background: #ff4757; color: #fff; font-size: 8px; padding: 2px 4px; border-radius: 4px; font-weight: bold; text-transform: uppercase;">Soon</span>
+                    </button>
                 </div>
             </div>
 
