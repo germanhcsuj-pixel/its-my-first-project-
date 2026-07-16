@@ -617,7 +617,7 @@ function initThreeJS() {
         threeCanvas = document.createElement('canvas');
         threeCanvas.id = 'threeCanvas';
         threeCanvas.style.cssText =
-            'position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:7;pointer-events:none;';
+            'position:absolute;top:0;left:0;width:100vw;height:100vh;z-index:12;pointer-events:none;';
         document.body.appendChild(threeCanvas);
     }
 
@@ -654,20 +654,7 @@ function switchDemoModel(idx) {
     currentModelIndex = ((idx % demoModels.length) + demoModels.length) % demoModels.length;
     
     const newModel = demoModels[currentModelIndex];
-    newModel.visible = true;
-    newModel.scale.set(0.01, 0.01, 0.01);
-    
-    let targetScale = 1.0;
-    function animateSpawn() {
-        if (newModel.scale.x < targetScale - 0.01) {
-            const s = newModel.scale.x + (targetScale - newModel.scale.x) * 0.15;
-            newModel.scale.set(s, s, s);
-            requestAnimationFrame(animateSpawn);
-        } else {
-            newModel.scale.set(targetScale, targetScale, targetScale);
-        }
-    }
-    animateSpawn();
+    newModel.visible = false; // Model remains hidden until FIST is made
     
     const panelBtns = document.querySelectorAll('.model-btn');
     if (panelBtns.length > 0) {
@@ -679,11 +666,8 @@ function switchDemoModel(idx) {
 function animateThree() {
     requestAnimationFrame(animateThree);
     
-    // Временно игнорируем isFrozen, чтобы проверить вращение
-    if (demoModels[currentModelIndex]) {
-        demoModels[currentModelIndex].rotation.y += 0.02; // Скорость
-        demoModels[currentModelIndex].rotation.x += 0.01;
-    }
+    // Временно отключили автоматическое вращение
+    // Модель будет вращаться только жестами второй руки
     
     threeRenderer.render(threeScene, threeCamera);
 }
@@ -705,7 +689,7 @@ function switchAirCanvasLevel(level) {
     if (threeScene) {
         threeScene.visible = (level === 3);
         if (level === 3 && demoModels.length)
-            demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
+            demoModels.forEach((m, i) => { m.visible = false; });
     }
 
     const btn = document.getElementById('levelSwitcherBtn');
@@ -722,8 +706,13 @@ function switchAirCanvasLevel(level) {
     if (modelPanel) {
         modelPanel.style.display = level === 3 ? 'flex' : 'none';
     }
+    const btnOpen3D = document.getElementById('btnOpen3DLibrary');
+    if (btnOpen3D) {
+        btnOpen3D.style.display = level === 3 ? 'block' : 'none';
+    }
+
     if (level === 3) {
-        showSystemNotification('Выберите 3D-модель внизу, чтобы начать взаимодействие!', 3000);
+        showSystemNotification('Выберите 3D-модель, чтобы начать взаимодействие!', 3000);
     }
     
     GestureEngine.reset();
@@ -1041,10 +1030,46 @@ function processLevel3(events, codes, w, h) {
         zoomBaseDist = null;
     }
 
-    // ── Позиция (Якорь): FIST левой руки (руки 0) ─────────────
-    if (events.includes('CODE0:FIST') && s0.x !== 0) {
-        const ndcX = (s0.x / w) * 2 - 1;
-        const ndcY = -(s0.y / h) * 2 + 1;
+    let anchorHand = null;
+    let actionHand = null;
+    let isActionH1 = false;
+
+    // Определяем, какая рука держит кулак (Якорь)
+    if (events.includes('CODE0:FIST')) {
+        anchorHand = s0;
+        actionHand = s1;
+        isActionH1 = true;
+    } else if (events.includes('CODE1:FIST')) {
+        anchorHand = s1;
+        actionHand = s0;
+        isActionH1 = false;
+    } else {
+        // Если кулака нет, пусть первая рука будет рабочей (для вращения/масштаба)
+        actionHand = s0;
+        isActionH1 = false;
+    }
+
+    // ── Позиция (Якорь): FIST любой руки ─────────────
+    if (anchorHand && anchorHand.x !== 0) {
+        if (!model.visible) {
+            model.visible = true;
+            model.scale.set(0.01, 0.01, 0.01);
+            let targetScale = 1.0;
+            function animateSpawn() {
+                if (model.scale.x < targetScale - 0.01) {
+                    const s = model.scale.x + (targetScale - model.scale.x) * 0.15;
+                    model.scale.set(s, s, s);
+                    requestAnimationFrame(animateSpawn);
+                } else {
+                    model.scale.set(targetScale, targetScale, targetScale);
+                }
+            }
+            animateSpawn();
+            showSystemNotification('✨ Модель появилась!');
+        }
+
+        const ndcX = (anchorHand.x / w) * 2 - 1;
+        const ndcY = -(anchorHand.y / h) * 2 + 1;
         const vec  = new THREE.Vector3(ndcX, ndcY, 0.5);
         vec.unproject(threeCamera);
         const dir  = vec.sub(threeCamera.position).normalize();
@@ -1055,12 +1080,25 @@ function processLevel3(events, codes, w, h) {
         isFrozen = false;
     }
 
-    // ── Вращение: INDEX правой руки (руки 1) ──────────────────
-    if (events.includes('CODE1:INDEX') && !isFrozen && s1.lastX !== 0) {
-        const dx = s1.x - s1.lastX;
-        const dy = s1.y - s1.lastY;
-        model.rotation.y += dx * 0.015;
-        model.rotation.x += dy * 0.015;
+    // ── Вращение и Масштаб: Вторая рука (или любая, если нет кулака) ──────────
+    if (actionHand && actionHand.x !== 0 && !isFrozen && actionHand.lastX !== 0) {
+        const isPinch = isActionH1 ? events.includes('PINCH_H1') : events.includes('PINCH_H0');
+        const isPeace = isActionH1 ? events.includes('CODE1:PEACE') : events.includes('CODE0:PEACE');
+
+        if (isPinch || isPeace) {
+            // Масштабирование (PEACE или PINCH)
+            const dy = actionHand.y - actionHand.lastY;
+            // Движение вверх (dy < 0) -> увеличивает масштаб
+            let targetScale = model.scale.x - dy * 0.01;
+            targetScale = Math.max(0.1, Math.min(5.0, targetScale));
+            model.scale.set(targetScale, targetScale, targetScale);
+        } else {
+            // Вращение (любой другой жест)
+            const dx = actionHand.x - actionHand.lastX;
+            const dy = actionHand.y - actionHand.lastY;
+            model.rotation.y += dx * 0.015;
+            model.rotation.x += dy * 0.015;
+        }
     }
 
     // ── Свайп вниз жестом OPEN: Скрыть модель ─────────────────
@@ -1320,3 +1358,33 @@ if (_fi) {
         }
     });
 }
+
+// ── Логика 3D библиотеки ────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const btnOpen = document.getElementById('btnOpen3DLibrary');
+    const btnClose = document.getElementById('btnClose3DLibrary');
+    const modal = document.getElementById('modal3DLibrary');
+
+    if (btnOpen && modal) {
+        btnOpen.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+        // Initial state
+        btnOpen.style.display = currentLevel === 3 ? 'block' : 'none';
+    }
+
+    if (btnClose && modal) {
+        btnClose.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    }
+});
+
+// Глобальная функция выбора модели
+window.selectHoloModel = function(index) {
+    if (typeof switchDemoModel === 'function') {
+        switchDemoModel(index);
+    }
+    const modal = document.getElementById('modal3DLibrary');
+    if (modal) modal.classList.add('hidden');
+};
