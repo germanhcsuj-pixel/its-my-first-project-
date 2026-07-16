@@ -16,17 +16,12 @@ const LERP_FACTOR = 0.2;
 let isRunning          = false;
 let camera             = null;
 let hands              = null;
-let faceMesh           = null;
-let currentFaceLandmarks = null;
-let arMaskModel        = null;
 let isPresentationMode = false;
 let isFrozen           = false;   // заморозка вращения 3D
 let isFramingPhoto     = false;   // Selfie Drop (обе Peace)
 let isGridVisible      = false;
 let fillHoldTimer      = 0;
 let isFilling          = false;
-let isArModeActive     = false;
-let arFlashEndTime     = 0;
 
 // ─── Состояния рук ───────────────────────────────────────────
 const handStates = [
@@ -62,8 +57,8 @@ let threeCamera       = null;
 let threeRenderer     = null;
 let threeAnimId       = null;
 let demoModels        = [];
-let currentModelIndex = 2; // Default to procedural house
-let modelSelected = true;
+let currentModelIndex = 0;
+let modelSelected = false;
 let zoomBaseDist      = null;
 
 // ─── Глобальные кулдауны ──────────────────────────────────────
@@ -190,40 +185,6 @@ function flashSnapshot() {
     }
     flash.style.opacity = '0.9';
     setTimeout(() => { flash.style.opacity = '0'; }, 120);
-}
-
-function takeARSnapshot() {
-    if (!videoElement || !uiCanvas) return;
-    const w = uiCanvas.width, h = uiCanvas.height;
-    const tmp = document.createElement('canvas');
-    tmp.width = w; tmp.height = h;
-    const tmpCtx = tmp.getContext('2d');
-    if (!tmpCtx) return;
-    
-    if (videoElement.readyState >= 2) {
-        tmpCtx.save();
-        tmpCtx.translate(w, 0);
-        tmpCtx.scale(-1, 1); // Отзеркаливаем ОДНОВРЕМЕННО и видео, и 3D маску
-        tmpCtx.drawImage(videoElement, 0, 0, w, h);
-        
-        const threeCanvas = document.getElementById('threeCanvas');
-        if (threeCanvas) {
-            tmpCtx.drawImage(threeCanvas, 0, 0, w, h);
-        }
-        tmpCtx.restore();
-    }
-
-    tmp.toBlob((blob) => {
-        if (!blob) return;
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'Solifon_AR_Selfie.png';
-        document.body.appendChild(link);
-        link.click(); link.remove();
-        setTimeout(() => URL.revokeObjectURL(link.href), 1500);
-    }, 'image/png');
-
-    arFlashEndTime = Date.now() + 150; // Белая вспышка на экране
 }
 
 function takeSnapshot() {
@@ -452,8 +413,7 @@ const GestureEngine = {
         const map = {
             '01000': 'INDEX',      // Указательный
             '00001': 'PINKY',      // Мизинец
-            '01001': 'ROCK',       // Указательный + Мизинец (большой прижат)
-            '11001': 'ROCK',       // Указательный + Мизинец (большой оттопырен)
+            '01001': 'INDEX_PINKY',// Указательный + Мизинец (Рок)
             '01110': 'THREE',      // Три пальца
             '11000': 'GUN',        // Пистолет (большой + указательный)
             '01100': 'PEACE',      // V / Peace
@@ -594,8 +554,6 @@ const GestureEngine = {
             events.push('DUAL:' + both);
             // Два кулака = зум
             if (cans[0] === 'FIST' && cans[1] === 'FIST') events.push('DUAL_FIST');
-            // Две "козы" (Рок) = AR режим
-            if (cans[0] === 'ROCK' && cans[1] === 'ROCK') events.push('DUAL_ROCK');
             // Обе Peace = Selfie
             if (cans[0] === 'PEACE' && cans[1] === 'PEACE') events.push('DUAL_PEACE');
             // Оба Thumb
@@ -628,7 +586,7 @@ function executeDrawingLogic(state, code) {
     switch (code) {
         case 'INDEX':        state.brush='Premium Pen';   state.width=5;  break;
         case 'PINKY':        state.brush='Calligraphy';   state.width=2;  break;
-        case 'ROCK':         state.brush='Neon Glow';     state.width=6;  state.shadow=12; break;
+        case 'INDEX_PINKY':  state.brush='Neon Glow';     state.width=6;  state.shadow=12; break;
         case 'THREE':        state.brush='Thick Marker';  state.width=18; break;
         case 'PEACE':
             state.brush='Smart Eraser'; state.width=40;
@@ -715,7 +673,7 @@ function initThreeJS() {
     dirLight.position.set(10, 20, 10);
     threeScene.add(dirLight);
 
-    threeRenderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+    threeRenderer = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
     threeRenderer.setSize(window.innerWidth, window.innerHeight);
     threeRenderer.setPixelRatio(window.devicePixelRatio);
     threeRenderer.setClearColor(0x000000, 0);
@@ -733,21 +691,6 @@ function initThreeJS() {
 
     if (window.THREE && window.THREE.GLTFLoader) {
         const loader = new THREE.GLTFLoader();
-        
-        loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb', (gltf) => {
-            arMaskModel = gltf.scene;
-            arMaskModel.visible = false;
-            // Центрируем и масштабируем маску
-            const box = new THREE.Box3().setFromObject(arMaskModel);
-            const size = box.getSize(new THREE.Vector3()).length();
-            const scale = 3.0 / size; 
-            arMaskModel.scale.set(scale, scale, scale);
-            const center = box.getCenter(new THREE.Vector3());
-            arMaskModel.position.sub(center.multiplyScalar(scale));
-            
-            threeScene.add(arMaskModel);
-        });
-
         // Fox
         loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Fox/glTF-Binary/Fox.glb', (gltf) => {
             const m = gltf.scene; m.scale.set(0.02, 0.02, 0.02); m.position.y = -0.5; demoModels[0].add(m);
@@ -840,8 +783,6 @@ function switchDemoModel(idx) {
     
     const newModel = demoModels[currentModelIndex];
     newModel.scale.set(0.01, 0.01, 0.01);
-    newModel.position.set(0, 0, 0); 
-    newModel.userData.isPinned = true;
     
     let targetScale = 1.0;
     function animateSpawn() {
@@ -891,18 +832,13 @@ function switchAirCanvasLevel(level) {
         galleryRotation = 0;
     }
     if (threeScene) {
-        // Сцена должна работать и на 2, и на 3 уровне, а также если AR активен
-        threeScene.visible = (level === 3 || level === 2 || isArModeActive);
-        
+        threeScene.visible = (level === 3);
         if (level === 3 && demoModels.length) {
-            demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
-            if (arMaskModel) arMaskModel.visible = false;
-        } else if (level === 2) {
-            demoModels.forEach(m => { m.visible = false; });
-            // Видимость arMaskModel переключается локально внутри processLevel2
-        } else {
-            demoModels.forEach(m => { m.visible = false; });
-            if (arMaskModel) arMaskModel.visible = false;
+            if (modelSelected) {
+                demoModels.forEach((m, i) => { m.visible = (i === currentModelIndex); });
+            } else {
+                demoModels.forEach(m => { m.visible = false; });
+            }
         }
     }
 
@@ -1056,48 +992,16 @@ function initAirCanvasElite() {
     hands.setOptions({ maxNumHands: 2, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
     hands.onResults(onResultsElite);
 
-    // ── Авто-загрузка FaceMesh, если ещё не загружен ──────
-    if (typeof FaceMesh === 'undefined') {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js';
-        script.crossOrigin = 'anonymous';
-        script.onload = () => {
-            // После загрузки библиотеки инициализируем FaceMesh
-            if (typeof FaceMesh !== 'undefined' && !faceMesh) {
-                faceMesh = new FaceMesh({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}` });
-                faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
-                faceMesh.onResults((results) => {
-                    currentFaceLandmarks = results.multiFaceLandmarks;
-                });
-            }
-        };
-        document.head.appendChild(script);
-    } else {
-        // FaceMesh уже доступен — инициализируем сразу
-        faceMesh = new FaceMesh({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${f}` });
-        faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: false, minDetectionConfidence: 0.7, minTrackingConfidence: 0.7 });
-        faceMesh.onResults((results) => {
-            currentFaceLandmarks = results.multiFaceLandmarks;
-        });
-    }
-
     updatePaletteUI(handStates[0].color);
 
     camera = new Camera(videoElement, {
-        onFrame: async () => { 
-            if (isRunning) {
-                const promises = [hands.send({ image: videoElement })];
-                if (faceMesh) promises.push(faceMesh.send({ image: videoElement }));
-                await Promise.all(promises);
-            }
-        },
+        onFrame: async () => { if (isRunning) await hands.send({ image: videoElement }); },
         width: 1280, height: 720
     });
 
     createLevelSwitcher();
     createUploadButtons();
     initThreeJS();
-    createModelLibraryPanel();
 }
 
 
@@ -1119,7 +1023,7 @@ function processLevel1(events, codes, state, lms0, w, h) {
     }
 
     // Жесты рисования
-    const DRAWING_CODES = new Set(['INDEX','PINKY','ROCK','THREE','GUN','PEACE']);
+    const DRAWING_CODES = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE']);
 
     if (DRAWING_CODES.has(code)) {
         if (code === 'GUN') {
@@ -1192,65 +1096,7 @@ function processLevel2(events, codes, lms, w, h) {
     const s1 = handStates[1];
     const n = lms.length;
 
-    // ── Включаем AR-маску ЛЮБОЙ одной рукой (жест РОК 🤘) ──
-    if ((events.includes('CODE0:ROCK') || events.includes('CODE1:ROCK')) && cooldown('arToggle', 1500)) {
-        isArModeActive = !isArModeActive;
-        flashSnapshot(); // Вспышка при переключении режима
-        
-        if (!isArModeActive && arMaskModel) arMaskModel.visible = false;
-        if (threeScene) threeScene.visible = (currentLevel === 3 || isArModeActive);
-    }
-
-    // ── ИЗОЛИРОВАННЫЙ AR РЕЖИМ (ФИЛЬТРЫ ЛИЦА) ──
-    if (isArModeActive) {
-        if (currentFaceLandmarks && currentFaceLandmarks.length > 0) {
-            window.lastFaceTime = Date.now();
-            window.lastFaceData = currentFaceLandmarks[0];
-        }
-
-        const recentlyHadFace = (Date.now() - (window.lastFaceTime || 0)) < 600;
-
-        if (arMaskModel && recentlyHadFace && window.lastFaceData) {
-            const face = window.lastFaceData;
-            const nose = face[1];
-            const leftEye = face[33];
-            const rightEye = face[263];
-            
-            const targetX = (1 - nose.x) * 2 - 1;
-            const targetY = -(nose.y) * 2 + 1;
-            const vec = new THREE.Vector3(targetX, targetY, 0.5);
-            vec.unproject(threeCamera);
-            const dir = vec.sub(threeCamera.position).normalize();
-            const dist = -threeCamera.position.z / dir.z;
-            const pos = threeCamera.position.clone().add(dir.multiplyScalar(dist));
-            
-            arMaskModel.position.copy(pos);
-            arMaskModel.position.z += 0.5; // Смещение к камере
-            
-            const screenDx = (1 - rightEye.x) - (1 - leftEye.x);
-            const screenDy = rightEye.y - leftEye.y;
-            const angleZ = Math.atan2(screenDy, screenDx);
-            arMaskModel.rotation.z = -angleZ;
-            
-            const yaw = (nose.x - 0.5) * -Math.PI / 4; 
-            const pitch = (nose.y - 0.5) * -Math.PI / 4;
-            arMaskModel.rotation.y = yaw;
-            arMaskModel.rotation.x = pitch;
-
-            arMaskModel.visible = true;
-        } else if (arMaskModel) {
-            arMaskModel.visible = false;
-        }
-
-        // ── AR СЕЛФИ ПО ЖЕСТУ PEACE ✌️ ИЛИ ДВУМ КУЛАКАМ ──
-        if ((events.includes('CODE0:PEACE') || events.includes('CODE1:PEACE') || events.includes('DUAL_FIST')) && cooldown('arSelfie', 1500)) {
-            takeARSnapshot();
-        }
-        
-        return; // Блокируем обычную фото-ленту, пока включен AR
-    }
-
-    // ── ОБЫЧНАЯ ФОТО-ЛЕНТА ──
+    // ── СНИМОК ЭКРАНА (Режиссерская рамка) ТОЛЬКО ТУТ ──────────
     if (n === 2) {
         const a0 = s0.action;
         const a1 = s1.action;
@@ -1266,16 +1112,22 @@ function processLevel2(events, codes, lms, w, h) {
         isFramingPhoto = false;
     }
 
-    if (isFramingPhoto) drawFramingOverlay(uiCtx, w, h);
+    if (isFramingPhoto) {
+        drawFramingOverlay(uiCtx, w, h);
+    }
 
+    // ── Вращение галереи: Index одной руки ────────────────────
     if (events.includes('CODE0:INDEX') && s0.lastX !== 0) {
         galleryRotation += (s0.x - s0.lastX) * 0.004;
     }
 
+    // ── Открытая ладонь 1.5 сек → очистить галерею ───────────
     if (events.includes('CODE0:OPEN') && cooldown('clearGallery', 1500)) {
         uploadedAssets = []; galleryRotation = 0; galleryZoom = 1.0;
+        showSystemNotification('🗑️  Галерея очищена');
     }
 
+    // ── Zoom галереи: два кулака ───────────────────────────────
     if (events.includes('DUAL_FIST') && s0.x !== 0 && s1.x !== 0) {
         const d = dist2D(s0.x, s0.y, s1.x, s1.y);
         if (zoomBaseDist === null) zoomBaseDist = d;
@@ -1284,13 +1136,10 @@ function processLevel2(events, codes, lms, w, h) {
         zoomBaseDist = null;
     }
 
-    const isRibbonDetected = (events.includes('CODE0:FIST') && events.includes('CODE1:PEACE')) ||
-                             (events.includes('CODE0:PEACE') && events.includes('CODE1:FIST'));
-                             
-    if (isRibbonDetected) window.lastRibbonTime = Date.now();
-    const isRibbonActive = (Date.now() - (window.lastRibbonTime || 0)) < 600;
-
-    if (isRibbonActive && s0.x !== 0 && s1.x !== 0) {
+    // ── Рендер ленты (Кулак + Peace) ─────────────────────────
+    const isRibbon = (events.includes('CODE0:FIST') && events.includes('CODE1:PEACE')) ||
+                     (events.includes('CODE0:PEACE') && events.includes('CODE1:FIST'));
+    if (isRibbon && s0.x !== 0 && s1.x !== 0) {
         renderGalleryRibbon(s0, s1, w, h);
     }
 }
@@ -1340,57 +1189,64 @@ function renderGalleryRibbon(s0, s1, w, h) {
 function processLevel3(events, codes, w, h) {
     if (!demoModels.length || !threeCamera || !modelSelected) return;
     const model = demoModels[currentModelIndex];
+
+    let fistHand = null;
+    let indexHand = null;
+
+    // Ищем кулак и указательный палец
+    if (codes[0] === 'FIST') fistHand = handStates[0];
+    else if (codes[1] === 'FIST') fistHand = handStates[1];
+
+    // Убедимся, что индексный палец не та же рука, что и кулак
+    if (codes[0] === 'INDEX' && fistHand !== handStates[0]) indexHand = handStates[0];
+    else if (codes[1] === 'INDEX' && fistHand !== handStates[1]) indexHand = handStates[1];
+
+    // Жест закрепления (PEACE)
+    if ((codes[0] === 'PEACE' || codes[1] === 'PEACE') && cooldown('pin3d', 1000)) {
+        model.userData.isPinned = !model.userData.isPinned;
+        showSystemNotification(model.userData.isPinned ? '📌 Модель закреплена' : '🔓 Модель откреплена');
+    }
+
+    // Видимость модели (если закреплена ИЛИ есть кулак)
+    if (!model.userData.isPinned && !fistHand) {
+        model.visible = false;
+        return;
+    }
     
-    // Всегда показываем выбранную модель на 3 уровне
     model.visible = true;
 
-    // ── Жест PEACE (✌️) переключает закрепление модели ──
-    if (events.some(e => e === 'CODE0:PEACE' || e === 'CODE1:PEACE')) {
-        if (cooldown('togglePin', 800)) {
-            model.userData.isPinned = !model.userData.isPinned;
-            showSystemNotification(model.userData.isPinned ? '📌 Модель закреплена' : '🔄 Модель свободна');
+    // Возвращаемся, если нет кулака (значит закреплена, но якорить не к чему)
+    if (!fistHand) {
+        // Мы все еще можем вращать закрепленную модель!
+        if (indexHand && indexHand.lastX !== 0 && indexHand.x !== 0) {
+            const dx = indexHand.x - indexHand.lastX;
+            const dy = indexHand.y - indexHand.lastY;
+            model.userData.vx = (model.userData.vx || 0) + dx * 0.005;
+            model.userData.vy = (model.userData.vy || 0) + dy * 0.005;
         }
+        return;
     }
 
-    // ── Следование за первой рукой (если не закреплена) ──
-    const hand = handStates[0];
-    if (hand && hand.x !== 0 && hand.y !== 0) {
-        // Преобразуем координаты экрана в 3D
-        const ndcX = (hand.x / w) * 2 - 1;
-        const ndcY = -(hand.y / h) * 2 + 1;
-        const vec = new THREE.Vector3(ndcX, ndcY, 0.5);
+    // ── Позиция (Якорь): над кулаком ──────
+    if (fistHand.x !== 0) {
+        const ndcX = (fistHand.x / w) * 2 - 1;
+        const ndcY = -(fistHand.y / h) * 2 + 1;
+        const vec  = new THREE.Vector3(ndcX, ndcY, 0.5);
         vec.unproject(threeCamera);
-        const dir = vec.sub(threeCamera.position).normalize();
+        const dir  = vec.sub(threeCamera.position).normalize();
         const dist = -threeCamera.position.z / dir.z;
-        const pos = threeCamera.position.clone().add(dir.multiplyScalar(dist));
-
-        if (!model.userData.isPinned) {
-            // Плавное следование
-            model.position.x = lerp(model.position.x, pos.x, 0.2);
-            model.position.y = lerp(model.position.y, pos.y + 0.5, 0.2); // смещение вверх
-            model.position.z = lerp(model.position.z, pos.z, 0.2);
-        }
-        // Если закреплено, позиция не меняется
+        const pos  = threeCamera.position.clone().add(dir.multiplyScalar(dist));
+        
+        model.position.x = lerp(model.position.x, pos.x, 0.15);
+        model.position.y = lerp(model.position.y, pos.y + 0.5, 0.15);
     }
 
-    // ── Вращение указательным пальцем (с инерцией) ──
-    let indexHand = null;
-    if (codes[0] === 'INDEX') indexHand = handStates[0];
-    else if (codes[1] === 'INDEX') indexHand = handStates[1];
-
+    // ── Вращение: указательный палец другой руки ──────────────
     if (indexHand && indexHand.lastX !== 0 && indexHand.x !== 0) {
         const dx = indexHand.x - indexHand.lastX;
         const dy = indexHand.y - indexHand.lastY;
-        model.userData.vx = dx * 0.01;
-        model.userData.vy = dy * 0.01;
-    }
-    
-    // Применяем инерцию
-    if (model.userData.vx || model.userData.vy) {
-        model.rotation.y += model.userData.vx;
-        model.rotation.x += model.userData.vy;
-        model.userData.vx *= 0.92;
-        model.userData.vy *= 0.92;
+        model.userData.vx = (model.userData.vx || 0) + dx * 0.005;
+        model.userData.vy = (model.userData.vy || 0) + dy * 0.005;
     }
 }
 
@@ -1472,14 +1328,6 @@ function onResultsElite(results) {
 
     uiCtx.clearRect(0, 0, w, h);
 
-    if (Date.now() < arFlashEndTime) {
-        const alpha = (arFlashEndTime - Date.now()) / 150;
-        uiCtx.save();
-        uiCtx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        uiCtx.fillRect(0, 0, w, h);
-        uiCtx.restore();
-    }
-
     if (currentLevel === 1 && isGridVisible === true) {
         uiCtx.save();
         uiCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -1533,7 +1381,7 @@ function onResultsElite(results) {
     // ── Логика по уровням ─────────────────────────────────────
     if (currentLevel === 1) {
         // На Level 1 — активная одна рука (умный выбор)
-        const ACTIVE = new Set(['INDEX','PINKY','ROCK','THREE','GUN','PEACE','OPEN','SHAKA','FIST', 'OK_SIGN', 'CROSS_FIN', 'FOUR']);
+        const ACTIVE = new Set(['INDEX','PINKY','INDEX_PINKY','THREE','GUN','PEACE','OPEN','SHAKA','FIST', 'OK_SIGN', 'CROSS_FIN', 'FOUR']);
         let activeLm = lms[0];
         for (let i = 0; i < n; i++) {
             if (ACTIVE.has(GestureEngine.canonize(gestureCode(lms[i])))) { activeLm = lms[i]; break; }
@@ -1584,7 +1432,6 @@ window.startAirCanvasElite = function () {
         const stopBtn = document.getElementById('stopCamBtn');
         const lock = document.getElementById('premiumLock');
         if (authBtn) authBtn.style.display = 'none';
-        if (stopBtn) { stopBtn.style.display = 'block'; stopBtn.style.pointerEvents = 'auto'; }
         if (lock) {
             lock.style.background = 'transparent';
             lock.style.backdropFilter = 'none';
@@ -1594,6 +1441,7 @@ window.startAirCanvasElite = function () {
                 if (el) el.style.display = 'none';
             });
         }
+        if (stopBtn) { stopBtn.style.display = 'block'; stopBtn.style.pointerEvents = 'auto'; }
     }
 };
 
@@ -1609,7 +1457,6 @@ window.stopAirCanvasElite = function () {
         const stopBtn = document.getElementById('stopCamBtn');
         const lock = document.getElementById('premiumLock');
         if (authBtn) authBtn.style.display = 'block';
-        if (stopBtn) stopBtn.style.display = 'none';
         if (lock) {
             lock.style.background = 'rgba(0,0,0,.85)';
             lock.style.backdropFilter = 'blur(8px)';
@@ -1619,6 +1466,7 @@ window.stopAirCanvasElite = function () {
                 if (el) el.style.display = 'block';
             });
         }
+        if (stopBtn) stopBtn.style.display = 'none';
     }
 };
 
@@ -1639,9 +1487,8 @@ if (_fi) {
     });
 }
 
-// ── Логика UI для модалки 3D и кнопок запуска ──────────────
+// ── Логика UI для модалки 3D ────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-    // Модалка 3D библиотеки
     const btnOpen = document.getElementById('btnOpen3DLibrary');
     const btnClose = document.getElementById('btnClose3DLibrary');
     const modal = document.getElementById('modal3DLibrary');
@@ -1665,27 +1512,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.target.classList.add('hidden');
             }
         });
-    }
-
-    // ── Прямое управление кнопками камеры ──────────────────
-    const authBtn = document.getElementById('authBtn');
-    if (authBtn) {
-        // Убираем старые слушатели и вешаем прямой запуск
-        authBtn.onclick = (e) => {
-            e.preventDefault();
-            if (typeof window.startAirCanvasElite === 'function') {
-                window.startAirCanvasElite();
-            }
-        };
-    }
-    const stopBtn = document.getElementById('stopCamBtn');
-    if (stopBtn) {
-        stopBtn.onclick = (e) => {
-            e.preventDefault();
-            if (typeof window.stopAirCanvasElite === 'function') {
-                window.stopAirCanvasElite();
-            }
-        };
     }
 });
 
