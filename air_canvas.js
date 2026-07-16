@@ -611,6 +611,12 @@ function drawLassoTrail() {
 // ══════════════════════════════════════════════════════════════
 //  THREE.JS — ИНИЦИАЛИЗАЦИЯ
 // ══════════════════════════════════════════════════════════════
+let previewRenderer = null;
+let previewScene = null;
+let previewCamera = null;
+let previewModels = [];
+let previewCanvases = [];
+
 function initThreeJS() {
     let threeCanvas = document.getElementById('threeCanvas');
     if (!threeCanvas) {
@@ -631,10 +637,14 @@ function initThreeJS() {
     threeRenderer.setClearColor(0x000000, 0);
 
     const defs = [
-        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc },
-        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055 },
-        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6 },
-        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b },
+        { geo: new THREE.TorusKnotGeometry(0.7, 0.25, 128, 16), color: 0x00ffcc, name: 'Тор (Neon)' },
+        { geo: new THREE.BoxGeometry(1.2, 1.2, 1.2),             color: 0xff0055, name: 'Куб (Pink)' },
+        { geo: new THREE.SphereGeometry(0.9, 32, 32),            color: 0x3b82f6, name: 'Сфера (Blue)' },
+        { geo: new THREE.IcosahedronGeometry(0.9, 1),            color: 0xf59e0b, name: 'Кристалл' },
+        { geo: new THREE.ConeGeometry(0.8, 1.6, 32),             color: 0xa855f7, name: 'Конус' },
+        { geo: new THREE.CylinderGeometry(0.7, 0.7, 1.5, 32),    color: 0x10b981, name: 'Цилиндр' },
+        { geo: new THREE.DodecahedronGeometry(0.9, 0),           color: 0xec4899, name: 'Додекаэдр' },
+        { geo: new THREE.TorusGeometry(0.8, 0.3, 16, 100),       color: 0xffaa00, name: 'Кольцо' },
     ];
     demoModels = [];
     defs.forEach((d, i) => {
@@ -643,6 +653,43 @@ function initThreeJS() {
         threeScene.add(mesh);
         demoModels.push(mesh);
     });
+
+    // --- SETUP PREVIEW RENDERER ---
+    const previewCanvas = document.createElement('canvas');
+    previewCanvas.width = 160; previewCanvas.height = 160;
+    previewRenderer = new THREE.WebGLRenderer({ canvas: previewCanvas, alpha: true, antialias: true });
+    previewRenderer.setSize(160, 160);
+    previewRenderer.setClearColor(0x000000, 0);
+
+    previewScene = new THREE.Scene();
+    previewCamera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    previewCamera.position.z = 4;
+    
+    // Добавляем модели в UI меню
+    const holoGrid = document.getElementById('holoGrid');
+    if (holoGrid) {
+        defs.forEach((d, i) => {
+            const item = document.createElement('div');
+            item.className = 'holo-item';
+            item.onclick = () => window.selectHoloModel(i);
+            
+            const cvs = document.createElement('canvas');
+            cvs.className = 'preview-canvas';
+            cvs.width = 160; cvs.height = 160;
+            item.appendChild(cvs);
+            
+            const label = document.createElement('div');
+            label.className = 'holo-item-name';
+            label.innerText = d.name;
+            item.appendChild(label);
+            
+            holoGrid.appendChild(item);
+            previewCanvases.push(cvs);
+            
+            const pMesh = new THREE.Mesh(d.geo, new THREE.MeshBasicMaterial({ color: d.color, wireframe: true }));
+            previewModels.push(pMesh);
+        });
+    }
 
     threeScene.visible = false;
     animateThree();
@@ -666,10 +713,29 @@ function switchDemoModel(idx) {
 function animateThree() {
     requestAnimationFrame(animateThree);
     
-    // Временно отключили автоматическое вращение
-    // Модель будет вращаться только жестами второй руки
-    
     threeRenderer.render(threeScene, threeCamera);
+    
+    // Анимация превью в меню
+    const modal = document.getElementById('modal3DLibrary');
+    if (modal && !modal.classList.contains('hidden') && previewRenderer) {
+        for (let i = 0; i < previewModels.length; i++) {
+            const pm = previewModels[i];
+            const cvs = previewCanvases[i];
+            if (!cvs || !pm) continue;
+            
+            // Вращение превью
+            pm.rotation.y += 0.02;
+            pm.rotation.x += 0.01;
+            
+            previewScene.add(pm);
+            previewRenderer.render(previewScene, previewCamera);
+            previewScene.remove(pm);
+            
+            const ctx = cvs.getContext('2d');
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            ctx.drawImage(previewRenderer.domElement, 0, 0);
+        }
+    }
 }
 
 
@@ -702,6 +768,11 @@ function switchAirCanvasLevel(level) {
     }
     updateUploadButtons();
     
+    const colorBar = document.getElementById('colorBar');
+    if (colorBar) {
+        colorBar.style.display = level === 1 ? 'flex' : 'none';
+    }
+
     const modelPanel = document.getElementById('modelLibraryPanel');
     if (modelPanel) {
         modelPanel.style.display = level === 3 ? 'flex' : 'none';
@@ -766,26 +837,110 @@ function createUploadButtons() {
     }
     if (!document.getElementById('uploadModelBtn')) {
         const inp = document.createElement('input');
-        inp.type = 'file'; inp.accept = '*/*';
+        inp.type = 'file'; inp.accept = '.glb,.gltf';
         inp.style.display = 'none'; inp.id = 'uploadModelInput';
         inp.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) console.log('3D:', e.target.files[0].name);
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const url = URL.createObjectURL(file);
+                if (typeof THREE.GLTFLoader !== 'undefined') {
+                    const loader = new THREE.GLTFLoader();
+                    loader.load(url, (gltf) => {
+                        const customMesh = gltf.scene;
+                        
+                        // Добавляем освещение, если загружаем GLTF (часто требует свет)
+                        if (!threeScene.userData.hasLight) {
+                            const light = new THREE.AmbientLight(0xffffff, 1);
+                            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                            dirLight.position.set(0, 5, 5);
+                            threeScene.add(light);
+                            threeScene.add(dirLight);
+                            
+                            const pLight = new THREE.AmbientLight(0xffffff, 1);
+                            const pDirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                            pDirLight.position.set(0, 5, 5);
+                            previewScene.add(pLight);
+                            previewScene.add(pDirLight);
+                            
+                            threeScene.userData.hasLight = true;
+                        }
+
+                        // Масштабирование кастомной модели под сцену
+                        const box = new THREE.Box3().setFromObject(customMesh);
+                        const center = box.getCenter(new THREE.Vector3());
+                        const size = box.getSize(new THREE.Vector3());
+                        const maxAxis = Math.max(size.x, size.y, size.z);
+                        customMesh.scale.multiplyScalar(2.0 / maxAxis);
+                        customMesh.position.sub(center.multiplyScalar(2.0 / maxAxis));
+
+                        const wrapper = new THREE.Group();
+                        wrapper.add(customMesh);
+
+                        threeScene.add(wrapper);
+                        demoModels.push(wrapper);
+                        
+                        // UI Preview
+                        const grid = document.querySelector('.holo-grid');
+                        const i = demoModels.length - 1;
+                        
+                        const item = document.createElement('div');
+                        item.className = 'holo-item';
+                        item.onclick = () => window.selectHoloModel(i);
+                        
+                        const cvs = document.createElement('canvas');
+                        cvs.className = 'preview-canvas';
+                        cvs.width = 160; cvs.height = 160;
+                        item.appendChild(cvs);
+                        
+                        const label = document.createElement('div');
+                        label.className = 'holo-item-name';
+                        label.innerText = 'Custom ' + i;
+                        item.appendChild(label);
+                        
+                        grid.appendChild(item);
+                        previewCanvases.push(cvs);
+                        
+                        const pMesh = wrapper.clone();
+                        previewModels.push(pMesh);
+
+                        showSystemNotification('✅ Модель загружена!', 2000);
+                        // Автоматически выбираем её
+                        if (typeof switchDemoModel === 'function') {
+                            switchDemoModel(i);
+                        }
+                        const modal = document.getElementById('modal3DLibrary');
+                        if (modal) modal.classList.add('hidden');
+                    }, undefined, (err) => {
+                        console.error(err);
+                        showSystemNotification('❌ Ошибка загрузки', 2000);
+                    });
+                } else {
+                    showSystemNotification('GLTFLoader не найден', 2000);
+                }
+            }
             inp.value = '';
         });
         document.body.appendChild(inp);
-        const btn = document.createElement('button');
-        btn.id = 'uploadModelBtn'; btn.className = 'air-upload-btn';
-        btn.textContent = '🧊 Загрузить 3D Модель';
-        btn.addEventListener('click', () => inp.click());
-        document.body.appendChild(btn);
+        
+        // Добавляем в сетку модалки
+        const grid = document.querySelector('.holo-grid');
+        if (grid) {
+            const btn = document.createElement('div');
+            btn.id = 'uploadModelBtn';
+            btn.className = 'holo-item';
+            btn.style.background = 'rgba(255, 255, 255, 0.1)';
+            btn.style.border = '1px dashed rgba(255,255,255,0.3)';
+            btn.innerHTML = '📁 Upload 3D Model';
+            btn.addEventListener('click', () => inp.click());
+            grid.appendChild(btn);
+        }
     }
 }
 
 function updateUploadButtons() {
     const p = document.getElementById('uploadPhotoBtn');
-    const m = document.getElementById('uploadModelBtn');
     if (p) p.style.display = currentLevel === 2 ? 'block' : 'none';
-    if (m) m.style.display = currentLevel === 3 ? 'block' : 'none';
+    // uploadModelBtn is now in the modal, no need to toggle its display globally
 }
 
 function updatePaletteUIColor(col) {
