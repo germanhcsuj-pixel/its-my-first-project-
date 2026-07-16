@@ -1187,15 +1187,24 @@ function renderGalleryRibbon(s0, s1, w, h) {
 //  ██████  LEVEL 3: 3D-ГОЛОГРАММА  ██████
 // ══════════════════════════════════════════════════════════════
 function processLevel3(events, codes, w, h) {
-    if (!demoModels.length || !threeCamera || !modelSelected) return;
-    const model = demoModels[currentModelIndex];
-
+    if (!demoModels.length || !threeCamera) return;
+    
     let fistHand = null;
     let indexHand = null;
 
     // Ищем кулак и указательный палец
     if (codes[0] === 'FIST') fistHand = handStates[0];
     else if (codes[1] === 'FIST') fistHand = handStates[1];
+
+    // Если кулак обнаружен и модель ещё не выбрана — выбираем первую по умолчанию
+    if (fistHand && !modelSelected) {
+        switchDemoModel(0);
+    }
+
+    // Если модель не выбрана и нет кулака — выходим
+    if (!modelSelected) return;
+    
+    const model = demoModels[currentModelIndex];
 
     // Убедимся, что индексный палец не та же рука, что и кулак
     if (codes[0] === 'INDEX' && fistHand !== handStates[0]) indexHand = handStates[0];
