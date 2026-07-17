@@ -691,6 +691,85 @@ function initThreeJS() {
         });
     }
 
+    // --- Загрузка локальных GLB моделей ---
+    const localGLBModels = [
+        { url: 'low-poly_ak-15_k.glb', name: 'AK-15' },
+        { url: 'sukhoi_su-27m.glb', name: 'Су-27М' },
+        { url: 'tokyo_mater.glb', name: 'Tokyo Mater' },
+        { url: '1970_alfa_romeo_montreal.glb', name: 'Alfa Romeo' }
+    ];
+
+    if (typeof THREE.GLTFLoader !== 'undefined') {
+        const loader = new THREE.GLTFLoader();
+        localGLBModels.forEach(modelInfo => {
+            loader.load(modelInfo.url, (gltf) => {
+                const customMesh = gltf.scene;
+
+                if (!threeScene.userData.hasLight) {
+                    const light = new THREE.AmbientLight(0xffffff, 1);
+                    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                    dirLight.position.set(0, 5, 5);
+                    threeScene.add(light);
+                    threeScene.add(dirLight);
+
+                    const pLight = new THREE.AmbientLight(0xffffff, 1);
+                    const pDirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                    pDirLight.position.set(0, 5, 5);
+                    previewScene.add(pLight);
+                    previewScene.add(pDirLight);
+
+                    threeScene.userData.hasLight = true;
+                }
+
+                const box = new THREE.Box3().setFromObject(customMesh);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+                const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+                customMesh.scale.multiplyScalar(2.0 / maxAxis);
+                customMesh.position.sub(center.multiplyScalar(2.0 / maxAxis));
+
+                const wrapper = new THREE.Group();
+                wrapper.add(customMesh);
+                wrapper.visible = false;
+
+                threeScene.add(wrapper);
+                demoModels.push(wrapper);
+
+                const grid = document.querySelector('.holo-grid');
+                if (grid) {
+                    const i = demoModels.length - 1;
+
+                    const item = document.createElement('div');
+                    item.className = 'holo-item';
+                    item.onclick = () => window.selectHoloModel(i);
+
+                    const cvs = document.createElement('canvas');
+                    cvs.className = 'preview-canvas';
+                    cvs.width = 160; cvs.height = 160;
+                    item.appendChild(cvs);
+
+                    const label = document.createElement('div');
+                    label.className = 'holo-item-name';
+                    label.innerText = modelInfo.name;
+                    item.appendChild(label);
+
+                    const uploadBtn = document.getElementById('uploadModelBtn');
+                    if (uploadBtn) {
+                        grid.insertBefore(item, uploadBtn);
+                    } else {
+                        grid.appendChild(item);
+                    }
+                    previewCanvases.push(cvs);
+
+                    const pMesh = wrapper.clone();
+                    previewModels.push(pMesh);
+                }
+            }, undefined, (err) => {
+                console.warn('Не удалось загрузить ' + modelInfo.url);
+            });
+        });
+    }
+
     threeScene.visible = false;
     animateThree();
 }
@@ -991,6 +1070,13 @@ function initAirCanvasElite() {
 function processLevel1(events, codes, state, lms0, w, h) {
 
     let code = GestureEngine.canonize(codes[0]);
+    if (code === 'THUMB') {
+        const thumbTip = lms0[4];
+        const thumbMcp = lms0[2];
+        if (thumbTip.y > thumbMcp.y) code = 'THUMB_DOWN';
+        else code = 'THUMB_UP';
+    }
+
     if (GestureEngine.detectOKSign(lms0)) code = 'OK_SIGN';
     else if (GestureEngine.detectCrossedFingers(lms0)) code = 'CROSS_FIN';
 
@@ -1022,10 +1108,20 @@ function processLevel1(events, codes, state, lms0, w, h) {
         }
         state.isDrawing = false; state.px = 0; state.py = 0;
 
-    } else if (code === 'SHAKA') {
-        // 🤙 Смена цвета палитры
+    } else if (code === 'THUMB_UP' || code === 'SHAKA') {
+        // 🤙 Смена цвета палитры ВПЕРЕД
         if (cooldown('colorSwitch', 600)) {
             colorIndex[0] = (colorIndex[0] + 1) % PREMIUM_COLORS.length;
+            state.color = PREMIUM_COLORS[colorIndex[0]];
+            updatePaletteUIColor(state.color);
+            showSystemNotification('🎨  ' + state.color);
+        }
+        state.isDrawing = false; state.px = 0; state.py = 0;
+
+    } else if (code === 'THUMB_DOWN') {
+        // 👎 Смена цвета палитры НАЗАД
+        if (cooldown('colorSwitch', 600)) {
+            colorIndex[0] = (colorIndex[0] - 1 + PREMIUM_COLORS.length) % PREMIUM_COLORS.length;
             state.color = PREMIUM_COLORS[colorIndex[0]];
             updatePaletteUIColor(state.color);
             showSystemNotification('🎨  ' + state.color);
@@ -1036,7 +1132,7 @@ function processLevel1(events, codes, state, lms0, w, h) {
         if (fillHoldTimer === 0) {
             fillHoldTimer = Date.now();
             isFilling = false;
-        } else if (Date.now() - fillHoldTimer > 600 && !isFilling) {
+        } else if (Date.now() - fillHoldTimer > 1200 && !isFilling) {
             floodFill(drawCtx, Math.floor(state.x), Math.floor(state.y), state.color);
             saveHistory();
             showSystemNotification('🪣 Заливка применена');
@@ -1079,12 +1175,17 @@ function processLevel2(events, codes, lms, w, h) {
     if (n === 2) {
         const a0 = s0.action;
         const a1 = s1.action;
-        if (a0 === '01100' && a1 === '01100') {
+        
+        // Более мягкие условия для "рамки"
+        const isFramePose = (a) => ['01100', '01000', '11000', '01110', '11100'].includes(a);
+        
+        if (isFramePose(a0) && isFramePose(a1)) {
             isFramingPhoto = true;
-        } else if (isFramingPhoto && a0 === '00000' && a1 === '00000') {
+        } else if (isFramingPhoto && (a0 === '00000' || a1 === '00000')) {
+            // Снимок: одна из рук сжалась в кулак
             if (cooldown('snapshotDirector', 2000)) takeSnapshot();
             isFramingPhoto = false;
-        } else if ((a0 !== '01100' && a0 !== '00000') || (a1 !== '01100' && a1 !== '00000')) {
+        } else if (!isFramePose(a0) && !isFramePose(a1) && a0 !== '00000' && a1 !== '00000') {
             isFramingPhoto = false;
         }
     } else {
