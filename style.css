@@ -5605,3 +5605,209 @@ body.chat-started .suggestion-btn {
     animation-delay: 0.4s;
     opacity: 0; 
 }
+
+/* ====================================================
+   MOBILE OVERRIDES (FOR PHONE VERSION ONLY)
+   ==================================================== */
+@media screen and (max-width: 768px) {
+    /* Hide decorative or obstructive elements on mobile */
+    .star-animation-container,
+    .hero-visual,
+    .quick-card,
+    .floating-card,
+    .quick-pills-wrapper,
+    #quickPills,
+    .trace,
+    .g-big, .g-p, .g-s {
+        display: none !important;
+    }
+
+    /* Adjust chat wrapper padding */
+    .chat-wrapper {
+        padding-top: 60px !important;
+        padding-bottom: 120px !important;
+    }
+
+    /* Adjust welcome screen */
+    .welcome-screen {
+        min-height: auto !important;
+        padding: 20px !important;
+        margin-top: 20px !important;
+    }
+    
+    .welcome-screen h1 {
+        font-size: 1.8rem !important;
+        line-height: 1.2 !important;
+    }
+
+    /* Adjust navbar */
+    .tubelight-navbar-inner {
+        padding: 5px !important;
+        gap: 5px !important;
+    }
+    
+    .tubelight-nav-item span.md-inline {
+        display: none !important;
+    }
+    
+    .tubelight-nav-item i.md-hidden {
+        display: inline-block !important;
+        font-size: 1.2rem !important;
+    }
+
+    /* Adjust input area */
+    .input-area {
+        padding: 10px !important;
+        width: 100% !important;
+    }
+    
+    .send-btn-wrapper {
+        width: 100% !important;
+        max-width: 100px !important;
+        height: 44px !important;
+    }
+
+    .mic-wrapper {
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+    }
+    
+    .chat-bottom-controls {
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+    
+    .right-actions {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+
+    /* Messages container */
+    #messagesContainer {
+        width: 100% !important;
+        padding: 10px !important;
+    }
+    
+    .user-message, .ai-message {
+        margin-left: 5% !important;
+        margin-right: 5% !important;
+        width: 90% !important;
+    }
+
+    /* Deep search menu */
+    .deep-search-menu {
+        width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        border-radius: 15px !important;
+    }
+
+    /* Sidebar mobile sizing fix */
+    .sidebar {
+        width: 300px !important;
+        left: -300px !important;
+    }
+    .nav-toggle:checked ~ .app-layout .sidebar {
+        transform: translateX(300px) !important;
+    }
+    .nav-toggle:checked ~ .app-layout .main-content {
+        transform: translateX(300px) !important;
+    }
+
+    /* Modal mobile fixes */
+    .custom-modal, #whatsNewModal, #aboutModal, #fullscreenLayerModal, .lumifex-fullscreen {
+        background: #000000 !important;
+        z-index: 999999 !important;
+    }
+    .modal-content, .custom-modal .modal-content, .fs-layer-content {
+        padding: 20px 15px !important;
+        background: #000000 !important;
+        z-index: 999999 !important;
+    }
+
+    /* Explore Modal (Settings & Style) Layout Fix */
+    .fs-layer-body {
+        padding: 20px 10px !important;
+    }
+    .fs-layer-body > div[style*="display: flex"] {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    .fs-layer-body div[style*="display: grid"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: auto !important;
+    }
+    #preview_square_main {
+        flex: none !important;
+        width: 100% !important;
+        height: 200px !important;
+    }
+    
+    /* Carousel mobile fixes */
+    .carousel-section {
+        height: 380px !important;
+        margin-bottom: 10px !important;
+    }
+    #stellar-carousel {
+        height: 380px !important;
+    }
+    .carousel-slide {
+        width: 220px !important;
+        height: 350px !important;
+        margin-left: -110px !important;
+        margin-top: -175px !important;
+    }
+    
+    /* Fix Model Dropdown */
+    .mmd-dropdown {
+        position: fixed !important;
+        bottom: 80px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        right: auto !important;
+        width: 90% !important;
+        max-width: 320px !important;
+        z-index: 100000 !important;
+        animation: none !important;
+    }
+    .modal-header {
+        margin-bottom: 20px !important;
+        padding-bottom: 10px !important;
+    }
+    .modal-header h3 {
+        font-size: 1.2rem !important;
+    }
+    .close-modal {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 1.2rem !important;
+        top: 10px !important;
+        right: 10px !important;
+    }
+
+    /* Remove cards that might break layout */
+    .card-1, .card-2, .card-3 {
+        display: none !important;
+    }
+    
+    /* Make model mini button text smaller */
+    #modelMiniName {
+        font-size: 12px !important;
+    }
+    
+    #modelMiniBtn {
+        padding: 0 10px !important;
+        height: 36px !important;
+    }
+    
+    /* Adjust dropdown */
+    .suggestions-dropdown {
+        width: 95% !important;
+    }
+
+    /* Hide 4 suggestion buttons on mobile */
+    .chat-suggestion-buttons {
+        display: none !important;
+    }
+}
