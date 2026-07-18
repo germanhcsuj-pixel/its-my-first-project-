@@ -5422,3 +5422,4 @@ window.signInWithProvider = function(providerName) {
         }
     }
 };
+ 
