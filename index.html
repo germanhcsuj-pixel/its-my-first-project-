@@ -569,7 +569,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/pdf create</span>
-                    <span class="dsm-cmd-desc">AI will create a PDF from your text</span>
+                    <span class="dsm-cmd-desc">ИИ создаст PDF из твоего текста</span>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
@@ -579,7 +579,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/pdf edit</span>
-                    <span class="dsm-cmd-desc">Upload a PDF and AI will edit it</span>
+                    <span class="dsm-cmd-desc">Загрузи PDF и ИИ изменит его</span>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
@@ -589,7 +589,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/word create</span>
-                    <span class="dsm-cmd-desc">AI will create a Word document</span>
+                    <span class="dsm-cmd-desc">ИИ создаст документ Word</span>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
@@ -599,7 +599,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/excel create</span>
-                    <span class="dsm-cmd-desc">AI will create an Excel spreadsheet</span>
+                    <span class="dsm-cmd-desc">ИИ создаст таблицу Excel</span>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
@@ -609,7 +609,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/ppt create</span>
-                    <span class="dsm-cmd-desc">AI will create a PowerPoint presentation</span>
+                    <span class="dsm-cmd-desc">ИИ создаст презентацию PowerPoint</span>
                 </div>
                 <span class="dsm-badge">NEW</span>
             </div>
@@ -619,7 +619,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </div>
                 <div class="dsm-cmd-info">
                     <span class="dsm-cmd-title">/image</span>
-                    <span class="dsm-cmd-desc">Generate an image from description</span>
+                    <span class="dsm-cmd-desc">Генерация изображения по описанию</span>
                 </div>
             </div>
         </div>
@@ -2092,41 +2092,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     transform: translateY(-1px);
     box-shadow: 0 6px 22px rgba(79,142,247,0.5);
     background: #5f9eff;
-}
-
-.artifact-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    transform: translateY(-1px);
-}
-.artifact-btn:active {
-    transform: translateY(1px);
-}
-
-.rename-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.7);
-    border-radius: 6px;
-    width: 26px;
-    height: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-left: 8px;
-    font-size: 14px;
-}
-.rename-btn:hover {
-    background: rgba(154, 117, 243, 0.2);
-    border-color: rgba(154, 117, 243, 0.5);
-    color: #9a75f3;
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 0 10px rgba(154, 117, 243, 0.3);
-}
-.rename-btn:active {
-    transform: scale(0.95);
 }
 
 .ide-close-btn {
@@ -3957,14 +3922,11 @@ function closeCleanScreen() {
     <div class="artifact-header">
         <div class="artifact-title">
             <i class="ph ph-file-pdf"></i>
-            <span id="artifactTitleText" style="outline: none; padding: 2px 6px; border-radius: 4px; transition: background 0.2s;">Document</span>
-            <button id="artifactRenameBtn" class="rename-btn" onclick="window.renameArtifact()" title="Rename file">
-                <i class="ph ph-pencil-simple"></i>
-            </button>
+            <span id="artifactTitleText">Document</span>
         </div>
         <div class="artifact-actions">
-            <button id="artifactEditBtn" class="artifact-btn edit-btn" onclick="window.editArtifact()"><i class="ph ph-pencil-simple"></i> Edit</button>
-            <a id="artifactDownloadBtn" class="artifact-btn download-btn" download><i class="ph ph-download-simple"></i> Download</a>
+            <button id="artifactEditBtn" class="artifact-btn edit-btn" onclick="window.editArtifact()"><i class="ph ph-pencil-simple"></i> Изменить</button>
+            <a id="artifactDownloadBtn" class="artifact-btn download-btn" download><i class="ph ph-download-simple"></i> Скачать</a>
             <button id="artifactCloseBtn" class="artifact-btn close-btn" onclick="window.closeArtifact()"><i class="ph ph-x"></i></button>
         </div>
     </div>
@@ -4195,28 +4157,19 @@ function closeCleanScreen() {
 .document-editor-page {
     width: 210mm;
     min-height: 297mm;
-    background: #1a1a20;
-    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    background: #ffffff;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
     padding: 2.5cm;
-    color: #e2e8f0;
+    color: #1a1a2e;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     line-height: 1.6;
     outline: none;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    box-sizing: border-box;
 }
-.document-editor-page h1 { font-size: 26px; margin-bottom: 20px; color: #ffffff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-.document-editor-page h2 { font-size: 20px; margin-bottom: 16px; margin-top: 32px; color: #f8fafc; }
-.document-editor-page h3 { font-size: 18px; margin-bottom: 12px; margin-top: 24px; color: #cbd5e1; }
-.document-editor-page p { margin-bottom: 16px; }
-.document-editor-page ul, .document-editor-page ol { margin-bottom: 16px; padding-left: 24px; }
-.document-editor-page li { margin-bottom: 6px; }
-.document-editor-page table { width: 100%; border-collapse: collapse; margin-bottom: 24px; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; }
-.document-editor-page th, .document-editor-page td { padding: 12px 16px; border: 1px solid rgba(255,255,255,0.08); text-align: left; }
-.document-editor-page th { background: rgba(255,255,255,0.05); font-weight: 600; color: #fff; }
-.document-editor-page tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.document-editor-page h1 { font-size: 24px; margin-bottom: 16px; color: #111; }
+.document-editor-page h2 { font-size: 20px; margin-bottom: 12px; margin-top: 24px; color: #222; }
+.document-editor-page p { margin-bottom: 12px; }
+.document-editor-page ul { margin-bottom: 12px; padding-left: 20px; }
 
 .color-picker {
     width: 0;
@@ -4249,12 +4202,8 @@ function closeCleanScreen() {
     align-items: center;
     justify-content: space-between;
     margin-top: 12px;
-    margin-bottom: 4px;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 100%;
-    max-width: 400px;
-    height: fit-content;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 .doc-card:hover {
