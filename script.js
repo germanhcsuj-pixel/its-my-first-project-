@@ -5340,14 +5340,21 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
         const resp = await fetch(BASE + '/pdf/create', { method: 'POST', body: fd });
         if (!resp.ok) throw new Error('Server error ' + resp.status);
         
-        const data = await resp.json();
-        if (data.raw) {
-            const rawMarkdown = data.raw;
+        const ct = resp.headers.get('content-type') || '';
+        if (ct.includes('application/pdf')) {
+            const blob = await resp.blob();
+            const url  = URL.createObjectURL(blob);
             const pdfName = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pdf';
             if (typeof animInterval !== 'undefined') clearInterval(animInterval);
-            const safeMarkdown = encodeURIComponent(data.raw || '');
+            
             const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
-                <div class="doc-card" data-markdown="${safeMarkdown}" onclick="window.openDocumentEditor(this.getAttribute('data-markdown'), '${pdfName}')"> <div class="doc-card-left"> <div class="doc-card-icon"><i class="ph ph-file-pdf"></i></div> <div class="doc-card-info"> <span class="doc-card-title">Document Ready</span> <span class="doc-card-subtitle">${pdfName}</span> </div> </div> </div>
+                <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                        <span style="font-size:26px;">📄</span>
+                        <div style="font-weight:600;color:#e2e8f0;">Ready! PDF document created.</div>
+                    </div>
+                    <a href="${url}" download="${pdfName}" style="display:inline-block;padding:8px 16px;background:#ef4444;color:#fff;text-decoration:none;border-radius:8px;font-size:0.9rem;font-weight:500;">Скачать .pdf</a>
+                </div>
             `;
             
             _updateBotMsg(botEl, finalHtml);
@@ -5355,9 +5362,25 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
                 saveToFirebase('ai', finalHtml);
             }
         } else {
-            const finalHtml = (aiText ? aiText + '<br><br>' : '') + (data.reply || data.error || 'Ready!');
-            _updateBotMsg(botEl, finalHtml);
-            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
+            const data = await resp.json();
+            if (data.raw) {
+                const rawMarkdown = data.raw;
+                const pdfName = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pdf';
+                if (typeof animInterval !== 'undefined') clearInterval(animInterval);
+                const safeMarkdown = encodeURIComponent(data.raw || '');
+                const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
+                    <div class="doc-card" data-markdown="${safeMarkdown}" onclick="window.openDocumentEditor(this.getAttribute('data-markdown'), '${pdfName}')"> <div class="doc-card-left"> <div class="doc-card-icon"><i class="ph ph-file-pdf"></i></div> <div class="doc-card-info"> <span class="doc-card-title">Document Ready</span> <span class="doc-card-subtitle">${pdfName}</span> </div> </div> </div>
+                `;
+                
+                _updateBotMsg(botEl, finalHtml);
+                if (typeof saveToFirebase === 'function') {
+                    saveToFirebase('ai', finalHtml);
+                }
+            } else {
+                const finalHtml = (aiText ? aiText + '<br><br>' : '') + (data.reply || data.error || 'Ready!');
+                _updateBotMsg(botEl, finalHtml);
+                if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
+            }
         }
     } catch (err) {
         if (typeof animInterval !== 'undefined') clearInterval(animInterval);
