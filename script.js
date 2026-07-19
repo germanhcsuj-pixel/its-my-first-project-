@@ -5091,6 +5091,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
 async function _callDocxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
+    addMessageToUI('user', '📄 /word create: ' + prompt);
     const botEl = addMessageToUI('bot', '');
     let animInterval;
     const steps = ['Analyzing word processing structure...', 'Generating AI document context...', 'Formatting paragraphs and styles...', 'Saving Word Document...'];
@@ -5150,6 +5151,7 @@ async function _callDocxCreate(prompt) {
 
 async function _callXlsxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
+    addMessageToUI('user', '📊 /excel create: ' + prompt);
     const botEl = addMessageToUI('bot', '');
     let animInterval;
     const steps = ['Analyzing tabular data structure...', 'Generating spreadsheet cells...', 'Formatting columns and rows...', 'Saving Excel Spreadsheet...'];
@@ -5209,6 +5211,7 @@ async function _callXlsxCreate(prompt) {
 
 async function _callPptxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
+    addMessageToUI('user', '📈 /ppt create: ' + prompt);
     const botEl = addMessageToUI('bot', '');
     let animInterval;
     const steps = ['Analyzing presentation topic...', 'Generating slide bullet points...', 'Structuring presentation layouts...', 'Saving PowerPoint File...'];
@@ -5810,5 +5813,4 @@ window.signInWithProvider = function(providerName) {
         }
     }
 };
- 
  
