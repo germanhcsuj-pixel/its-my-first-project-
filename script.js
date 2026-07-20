@@ -3780,23 +3780,13 @@ document.addEventListener("DOMContentLoaded", () => {
             "speed reading techniques for beginners","brainstorming techniques for innovation","most popular programming languages 2024",
             "preschool speech development activities","fine motor skills development activities","phonological awareness activities for kids"
         ],
-        "kz": [
-            "Р В РЎВР В РЎвЂР В РЎвЂќР РЋР вЂљР В РЎвЂўР РЋР С“Р В Р’ВµР РЋР вЂљР В Р вЂ Р В РЎвЂР РЋР С“ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎВР В РЎвЂўР В Р’В±Р В РЎвЂР В В»Р РЋР Р‰Р В РўвЂР РЋРІР‚вЂњ Р СћРІР‚С”Р В РЎвЂўР РЋР С“Р РЋРІР‚в„–Р В РЎВР РЋРІвЂљВ¬Р В Р’В° Р Р€РІвЂћСћР В Р’В·Р РЋРІР‚вЂњР РЋР вЂљР В В»Р В Р’ВµР РЋРЎвЂњ","Р В РЎВР Р€РІвЂћСћР В В»Р РЋРІР‚вЂњР В РЎВР В Р’ВµР РЋРІР‚С™Р РЋРІР‚С™Р В Р’ВµР РЋР вЂљР В РўвЂР РЋРІР‚вЂњ Р СћР’В±Р В РІвЂћвЂ“Р РЋРІР‚в„–Р В РЎВР В РўвЂР В Р’В°Р РЋР С“Р РЋРІР‚С™Р РЋРІР‚в„–Р РЋР вЂљР РЋРЎвЂњ","Р РЋР С“Р Р€Р’В©Р В РІвЂћвЂ“Р В В»Р В Р’ВµР РЋРЎвЂњ Р СћРІР‚С”Р В Р’В°Р РЋР вЂљР СћРІР‚С”Р РЋРІР‚в„–Р В Р вЂ¦Р РЋРІР‚в„–Р В Р вЂ¦ Р В Р’В¶Р В Р’В°Р СћРІР‚С”Р РЋР С“Р В Р’В°Р РЋР вЂљР РЋРІР‚С™Р РЋРЎвЂњ",
-            "Р РЋРІР‚С™Р СћР вЂЎР В РІвЂћвЂ“Р РЋРІР‚вЂњР В В»Р РЋРЎвЂњР РЋР вЂљР РЋРЎвЂњР В РўвЂР РЋРІР‚вЂњ Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р В Р’ВµР В РЎВР В РўвЂР В Р’ВµР РЋРЎвЂњ Р В РЎвЂќР В Р’ВµР РЋР вЂљР В Р’ВµР В РЎвЂќ","Python Р В РЎвЂ”Р РЋР вЂљР В РЎвЂўР В РЎвЂ“Р РЋР вЂљР В Р’В°Р В РЎВР В РЎВР В Р’В°Р В В»Р В Р’В°Р РЋРЎвЂњ Р В Р вЂ¦Р В Р’ВµР В РЎвЂ“Р РЋРІР‚вЂњР В Р’В·Р В РўвЂР В Р’ВµР РЋР вЂљР РЋРІР‚вЂњ","Р В Р’В±Р В Р’В°Р В В»Р В Р’В°Р В В»Р В Р’В°Р РЋР вЂљР СћРІР‚СљР В Р’В° Р В Р’ВµР В РЎвЂќР РЋРІР‚вЂњР В Р вЂ¦Р РЋРІвЂљВ¬Р РЋРІР‚вЂњ Р РЋРІР‚С™Р РЋРІР‚вЂњР В В»Р В РўвЂР РЋРІР‚вЂњ Р СћР вЂЎР В РІвЂћвЂ“Р РЋР вЂљР В Р’ВµР РЋРІР‚С™Р РЋРЎвЂњ","Р В Р вЂ Р В РЎвЂР РЋР вЂљР РЋРІР‚С™Р РЋРЎвЂњР В Р’В°Р В В»Р В РўвЂР РЋРІР‚в„– Р РЋРІвЂљВ¬Р РЋРІР‚в„–Р В Р вЂ¦Р В РўвЂР РЋРІР‚в„–Р СћРІР‚С” Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ",
-            "Р В Р’В¶Р РЋРІР‚в„–Р В В»Р В РўвЂР В Р’В°Р В РЎВ Р В РЎвЂўР СћРІР‚С”Р РЋРЎвЂњ Р РЋРІР‚С™Р В Р’ВµР РЋРІР‚В¦Р В Р вЂ¦Р В РЎвЂР В РЎвЂќР В Р’В°Р РЋР С“Р РЋРІР‚в„– Р Р€РІвЂћСћР В РўвЂР РЋРІР‚вЂњР РЋР С“Р РЋРІР‚С™Р В Р’ВµР РЋР вЂљР РЋРІР‚вЂњ","Р В Р’В¶Р СћР’В±Р В РЎВР РЋРІР‚в„–Р РЋР С“ Р В РЎвЂўР РЋР вЂљР В Р вЂ¦Р РЋРІР‚в„–Р В Р вЂ¦ Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р СћР’В±Р В РІвЂћвЂ“Р РЋРІР‚в„–Р В РЎВР В РўвЂР В Р’В°Р РЋР С“Р РЋРІР‚С™Р РЋРІР‚в„–Р РЋР вЂљР РЋРЎвЂњ","Р В Р’В·Р В Р’В°Р РЋРІР‚С™Р РЋРІР‚С™Р В Р’В°Р РЋР вЂљ Р В РЎвЂР В Р вЂ¦Р РЋРІР‚С™Р В Р’ВµР РЋР вЂљР В Р вЂ¦Р В Р’ВµР РЋРІР‚С™Р РЋРІР‚вЂњ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎвЂќР В РЎвЂР В Р’В±Р В Р’ВµР РЋР вЂљР СћРІР‚С”Р В Р’В°Р РЋРЎвЂњР РЋРІР‚вЂњР В РЎвЂ”Р РЋР С“Р РЋРІР‚вЂњР В Р’В·Р В РўвЂР РЋРІР‚вЂњР В РЎвЂќ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ",
-            "Р В РЎвЂќР В РЎвЂўР В РўвЂ Р В Р’В¶Р В Р’В°Р В Р’В·Р РЋРЎвЂњР В РўвЂР РЋРІР‚в„– Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р В Р’В±Р В Р’В°Р РЋР С“Р РЋРІР‚С™Р В Р’В°Р РЋРЎвЂњ Р В РЎвЂќР В Р’ВµР РЋР вЂљР В Р’ВµР В РЎвЂќ","Р В РЎвЂќР Р€Р’В©Р В Р’В±Р В Р’ВµР В РІвЂћвЂ“Р РЋРІР‚С™Р РЋРЎвЂњ Р В РЎвЂќР В Р’ВµР РЋР С“Р РЋРІР‚С™Р В Р’ВµР РЋР С“Р РЋРІР‚вЂњР В Р вЂ¦ Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р СћР вЂЎР В РІвЂћвЂ“Р РЋР вЂљР В Р’ВµР В Р вЂ¦Р РЋРЎвЂњ","Р В РЎВР В Р’ВµР В РЎвЂќР РЋРІР‚С™Р В Р’ВµР В РЎвЂ”Р В РЎвЂќР В Р’Вµ Р В РўвЂР В Р’ВµР В РІвЂћвЂ“Р РЋРІР‚вЂњР В Р вЂ¦Р В РЎвЂ“Р РЋРІР‚вЂњ Р РЋР С“Р Р€Р’В©Р В РІвЂћвЂ“Р В В»Р В Р’ВµР РЋРЎвЂњ Р В РўвЂР В Р’В°Р В РЎВР РЋРЎвЂњР РЋРІР‚в„–","Р В РЎВР В РЎвЂР В РЎвЂќР РЋР вЂљР В РЎвЂўР В Р’В°Р РЋР вЂљР РЋРІР‚В¦Р В РЎвЂР РЋРІР‚С™Р В Р’ВµР В РЎвЂќР РЋРІР‚С™Р РЋРЎвЂњР РЋР вЂљР В Р’В° Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ",
-            "Р В Р вЂ¦Р СћР’В±Р РЋР С“Р СћРІР‚С”Р В Р’В°Р РЋР С“Р РЋРІР‚в„–Р В Р вЂ¦ Р В Р’В±Р В Р’В°Р РЋР С“Р СћРІР‚С”Р В Р’В°Р РЋР вЂљР РЋРЎвЂњ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎвЂ”Р В РЎвЂР РЋРІР‚С™Р В РЎвЂўР В Р вЂ¦Р В РўвЂР РЋРІР‚в„– Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р СћР вЂЎР В РІвЂћвЂ“Р РЋР вЂљР В Р’ВµР В Р вЂ¦Р РЋРЎвЂњР В РЎвЂ“Р В Р’Вµ Р В Р’В±Р В РЎвЂўР В В»Р В Р’В°Р В РўвЂР РЋРІР‚в„–","Р РЋР С“Р Р€Р’В©Р В РІвЂћвЂ“Р В В»Р В Р’ВµР РЋРЎвЂњ Р СћРІР‚С”Р В Р’В°Р РЋРІР‚С™Р В Р’ВµР В В»Р В Р’ВµР РЋР вЂљР РЋРІР‚вЂњР В Р вЂ¦ Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р РЋРІР‚С™Р СћР вЂЎР В Р’В·Р В Р’ВµР РЋРІР‚С™Р РЋРЎвЂњ","Р РЋРІР‚С›Р РЋР вЂљР В РЎвЂўР В Р вЂ¦Р РЋРІР‚С™Р В Р’ВµР В Р вЂ¦Р В РўвЂ Р РЋР вЂљР В Р’В°Р В Р’В·Р РЋР вЂљР В Р’В°Р В Р’В±Р В РЎвЂўР РЋРІР‚С™Р В РЎвЂќР В Р’В° Р В Р вЂ¦Р В Р’ВµР В РЎвЂ“Р РЋРІР‚вЂњР В Р’В·Р В РўвЂР В Р’ВµР РЋР вЂљР РЋРІР‚вЂњ",
-            "Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р В Р’В¶Р РЋРІР‚в„–Р В В»Р В РўвЂР В Р’В°Р В РЎВР РЋРІР‚в„–Р РЋР вЂљР В Р’В°Р СћРІР‚С” Р В РЎвЂўР СћРІР‚С”Р РЋРЎвЂњР СћРІР‚СљР В Р’В° Р В Р’В±Р В РЎвЂўР В В»Р В Р’В°Р В РўвЂР РЋРІР‚в„–","Р В РўвЂР В РЎвЂР В Р’В·Р В Р’В°Р РЋР вЂљР РЋРІР‚С™Р РЋР вЂљР В РЎвЂР РЋР РЏ Р В Р’В±Р В Р’ВµР В В»Р В РЎвЂ“Р РЋРІР‚вЂњР В В»Р В Р’ВµР РЋР вЂљР РЋРІР‚вЂњ Р В Р’В¶Р Р€РІвЂћСћР В Р вЂ¦Р В Р’Вµ Р В Р’ВµР В РЎВР В РўвЂР В Р’ВµР РЋРЎвЂњ","Р В Р’В¶Р В Р’В°Р В Р’В·Р В Р’В±Р В Р’В°Р РЋРІвЂљВ¬Р В Р’В° Р РЋРІР‚С™Р РЋРІР‚вЂњР В В» Р В Р’В±Р СћР’В±Р В Р’В·Р РЋРІР‚в„–Р В В»Р РЋРЎвЂњР В В»Р В Р’В°Р РЋР вЂљР РЋРІР‚в„–Р В Р вЂ¦ Р РЋРІР‚С™Р СћР вЂЎР В Р’В·Р В Р’ВµР РЋРІР‚С™Р РЋРЎвЂњ","Р В Р’В¶Р В Р’В°Р В Р’В·Р РЋРЎвЂњР В РўвЂР В Р’В°Р СћРІР‚СљР РЋРІР‚в„– Р В РЎвЂ“Р РЋР вЂљР В Р’В°Р В РЎВР В РЎВР В Р’В°Р РЋРІР‚С™Р В РЎвЂР В РЎвЂќР В Р’В°Р В Р вЂ¦Р РЋРІР‚в„– Р В Р’В¶Р В Р’В°Р СћРІР‚С”Р РЋР С“Р В Р’В°Р РЋР вЂљР РЋРІР‚С™Р РЋРЎвЂњ",
-            "Р В Р’В¶Р В Р’В°Р РЋР С“Р В Р’В°Р В Р вЂ¦Р В РўвЂР РЋРІР‚в„– Р В РЎвЂР В Р вЂ¦Р РЋРІР‚С™Р В Р’ВµР В В»Р В В»Р В Р’ВµР В РЎвЂќР РЋРІР‚С™ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В Р’В·Р В Р’ВµР В РІвЂћвЂ“Р РЋРІР‚вЂњР В Р вЂ¦Р В РўвЂР РЋРІР‚вЂњ Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р В Р’В°Р РЋР вЂљР РЋРІР‚С™Р РЋРІР‚С™Р РЋРІР‚в„–Р РЋР вЂљР РЋРЎвЂњР СћРІР‚СљР В Р’В° Р В Р’В±Р В РЎвЂўР В В»Р В Р’В°Р В РўвЂР РЋРІР‚в„–","Р В РЎвЂќР В РЎвЂР В Р’В±Р В Р’ВµР РЋР вЂљ Р СћРІР‚С”Р В Р’В°Р РЋРЎвЂњР РЋРІР‚вЂњР В РЎвЂ”Р РЋР С“Р РЋРІР‚вЂњР В Р’В·Р В РўвЂР РЋРІР‚вЂњР В РЎвЂќ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎвЂќР В РЎвЂўР В РЎВР В РЎВР РЋРЎвЂњР В Р вЂ¦Р В РЎвЂР В РЎвЂќР В Р’В°Р РЋРІР‚В Р В РЎвЂР РЋР РЏ Р В РўвЂР В Р’В°Р СћРІР‚СљР В РўвЂР РЋРІР‚в„–Р В В»Р В Р’В°Р РЋР вЂљР РЋРІР‚в„–Р В Р вЂ¦ Р В РўвЂР В Р’В°Р В РЎВР РЋРІР‚в„–Р РЋРІР‚С™Р РЋРЎвЂњ",
-            "Р В РЎвЂќР В РЎвЂўР В РЎВР В РЎвЂ”Р РЋР Р‰Р РЋР вЂ№Р РЋРІР‚С™Р В Р’ВµР РЋР вЂљР В В»Р РЋРІР‚вЂњР В РЎвЂќ Р В РЎвЂќР Р€Р’В©Р РЋР вЂљР РЋРЎвЂњ Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎвЂќР РЋР вЂљР В Р’ВµР В Р’В°Р РЋРІР‚С™Р В РЎвЂР В Р вЂ Р РЋРІР‚С™Р РЋРІР‚вЂњ Р В РЎвЂўР В РІвЂћвЂ“Р В В»Р В Р’В°Р РЋРЎвЂњР В РўвЂР РЋРІР‚в„– Р СћРІР‚С”Р В Р’В°Р В В»Р В Р’В°Р В РІвЂћвЂ“ Р В РўвЂР В Р’В°Р В РЎВР РЋРІР‚в„–Р РЋРІР‚С™Р РЋРЎвЂњ","Р В В»Р В РЎвЂўР РЋРЎвЂњР В РЎвЂќР В РЎвЂўР В РўвЂ Р РЋР вЂљР В Р’В°Р В Р’В·Р РЋР вЂљР В Р’В°Р В Р’В±Р В РЎвЂўР РЋРІР‚С™Р В РЎвЂќР В Р’В° Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ","Р В РЎВР Р€РІвЂћСћР В В»Р РЋРІР‚вЂњР В РЎВР В Р’ВµР РЋРІР‚С™Р РЋРІР‚С™Р В Р’ВµР РЋР вЂљ Р В Р’В±Р В Р’В°Р В Р’В·Р В Р’В°Р РЋР С“Р РЋРІР‚в„– Р В РўвЂР В Р’ВµР В РЎвЂ“Р В Р’ВµР В Р вЂ¦Р РЋРІР‚вЂњР В РЎВР РЋРІР‚вЂњР В Р’В· Р В Р вЂ¦Р В Р’Вµ"
-        ]
+        "kz": []
     };
 
-    // Р В РЎвЂєР В Р’В±Р РЋР вЂ°Р В Р’ВµР В РўвЂР В РЎвЂР В Р вЂ¦Р РЋР РЏР В Р’ВµР В РЎВ Р В Р вЂ Р РЋР С“Р В Р’Вµ Р РЋРІР‚С™Р РЋР вЂљР В РЎвЂ Р РЋР РЏР В Р’В·Р РЋРІР‚в„–Р В РЎвЂќР В Р’В° Р В Р вЂ  Р В РЎвЂўР В РўвЂР В РЎвЂР В Р вЂ¦ Р В РЎВР В Р’В°Р РЋР С“Р РЋР С“Р В РЎвЂР В Р вЂ 
     const autocompleteDB = [
         ...generatedData.ru,
         ...generatedData.en,
-        ...generatedData.kz
+        ...(generatedData.kz || [])
     ];
 
     // ---- DOM Р РЋР РЉР В В»Р В Р’ВµР В РЎВР В Р’ВµР В Р вЂ¦Р РЋРІР‚С™Р РЋРІР‚в„– ----
@@ -5041,9 +5031,13 @@ window.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (mode === 'pdf_create' || text.toLowerCase().startsWith('/pdf create')) {
-            const prompt = text.replace(/^\/pdf create\s*/i, '').trim();
+            let prompt = text.replace(/^\/pdf create\s*/i, '').trim();
             if (!prompt) { if (ta) ta.placeholder = 'РќР°РїРёС€Рё С‡С‚Рѕ СЃРѕР·РґР°С‚СЊ РІ PDF...'; return; }
-            await _callPdfCreate(prompt, [...selectedFiles]);
+            
+            // Add rich formatting instructions per user request
+            const richPrompt = prompt + "\n\nCRITICAL INSTRUCTION: Generate RICH markdown content. You MUST use markdown tables where appropriate. Use ASCII arrows (->) to show workflows or graphs. Make important keywords and main concepts **bold**. Do NOT just output a wall of plain text, format it beautifully!";
+            
+            await _callPdfCreate(richPrompt, [...selectedFiles]);
             
             selectedFiles = [];
             const preview = document.getElementById('imagePreviewContainer');
@@ -5091,181 +5085,295 @@ window.addEventListener('DOMContentLoaded', function() {
 
 async function _callDocxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
-    addMessageToUI('user', '📄 /word create: ' + prompt);
-    const botEl = addMessageToUI('bot', '');
-    let animInterval;
-    const steps = ['Analyzing word processing structure...', 'Generating AI document context...', 'Formatting paragraphs and styles...', 'Saving Word Document...'];
-    let html = '<br><div class="ai-thinking-steps">';
-    steps.forEach((text, i) => {
-        html += '<div class="thinking-step" id="_callDocxCreatestep' + i + '">';
-        html += '    <div class="step-line"></div>';
-        html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
-        html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
-        html += '</div>';
-    });
-    html += '</div>';
-    _updateBotMsg(botEl, html);
-    let currentStep = 0;
-    animInterval = setInterval(() => {
-        if (!botEl.querySelector) return clearInterval(animInterval);
-        if (currentStep > 0 && currentStep <= steps.length) {
-            const prev = botEl.querySelector('#_callDocxCreatestep' + (currentStep - 1));
-            if (prev) prev.classList.add('completed');
-        }
-        if (currentStep < steps.length) {
-            const curr = botEl.querySelector('#_callDocxCreatestep' + currentStep);
-            if (curr) curr.classList.add('active');
-            currentStep++;
-        }
-    }, 1000);
+    const msgText = '📄 /word create: ' + prompt;
+    addMessageToUI('user', msgText);
+    if (typeof saveToFirebase === 'function') saveToFirebase('user', msgText);
+    
+    const botEl = addMessageToUI('bot', '⏳ Пишу текст и создаю Word...');
     try {
         const BASE = 'https://germanhcsuj-itssoimportandforme.hf.space';
+        
+        let aiText = '';
+        try {
+            const chatFd = new FormData();
+            chatFd.append('prompt', 'Write a short text (2-3 sentences) saying you created the Word document about: ' + prompt + '.');
+            chatFd.append('provider', window.currentProvider || 'gemini');
+            if (typeof currentUser !== 'undefined' && currentUser) chatFd.append('user_email', currentUser.email);
+            const aiResp = await fetch(BASE + '/chat', { method: 'POST', body: chatFd });
+            if (aiResp.ok) {
+                const aiData = await aiResp.json();
+                aiText = aiData.reply || '';
+            }
+        } catch (e) { console.error("Text fetch error", e); }
+        
+        let html = '<br><div class="ai-thinking-steps">';
+        const steps = ['Analyzing word processing structure...', 'Generating AI document context...', 'Formatting paragraphs and styles...', 'Saving Word Document...'];
+        steps.forEach((text, i) => {
+            html += '<div class="thinking-step" id="_callDocxCreatestep' + i + '">';
+            html += '    <div class="step-line"></div>';
+            html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
+            html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        _updateBotMsg(botEl, html);
+        if (aiText) typeEffect(botEl, aiText);
+
+        let currentStep = 0;
+        let animInterval = setInterval(() => {
+            if (!botEl.querySelector) return clearInterval(animInterval);
+            if (currentStep > 0 && currentStep <= steps.length) {
+                const prev = botEl.querySelector('#_callDocxCreatestep' + (currentStep - 1));
+                if (prev) prev.classList.add('completed');
+            }
+            if (currentStep < steps.length) {
+                const curr = botEl.querySelector('#_callDocxCreatestep' + currentStep);
+                if (curr) curr.classList.add('active');
+                currentStep++;
+            }
+        }, 1000);
+
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
         const resp = await fetch(BASE + '/docx/create', { method: 'POST', body: fd });
         if (!resp.ok) throw new Error('Server error ' + resp.status);
         const ct = resp.headers.get('content-type') || '';
+        
+        if (typeof animInterval !== 'undefined') clearInterval(animInterval);
+        
+        if (aiText) {
+            await new Promise(resolve => {
+                const check = setInterval(() => {
+                    if (!window.currentTypingInterval) {
+                        clearInterval(check);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
         if (ct.includes('application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
             const blob = await resp.blob();
             const url  = URL.createObjectURL(blob);
-            if (typeof animInterval !== 'undefined') clearInterval(animInterval);
-            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-zа-я0-9]/gi, '_') + '.docx';
-            _updateBotMsg(botEl, `
-                <div style="background:rgba(74,144,226,0.08);border:1px solid rgba(74,144,226,0.3);border-radius:14px;padding:16px;margin-top:4px;">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                        <span style="font-size:26px;">📄</span>
+            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.docx';
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
+                <div style="background:rgba(74,144,226,0.08);border:1px solid rgba(74,144,226,0.3);border-radius:14px;padding:10px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:20px;">📄</span>
                         <div style="font-weight:600;color:#e2e8f0;">Ready! Word document created.</div>
                     </div>
-                    <a href="${url}" download="${name}" style="display:inline-block;padding:8px 16px;background:#4a90e2;color:#fff;text-decoration:none;border-radius:8px;font-size:0.9rem;font-weight:500;">Скачать .docx</a>
+                    <a href="${url}" download="${name}" style="display:inline-block;padding:6px 12px;background:#4a90e2;color:#fff;text-decoration:none;border-radius:8px;font-size:0.8rem;font-weight:500;">Скачать .docx</a>
                 </div>
-            `);
+            `;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         } else {
             const text = await resp.text();
-            _updateBotMsg(botEl, text);
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + text;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         }
     } catch(e) {
-        _updateBotMsg(botEl, '❌ Ошибка генерации Word: ' + e.message);
+        const errorMsg = '❌ Ошибка генерации Word: ' + e.message;
+        _updateBotMsg(botEl, errorMsg);
+        if (typeof saveToFirebase === 'function') saveToFirebase('ai', errorMsg);
     }
 }
 
 async function _callXlsxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
-    addMessageToUI('user', '📊 /excel create: ' + prompt);
-    const botEl = addMessageToUI('bot', '');
-    let animInterval;
-    const steps = ['Analyzing tabular data structure...', 'Generating spreadsheet cells...', 'Formatting columns and rows...', 'Saving Excel Spreadsheet...'];
-    let html = '<br><div class="ai-thinking-steps">';
-    steps.forEach((text, i) => {
-        html += '<div class="thinking-step" id="_callXlsxCreatestep' + i + '">';
-        html += '    <div class="step-line"></div>';
-        html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
-        html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
-        html += '</div>';
-    });
-    html += '</div>';
-    _updateBotMsg(botEl, html);
-    let currentStep = 0;
-    animInterval = setInterval(() => {
-        if (!botEl.querySelector) return clearInterval(animInterval);
-        if (currentStep > 0 && currentStep <= steps.length) {
-            const prev = botEl.querySelector('#_callXlsxCreatestep' + (currentStep - 1));
-            if (prev) prev.classList.add('completed');
-        }
-        if (currentStep < steps.length) {
-            const curr = botEl.querySelector('#_callXlsxCreatestep' + currentStep);
-            if (curr) curr.classList.add('active');
-            currentStep++;
-        }
-    }, 1000);
+    const msgText = '📊 /excel create: ' + prompt;
+    addMessageToUI('user', msgText);
+    if (typeof saveToFirebase === 'function') saveToFirebase('user', msgText);
+    
+    const botEl = addMessageToUI('bot', '⏳ Пишу текст и создаю Excel...');
     try {
         const BASE = 'https://germanhcsuj-itssoimportandforme.hf.space';
+        
+        let aiText = '';
+        try {
+            const chatFd = new FormData();
+            chatFd.append('prompt', 'Write a short text (2-3 sentences) saying you created the Excel document about: ' + prompt + '.');
+            chatFd.append('provider', window.currentProvider || 'gemini');
+            if (typeof currentUser !== 'undefined' && currentUser) chatFd.append('user_email', currentUser.email);
+            const aiResp = await fetch(BASE + '/chat', { method: 'POST', body: chatFd });
+            if (aiResp.ok) {
+                const aiData = await aiResp.json();
+                aiText = aiData.reply || '';
+            }
+        } catch (e) { console.error("Text fetch error", e); }
+        
+        let html = '<br><div class="ai-thinking-steps">';
+        const steps = ['Analyzing tabular data structure...', 'Generating spreadsheet cells...', 'Formatting columns and rows...', 'Saving Excel Spreadsheet...'];
+        steps.forEach((text, i) => {
+            html += '<div class="thinking-step" id="_callXlsxCreatestep' + i + '">';
+            html += '    <div class="step-line"></div>';
+            html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
+            html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        _updateBotMsg(botEl, html);
+        if (aiText) typeEffect(botEl, aiText);
+
+        let currentStep = 0;
+        let animInterval = setInterval(() => {
+            if (!botEl.querySelector) return clearInterval(animInterval);
+            if (currentStep > 0 && currentStep <= steps.length) {
+                const prev = botEl.querySelector('#_callXlsxCreatestep' + (currentStep - 1));
+                if (prev) prev.classList.add('completed');
+            }
+            if (currentStep < steps.length) {
+                const curr = botEl.querySelector('#_callXlsxCreatestep' + currentStep);
+                if (curr) curr.classList.add('active');
+                currentStep++;
+            }
+        }, 1000);
+
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
         const resp = await fetch(BASE + '/xlsx/create', { method: 'POST', body: fd });
         if (!resp.ok) throw new Error('Server error ' + resp.status);
         const ct = resp.headers.get('content-type') || '';
+        
+        if (typeof animInterval !== 'undefined') clearInterval(animInterval);
+        
+        if (aiText) {
+            await new Promise(resolve => {
+                const check = setInterval(() => {
+                    if (!window.currentTypingInterval) {
+                        clearInterval(check);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
         if (ct.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
             const blob = await resp.blob();
             const url  = URL.createObjectURL(blob);
-            if (typeof animInterval !== 'undefined') clearInterval(animInterval);
-            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-zа-я0-9]/gi, '_') + '.xlsx';
-            _updateBotMsg(botEl, `
-                <div style="background:rgba(72,199,142,0.08);border:1px solid rgba(72,199,142,0.3);border-radius:14px;padding:16px;margin-top:4px;">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                        <span style="font-size:26px;">📊</span>
+            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.xlsx';
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
+                <div style="background:rgba(72,199,142,0.08);border:1px solid rgba(72,199,142,0.3);border-radius:14px;padding:10px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:20px;">📊</span>
                         <div style="font-weight:600;color:#e2e8f0;">Ready! Excel spreadsheet created.</div>
                     </div>
-                    <a href="${url}" download="${name}" style="display:inline-block;padding:8px 16px;background:#48c78e;color:#fff;text-decoration:none;border-radius:8px;font-size:0.9rem;font-weight:500;">Скачать .xlsx</a>
+                    <a href="${url}" download="${name}" style="display:inline-block;padding:6px 12px;background:#48c78e;color:#fff;text-decoration:none;border-radius:8px;font-size:0.8rem;font-weight:500;">Скачать .xlsx</a>
                 </div>
-            `);
+            `;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         } else {
             const text = await resp.text();
-            _updateBotMsg(botEl, text);
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + text;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         }
     } catch(e) {
-        _updateBotMsg(botEl, '❌ Ошибка генерации Excel: ' + e.message);
+        const errorMsg = '❌ Ошибка генерации Excel: ' + e.message;
+        _updateBotMsg(botEl, errorMsg);
+        if (typeof saveToFirebase === 'function') saveToFirebase('ai', errorMsg);
     }
 }
 
 async function _callPptxCreate(prompt) {
     const __ta = document.getElementById('userInput'); if (__ta) { __ta.value = ''; __ta.dispatchEvent(new Event('input')); }
-    addMessageToUI('user', '📈 /ppt create: ' + prompt);
-    const botEl = addMessageToUI('bot', '');
-    let animInterval;
-    const steps = ['Analyzing presentation topic...', 'Generating slide bullet points...', 'Structuring presentation layouts...', 'Saving PowerPoint File...'];
-    let html = '<br><div class="ai-thinking-steps">';
-    steps.forEach((text, i) => {
-        html += '<div class="thinking-step" id="_callPptxCreatestep' + i + '">';
-        html += '    <div class="step-line"></div>';
-        html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
-        html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
-        html += '</div>';
-    });
-    html += '</div>';
-    _updateBotMsg(botEl, html);
-    let currentStep = 0;
-    animInterval = setInterval(() => {
-        if (!botEl.querySelector) return clearInterval(animInterval);
-        if (currentStep > 0 && currentStep <= steps.length) {
-            const prev = botEl.querySelector('#_callPptxCreatestep' + (currentStep - 1));
-            if (prev) prev.classList.add('completed');
-        }
-        if (currentStep < steps.length) {
-            const curr = botEl.querySelector('#_callPptxCreatestep' + currentStep);
-            if (curr) curr.classList.add('active');
-            currentStep++;
-        }
-    }, 1000);
+    const msgText = '📈 /ppt create: ' + prompt;
+    addMessageToUI('user', msgText);
+    if (typeof saveToFirebase === 'function') saveToFirebase('user', msgText);
+    
+    const botEl = addMessageToUI('bot', '⏳ Пишу текст и создаю PPTX...');
     try {
         const BASE = 'https://germanhcsuj-itssoimportandforme.hf.space';
+        
+        let aiText = '';
+        try {
+            const chatFd = new FormData();
+            chatFd.append('prompt', 'Write a short text (2-3 sentences) saying you created the PowerPoint presentation about: ' + prompt + '.');
+            chatFd.append('provider', window.currentProvider || 'gemini');
+            if (typeof currentUser !== 'undefined' && currentUser) chatFd.append('user_email', currentUser.email);
+            const aiResp = await fetch(BASE + '/chat', { method: 'POST', body: chatFd });
+            if (aiResp.ok) {
+                const aiData = await aiResp.json();
+                aiText = aiData.reply || '';
+            }
+        } catch (e) { console.error("Text fetch error", e); }
+        
+        let html = '<br><div class="ai-thinking-steps">';
+        const steps = ['Analyzing presentation topic...', 'Generating slide bullet points...', 'Structuring presentation layouts...', 'Saving PowerPoint File...'];
+        steps.forEach((text, i) => {
+            html += '<div class="thinking-step" id="_callPptxCreatestep' + i + '">';
+            html += '    <div class="step-line"></div>';
+            html += '    <div class="step-icon-container"><div class="step-icon"><i class="fa-solid fa-check"></i></div></div>';
+            html += '    <div class="step-content"><span class="step-title">' + text + '</span></div>';
+            html += '</div>';
+        });
+        html += '</div>';
+        _updateBotMsg(botEl, html);
+        if (aiText) typeEffect(botEl, aiText);
+
+        let currentStep = 0;
+        let animInterval = setInterval(() => {
+            if (!botEl.querySelector) return clearInterval(animInterval);
+            if (currentStep > 0 && currentStep <= steps.length) {
+                const prev = botEl.querySelector('#_callPptxCreatestep' + (currentStep - 1));
+                if (prev) prev.classList.add('completed');
+            }
+            if (currentStep < steps.length) {
+                const curr = botEl.querySelector('#_callPptxCreatestep' + currentStep);
+                if (curr) curr.classList.add('active');
+                currentStep++;
+            }
+        }, 1000);
+
         const fd = new FormData();
         fd.append('prompt', prompt);
         fd.append('provider', window.currentProvider || 'gemini');
         const resp = await fetch(BASE + '/pptx/create', { method: 'POST', body: fd });
         if (!resp.ok) throw new Error('Server error ' + resp.status);
         const ct = resp.headers.get('content-type') || '';
+        
+        if (typeof animInterval !== 'undefined') clearInterval(animInterval);
+        
+        if (aiText) {
+            await new Promise(resolve => {
+                const check = setInterval(() => {
+                    if (!window.currentTypingInterval) {
+                        clearInterval(check);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+
         if (ct.includes('application/vnd.openxmlformats-officedocument.presentationml.presentation')) {
             const blob = await resp.blob();
             const url  = URL.createObjectURL(blob);
-            if (typeof animInterval !== 'undefined') clearInterval(animInterval);
-            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-zа-я0-9]/gi, '_') + '.pptx';
-            _updateBotMsg(botEl, `
-                <div style="background:rgba(252,129,74,0.08);border:1px solid rgba(252,129,74,0.3);border-radius:14px;padding:16px;margin-top:4px;">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                        <span style="font-size:26px;">📽️</span>
+            const name = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pptx';
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
+                <div style="background:rgba(252,129,74,0.08);border:1px solid rgba(252,129,74,0.3);border-radius:14px;padding:10px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:20px;">📽️</span>
                         <div style="font-weight:600;color:#e2e8f0;">Ready! Presentation created.</div>
                     </div>
-                    <a href="${url}" download="${name}" style="display:inline-block;padding:8px 16px;background:#fc814a;color:#fff;text-decoration:none;border-radius:8px;font-size:0.9rem;font-weight:500;">Скачать .pptx</a>
+                    <a href="${url}" download="${name}" style="display:inline-block;padding:6px 12px;background:#fc814a;color:#fff;text-decoration:none;border-radius:8px;font-size:0.8rem;font-weight:500;">Скачать .pptx</a>
                 </div>
-            `);
+            `;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         } else {
             const text = await resp.text();
-            _updateBotMsg(botEl, text);
+            const finalHtml = (aiText ? aiText + '<br><br>' : '') + text;
+            _updateBotMsg(botEl, finalHtml);
+            if (typeof saveToFirebase === 'function') saveToFirebase('ai', finalHtml);
         }
     } catch(e) {
-        _updateBotMsg(botEl, '❌ Ошибка генерации презентации: ' + e.message);
+        const errorMsg = '❌ Ошибка генерации презентации: ' + e.message;
+        _updateBotMsg(botEl, errorMsg);
+        if (typeof saveToFirebase === 'function') saveToFirebase('ai', errorMsg);
     }
 }
 
@@ -5298,7 +5406,7 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
         let animInterval;
         if (aiText) {
             const steps = ['Analyzing document request...', 'Generating content via AI...', 'Formatting document structure...', 'Compiling PDF file...'];
-            let html = aiText + '<br><br><div class="ai-thinking-steps">';
+            let html = '<div class="ai-thinking-steps">';
             steps.forEach((text, i) => {
                 html += `
                   <div class="thinking-step" id="pdfstep${i}">
@@ -5314,6 +5422,7 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
             });
             html += '</div>';
             _updateBotMsg(botEl, html);
+            typeEffect(botEl, aiText);
 
             let currentStep = 0;
             animInterval = setInterval(() => {
@@ -5348,12 +5457,12 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
             if (typeof animInterval !== 'undefined') clearInterval(animInterval);
             
             const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
-                <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:16px;margin-top:4px;">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-                        <span style="font-size:26px;">📄</span>
+                <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:10px;margin-top:4px;">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:20px;">📄</span>
                         <div style="font-weight:600;color:#e2e8f0;">Ready! PDF document created.</div>
                     </div>
-                    <a href="${url}" download="${pdfName}" style="display:inline-block;padding:8px 16px;background:#ef4444;color:#fff;text-decoration:none;border-radius:8px;font-size:0.9rem;font-weight:500;">Скачать .pdf</a>
+                    <a href="${url}" download="${pdfName}" style="display:inline-block;padding:6px 12px;background:#ef4444;color:#fff;text-decoration:none;border-radius:8px;font-size:0.8rem;font-weight:500;">Скачать .pdf</a>
                 </div>
             `;
             
@@ -5367,6 +5476,15 @@ async function _callPdfCreate(prompt, filesToAttach = []) {
                 const rawMarkdown = data.raw;
                 const pdfName = 'solifon_' + prompt.slice(0, 30).replace(/[^a-z\u0430-\u044f0-9]/gi, '_') + '.pdf';
                 if (typeof animInterval !== 'undefined') clearInterval(animInterval);
+                await new Promise(resolve => {
+                    const check = setInterval(() => {
+                        if (!window.currentTypingInterval) {
+                            clearInterval(check);
+                            resolve();
+                        }
+                    }, 100);
+                });
+                
                 const safeMarkdown = encodeURIComponent(data.raw || '');
                 const finalHtml = (aiText ? aiText + '<br><br>' : '') + `
                     <div class="doc-card" data-markdown="${safeMarkdown}" onclick="window.openDocumentEditor(this.getAttribute('data-markdown'), '${pdfName}')"> <div class="doc-card-left"> <div class="doc-card-icon"><i class="ph ph-file-pdf"></i></div> <div class="doc-card-info"> <span class="doc-card-title">Document Ready</span> <span class="doc-card-subtitle">${pdfName}</span> </div> </div> </div>
@@ -5746,7 +5864,7 @@ async function _callImageSearch(query) {
 
         let html = '';
         if (photoUrl) {
-            html += `<img src="${photoUrl}" alt="${query}" style="width:100%;max-width:480px;border-radius:14px;margin-bottom:12px;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.4);">\n`;
+            html += `<img src="${photoUrl}" alt="${query}" style="width:100%;max-width:480px;border-radius:14px;margin-bottom:8px;display:block;box-shadow:0 8px 30px rgba(0,0,0,0.4);">\n`;
             if (photoCredit) html += `<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:8px;">📷 ${photoCredit} / Pexels</div>\n`;
         }
         if (aiText) html += `<div style="font-size:14px;line-height:1.65;">${aiText}</div>`;
