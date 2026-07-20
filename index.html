@@ -1428,7 +1428,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="custom-modal" id="whatsNewModal">
     <div class="modal-content wn-modal-content">
-        <button class="close-modal" onclick="closeModal('whatsNewModal')">&times;</button>
+        <button class="close-modal" onclick="closeModal('whatsNewModal')" style="font-size: 40px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; right: 20px; top: 20px; border-radius: 50%;">&times;</button>
 
         <!-- HEADER -->
         <div class="wn-header">
@@ -2872,7 +2872,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 z-index: 20;
             }
             .wp-btn.active::after {
-                content: 'Р Р†РЎС™РІР‚Сњ';
+                content: '\2713';
                 position: absolute;
                 top: 0; left: 0; width: 100%; height: 100%;
                 background: rgba(0,0,0,0.5);
@@ -2894,7 +2894,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         transform: scale(0.95) !important;
                     }
                     .wp-btn.active::after {
-                        content: 'Р Р†РЎС™РІР‚Сњ';
+                        content: '\2713';
                         position: absolute;
                         top: 50%; left: 50%; transform: translate(-50%, -50%);
                         font-size: 40px; color: #fff; font-weight: bold;
@@ -2919,7 +2919,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
 
                     <!-- RIGHT: 5x2 Grid (Wallpapers & Backgrounds) -->
-                    <div class="settings-grid-container" style="flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(2, 1fr); gap: 16px;">
+                    <div class="settings-grid-container" style="flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(3, 1fr); gap: 16px;">
                         <input type="file" id="wallpaperUploadInput_main" style="display: none;" accept="image/*,video/mp4,video/webm" onchange="window.handleWallpaperUpload(event, 'main')">
                         <div onclick="document.getElementById('wallpaperUploadInput_main').click()" class="fs-premium-card" style="cursor: pointer; background: rgba(255,255,255,0.02); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 2px dashed rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s;" title="Custom Background">
                             <i class="ph ph-plus" style="color: #fff; font-size: 32px; opacity: 0.6;"></i>
@@ -2947,17 +2947,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         </div>
                         <div onclick="window.setWallpaper('main', 'url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=800)')" data-wp="url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=800)" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1515630278258-407f66498911?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
                         </div>
+                    
+                        <div onclick="window.setWallpaper('main', 'video:live_bg_2.mp4')" data-wp="video:live_bg_2.mp4" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: linear-gradient(45deg, #ff9a9e, #fecfef); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-video-camera" style="color: white; font-size: 32px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); z-index: 2;"></i>
+                            <span style="position: absolute; bottom: 8px; font-size: 10px; color: #fff; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">Synthwave</span>
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'video:live_bg_3.mp4')" data-wp="video:live_bg_3.mp4" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: linear-gradient(45deg, #000000, #434343); border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-video-camera" style="color: white; font-size: 32px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); z-index: 2;"></i>
+                            <span style="position: absolute; bottom: 8px; font-size: 10px; color: #fff; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">Dark Space</span>
+                        </div>
+                        <div onclick="window.setWallpaper('main', 'live_ocean')" data-wp="live_ocean" data-view="main" class="fs-premium-card wp-btn" style="cursor: pointer; background: url(https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400) center/cover; border-radius: 20px; aspect-ratio: 1 / 1; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;">
+                            <i class="ph-fill ph-waves" style="color: white; font-size: 32px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5)); z-index: 2;"></i>
+                            <span style="position: absolute; bottom: 8px; font-size: 10px; color: #fff; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8);">Ocean</span>
+                        </div>
                     </div>
-    
-                </div>
 
-
-                
-
-
-                
-
-                <!-- BOTTOM ROW (Horizontal Glass Ovals) -->
+<!-- BOTTOM ROW (Horizontal Glass Ovals) -->
                   <div class="theme-btn-container" style="width: 100%; display: flex; justify-content: center; margin-top: 20px; overflow-x: auto; padding-bottom: 20px;">
                       <div class="theme-btn-inner" style="display: flex; gap: 16px; align-items: center; flex-wrap: nowrap; justify-content: center; background: rgba(0,0,0,0.4); padding: 12px 24px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 5px 15px rgba(0,0,0,0.5); min-width: min-content;">
                         <button onclick="window.setTheme('glass')" data-theme="glass" class="theme-btn" style="white-space: nowrap; background: rgba(255,255,255,0.1); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.2); border-radius: 100px; padding: 14px 28px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><i class="ph-fill ph-drop"></i> Glassmorphism</button>
