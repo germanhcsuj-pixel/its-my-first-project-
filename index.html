@@ -3313,6 +3313,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 }
 </style>
 
+</div></div></div>
 <!-- GAME SCREEN -->
 <div id="game-screen" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:1000; background:#000000; font-family:'Inter', sans-serif; overflow-y:auto; overflow-x:hidden; color:#fff; scroll-behavior: smooth;">
     
@@ -3704,6 +3705,10 @@ function openGameScreen() {
     const screen = document.getElementById('game-screen');
     if (screen) {
         screen.style.setProperty('display', 'flex', 'important');
+        screen.style.setProperty('opacity', '1', 'important');
+        screen.style.setProperty('pointer-events', 'auto', 'important');
+        screen.style.setProperty('visibility', 'visible', 'important');
+        screen.style.setProperty('z-index', '99999', 'important');
     }
 }
 
