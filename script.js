@@ -4207,6 +4207,27 @@ window.applyWallpaper = function(forceView) {
     if (bg && bg.startsWith('video:')) {
         const videoSrc = bg.replace('video:', '');
         targetElement.style.backgroundImage = 'none';
+
+    const previewSquare = document.getElementById('preview_square_' + viewToApply);
+    if (previewSquare) {
+        if (bg && bg.startsWith('video:')) {
+            previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_leaves') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400")';
+        } else if (bg === 'live_matrix') {
+             previewSquare.style.backgroundColor = '#050505';
+             previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_ocean') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400")';
+        } else if (bg && bg !== 'none') {
+             previewSquare.style.backgroundImage = bg;
+             previewSquare.style.backgroundSize = 'cover';
+        } else {
+             previewSquare.style.backgroundImage = 'none';
+             previewSquare.style.backgroundColor = '#0a0a0a';
+        }
+    }
+
         targetElement.style.backgroundColor = '#000';
         
         const video = document.createElement('video');
@@ -4239,6 +4260,27 @@ window.applyWallpaper = function(forceView) {
         startFallingLeaves();
     } else if (bg === 'live_matrix') {
         targetElement.style.backgroundImage = 'none';
+
+    const previewSquare = document.getElementById('preview_square_' + viewToApply);
+    if (previewSquare) {
+        if (bg && bg.startsWith('video:')) {
+            previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_leaves') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400")';
+        } else if (bg === 'live_matrix') {
+             previewSquare.style.backgroundColor = '#050505';
+             previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_ocean') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400")';
+        } else if (bg && bg !== 'none') {
+             previewSquare.style.backgroundImage = bg;
+             previewSquare.style.backgroundSize = 'cover';
+        } else {
+             previewSquare.style.backgroundImage = 'none';
+             previewSquare.style.backgroundColor = '#0a0a0a';
+        }
+    }
+
         targetElement.style.backgroundColor = '#050505';
         startMatrixRain();
     } else if (bg && bg !== 'none') {
@@ -4248,6 +4290,27 @@ window.applyWallpaper = function(forceView) {
         targetElement.style.backgroundAttachment = 'fixed';
     } else {
         targetElement.style.backgroundImage = 'none';
+
+    const previewSquare = document.getElementById('preview_square_' + viewToApply);
+    if (previewSquare) {
+        if (bg && bg.startsWith('video:')) {
+            previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_leaves') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1476231682828-37e571bc172f?q=80&w=400")';
+        } else if (bg === 'live_matrix') {
+             previewSquare.style.backgroundColor = '#050505';
+             previewSquare.style.backgroundImage = 'none';
+        } else if (bg === 'live_ocean') {
+             previewSquare.style.backgroundImage = 'url("https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=400")';
+        } else if (bg && bg !== 'none') {
+             previewSquare.style.backgroundImage = bg;
+             previewSquare.style.backgroundSize = 'cover';
+        } else {
+             previewSquare.style.backgroundImage = 'none';
+             previewSquare.style.backgroundColor = '#0a0a0a';
+        }
+    }
+
         targetElement.style.backgroundColor = (viewToApply === 'main') ? '#000' : 'transparent';
     }
     
@@ -5954,5 +6017,4 @@ window.signInWithProvider = function(providerName) {
         }
     }
 };
- 
  
