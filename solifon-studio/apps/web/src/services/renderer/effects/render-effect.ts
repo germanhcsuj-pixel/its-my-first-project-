@@ -1,0 +1,1 @@
+import type{RenderTarget}from "../render-target";export type EffectContext={time:number;width:number;height:number;deltaTime:number;fps:number;renderNodeAtTime?:(time:number,target:RenderTarget)=> Promise<void>;};export interface RenderEffect{type:string;apply( input:RenderTarget,output:RenderTarget,context:EffectContext ):void | Promise<void>;}

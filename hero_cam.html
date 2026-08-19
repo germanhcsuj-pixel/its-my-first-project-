@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><!-- Р‘РµСЃРїР»Р°С‚РЅС‹Рµ Р±РёР±Р»РёРѕС‚РµРєРё Google MediaPipe (CDN) --><script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script><!-- Three.js Library --><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script><style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#fff; font-family:system-ui,-apple-system,sans-serif;
+      height:100vh; display:flex; flex-direction:column;
+      align-items:center; justify-content:flex-start; padding-top:18px; overflow:hidden;
+    }
+    
+    .hero-text { text-align:center; margin-bottom:10px; }
+    .hero-text .sub { font-size:14px; color:#666; }
+    .hero-text .main { font-size:34px; font-weight:800; color:#0f172a; }
+    .hero-text .hour { color:#f59e0b; }
+
+    .tablet-outer { position:relative; width:100%; flex:1; display:flex; flex-direction:column; }
+    .tablet-body {
+      flex:1; background:#1c1c1e; border-radius:14px 14px 0 0; padding:7px 7px 0;
+      box-shadow:0 -4px 30px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.08);
+      display:flex; flex-direction:column; position:relative;
+    }
+    .tablet-dot {
+      width:7px; height:7px; background:#333; border-radius:50%;
+      position:absolute; top:5px; left:50%; transform:translateX(-50%); z-index:2;
+    }
+    .tablet-screen {
+      flex:1; background:#0a0a14; border-radius:8px 8px 0 0; overflow:hidden; position:relative;
+    }
+
+    /* Р’РёРґРµРѕ Рё РєР°РЅРІР°СЃС‹ */
+    #camVideo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block; z-index:10; }
+    #drawCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:20; }
+    
+    /* Р—Р°РіР»СѓС€РєР°, РєРѕРіРґР° РєР°РјРµСЂР° РІС‹РєР»СЋС‡РµРЅР° */
+    .cam-ph {
+      position:absolute; inset:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:10px; background:#0a0a14; color:#444; font-size:13px;
+    }
+    .cam-ph svg { opacity:.25; }
+
+    /* РћРєРЅРѕ РїСЂРѕРІРµСЂРєРё РїРѕРґРїРёСЃРєРё */
+    #premiumLock {
+
+      display:flex; position:absolute; inset:0; background:rgba(0,0,0,.85);
+      backdrop-filter:blur(8px); z-index:50; flex-direction:column;
+      align-items:center; justify-content:center; gap:14px; text-align:center; padding:20px;
+    }
+    #premiumLock .lock-icon { font-size:40px; }
+    #premiumLock h3 { color:#fff; font-size:17px; }
+    #premiumLock p { color:rgba(255,255,255,.6); font-size:13px; max-width:260px; line-height:1.6; }
+    #premiumLock input {
+      padding:10px 16px; border-radius:20px; border:1px solid rgba(255,255,255,.2);
+      background:rgba(255,255,255,.1); color:#fff; font-size:14px; text-align:center;
+      width:220px; outline:none; font-family:inherit;
+    }
+    #premiumLock button {
+      padding:11px 28px; border-radius:30px; background:linear-gradient(135deg,#10b981,#059669);
+      border:none; color:#fff; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit;
+    }
+    #lockError { color:#ef4444; font-size:13px; display:none; font-weight:600; }
+
+    /* РџР°Р»РёС‚СЂР° С†РІРµС‚РѕРІ */
+    #colorBar {
+      display:none; position:absolute; top:10px; left:10px; z-index:30;
+      flex-direction:column; gap:8px;
+    }
+    .cb-swatch {
+      width:32px; height:32px; border-radius:50%; cursor:pointer;
+      border:2px solid transparent; transition:transform .15s, border .15s;
+    }
+    .cb-swatch.active { border-color:#fff; transform:scale(1.15); box-shadow:0 2px 10px rgba(0,0,0,0.5); }
+    
+    #clearBtn {
+      width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.2); color:#fff; font-size:14px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+    }
+
+    /* РџРѕРґСЃРєР°Р·РєР° */
+    #hint {
+      display:none; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+      background:rgba(0,0,0,.7); backdrop-filter:blur(6px); color:#fff; font-size:12px;
+      font-weight:600; padding:6px 16px; border-radius:20px; white-space:nowrap; z-index:30;
+    }
+
+    /* РРЅРґРёРєР°С‚РѕСЂ Р¶РµСЃС‚РѕРІ */
+    #gestureIndicator {
+      position: absolute; bottom: 16px; right: 16px; z-index: 30;
+      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); border-radius: 20px;
+      padding: 8px 16px; display: none; align-items: center; gap: 8px;
+      color: #fff; font-size: 14px; font-weight: 600; border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: all 0.3s;
+    }
+    
+    /* РўР°Р№РјРµСЂ С„РѕС‚Рѕ */
+    #photoTimer {
+      display: none; position: absolute; z-index: 40;
+      align-items: center; justify-content: center;
+      font-size: 80px; font-weight: 900; color: #fff;
+      text-shadow: 0 0 40px rgba(239, 68, 68, 0.8), 0 4px 10px rgba(0,0,0,0.5);
+      animation: pulse 1s infinite;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.1); } 100% { transform: translate(-50%, -50%) scale(1); } }
+    
+    #uiCanvas { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:15; }
+
+    /* Р’СЃРїС‹С€РєР° */
+    #photoFlash {
+      display: none; position: absolute; inset: 0; background: #fff; z-index: 45;
+    }
+
+    /* Кнопка сбоку 3D */
+    .holo-btn-trigger {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: linear-gradient(135deg, #00ffcc, #3b82f6);
+        color: #000;
+        border: none;
+        padding: 15px 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
+        transition: 0.3s;
+    }
+    .holo-btn-trigger:hover { transform: translateY(-2px) scale(1.05); }
+
+    /* Полупрозрачный фон модалки 3D */
+    .holo-modal {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(10, 10, 10, 0.5); 
+        backdrop-filter: blur(12px); 
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    .holo-modal.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Контент внутри модалки 3D */
+    .holo-modal-content {
+        background: rgba(25, 25, 25, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 20px;
+        width: 80%;
+        max-width: 600px;
+        color: white;
+        text-align: center;
+    }
+    .holo-modal-header { display: none; justify-content: space-between; margin-bottom: 20px; }
+    .holo-close-btn { background: transparent; border: none; color: white; font-size: 24px; cursor: pointer; }
+    .holo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; }
+    .holo-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .holo-item:hover { background: rgba(0, 255, 204, 0.2); border-color: #00ffcc; transform: translateY(-5px); }
+    .preview-canvas {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.2);
+    }
+    .holo-item-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        text-align: center;
+    }
+
+  </style><!-- РЎС‚СЂРѕРіРѕ РѕС‚РґРµР»РµРЅРЅС‹Р№ JS РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ --><script src="air_logic.js?v=1785468718007" defer></script><script src="https://unpkg.com/@phosphor-icons/web"></script></head><body><!-- КНОПКА ПОДКЛЮЧЕНИЯ ТВ (УРОВЕНЬ 2) --><button id="connectTvBtn" onclick="promptTvId()" style="position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s; display: none; align-items: center; gap: 6px; z-index: 1000;" onmouseover="this.style.background='rgba(0,0,0,0.08)'" onmouseout="this.style.background='rgba(0,0,0,0.04)'"><i class="ph ph-television" style="font-size: 16px; color: #ec4899;"></i> Подключить ТВ
+</button><script>
+function promptTvId() {
+    const tvId = prompt("Введите ID телевизора для подключения:");
+    if (tvId) {
+        alert("Телевизор " + tvId + " успешно подключен!");
+    }
+}
+</script><div class="hero-text"><div class="sub">Try out our</div><div class="main">New Feature <span class="hour">now</span></div></div><div class="tablet-outer"><div class="tablet-body"><div class="tablet-dot"></div><div class="tablet-screen" id="screen"><div class="cam-ph" id="camOff"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.4" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.889L15 14"/><rect x="3" y="6" width="12" height="12" rx="2"/></svg><span>Camera is off</span></div><!-- РљР°РјРµСЂР° --><video id="camVideo" autoplay playsinline muted></video><!-- РҐРѕР»СЃС‚ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ --><canvas id="uiCanvas"></canvas><canvas id="drawCanvas"></canvas><!-- РџР°РЅРµР»СЊ СѓРїСЂР°РІР»РµРЅРёСЏ (С†РІРµС‚Р°) --><div id="colorBar" style="display:flex;"><div class="cb-swatch active" style="background:#ef4444" data-color="#ef4444"></div><div class="cb-swatch" style="background:#3b82f6" data-color="#3b82f6"></div><div class="cb-swatch" style="background:#10b981" data-color="#10b981"></div><div class="cb-swatch" style="background:#f59e0b" data-color="#f59e0b"></div><div class="cb-swatch" style="background:#ffffff" data-color="#ffffff"></div><div class="cb-swatch" style="background:#a855f7" data-color="#a855f7"></div><div class="cb-swatch" style="background:#ec4899" data-color="#ec4899"></div><button id="clearBtn" title="Clear">✖</button></div><!-- Р­РєСЂР°РЅ РїСЂРѕРІРµСЂРєРё РїРѕРґРїРёСЃРєРё --><div id="premiumLock" style="display: flex;"><div class="lock-icon" style="font-size: 40px; margin-bottom: 10px;">🎥</div><h3>Air Canvas Elite</h3><p>Experience the 20-gesture advanced drawing system.</p><button id="authBtn" onclick="window.parent.postMessage('startCamera', '*')">Start Camera</button><button id="stopCamBtn" style="display: none; background: #ef4444; position: absolute; top: 25px; right: 90px; z-index: 9999;" onclick="window.parent.postMessage('stopCamera', '*')">Stop Camera</button></div><!-- РџРѕРґСЃРєР°Р·РєР° --><div id="hint"></div><!-- Р˜РЅРґРёРєР°С‚РѕСЂ Р¶РµСЃС‚РѕРІ СѓРґР°Р»РµРЅ --><!-- РўР°Р№РјРµСЂ Рё РІСЃРїС‹С€РєР° РґР»СЏ С„РѕС‚Рѕ --><div id="directorBox"></div><div id="photoTimer">3</div><div id="photoFlash"></div></div></div></div><!-- UI for 3D Library --><button id="btnOpen3DLibrary" class="holo-btn-trigger"><span>🧊</span> Выбрать 3D
+</button><div id="modal3DLibrary" class="holo-modal hidden"><div class="holo-modal-content"><div class="holo-modal-header"><h3>Библиотека Голограмм</h3><button id="btnClose3DLibrary" class="holo-close-btn">✕</button></div><div class="holo-grid" id="holoGrid"><!-- Элементы будут сгенерированы скриптом --></div></div></div></body></html>

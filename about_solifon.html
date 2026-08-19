@@ -1,0 +1,267 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><title>SOLIFON // ABOUT</title><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"><style>
+        :root {
+            --obsidian-black: #000000;
+            --accent-midnight: #0A1128;
+            --accent-brown: #4A3728;
+            --accent-primary: #c9c6c5;
+        }
+        body {
+            background-color: var(--obsidian-black);
+            color: #e2e2e2;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(10, 17, 40, 0.2);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .grain-overlay {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuCKWsHHyjRjNbw6zUiYFbXfXBBZ8F9a-1mrAnjwBrjF_x0_sOCjLdJExMOitvwPxb-LQUq1vh5gH3nAC3mt9vh1b3GcGCfl2TcNW8it2fwd-G76xRLrUTRoqnrX-tdh_RuqP1ZknmdKjXOLIKcQG_mV7ksx6lrZHOK4XIC2m8BKqA0qyCSvUBdnLpjBx1y6U-FNBVbhOIb-svIf4HwhiPB59CH9t0mxlIAQo_b1uI8SiT_zJPoSDH8O);
+            animation: grain-animation 8s steps(10) infinite;
+        }
+        @keyframes grain-animation {
+            0%, 100% { transform:translate(0, 0) }
+            10% { transform:translate(-5%, -10%) }
+            30% { transform:translate(3%, -15%) }
+            50% { transform:translate(12%, 9%) }
+            70% { transform:translate(9%, 4%) }
+            90% { transform:translate(-10%, 10%) }
+        }
+        .data-scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(74, 55, 40, 0.3), transparent);
+            z-index: 40;
+            pointer-events: none;
+            animation: scanline 4s linear infinite;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        .technical-line {
+            background: linear-gradient(90deg, transparent, var(--accent-brown) 50%, transparent);
+            height: 1px;
+            width: 100%;
+            transform-origin: center;
+        }
+        .vertical-grid-line {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: rgba(29, 29, 32, 0.3);
+            z-index: -1;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stealth-btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+        .stealth-btn:hover {
+            border-color: var(--accent-brown);
+            background: rgba(74, 55, 40, 0.1);
+            box-shadow: 0 0 20px rgba(74, 55, 40, 0.2);
+        }
+        #synapse-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .interactive-glow {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-layer {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(74, 55, 40, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+    </style><script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#c9c6c5",
+                    "background": "#000000",
+                    "surface": "#121414",
+                    "surface-obsidian": "#050505",
+                    "accent-earth": "#4A3728",
+                    "surface-midnight": "#0A1128",
+                    "on-surface": "#e2e2e2",
+                    "outline-variant": "#444748",
+                    "data-line": "#1D1D20"
+            },
+            "fontFamily": {
+                    "headline-xl": ["EB Garamond"],
+                    "headline-md": ["EB Garamond"],
+                    "body-md": ["Hanken Grotesk"],
+                    "label-caps": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "headline-xl-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em"}],
+                    "headline-md": ["28px", {"lineHeight": "36px"}],
+                    "label-caps": ["10px", {"lineHeight": "14px", "letterSpacing": "0.2em"}]
+            },
+            "spacing": {
+                    "margin-mobile": "24px"
+            }
+          },
+        },
+      }
+    </script></head><body class="relative min-h-screen selection:bg-accent-earth/30"><div class="grain-overlay"></div><div class="data-scanline"></div><!-- Background grid lines --><div class="vertical-grid-line" style="left: 24px;"></div><div class="vertical-grid-line" style="right: 24px;"></div><!-- Top Navigation --><header class="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-2xl border-b border-white/5 flex justify-between items-center px-margin-mobile py-5"><div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary text-lg" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">menu_open</span><h1 class="font-headline-md text-xl tracking-tight text-on-surface">SOLIFON</h1></div><div class="flex items-center gap-4"><span class="font-label-caps text-[9px] text-white/30">SEC_01 // V_2.6</span><span class="material-symbols-outlined text-accent-earth text-lg" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">radio_button_checked</span></div></header><main class="pt-32 pb-24 px-margin-mobile space-y-24 relative"><!-- Hero Section --><section class="relative reveal active"><p class="font-label-caps text-accent-earth mb-4">FOUNDED 2024 // DASTAN TOMANBAEV</p><h2 class="font-headline-xl text-4xl text-on-surface leading-[1.1] mb-8">
+            Defining the <br><span class="italic text-primary/80">Singularity</span> 
+            Vector.
+        </h2><div class="technical-line mb-8"></div><p class="font-body-md text-white/60 max-w-xs leading-relaxed">
+            Solifon is the culmination of 7 months of intense architectural refinement. A technology born from a vision to erase the boundary between human and machine.
+        </p></section><!-- Strategic Vision: 100% Focus --><section class="reveal space-y-6 active"><div class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-accent-earth shadow-[0_0_8px_rgba(74,55,40,1)]"></span><h3 class="font-label-caps text-primary">STRATEGIC VISION</h3></div><div class="glass-panel p-6 border-l-2 border-l-accent-earth/40"><h4 class="font-headline-md text-2xl mb-4">100% Focus on AI Agents</h4><p class="font-body-md text-white/50 leading-relaxed">
+                Our only vector of development is cutting-edge AI agents and specialized models. No compromises. No side niches. We focus exclusively on artificial intelligence that redefines the computational fabric.
+            </p></div><div class="glass-panel p-6 border-l-2 border-l-accent-earth/40 mt-4"><h4 class="font-headline-md text-2xl mb-4">Computer Vision &amp; Neural Gaming</h4><p class="font-body-md text-white/50 leading-relaxed">
+Leveraging proprietary spatial recognition to redefine immersion. We are building the visual intelligence that powers next-gen interactive environments.
+</p></div></section><!-- Air Canvas Elite --><section class="reveal space-y-8 active"><div class="flex justify-between items-end"><div><p class="font-label-caps text-[9px] text-white/20 mb-2">FLAGSHIP MODULE</p><h3 class="font-headline-md text-3xl">Air Canvas Elite</h3></div><span class="material-symbols-outlined text-accent-earth text-3xl" style="font-variation-settings: &quot;wght&quot; 100; color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.4) 0px 0px 6px);">gesture</span></div><div class="space-y-4"><!-- Level 1 --><div class="glass-panel p-5 group hover:border-white/10"><div class="flex justify-between items-center mb-2"><span class="font-label-caps text-accent-earth">LEVEL_01</span><span class="text-[10px] text-white/30">2D SPATIAL CANVAS</span></div><p class="text-xs text-white/50">Draw in thin air. Zero-latency tracking transforms your space into an infinite digital canvas.</p></div><!-- Level 2 --><div class="glass-panel p-5 group hover:border-white/10"><div class="flex justify-between items-center mb-2"><span class="font-label-caps text-accent-earth">LEVEL_02</span><span class="text-[10px] text-white/30">AR SELFIE &amp; MASKS</span></div><p class="text-xs text-white/50">Advanced facial mesh tracking for pixel-perfect 3D masks and filters via hand signals.</p></div><!-- Level 3 --><div class="glass-panel p-5 group hover:border-white/10"><div class="flex justify-between items-center mb-2"><span class="font-label-caps text-accent-earth">LEVEL_03</span><span class="text-[10px] text-white/30">3D VOLUMETRIC CONTROL</span></div><p class="text-xs text-white/50">Full six-degrees-of-freedom interaction with high-fidelity 3D models using natural joint mapping.</p></div><div class="glass-panel p-5 group hover:border-white/10"><div class="flex justify-between items-center mb-2"><span class="font-label-caps text-accent-earth">LEVEL_04</span><span class="text-[10px] text-white/30">3D CHARACTER CONTROL</span></div><p class="text-xs text-white/50">Advanced skeletal mapping for real-time character manipulation and 3D avatar synchronization.</p></div></div></section><!-- Strategic Pivot Details --><section class="reveal space-y-8 active"><div class="technical-line opacity-20"></div><div class="grid grid-cols-1 gap-10"><div><h3 class="font-headline-md text-2xl text-on-surface mb-4">Architectural Independence</h3><p class="font-body-md text-white/50">
+                    To maintain absolute quality, we have completely abandoned all educational and medical initiatives. Solifon no longer supports the public sector or bureaucratic civil partnerships.
+                </p></div><div class="grid grid-cols-3 gap-3"><div class="glass-panel py-8 flex flex-col items-center justify-center opacity-40 border-dashed border-white/5"><span class="material-symbols-outlined text-white/20 mb-2" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">medical_services</span><p class="font-label-caps text-[8px] text-white/30 tracking-tighter">DISCARDED_MED</p></div><div class="glass-panel py-8 flex flex-col items-center justify-center opacity-40 border-dashed border-white/5"><span class="material-symbols-outlined text-white/20 mb-2" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">school</span><p class="font-label-caps text-[8px] text-white/30 tracking-tighter">DISCARDED_EDU</p></div><div class="glass-panel py-8 flex flex-col items-center justify-center opacity-40 border-dashed border-white/5"><span class="material-symbols-outlined text-white/20 mb-2" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">account_balance</span><p class="font-label-caps text-[8px] text-white/30 tracking-tighter">DISCARDED_GOV</p></div></div></div></section><!-- AI Agents Section (Enhanced Neural Background) --><section class="relative -mx-margin-mobile p-margin-mobile bg-black reveal min-h-[400px] flex flex-col justify-center border-y border-white/5 active"><canvas id="synapse-canvas" width="390" height="400"></canvas><div class="relative z-10 space-y-6"><p class="font-label-caps text-[9px] text-accent-earth">SYSTEM_CORE // NEURAL_ENGINE</p><h3 class="font-headline-md text-3xl">The Singular Vector</h3><div class="max-w-xs space-y-4"><p class="font-body-md text-white/70 italic border-l border-accent-earth/50 pl-4 py-2">
+                        "The future isn't a tool; it's an agent. We are building the entities that will navigate the next era of information."
+                    </p><div class="flex items-center gap-4 group cursor-pointer pt-4"><span class="material-symbols-outlined text-primary group-hover:text-white transition-colors" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.6) 0px 0px 5px);">hub</span><span class="font-label-caps text-[10px] tracking-widest text-white/40 group-hover:text-white">AUTONOMOUS_NODES.EXE</span></div></div></div></section><!-- Elegant CTA --><section class="reveal pt-12 flex flex-col items-center active"><button class="stealth-btn px-12 py-4 rounded-full font-label-caps text-[11px] tracking-[0.3em] text-white/80 group flex items-center gap-3 overflow-hidden" id="engage-btn"><span class="relative z-10">ENGAGE PROTOCOL</span><span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 3px);">arrow_forward_ios</span></button><p class="mt-16 font-label-caps text-[8px] text-white/10 text-center uppercase leading-loose">
+            Encryption: 256-Bit RSA // Quantum-Secure<br>
+            Dastan Tomanbaev © 2026 Solifon
+        </p></section></main><footer class="bg-black text-white/40 font-label-caps text-[10px] px-margin-mobile py-16 border-t border-white/5 space-y-12"><div class="flex flex-col gap-8 md:flex-row md:justify-between"><h2 class="font-headline-md text-2xl text-on-surface tracking-tighter">SOLIFON</h2><div class="flex flex-wrap gap-x-8 gap-y-4"><a class="hover:text-white transition-colors" href="#">ARCHITECTURE</a><a class="hover:text-white transition-colors" href="#">AIR_CANVAS</a><a class="hover:text-white transition-colors" href="#">CLONE_UI</a><a class="hover:text-white transition-colors" href="#">DEEP_SEARCH</a></div></div><div class="flex justify-between items-center opacity-30 pt-8 border-t border-white/5"><p class="">BUILT FOR SCALE // GLOBAL</p><div class="flex gap-4"><span class="material-symbols-outlined text-sm" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">terminal</span><span class="material-symbols-outlined text-sm" style="color: rgb(255, 255, 255); filter: drop-shadow(rgba(255, 255, 255, 0.5) 0px 0px 4px);">settings_input_antenna</span></div></div></footer><!-- Bottom Nav --><script>
+    // Reveal Observer
+    const revealCallback = (entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    };
+    const observer = new IntersectionObserver(revealCallback, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Enhanced Neural Synapse Animation
+    const canvas = document.getElementById('synapse-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    
+    function resize() {
+        const parent = canvas.parentElement;
+        canvas.width = parent.offsetWidth;
+        canvas.height = parent.offsetHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Particle {
+        constructor() {
+            this.init();
+        }
+        init() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.vx = (Math.random() - 0.5) * 0.3;
+            this.vy = (Math.random() - 0.5) * 0.3;
+            this.radius = Math.random() * 1.5;
+            this.pulse = Math.random() * Math.PI;
+        }
+        update() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.pulse += 0.02;
+            if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+            if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        }
+        draw() {
+            const opacity = 0.1 + Math.sin(this.pulse) * 0.1;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(201, 198, 197, ${opacity})`;
+            ctx.fill();
+        }
+    }
+
+    function init() {
+        particles = Array.from({length: 60}, () => new Particle());
+    }
+    init();
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+            p.update();
+            p.draw();
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = p.x - particles[j].x;
+                const dy = p.y - particles[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 120) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(74, 55, 40, ${0.15 * (1 - dist/120)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.stroke();
+                }
+            }
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Mouse Glow Track
+    document.querySelectorAll('.interactive-glow, button').forEach(el => {
+        el.addEventListener('mousemove', (e) => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            let glow = el.querySelector('.glow-layer');
+            if(!glow && el.classList.contains('interactive-glow')) {
+                glow = document.createElement('div');
+                glow.className = 'glow-layer';
+                el.appendChild(glow);
+            }
+            if(glow) {
+                glow.style.opacity = '1';
+                glow.style.left = `${x}px`;
+                glow.style.top = `${y}px`;
+            }
+        });
+        el.addEventListener('mouseleave', (e) => {
+            const glow = el.querySelector('.glow-layer');
+            if(glow) glow.style.opacity = '0';
+        });
+    });
+</script></body></html>
