@@ -2699,317 +2699,39 @@ window.closeAboutMyScreen = closeAboutMyScreen;
                         Utilizing Nanite and Lumen technology, LIS provides an unparalleled visual fidelity. Every grain of sand is a physical object, interacting with dynamic light sources and global illumination.
                     </p><div class="reveal grid grid-cols-1 md:grid-cols-2 gap-12 pt-4"><div class="border-l-[0.5px] border-rich-brown/40 pl-6 py-2"><h5 class="font-label-caps text-xs text-on-surface uppercase tracking-[0.2em] mb-2">Dynamic Volumetrics</h5><p class="font-code-sm text-[11px] text-outline opacity-60 uppercase">Real-time particle simulation.</p></div><div class="border-l-[0.5px] border-rich-brown/40 pl-6 py-2"><h5 class="font-label-caps text-xs text-on-surface uppercase tracking-[0.2em] mb-2">Lumen Integration</h5><p class="font-code-sm text-[11px] text-outline opacity-60 uppercase">Global ray-traced lighting.</p></div></div></div><!-- Tactical HUD Element --><div class="reveal lg:w-1/2 relative p-12 active"><div class="w-full aspect-square relative flex items-center justify-center border-[0.5px] border-rich-brown/10 glass-panel overflow-hidden"><div class="absolute inset-0 border-[0.5px] border-rich-brown/5"></div><div class="absolute top-0 left-0 w-full h-[0.5px] bg-gradient-to-r from-transparent via-rich-brown/10 to-transparent"></div><div class="absolute top-6 left-6 w-8 h-8 border-t-[0.5px] border-l-[0.5px] border-rich-brown/30"></div><div class="absolute top-6 right-6 w-8 h-8 border-t-[0.5px] border-r-[0.5px] border-rich-brown/30"></div><div class="absolute bottom-6 left-6 w-8 h-8 border-b-[0.5px] border-l-[0.5px] border-rich-brown/30"></div><div class="absolute bottom-6 right-6 w-8 h-8 border-b-[0.5px] border-r-[0.5px] border-rich-brown/30"></div><div class="relative flex flex-col items-center gap-8"><div class="w-72 h-72 border-[0.5px] border-rich-brown/10 rounded-full flex items-center justify-center animate-[spin_40s_linear_infinite]"><div class="w-64 h-64 border-dashed border-[0.5px] border-rich-brown/20 rounded-full"></div></div><div class="absolute inset-0 flex flex-col items-center justify-center gap-6"><span class="material-symbols-outlined text-8xl text-rich-brown/60 opacity-80" style="font-variation-settings: 'FILL' 1;">emergency_heat</span><div class="flex flex-col items-center gap-2"><span class="font-code-sm text-rich-brown tracking-[0.5em] text-[9px] animate-pulse">STABILIZING_SYNC...</span><span class="font-code-sm text-rich-brown/30 text-[7px] uppercase tracking-widest">Neural_Protocol_Active</span></div></div></div><div class="absolute top-10 left-10 flex flex-col gap-2"><span class="font-code-sm text-rich-brown/60 text-[9px] uppercase tracking-[0.3em]">Tracking_A4</span><div class="flex gap-2"><div class="w-1 h-1 bg-rich-brown"></div><div class="w-1 h-1 bg-rich-brown"></div><div class="w-1 h-1 bg-rich-brown/20"></div></div></div></div></div></div></section><!-- Footer --><footer class="w-full px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-center gap-10 bg-black/40 border-t wireframe-subtle relative z-10"><div class="font-label-caps text-[10px] text-on-surface-variant/40 flex items-center gap-6 tracking-[0.3em]"><span class="text-rich-brown/60">LIS_SYS_CORE</span><span class="opacity-20">|</span><span class="">PROTOCOL_v.0.4.2</span></div><div class="flex gap-12"><a class="font-code-sm text-[10px] uppercase text-outline/50 hover:text-rich-brown transition-all duration-500 tracking-[0.3em]" href="#">Terminal</a><a class="font-code-sm text-[10px] uppercase text-outline/50 hover:text-rich-brown transition-all duration-500 tracking-[0.3em]" href="#">Patches</a><a class="font-code-sm text-[10px] uppercase text-outline/50 hover:text-rich-brown transition-all duration-500 tracking-[0.3em]" href="#">Contact</a></div></div></div><div id="aboutMyOverlay" class="dark" style="display:none; position:fixed !important; top:0 !important; left:0 !important; width:100vw !important; height:100vh !important; z-index:99999 !important; background:#000 !important; color:#e2e2e2; overflow:hidden; font-family:'Inter',sans-serif;"><button onclick="closeAboutMyScreen()" style="position: fixed; top: 20px; right: 20px; z-index: 999999; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); width: 44px; height: 44px; border-radius: 50%; color: #fff; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 4px 20px rgba(0,0,0,0.5);" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="ph ph-x"></i></button><iframe src="about_solifon.html?v=1" style="width: 100%; height: 100%; border: none; outline: none; background: #000;"></iframe></div><!-- Старый 3D VRM модуль больше не нужен --><!-- <script type="module">import { initVRM } from './vrm_assistant/vrm_core.js'; initVRM();</script> --><script src="smart_voice.js"></script>
 
-<!-- ======================================================== -->
-<!-- SOLIFON STUDIO — FULL-SCREEN NATIVE CUTIA STUDIO ENGINE -->
-<!-- ======================================================== -->
-<div id="solifonStudioModal" style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:#09090b; z-index:2147483647; font-family:'Inter', -apple-system, sans-serif; color:#fff; flex-direction:column; overflow:hidden; user-select:none;">
 
-  <style>
-    #solifonStudioModal * { box-sizing: border-box; }
-    .st-btn {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .st-btn:hover {
-      background: rgba(255,255,255,0.15);
-      border-color: rgba(255,255,255,0.3);
-    }
-    .st-btn-white {
-      background: #ffffff !important;
-      color: #000000 !important;
-      font-weight: 700;
-      border: none !important;
-      box-shadow: 0 0 25px rgba(255,255,255,0.3);
-    }
-    .st-btn-white:hover {
-      background: #e4e4e7 !important;
-      transform: translateY(-1px);
-    }
-    .st-tab-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 10px 4px;
-      color: #71717a;
-      font-size: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: all 0.15s;
-      width: 100%;
-    }
-    .st-tab-item:hover { color: #fff; background: rgba(255,255,255,0.03); }
-    .st-tab-item.active { color: #00f2fe; background: rgba(0,242,254,0.08); border-left: 2px solid #00f2fe; }
-    .st-tab-item i { font-size: 18px; }
-    
-    .st-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .st-card:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: #00f2fe;
-      transform: translateY(-2px);
-    }
-    .st-track-lane {
-      flex: 1;
-      position: relative;
-      background: rgba(255,255,255,0.015);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      height: 44px;
-      display: flex;
-      align-items: center;
-    }
-    .st-clip {
-      position: absolute;
-      height: 34px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #fff;
-      cursor: grab;
-      overflow: hidden;
-      white-space: nowrap;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .st-input {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 6px;
-      color: #fff;
-      padding: 6px 8px;
-      font-size: 12px;
-      width: 100%;
-      outline: none;
-    }
-    .st-input:focus { border-color: #00f2fe; }
-  </style>
 
-  <!-- Top Studio Header -->
-  <div style="height:48px; background:#0c0c11; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0; z-index:100;">
-    <!-- Left: Studio Logo -->
+
+<!-- ======================================================== -->
+<!-- SOLIFON STUDIO — ORIGINAL FULL CUTIA ENGINE (PORT 4101) -->
+<!-- ======================================================== -->
+<div id="solifonStudioModal" style="display:none; position:fixed; inset:0; width:100vw; height:100vh; background:#09090b; z-index:2147483647; font-family:'Inter', -apple-system, sans-serif; flex-direction:column; overflow:hidden;">
+  
+  <!-- Studio Top Navigation Bar -->
+  <div style="height:46px; background:#0c0c11; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:space-between; padding:0 16px; flex-shrink:0; z-index:100;">
     <div style="display:flex; align-items:center; gap:12px;">
-      <div style="width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg, #00f2fe, #a855f7); display:flex; align-items:center; justify-content:center; box-shadow:0 0 12px rgba(0,242,254,0.4);">
-        <i class="ph ph-film-strip" style="color:#000; font-size:16px; font-weight:bold;"></i>
+      <div style="width:26px; height:26px; border-radius:6px; background:linear-gradient(135deg, #00f2fe, #a855f7); display:flex; align-items:center; justify-content:center;">
+        <i class="ph ph-film-strip" style="color:#000; font-size:15px; font-weight:bold;"></i>
       </div>
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-weight:800; font-size:14px; letter-spacing:0.5px;">SOLIFON STUDIO</span>
-        <span style="font-size:10px; color:#00f2fe; background:rgba(0,242,254,0.1); padding:2px 6px; border-radius:4px; border:1px solid rgba(0,242,254,0.25);">CUTIA AI V4.3</span>
+      <div style="font-size:13px; font-weight:800; color:#fff; letter-spacing:0.5px;">
+        SOLIFON STUDIO <span style="font-size:10px; color:#00f2fe; background:rgba(0,242,254,0.12); padding:2px 6px; border-radius:4px; border:1px solid rgba(0,242,254,0.25); margin-left:4px;">ORIGINAL CUTIA</span>
       </div>
     </div>
 
-    <!-- Center View Switcher: Home Landing / Studio Editor -->
-    <div style="display:flex; background:rgba(255,255,255,0.05); padding:3px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); gap:4px;">
-      <button id="stTabEditorBtn" onclick="switchCutiaView('editor')" class="st-btn" style="background:#00f2fe; color:#000; font-weight:700; border:none; padding:4px 14px; border-radius:6px;">
-        <i class="ph ph-video"></i> Редактор
-      </button>
-      <button id="stTabHomeBtn" onclick="switchCutiaView('home')" class="st-btn" style="background:transparent; color:#888; border:none; padding:4px 14px; border-radius:6px;">
-        <i class="ph ph-sparkle"></i> О студии
-      </button>
-    </div>
-
-    <!-- Right Controls: Aspect Ratio, Export, Close -->
+    <!-- Actions: Open in new tab + Close -->
     <div style="display:flex; align-items:center; gap:10px;">
-      <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:#888; background:rgba(255,255,255,0.04); padding:4px 10px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">
-        <select onchange="changeCutiaAspect(this.value)" style="background:transparent; color:#fff; border:none; outline:none; font-size:11px; cursor:pointer;">
-          <option value="16:9" style="background:#111;">16:9 (Landscape)</option>
-          <option value="9:16" style="background:#111;">9:16 (Reels/TikTok)</option>
-          <option value="1:1" style="background:#111;">1:1 (Square)</option>
-        </select>
-      </div>
-
-      <button class="st-btn st-btn-white" onclick="alert('🚀 Рендеринг видео 4K 60FPS с WebGL ускорением... Готово к сохранению!')" style="padding:5px 14px; font-size:11px;">
-        <i class="ph ph-export"></i> Экспорт 4K
-      </button>
-
+      <a id="stDirectLink" href="http://localhost:4101/ru/editor/6616dc12-22c5-49f0-92a6-22aaec2974e0" target="_blank" style="text-decoration:none; padding:5px 12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#fff; border-radius:6px; font-size:12px; display:inline-flex; align-items:center; gap:6px; transition:0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+        <i class="ph ph-arrow-square-out"></i> В новой вкладке
+      </a>
       <button onclick="window.closeSolifonStudio()" style="width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#ff0055'" onmouseout="this.style.background='rgba(255,255,255,0.08)'" title="Закрыть студию">
         <i class="ph ph-x"></i>
       </button>
     </div>
   </div>
 
-  <!-- VIEW 1: STUDIO WORKSPACE (EDITOR) -->
-  <div id="cutiaViewEditor" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
-    <!-- Upper Section: Assets + Stage + Inspector -->
-    <div style="flex:1; display:flex; overflow:hidden; min-height:0;">
-      
-      <!-- Left Tab Icons -->
-      <div style="width:64px; background:#0c0c10; border-right:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; align-items:center; padding:8px 0; gap:2px; flex-shrink:0;">
-        <div class="st-tab-item active" onclick="switchCutiaAssetTab('media', this)"><i class="ph ph-film-slate"></i><span>Медиа</span></div>
-        <div class="st-tab-item" onclick="switchCutiaAssetTab('text', this)"><i class="ph ph-text-t"></i><span>Текст</span></div>
-        <div class="st-tab-item" onclick="switchCutiaAssetTab('effects', this)"><i class="ph ph-sparkle"></i><span>Эффекты</span></div>
-        <div class="st-tab-item" onclick="switchCutiaAssetTab('filters', this)"><i class="ph ph-faders"></i><span>Фильтры</span></div>
-        <div class="st-tab-item" onclick="switchCutiaAssetTab('audio', this)"><i class="ph ph-waveform"></i><span>Аудио</span></div>
-        <div class="st-tab-item" onclick="switchCutiaAssetTab('ai', this)"><i class="ph ph-robot"></i><span>ИИ Smart</span></div>
-      </div>
-
-      <!-- Left Drawer List -->
-      <div style="width:260px; background:#0e0e14; border-right:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; overflow:hidden; flex-shrink:0;">
-        <div style="padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.06); font-size:12px; font-weight:700; text-transform:uppercase; color:#fff;" id="stDrawerTitle">
-          Медиатека
-        </div>
-        <div id="stDrawerContent" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;">
-          <!-- Dynamically filled -->
-        </div>
-      </div>
-
-      <!-- Center Player Stage Canvas -->
-      <div style="flex:1; background:#060608; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; position:relative; overflow:hidden;">
-        
-        <div style="position:absolute; top:12px; left:16px; font-size:11px; color:#666; display:flex; gap:8px;">
-          <span style="color:#00e676;">● 60 FPS</span>
-          <span>|</span>
-          <span id="stResBadge">3840 x 2160 (16:9 UHD)</span>
-        </div>
-
-        <!-- Video Screen Frame -->
-        <div id="cutiaCanvasFrame" style="width:100%; max-width:640px; aspect-ratio:16/9; background:#000; border-radius:12px; border:1px solid rgba(255,255,255,0.15); position:relative; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center;">
-          <video id="stMainVideo" src="https://assets.mixkit.co/videos/preview/mixkit-futuristic-city-with-flying-cars-at-night-41584-large.mp4" style="width:100%; height:100%; object-fit:cover;" loop playsinline autoplay muted></video>
-          <div id="stOverlayText" style="position:absolute; bottom:20%; left:50%; transform:translateX(-50%); font-size:22px; font-weight:800; color:#fff; text-shadow:0 0 20px rgba(0,242,254,0.8); text-transform:uppercase; text-align:center; pointer-events:none;">
-            SOLIFON STUDIO
-          </div>
-        </div>
-
-        <!-- Transport Bar -->
-        <div style="display:flex; align-items:center; gap:16px; margin-top:14px; background:rgba(20,20,28,0.8); padding:6px 20px; border-radius:30px; border:1px solid rgba(255,255,255,0.08); backdrop-filter:blur(20px);">
-          <button onclick="stStep(-1)" class="st-btn" style="padding:6px; border-radius:50%; background:transparent; border:none;"><i class="ph ph-skip-back"></i></button>
-          <button onclick="stTogglePlay()" class="st-btn st-btn-white" style="width:36px; height:36px; border-radius:50%; padding:0; justify-content:center;">
-            <i id="stPlayIcon" class="ph ph-pause" style="font-size:16px;"></i>
-          </button>
-          <button onclick="stStep(1)" class="st-btn" style="padding:6px; border-radius:50%; background:transparent; border:none;"><i class="ph ph-skip-forward"></i></button>
-          
-          <div style="height:14px; width:1px; background:rgba(255,255,255,0.1);"></div>
-          <div style="font-family:monospace; font-size:12px; font-weight:700; color:#00f2fe;">
-            <span id="stTimeCurrent">00:04.18</span> / <span style="color:#666;">00:15.00</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Inspector Panel -->
-      <div style="width:280px; background:#0e0e14; border-left:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; overflow-y:auto; padding:14px; flex-shrink:0; gap:14px;">
-        <div style="font-size:12px; font-weight:700; text-transform:uppercase; color:#fff; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:6px;">
-          Параметры клипа (Слой V1)
-        </div>
-
-        <div>
-          <div style="font-size:10px; color:#777; margin-bottom:4px;">Масштаб (%)</div>
-          <input type="range" min="50" max="150" value="100" class="st-input" oninput="document.getElementById('stMainVideo').style.transform = 'scale(' + (this.value/100) + ')';">
-        </div>
-
-        <div>
-          <div style="font-size:10px; color:#777; margin-bottom:4px;">Прозрачность</div>
-          <input type="range" min="0" max="100" value="100" class="st-input" oninput="document.getElementById('stMainVideo').style.opacity = this.value/100;">
-        </div>
-
-        <div>
-          <div style="font-size:10px; color:#777; margin-bottom:4px;">Режим наложения (Blend Mode)</div>
-          <select class="st-input" onchange="document.getElementById('stMainVideo').style.mixBlendMode = this.value;">
-            <option value="normal">Normal</option>
-            <option value="screen">Screen (Свечение)</option>
-            <option value="multiply">Multiply (Затемнение)</option>
-            <option value="overlay">Overlay</option>
-          </select>
-        </div>
-
-        <div style="background:rgba(0,242,254,0.05); border:1px solid rgba(0,242,254,0.2); border-radius:8px; padding:10px; display:flex; flex-direction:column; gap:8px;">
-          <div style="font-size:11px; font-weight:700; color:#00f2fe; display:flex; align-items:center; gap:6px;"><i class="ph ph-magic-wand"></i> ИИ Smart Edit (P4)</div>
-          <label style="font-size:11px; color:#aaa; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
-            <span>Beat-Sync нарезка</span>
-            <input type="checkbox" checked style="accent-color:#00f2fe;">
-          </label>
-          <label style="font-size:11px; color:#aaa; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
-            <span>Удаление фона (AI Mask)</span>
-            <input type="checkbox" style="accent-color:#00f2fe;">
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Lower Section: Multi-track Timeline -->
-    <div style="height:210px; background:#0a0a0f; border-top:1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; flex-shrink:0;">
-      <!-- Timeline Toolbar -->
-      <div style="height:36px; background:#0e0e14; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:space-between; padding:0 14px;">
-        <div style="display:flex; align-items:center; gap:6px;">
-          <button class="st-btn" onclick="alert('✂️ Клип разделен на позиции 00:04.18')" style="padding:3px 8px; font-size:11px;"><i class="ph ph-scissors"></i> Разрезать</button>
-          <button class="st-btn" onclick="alert('🗑️ Клип удален с таймлайна')" style="padding:3px 8px; font-size:11px;"><i class="ph ph-trash"></i> Удалить</button>
-          <button class="st-btn" onclick="alert('⚡ ИИ Beat-Sync: Автоматически создано 6 склеек по битам')" style="padding:3px 8px; font-size:11px; color:#00f2fe; border-color:rgba(0,242,254,0.3);"><i class="ph ph-lightning"></i> AI Beat Cut</button>
-        </div>
-        <div style="font-size:11px; color:#666; font-family:monospace;">SNAP: ON | 60 FPS</div>
-      </div>
-
-      <!-- Tracks -->
-      <div style="flex:1; overflow-y:auto; position:relative;">
-        <div id="stPlayheadLine" style="position:absolute; top:0; bottom:0; left:260px; width:2px; background:#ff0055; z-index:50; box-shadow:0 0 10px #ff0055;"></div>
-
-        <!-- Track T1 -->
-        <div style="display:flex; width:100%;">
-          <div style="width:90px; padding:6px 10px; font-size:10px; color:#777; border-right:1px solid rgba(255,255,255,0.08); background:#0d0d12;">T1 Текст</div>
-          <div class="st-track-lane">
-            <div class="st-clip" style="left:120px; width:280px; background:linear-gradient(90deg, #7928ca, #ff0080);">Титр: Solifon AI Studio</div>
-          </div>
-        </div>
-
-        <!-- Track V1 -->
-        <div style="display:flex; width:100%;">
-          <div style="width:90px; padding:6px 10px; font-size:10px; color:#777; border-right:1px solid rgba(255,255,255,0.08); background:#0d0d12;">V1 Видео</div>
-          <div class="st-track-lane">
-            <div class="st-clip" style="left:0px; width:360px; background:linear-gradient(90deg, #0070f3, #00dfd8);">Cyberpunk_City_4K.mp4</div>
-            <div class="st-clip" style="left:364px; width:300px; background:linear-gradient(90deg, #0051a8, #00b4d8);">Flying_Vehicles.mp4</div>
-          </div>
-        </div>
-
-        <!-- Track A1 -->
-        <div style="display:flex; width:100%;">
-          <div style="width:90px; padding:6px 10px; font-size:10px; color:#777; border-right:1px solid rgba(255,255,255,0.08); background:#0d0d12;">A1 Музыка</div>
-          <div class="st-track-lane">
-            <div class="st-clip" style="left:0px; width:680px; background:linear-gradient(90deg, #10b981, #059669);">Synthwave_Soundtrack_140BPM.mp3</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- VIEW 2: COSMIC STUDIO LANDING (HOME) -->
-  <div id="cutiaViewHome" style="display:none; flex:1; background:#09090b; overflow-y:auto; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 20px; position:relative;">
-    <!-- Stars Background -->
-    <div style="position:absolute; inset:0; background:radial-gradient(circle at center, rgba(139, 92, 246, 0.25) 0%, rgba(0,0,0,0) 70%); pointer-events:none;"></div>
-    
-    <div style="position:relative; z-index:2; max-width:800px; display:flex; flex-direction:column; align-items:center; gap:20px;">
-      <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); padding:6px 16px; border-radius:30px; font-size:12px; color:#a1a1aa;">
-        ✨ Редактор видео, основанный на ИИ
-      </div>
-
-      <h1 style="font-size:clamp(32px, 5vw, 56px); font-weight:800; line-height:1.1; margin:0; color:#fff; letter-spacing:-1px;">
-        Редактировать видео,<br><span style="background:linear-gradient(90deg, #fff, #a1a1aa); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">прямо в вашем браузере</span>
-      </h1>
-
-      <p style="font-size:15px; color:#a1a1aa; max-width:620px; line-height:1.6; margin:0;">
-        Solifon Studio — это редактор видео с открытым исходным кодом и быстрой альтернативой CapCut. Никаких загрузок, никакого отслеживания — ваши медиа остаются на вашем устройстве.
-      </p>
-
-      <button onclick="switchCutiaView('editor')" class="st-btn st-btn-white" style="padding:12px 28px; font-size:15px; border-radius:10px; margin-top:10px;">
-        Открыть редактор <i class="ph ph-arrow-right"></i>
-      </button>
-    </div>
+  <!-- Real Cutia Video Editor Full-Screen Frame -->
+  <div style="flex:1; width:100%; height:calc(100vh - 46px); position:relative; background:#09090b;">
+    <iframe id="studioIframe" src="http://localhost:4101/ru/editor/6616dc12-22c5-49f0-92a6-22aaec2974e0" style="width:100%; height:100%; border:none; display:block;" allow="camera; microphone; display-capture; clipboard-write; clipboard-read; autoplay"></iframe>
   </div>
 
 </div>
@@ -3017,11 +2739,24 @@ window.closeAboutMyScreen = closeAboutMyScreen;
 <script>
 window.openSolifonStudio = function() {
   var modal = document.getElementById('solifonStudioModal');
+  var iframe = document.getElementById('studioIframe');
+  var directLink = document.getElementById('stDirectLink');
+
+  var studioUrl = 'http://localhost:4101/ru/editor/6616dc12-22c5-49f0-92a6-22aaec2974e0';
+
   if (modal) {
     modal.style.setProperty('display', 'flex', 'important');
-    switchCutiaAssetTab('media');
-    var v = document.getElementById('stMainVideo');
-    if (v) v.play().catch(function(){});
+    modal.style.setProperty('opacity', '1', 'important');
+    modal.style.setProperty('visibility', 'visible', 'important');
+    modal.style.setProperty('pointer-events', 'auto', 'important');
+    modal.style.setProperty('z-index', '2147483647', 'important');
+
+    if (iframe) {
+      iframe.src = studioUrl;
+    }
+    if (directLink) {
+      directLink.href = studioUrl;
+    }
   }
 };
 
@@ -3029,96 +2764,7 @@ window.closeSolifonStudio = function() {
   var modal = document.getElementById('solifonStudioModal');
   if (modal) {
     modal.style.setProperty('display', 'none', 'important');
-    var v = document.getElementById('stMainVideo');
-    if (v) v.pause();
+    modal.style.setProperty('visibility', 'hidden', 'important');
   }
 };
-
-function switchCutiaView(view) {
-  var vEditor = document.getElementById('cutiaViewEditor');
-  var vHome = document.getElementById('cutiaViewHome');
-  var bEditor = document.getElementById('stTabEditorBtn');
-  var bHome = document.getElementById('stTabHomeBtn');
-
-  if (view === 'editor') {
-    if (vEditor) vEditor.style.display = 'flex';
-    if (vHome) vHome.style.display = 'none';
-    if (bEditor) { bEditor.style.background = '#00f2fe'; bEditor.style.color = '#000'; }
-    if (bHome) { bHome.style.background = 'transparent'; bHome.style.color = '#888'; }
-  } else {
-    if (vEditor) vEditor.style.display = 'none';
-    if (vHome) vHome.style.display = 'flex';
-    if (bEditor) { bEditor.style.background = 'transparent'; bEditor.style.color = '#888'; }
-    if (bHome) { bHome.style.background = '#00f2fe'; bHome.style.color = '#000'; }
-  }
-}
-
-function switchCutiaAssetTab(tab, el) {
-  document.querySelectorAll('.st-tab-item').forEach(function(i){ i.classList.remove('active'); });
-  if (el) el.classList.add('active');
-
-  var title = document.getElementById('stDrawerTitle');
-  var content = document.getElementById('stDrawerContent');
-  if (!content) return;
-  content.innerHTML = '';
-
-  if (tab === 'media') {
-    title.innerText = 'Медиатека (4)';
-    ['Cyberpunk_City_4K.mp4', 'Flying_Vehicles.mp4', 'Anime_Model.glb', 'Synthwave_Soundtrack.mp3'].forEach(function(m){
-      content.innerHTML += '<div class="st-card" onclick="alert(\'Выбран файл: ' + m + '\')"><div style=\'font-size:12px; font-weight:600;\'><i class=\'ph ph-film-strip\' style=\'color:#00f2fe;\'></i> ' + m + '</div></div>';
-    });
-  } else if (tab === 'text') {
-    title.innerText = 'Титры и текст';
-    ['Cyberpunk Glow Title', 'Minimal Subtitle', 'Cinematic Lower Third'].forEach(function(t){
-      content.innerHTML += '<div class="st-card" onclick="document.getElementById(\'stOverlayText\').innerText = \'' + t.toUpperCase() + '\';"><div style=\'font-size:12px; font-weight:600;\'><i class=\'ph ph-text-t\' style=\'color:#a855f7;\'></i> ' + t + '</div></div>';
-    });
-  } else if (tab === 'effects') {
-    title.innerText = 'WebGL Шейдеры';
-    ['RGB Glitch Split', 'Cinematic Film Grain', 'Neon Edge Glow', 'Motion Blur AI'].forEach(function(f){
-      content.innerHTML += '<div class="st-card" onclick="alert(\'Шейдер применен: ' + f + '\')"><div style=\'font-size:12px; font-weight:600;\'><i class=\'ph ph-sparkle\' style=\'color:#00f2fe;\'></i> ' + f + '</div></div>';
-    });
-  } else if (tab === 'filters') {
-    title.innerText = 'Цветовые LUTs';
-    ['Teal & Orange Hollywood', 'Kodak 500T 35mm', 'Matrix Cyber Green'].forEach(function(l){
-      content.innerHTML += '<div class="st-card" onclick="alert(\'LUT применен: ' + l + '\')"><div style=\'font-size:12px; font-weight:600;\'><i class=\'ph ph-faders\' style=\'color:#00e676;\'></i> ' + l + '</div></div>';
-    });
-  } else if (tab === 'audio') {
-    title.innerText = 'Аудио и звуки';
-    ['Synthwave Cyber 140 BPM', 'Deep Bass Drop', 'Whoosh Transition'].forEach(function(a){
-      content.innerHTML += '<div class="st-card" onclick="alert(\'Аудио добавлено на таймлайн: ' + a + '\')"><div style=\'font-size:12px; font-weight:600;\'><i class=\'ph ph-waveform\' style=\'color:#00f2fe;\'></i> ' + a + '</div></div>';
-    });
-  } else if (tab === 'ai') {
-    title.innerText = 'ИИ Инструменты';
-    ['Beat-Sync автонарезка', 'AI Удаление фона видео', 'Генератор субтитров Whisper V3'].forEach(function(ai){
-      content.innerHTML += '<div class="st-card" onclick="alert(\'Запуск ИИ-алгоритма: ' + ai + '\')"><div style=\'font-size:12px; font-weight:700; color:#00f2fe;\'><i class=\'ph ph-robot\'></i> ' + ai + '</div></div>';
-    });
-  }
-}
-
-function stTogglePlay() {
-  var v = document.getElementById('stMainVideo');
-  var icon = document.getElementById('stPlayIcon');
-  if (!v) return;
-  if (v.paused) {
-    v.play();
-    if (icon) icon.className = 'ph ph-pause';
-  } else {
-    v.pause();
-    if (icon) icon.className = 'ph ph-play';
-  }
-}
-
-function stStep(delta) {
-  var v = document.getElementById('stMainVideo');
-  if (v) v.currentTime = Math.max(0, v.currentTime + delta);
-}
-
-function changeCutiaAspect(aspect) {
-  var f = document.getElementById('cutiaCanvasFrame');
-  var b = document.getElementById('stResBadge');
-  if (!f) return;
-  if (aspect === '16:9') { f.style.maxWidth = '640px'; f.style.aspectRatio = '16/9'; if (b) b.innerText = '3840 x 2160 (16:9 UHD)'; }
-  else if (aspect === '9:16') { f.style.maxWidth = '280px'; f.style.aspectRatio = '9/16'; if (b) b.innerText = '1080 x 1920 (9:16 Reels)'; }
-  else if (aspect === '1:1') { f.style.maxWidth = '380px'; f.style.aspectRatio = '1/1'; if (b) b.innerText = '2160 x 2160 (1:1 Square)'; }
-}
 </script>
