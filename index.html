@@ -2736,35 +2736,15 @@ window.closeAboutMyScreen = closeAboutMyScreen;
 
 </div>
 
+
 <script>
 window.openSolifonStudio = function() {
-  var modal = document.getElementById('solifonStudioModal');
-  var iframe = document.getElementById('studioIframe');
-  var directLink = document.getElementById('stDirectLink');
-
   var studioUrl = 'http://localhost:4101/ru/editor/6616dc12-22c5-49f0-92a6-22aaec2974e0';
-
-  if (modal) {
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('opacity', '1', 'important');
-    modal.style.setProperty('visibility', 'visible', 'important');
-    modal.style.setProperty('pointer-events', 'auto', 'important');
-    modal.style.setProperty('z-index', '2147483647', 'important');
-
-    if (iframe) {
-      iframe.src = studioUrl;
-    }
-    if (directLink) {
-      directLink.href = studioUrl;
-    }
-  }
+  window.open(studioUrl, '_blank');
 };
-
 window.closeSolifonStudio = function() {
   var modal = document.getElementById('solifonStudioModal');
-  if (modal) {
-    modal.style.setProperty('display', 'none', 'important');
-    modal.style.setProperty('visibility', 'hidden', 'important');
-  }
+  if (modal) modal.style.setProperty('display', 'none', 'important');
 };
 </script>
+
