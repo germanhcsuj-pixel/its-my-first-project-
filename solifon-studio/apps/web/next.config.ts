@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { withBotId } from "botid/next/config";
 
 const nextConfig: NextConfig = {
   compiler: {
@@ -7,10 +6,6 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   productionBrowserSourceMaps: true,
-  output: "standalone",
-  outputFileTracingIncludes: {
-    "/**": ["./public/locales/**/*"],
-  },
   images: {
     remotePatterns: [
       {
@@ -45,4 +40,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withBotId(nextConfig);
+export default nextConfig;
