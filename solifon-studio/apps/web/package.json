@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "bun@1.2.18",
   "scripts": {
-    "dev": "next dev --turbopack --port 4101",
-    "build": "next build",
-    "start": "next start",
+    "dev": "bunx next dev --turbopack --port 4101",
+    "build": "bunx next build",
+    "start": "bunx next start",
     "lint": "biome check src/",
     "lint:fix": "biome check src/ --write",
     "format": "biome format src/ --write",
