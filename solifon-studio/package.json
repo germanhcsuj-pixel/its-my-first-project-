@@ -5,6 +5,8 @@
     "packages/*"
   ],
   "scripts": {
+    "build": "turbo run build --filter=@cutia/web",
+    "dev": "turbo run dev --filter=@cutia/web",
     "dev:web": "turbo run dev --filter=@cutia/web",
     "build:web": "turbo run build --filter=@cutia/web",
     "dev:tools": "turbo run dev --filter=@cutia/tools",

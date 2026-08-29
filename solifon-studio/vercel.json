@@ -1,1 +1,1 @@
-{"$schema":"https://openapi.vercel.sh/vercel.json","framework":"nextjs","installCommand":"bun install --frozen-lockfile","buildCommand":"bun run build:web","devCommand":"bun run dev:web","outputDirectory":"apps/web/.next"}
+{"$schema":"https://openapi.vercel.sh/vercel.json","framework":"nextjs","installCommand":"bun install","buildCommand":"bun run build","devCommand":"bun run dev","outputDirectory":"apps/web/.next"}
