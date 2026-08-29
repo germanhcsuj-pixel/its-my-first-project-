@@ -1,1 +1,1 @@
-{"$schema":"https://openapi.vercel.sh/vercel.json","framework":"nextjs","installCommand":"bun install","buildCommand":"bun run build","devCommand":"bun run dev","outputDirectory":"apps/web/.next"}
+{"$schema":"https://openapi.vercel.sh/vercel.json","framework":"nextjs","installCommand":"bun install","buildCommand":"npx turbo run build --filter=@cutia/web","devCommand":"bun run dev","outputDirectory":"apps/web/.next"}
