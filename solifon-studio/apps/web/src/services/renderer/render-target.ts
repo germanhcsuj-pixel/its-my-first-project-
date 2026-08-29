@@ -1,1 +1,96 @@
-export type RenderTargetParams={width:number;height:number;imageSmoothingQuality?:ImageSmoothingQuality;};export class RenderTarget{canvas:OffscreenCanvas | HTMLCanvasElement;context:OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;width:number;height:number;private smoothingQuality:ImageSmoothingQuality;constructor({width,height,imageSmoothingQuality="low"}:RenderTargetParams){this.width=width;this.height=height;this.smoothingQuality=imageSmoothingQuality;try{this.canvas=new OffscreenCanvas(width,height);}catch{this.canvas=document.createElement("canvas");this.canvas.width=width;this.canvas.height=height;}const context=this.canvas.getContext("2d");if (!context){throw new Error("Failed to get canvas context");}this.context=context as | OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;this.applySmoothing();}setSize(width:number,height:number){this.width=width;this.height=height;if (this.canvas instanceof OffscreenCanvas){this.canvas=new OffscreenCanvas(width,height);}else{this.canvas.width=width;this.canvas.height=height;}const context=this.canvas.getContext("2d");if (!context){throw new Error("Failed to get canvas context");}this.context=context as | OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;this.applySmoothing();}private applySmoothing(){this.context.imageSmoothingEnabled=true;this.context.imageSmoothingQuality=this.smoothingQuality;}clear(){this.context.clearRect(0,0,this.width,this.height);}clearWithColor(color:string){this.context.fillStyle=color;this.context.fillRect(0,0,this.width,this.height);}draw( source:RenderTarget | HTMLCanvasElement | HTMLVideoElement | HTMLImageElement,x:number=0,y:number=0,width?:number,height?:number ){const sourceCanvas=source instanceof RenderTarget ? source.canvas:source;const drawWidth=width ?? sourceCanvas.width;const drawHeight=height ?? sourceCanvas.height;this.context.drawImage(sourceCanvas,x,y,drawWidth,drawHeight);}dispose(){if (this.canvas && 'width' in this.canvas){this.canvas.width=0;this.canvas.height=0;}(this.canvas as any)=null;(this.context as any)=null;}}
+export type RenderTargetParams = {
+	width: number;
+	height: number;
+	imageSmoothingQuality?: ImageSmoothingQuality;
+};
+
+export class RenderTarget {
+	canvas: OffscreenCanvas | HTMLCanvasElement;
+	context: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
+	width: number;
+	height: number;
+	private smoothingQuality: ImageSmoothingQuality;
+
+	constructor({ width, height, imageSmoothingQuality = "low" }: RenderTargetParams) {
+		this.width = width;
+		this.height = height;
+		this.smoothingQuality = imageSmoothingQuality;
+
+		try {
+			this.canvas = new OffscreenCanvas(width, height);
+		} catch {
+			this.canvas = document.createElement("canvas");
+			this.canvas.width = width;
+			this.canvas.height = height;
+		}
+
+		const context = this.canvas.getContext("2d");
+		if (!context) {
+			throw new Error("Failed to get canvas context");
+		}
+
+		this.context = context as
+			| OffscreenCanvasRenderingContext2D
+			| CanvasRenderingContext2D;
+		
+		this.applySmoothing();
+	}
+
+	setSize(width: number, height: number) {
+		this.width = width;
+		this.height = height;
+
+		if (this.canvas instanceof OffscreenCanvas) {
+			this.canvas = new OffscreenCanvas(width, height);
+		} else {
+			this.canvas.width = width;
+			this.canvas.height = height;
+		}
+
+		const context = this.canvas.getContext("2d");
+		if (!context) {
+			throw new Error("Failed to get canvas context");
+		}
+		this.context = context as
+			| OffscreenCanvasRenderingContext2D
+			| CanvasRenderingContext2D;
+		this.applySmoothing();
+	}
+
+	private applySmoothing() {
+		this.context.imageSmoothingEnabled = true;
+		this.context.imageSmoothingQuality = this.smoothingQuality;
+	}
+
+	clear() {
+		this.context.clearRect(0, 0, this.width, this.height);
+	}
+	
+	clearWithColor(color: string) {
+		this.context.fillStyle = color;
+		this.context.fillRect(0, 0, this.width, this.height);
+	}
+
+	draw(
+		source: RenderTarget | HTMLCanvasElement | HTMLVideoElement | HTMLImageElement,
+		x: number = 0,
+		y: number = 0,
+		width?: number,
+		height?: number
+	) {
+		const sourceCanvas = source instanceof RenderTarget ? source.canvas : source;
+		const drawWidth = width ?? sourceCanvas.width;
+		const drawHeight = height ?? sourceCanvas.height;
+		this.context.drawImage(sourceCanvas, x, y, drawWidth, drawHeight);
+	}
+
+	dispose() {
+		// Helping GC and freeing GPU memory
+		if (this.canvas && 'width' in this.canvas) {
+			this.canvas.width = 0;
+			this.canvas.height = 0;
+		}
+		(this.canvas as any) = null;
+		(this.context as any) = null;
+	}
+}

@@ -1,1 +1,139 @@
-"use client";import React from "react";import{useEditor}from "@/hooks/use-editor";import type{TimelineElement}from "@/types/timeline";import{TIMELINE_CONSTANTS}from "@/constants/timeline-constants";interface Props{element:TimelineElement;trackId:string;zoomLevel:number;}export function TimelineEffectOverlay({element,trackId,zoomLevel}:Props){const editor=useEditor();const pixelsPerSecond=TIMELINE_CONSTANTS.PIXELS_PER_SECOND*zoomLevel;const elementWidth=element.duration*pixelsPerSecond;const animStart=element.animationStartTime ?? 0;const animDur=element.animationDuration ?? element.duration;const animLeft=(animStart/element.duration)*100;const animWidth=(animDur/element.duration)*100;const effectStart=element.effectStartTime ?? 0;const effectDur=element.effectDuration ?? element.duration;const effectLeft=(effectStart/element.duration)*100;const effectWidth=(effectDur/element.duration)*100;const handleDrag=( e:React.MouseEvent,type:"animation" | "effect",part:"start" | "end" | "move" )=>{e.stopPropagation();const startX=e.clientX;const initialStart=type==="animation" ? animStart:effectStart;const initialDur=type==="animation" ? animDur:effectDur;const onMouseMove=(moveEvent:MouseEvent)=>{const deltaX=moveEvent.clientX-startX;const deltaSeconds=deltaX/pixelsPerSecond;let newStart=initialStart;let newDur=initialDur;if (part==="start"){newStart=Math.max(0,Math.min(initialStart+deltaSeconds,initialStart+initialDur-0.1));newDur=initialDur+(initialStart-newStart);}else if (part==="end"){newDur=Math.max(0.1,Math.min(initialDur+deltaSeconds,element.duration-initialStart));}else if (part==="move"){newStart=Math.max(0,Math.min(initialStart+deltaSeconds,element.duration-initialDur));}editor.timeline.updateElements({updates:[{trackId,elementId:element.id,updates:type==="animation" ?{animationStartTime:newStart,animationDuration:newDur}:{effectStartTime:newStart,effectDuration:newDur},},],pushHistory:false,});};const onMouseUp=()=>{window.removeEventListener("mousemove",onMouseMove);window.removeEventListener("mouseup",onMouseUp);};window.addEventListener("mousemove",onMouseMove);window.addEventListener("mouseup",onMouseUp);};return ( <>{}{element.effect && ( <div className="absolute top-0 h-full bg-gradient-to-r from-emerald-500/30 to-teal-600/30 border border-emerald-500/40 rounded-sm overflow-hidden whitespace-nowrap flex items-center px-1 group" style={{left:`${Math.max(0,Math.min(100,effectLeft))}%`,width:`${Math.max(0,Math.min(100-effectLeft,effectWidth))}%`,}}onMouseDown={(e)=> handleDrag(e,"effect","move")}> <span className="text-[10px] text-white/90 font-medium truncate pointer-events-none drop-shadow-md select-none"> ✨{element.effect}</span>{}<div className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400" onMouseDown={(e)=> handleDrag(e,"effect","start")}/>{}<div className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400" onMouseDown={(e)=> handleDrag(e,"effect","end")}/> </div> )}{}{element.animation && ( <div className="absolute top-0 h-full bg-gradient-to-r from-indigo-500/30 to-purple-600/30 border border-indigo-500/40 rounded-sm mix-blend-screen overflow-hidden whitespace-nowrap flex items-center px-1 group" style={{left:`${Math.max(0,Math.min(100,animLeft))}%`,width:`${Math.max(0,Math.min(100-animLeft,animWidth))}%`,}}onMouseDown={(e)=> handleDrag(e,"animation","move")}> <span className="text-[10px] text-white/90 font-medium truncate pointer-events-none drop-shadow-md select-none"> 🎬{element.animation}</span>{}<div className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-indigo-400" onMouseDown={(e)=> handleDrag(e,"animation","start")}/>{}<div className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-indigo-400" onMouseDown={(e)=> handleDrag(e,"animation","end")}/> </div> )}</> );}
+"use client";
+
+import React from "react";
+import { useEditor } from "@/hooks/use-editor";
+import type { TimelineElement } from "@/types/timeline";
+import { TIMELINE_CONSTANTS } from "@/constants/timeline-constants";
+
+interface Props {
+	element: TimelineElement;
+	trackId: string;
+	zoomLevel: number;
+}
+
+export function TimelineEffectOverlay({ element, trackId, zoomLevel }: Props) {
+	const editor = useEditor();
+	
+	const pixelsPerSecond = TIMELINE_CONSTANTS.PIXELS_PER_SECOND * zoomLevel;
+	const elementWidth = element.duration * pixelsPerSecond;
+
+	// Animation calculations
+	const animStart = element.animationStartTime ?? 0;
+	const animDur = element.animationDuration ?? element.duration;
+	const animLeft = (animStart / element.duration) * 100;
+	const animWidth = (animDur / element.duration) * 100;
+
+	// Effect calculations
+	const effectStart = element.effectStartTime ?? 0;
+	const effectDur = element.effectDuration ?? element.duration;
+	const effectLeft = (effectStart / element.duration) * 100;
+	const effectWidth = (effectDur / element.duration) * 100;
+
+	const handleDrag = (
+		e: React.MouseEvent,
+		type: "animation" | "effect",
+		part: "start" | "end" | "move"
+	) => {
+		e.stopPropagation();
+		const startX = e.clientX;
+
+		const initialStart = type === "animation" ? animStart : effectStart;
+		const initialDur = type === "animation" ? animDur : effectDur;
+
+		const onMouseMove = (moveEvent: MouseEvent) => {
+			const deltaX = moveEvent.clientX - startX;
+			const deltaSeconds = deltaX / pixelsPerSecond;
+
+			let newStart = initialStart;
+			let newDur = initialDur;
+
+			if (part === "start") {
+				newStart = Math.max(0, Math.min(initialStart + deltaSeconds, initialStart + initialDur - 0.1));
+				newDur = initialDur + (initialStart - newStart);
+			} else if (part === "end") {
+				newDur = Math.max(0.1, Math.min(initialDur + deltaSeconds, element.duration - initialStart));
+			} else if (part === "move") {
+				newStart = Math.max(0, Math.min(initialStart + deltaSeconds, element.duration - initialDur));
+			}
+
+			editor.timeline.updateElements({
+				updates: [
+					{
+						trackId,
+						elementId: element.id,
+						updates:
+							type === "animation"
+								? { animationStartTime: newStart, animationDuration: newDur }
+								: { effectStartTime: newStart, effectDuration: newDur },
+					},
+				],
+				pushHistory: false,
+			});
+		};
+
+		const onMouseUp = () => {
+			window.removeEventListener("mousemove", onMouseMove);
+			window.removeEventListener("mouseup", onMouseUp);
+			// editor.timeline.pushHistory(); // push final state to history
+		};
+
+		window.addEventListener("mousemove", onMouseMove);
+		window.addEventListener("mouseup", onMouseUp);
+	};
+
+	return (
+		<>
+			{/* Effect Overlay */}
+			{element.effect && (
+				<div
+					className="absolute top-0 h-full bg-gradient-to-r from-emerald-500/30 to-teal-600/30 border border-emerald-500/40 rounded-sm overflow-hidden whitespace-nowrap flex items-center px-1 group"
+					style={{
+						left: `${Math.max(0, Math.min(100, effectLeft))}%`,
+						width: `${Math.max(0, Math.min(100 - effectLeft, effectWidth))}%`,
+					}}
+					onMouseDown={(e) => handleDrag(e, "effect", "move")}
+				>
+					<span className="text-[10px] text-white/90 font-medium truncate pointer-events-none drop-shadow-md select-none">
+						✨ {element.effect}
+					</span>
+					{/* Left Handle */}
+					<div
+						className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400"
+						onMouseDown={(e) => handleDrag(e, "effect", "start")}
+					/>
+					{/* Right Handle */}
+					<div
+						className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400"
+						onMouseDown={(e) => handleDrag(e, "effect", "end")}
+					/>
+				</div>
+			)}
+
+			{/* Animation Overlay */}
+			{element.animation && (
+				<div
+					className="absolute top-0 h-full bg-gradient-to-r from-indigo-500/30 to-purple-600/30 border border-indigo-500/40 rounded-sm mix-blend-screen overflow-hidden whitespace-nowrap flex items-center px-1 group"
+					style={{
+						left: `${Math.max(0, Math.min(100, animLeft))}%`,
+						width: `${Math.max(0, Math.min(100 - animLeft, animWidth))}%`,
+					}}
+					onMouseDown={(e) => handleDrag(e, "animation", "move")}
+				>
+					<span className="text-[10px] text-white/90 font-medium truncate pointer-events-none drop-shadow-md select-none">
+						🎬 {element.animation}
+					</span>
+					{/* Left Handle */}
+					<div
+						className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-indigo-400"
+						onMouseDown={(e) => handleDrag(e, "animation", "start")}
+					/>
+					{/* Right Handle */}
+					<div
+						className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-indigo-400"
+						onMouseDown={(e) => handleDrag(e, "animation", "end")}
+					/>
+				</div>
+			)}
+		</>
+	);
+}

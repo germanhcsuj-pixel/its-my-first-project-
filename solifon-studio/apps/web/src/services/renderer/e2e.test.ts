@@ -1,1 +1,200 @@
-import{describe,it,expect,mock}from "bun:test";import{EditorCore}from "@/core";import{applyPlan,getCurrentTimelineRevision}from "@/lib/ai/apply-plan";import{evaluateAnimation}from "./animation-engine";import{getShakeOffset}from "./nodes/root-node";import type{AIEditPlan}from "@/lib/ai/edit-plan";import type{VideoTrack,VideoElement,TextElement}from "@/types/timeline";import*as editPlanValidator from "@/lib/ai/edit-plan-validator";if (typeof window==="undefined"){(globalThis as any).window=globalThis;}mock.module("@/lib/ai/edit-plan-validator",()=>{const original=import.meta.require("@/lib/ai/edit-plan-validator");return{...original,computePlanHashAsync:async ()=> "test_hash"};});describe("E2E AI Director Scenario",()=>{it("should apply IMPACT_ZOOM,FAST_PAN_LEFT,and BEAT_SHAKE correctly",async ()=>{const editor=EditorCore.getInstance();editor.project.setActiveProject({project:{id:"proj_1",name:"E2E Project",settings:{fps:30,resolution:{width:1920,height:1080}},metadata:{createdAt:new Date(),updatedAt:new Date()},assets:[],scenes:[],currentSceneId:"scene_1"}as any});editor.scenes.setScenes({scenes:[{id:"scene_1",name:"Scene 1",tracks:[],bookmarks:[],markers:[]}],activeSceneId:"scene_1"});const videoElement:VideoElement={id:"video_1",type:"video",mediaId:"media_video_1",startTime:0,duration:3,trimStart:0,trimEnd:3,transform:{position:{x:0,y:0},scale:1,rotate:0},opacity:1,};const textElement:TextElement={id:"text_1",type:"text",content:"SOLIFON EDIT",fontSize:48,fontFamily:"Arial",color:"#FFFFFF",startTime:0,duration:3,trimStart:0,trimEnd:3,transform:{position:{x:0,y:0},scale:1,rotate:0},opacity:1,};(textElement as any).mediaId="media_text_1";const track1:VideoTrack={id:"track_1",type:"video",isMain:true,elements:[videoElement,textElement],};editor.timeline.updateTracks([track1]);const baseRev=getCurrentTimelineRevision();let tracks=editor.timeline.getTracks();let videoEl=(tracks[0] as VideoTrack).elements.find(e=> e.id==="video_1")!;let textEl=(tracks[0] as VideoTrack).elements.find(e=> e.id==="text_1")!;expect(videoEl.transform.transformKeyframes).toBeUndefined();expect(textEl.transform.transformKeyframes).toBeUndefined();expect(editor.project.getActive().settings.virtualCamera?.shake).toBeUndefined();const plan:AIEditPlan={id:"plan_1",version:1,hash:"test_hash",baseTimelineRevision:baseRev,intent:{prompt:"Test",style:"tiktok",pacing:"fast"},sourceClips:[],decisions:[],cuts:[],transitions:[],effects:[{trackId:"media_video_1",motion:"IMPACT_ZOOM"},{trackId:"media_video_1",motion:"IMPACT_GLOW"},{trackId:"media_text_1",motion:"FAST_PAN_LEFT"},{trackId:"media_video_1",motion:"BEAT_SHAKE"}],confidence:1};const ctx={projectSettings:editor.project.getActive().settings,tracks:editor.timeline.getTracks(),mediaAssets:[],currentTimelineRevision:getCurrentTimelineRevision()};const report=await applyPlan(plan,ctx);if (report.status !=="committed"){console.log(report.error,report.validation?.errors);}expect(report.status).toBe("committed");console.log("Applied commands:",report.commandsApplied);console.log("Failed commands:",report.commandsFailed);console.log("Resulting tracks elements:",JSON.stringify(editor.timeline.getTracks()[0].elements.map(e=> e.transform),null,2));tracks=editor.timeline.getTracks();videoEl=(tracks[0] as VideoTrack).elements.find(e=> e.id==="video_1")!;textEl=(tracks[0] as VideoTrack).elements.find(e=> e.id==="text_1")!;const cameraSettings=editor.project.getActive().settings.virtualCamera;expect(videoEl.transform.transformKeyframes?.scale).toBeDefined();expect(videoEl.effects).toBeDefined();expect(videoEl.effects?.some(e=> e.type==="glow")).toBe(true);expect(videoEl.effects?.some(e=> e.type==="motion-blur")).toBe(true);expect(textEl.transform.transformKeyframes?.x).toBeDefined();expect(cameraSettings?.shake).toBeDefined();console.log("\n---E2E RENDER OUTPUT---");const frames=[0,15,30,45,60,90];for (const frame of frames){const time=frame/30.0;const videoState=evaluateAnimation( videoEl.transform.transformKeyframes,videoEl.transform.propertyKeyframes,time,{x:0,y:0,scale:1,rotate:0},1 );const textState=evaluateAnimation( textEl.transform.transformKeyframes,textEl.transform.propertyKeyframes,time,{x:0,y:0,scale:1,rotate:0},1 );const cameraShake=getShakeOffset(time,cameraSettings!.shake!);console.log(`[Frame ${frame.toString().padStart(2,' ')}| t=${time.toFixed(2)}s]`);console.log(` VIDEO scale:${videoState.scale.toFixed(3)}`);console.log(` TEXT x:${textState.x.toFixed(3)}`);console.log(` SHAKE x,y:${cameraShake.x.toFixed(3)},${cameraShake.y.toFixed(3)}\n`);if (frame===0){expect(videoState.scale).toBe(1);expect(textState.x).toBe(0);}if (frame===30){expect(videoState.scale).toBeCloseTo(1.04,2);}}});});
+import { describe, it, expect, mock } from "bun:test";
+import { EditorCore } from "@/core";
+import { applyPlan, getCurrentTimelineRevision } from "@/lib/ai/apply-plan";
+import { evaluateAnimation } from "./animation-engine";
+import { getShakeOffset } from "./nodes/root-node";
+import type { AIEditPlan } from "@/lib/ai/edit-plan";
+import type { VideoTrack, VideoElement, TextElement } from "@/types/timeline";
+import * as editPlanValidator from "@/lib/ai/edit-plan-validator";
+
+// Mock window for bun environment since EditorCore uses window.setTimeout
+if (typeof window === "undefined") {
+	(globalThis as any).window = globalThis;
+}
+
+// Mock the hash function to always match for testing
+mock.module("@/lib/ai/edit-plan-validator", () => {
+	const original = import.meta.require("@/lib/ai/edit-plan-validator");
+	return {
+		...original,
+		computePlanHashAsync: async () => "test_hash"
+	};
+});
+
+describe("E2E AI Director Scenario", () => {
+	it("should apply IMPACT_ZOOM, FAST_PAN_LEFT, and BEAT_SHAKE correctly", async () => {
+		const editor = EditorCore.getInstance();
+		
+		// Need to create a project and scene first
+		editor.project.setActiveProject({
+			project: {
+				id: "proj_1",
+				name: "E2E Project",
+				settings: { fps: 30, resolution: { width: 1920, height: 1080 } },
+				metadata: { createdAt: new Date(), updatedAt: new Date() },
+				assets: [],
+				scenes: [],
+				currentSceneId: "scene_1"
+			} as any
+		});
+		editor.scenes.setScenes({
+			scenes: [{ id: "scene_1", name: "Scene 1", tracks: [], bookmarks: [], markers: [] }],
+			activeSceneId: "scene_1"
+		});
+		
+		const videoElement: VideoElement = {
+			id: "video_1",
+			type: "video",
+			mediaId: "media_video_1",
+			startTime: 0,
+			duration: 3,
+			trimStart: 0,
+			trimEnd: 3,
+			transform: { position: { x: 0, y: 0 }, scale: 1, rotate: 0 },
+			opacity: 1,
+		};
+		
+		const textElement: TextElement = {
+			id: "text_1",
+			type: "text",
+			content: "SOLIFON EDIT",
+			fontSize: 48,
+			fontFamily: "Arial",
+			color: "#FFFFFF",
+			startTime: 0,
+			duration: 3,
+			trimStart: 0,
+			trimEnd: 3,
+			transform: { position: { x: 0, y: 0 }, scale: 1, rotate: 0 },
+			opacity: 1,
+		};
+		
+		(textElement as any).mediaId = "media_text_1"; // Hack to allow applyPlan resolver to find it easily
+		
+		const track1: VideoTrack = {
+			id: "track_1",
+			type: "video",
+			isMain: true,
+			elements: [videoElement, textElement],
+		};
+		
+		editor.timeline.updateTracks([track1]);
+		const baseRev = getCurrentTimelineRevision();
+
+		// Check Pre-apply state
+		let tracks = editor.timeline.getTracks();
+		let videoEl = (tracks[0] as VideoTrack).elements.find(e => e.id === "video_1")!;
+		let textEl = (tracks[0] as VideoTrack).elements.find(e => e.id === "text_1")!;
+		
+		expect(videoEl.transform.transformKeyframes).toBeUndefined();
+		expect(textEl.transform.transformKeyframes).toBeUndefined();
+		expect(editor.project.getActive().settings.virtualCamera?.shake).toBeUndefined();
+
+		// 2. Build EditPlan
+		const plan: AIEditPlan = {
+			id: "plan_1",
+			version: 1,
+			hash: "test_hash",
+			baseTimelineRevision: baseRev,
+			intent: { prompt: "Test", style: "tiktok", pacing: "fast" },
+			sourceClips: [],
+			decisions: [],
+			cuts: [],
+			transitions: [],
+			effects: [
+				{
+					trackId: "media_video_1",
+					motion: "IMPACT_ZOOM"
+				},
+				{
+					trackId: "media_video_1",
+					motion: "IMPACT_GLOW"
+				},
+				{
+					trackId: "media_text_1",
+					motion: "FAST_PAN_LEFT"
+				},
+				{
+					trackId: "media_video_1",
+					motion: "BEAT_SHAKE"
+				}
+			],
+			confidence: 1
+		};
+
+		// 3. Apply Plan
+		const ctx = {
+			projectSettings: editor.project.getActive().settings,
+			tracks: editor.timeline.getTracks(),
+			mediaAssets: [],
+			currentTimelineRevision: getCurrentTimelineRevision()
+		};
+		
+		const report = await applyPlan(plan, ctx);
+		if (report.status !== "committed") {
+			console.log(report.error, report.validation?.errors);
+		}
+		expect(report.status).toBe("committed");
+
+		console.log("Applied commands:", report.commandsApplied);
+		console.log("Failed commands:", report.commandsFailed);
+		console.log("Resulting tracks elements:", JSON.stringify(editor.timeline.getTracks()[0].elements.map(e => e.transform), null, 2));
+
+		// 4. Verify resulting timeline
+		tracks = editor.timeline.getTracks();
+		videoEl = (tracks[0] as VideoTrack).elements.find(e => e.id === "video_1")!;
+		textEl = (tracks[0] as VideoTrack).elements.find(e => e.id === "text_1")!;
+		const cameraSettings = editor.project.getActive().settings.virtualCamera;
+		
+		expect(videoEl.transform.transformKeyframes?.scale).toBeDefined();
+		expect(videoEl.effects).toBeDefined();
+		expect(videoEl.effects?.some(e => e.type === "glow")).toBe(true);
+		expect(videoEl.effects?.some(e => e.type === "motion-blur")).toBe(true);
+		
+		expect(textEl.transform.transformKeyframes?.x).toBeDefined();
+		expect(cameraSettings?.shake).toBeDefined();
+
+		// 5. Run Renderer verification (Frame by frame)
+		console.log("\n--- E2E RENDER OUTPUT ---");
+		
+		// 3 seconds duration -> 0, 15, 30, 45, 60 frames (assuming 30fps, 1 sec = 30 frames)
+		const frames = [0, 15, 30, 45, 60, 90];
+		
+		for (const frame of frames) {
+			const time = frame / 30.0;
+			
+			const videoState = evaluateAnimation(
+				videoEl.transform.transformKeyframes,
+				videoEl.transform.propertyKeyframes,
+				time, // localTime
+				{ x: 0, y: 0, scale: 1, rotate: 0 },
+				1
+			);
+			
+			const textState = evaluateAnimation(
+				textEl.transform.transformKeyframes,
+				textEl.transform.propertyKeyframes,
+				time,
+				{ x: 0, y: 0, scale: 1, rotate: 0 },
+				1
+			);
+			
+			const cameraShake = getShakeOffset(time, cameraSettings!.shake!);
+			
+			console.log(`[Frame ${frame.toString().padStart(2, ' ')} | t=${time.toFixed(2)}s]`);
+			console.log(`  VIDEO scale: ${videoState.scale.toFixed(3)}`);
+			console.log(`  TEXT  x:     ${textState.x.toFixed(3)}`);
+			console.log(`  SHAKE x,y:   ${cameraShake.x.toFixed(3)}, ${cameraShake.y.toFixed(3)}\n`);
+			
+			// Basic assertions based on recipe knowledge
+			if (frame === 0) {
+				expect(videoState.scale).toBe(1);
+				expect(textState.x).toBe(0);
+			}
+			if (frame === 30) {
+				// IMPACT_ZOOM interpolates from 1.05 at 0.5s to 1.0 at 3.0s. At 1.0s, it's 1.04.
+				expect(videoState.scale).toBeCloseTo(1.04, 2);
+			}
+		}
+	});
+});

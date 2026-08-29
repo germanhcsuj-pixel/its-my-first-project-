@@ -1,1 +1,19 @@
-import type{RenderEffect,EffectContext}from "./render-effect";import type{RenderTarget}from "../render-target";import{getSharedTargets}from "../shared-targets";export class MotionBlurEffect implements RenderEffect{public type="motion-blur";constructor( public samples:number=4,public shutterAngle:number=180 ){}async apply(input:RenderTarget,output:RenderTarget,context:EffectContext):Promise<void>{output.context.drawImage(input.canvas,0,0);}}
+import type { RenderEffect, EffectContext } from "./render-effect";
+import type { RenderTarget } from "../render-target";
+import { getSharedTargets } from "../shared-targets";
+
+export class MotionBlurEffect implements RenderEffect {
+	public type = "motion-blur";
+
+	constructor(
+		public samples: number = 4,
+		public shutterAngle: number = 180
+	) {}
+
+	async apply(input: RenderTarget, output: RenderTarget, context: EffectContext): Promise<void> {
+		// Single Source of Truth: RenderScheduler handles all temporal sampling.
+		// MotionBlurEffect is now just a parameter container for the Engine.
+		// If this is ever called, we just pass the input to the output transparently.
+		output.context.drawImage(input.canvas, 0, 0);
+	}
+}

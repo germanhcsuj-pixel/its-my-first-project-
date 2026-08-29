@@ -1,1 +1,236 @@
-import{RenderTarget}from "../render-target";import{MaskMode}from "@/types/timeline";import{EvaluatedMask}from "./mask-evaluator";import{MaskRenderer}from "./mask-renderer";export class RenderTargetPool{private static pool=new Map<string,RenderTarget[]>();private static activeCount=0;public static getActiveCount():number{return this.activeCount;}public static acquire(width:number,height:number):RenderTarget{this.activeCount++;const key=`${width}x${height}`;const list=this.pool.get(key);if (list && list.length > 0){const target=list.pop()!;target.clear();target.context.globalCompositeOperation="source-over";target.context.globalAlpha=1;target.context.setTransform(1,0,0,1,0,0);return target;}return new RenderTarget({width,height});}public static release(target:RenderTarget){this.activeCount=Math.max(0,this.activeCount-1);const key=`${target.width}x${target.height}`;if (!this.pool.has(key)){this.pool.set(key,[]);}target.clear();this.pool.get(key)!.push(target);}public static clear(){this.activeCount=0;for (const list of this.pool.values()){for (const target of list){target.dispose();}}this.pool.clear();}}export class MaskCompositor{public static applyMasks( sourceTarget:RenderTarget,masks:EvaluatedMask[] ):RenderTarget{if (masks.length===0){const result=RenderTargetPool.acquire(sourceTarget.width,sourceTarget.height);result.draw(sourceTarget);return result;}const width=sourceTarget.width;const height=sourceTarget.height;const maskAccumulator=RenderTargetPool.acquire(width,height);maskAccumulator.clear();for (let i=0;i < masks.length;i++){const mask=masks[i];const maskCanvas=MaskRenderer.renderToCanvas(mask,width,height);const mode=i===0 ? "add":mask.mode;const ctx=maskAccumulator.context;if (mode==="subtract"){ctx.save();ctx.globalCompositeOperation="destination-out";ctx.drawImage(maskCanvas,0,0);ctx.restore();continue;}if (mode==="intersect"){ctx.save();ctx.globalCompositeOperation="source-in";ctx.drawImage(maskCanvas,0,0);ctx.restore();continue;}const accData=ctx.getImageData(0,0,width,height);const maskCtx=(maskCanvas as unknown as{getContext:(type:string)=> CanvasRenderingContext2D}).getContext("2d");const maskData=maskCtx.getImageData(0,0,width,height);const accPixels=accData.data;const maskPixels=maskData.data;for (let p=3;p < accPixels.length;p+=4){const A=accPixels[p]/255;const B=maskPixels[p]/255;let A_out=A;if (mode==="add"){A_out=Math.max(A,B);}else if (mode==="exclude"){A_out=Math.abs(A-B);}accPixels[p]=Math.round(A_out*255);accPixels[p-1]=0;accPixels[p-2]=0;accPixels[p-3]=0;}ctx.putImageData(accData,0,0);}const maskedResult=RenderTargetPool.acquire(width,height);maskedResult.draw(sourceTarget);const ctx=maskedResult.context;ctx.save();ctx.globalCompositeOperation="destination-in";ctx.drawImage(maskAccumulator.canvas,0,0);ctx.restore();RenderTargetPool.release(maskAccumulator);return maskedResult;}public static runMathTests():{passed:boolean;results:string[]}{const results:string[]=[];let allPassed=true;const width=2;const height=2;const A=RenderTargetPool.acquire(width,height);const B=RenderTargetPool.acquire(width,height);const out=RenderTargetPool.acquire(width,height);const getAlpha=(target:RenderTarget)=>{const data=target.context.getImageData(0,0,1,1).data;return data[3]/255;};const fillAlpha=(target:RenderTarget,alpha:number)=>{target.clear();const ctx=target.context;const img=ctx.createImageData(width,height);for (let i=3;i < img.data.length;i+=4){img.data[i]=Math.round(alpha*255);}ctx.putImageData(img,0,0);};const testMath=(name:string,mode:MaskMode,aVal:number,bVal:number,expected:number)=>{fillAlpha(A,aVal);fillAlpha(B,bVal);let actual=0;if (mode==="subtract"){const ctx=A.context;ctx.save();ctx.globalCompositeOperation="destination-out";ctx.drawImage(B.canvas,0,0);ctx.restore();actual=getAlpha(A);}else if (mode==="intersect"){const ctx=A.context;ctx.save();ctx.globalCompositeOperation="source-in";ctx.drawImage(B.canvas,0,0);ctx.restore();actual=getAlpha(A);}else{const accData=A.context.getImageData(0,0,1,1);const bData=B.context.getImageData(0,0,1,1);const aAlpha=accData.data[3]/255;const bAlpha=bData.data[3]/255;actual=mode==="add" ? Math.max(aAlpha,bAlpha):Math.abs(aAlpha-bAlpha);}const diff=Math.abs(actual-expected);const passed=diff <=0.01;results.push(`[${passed ? 'PASS':'FAIL'}] ${name}:expected ${expected.toFixed(3)},got ${actual.toFixed(3)}`);if (!passed) allPassed=false;};const fractionCases=[{a:0.25,b:0.50},{a:0.50,b:0.25},{a:0.50,b:0.50},{a:0.20,b:0.80},{a:0.80,b:0.20},];fractionCases.forEach(({a,b})=>{testMath(`ADD max(${a},${b})`,"add",a,b,Math.max(a,b));testMath(`SUBTRACT ${a}*(1-${b})`,"subtract",a,b,a*(1-b));testMath(`INTERSECT ${a}*${b}`,"intersect",a,b,a*b);testMath(`EXCLUDE abs(${a}-${b})`,"exclude",a,b,Math.abs(a-b));});RenderTargetPool.release(A);RenderTargetPool.release(B);RenderTargetPool.release(out);return{passed:allPassed,results};}}
+import { RenderTarget } from "../render-target";
+import { MaskMode } from "@/types/timeline";
+import { EvaluatedMask } from "./mask-evaluator";
+import { MaskRenderer } from "./mask-renderer";
+
+export class RenderTargetPool {
+	private static pool = new Map<string, RenderTarget[]>();
+	private static activeCount = 0;
+
+	public static getActiveCount(): number {
+		return this.activeCount;
+	}
+
+	public static acquire(width: number, height: number): RenderTarget {
+		this.activeCount++;
+		const key = `${width}x${height}`;
+		const list = this.pool.get(key);
+		if (list && list.length > 0) {
+			const target = list.pop()!;
+			target.clear();
+			target.context.globalCompositeOperation = "source-over";
+			target.context.globalAlpha = 1;
+			target.context.setTransform(1, 0, 0, 1, 0, 0);
+			return target;
+		}
+		return new RenderTarget({ width, height });
+	}
+
+	public static release(target: RenderTarget) {
+		this.activeCount = Math.max(0, this.activeCount - 1);
+		const key = `${target.width}x${target.height}`;
+		if (!this.pool.has(key)) {
+			this.pool.set(key, []);
+		}
+		// Clear before storing to free GC/GPU pressure if needed
+		target.clear();
+		this.pool.get(key)!.push(target);
+	}
+	
+	public static clear() {
+		this.activeCount = 0;
+		for (const list of this.pool.values()) {
+			for (const target of list) {
+				target.dispose();
+			}
+		}
+		this.pool.clear();
+	}
+}
+
+export class MaskCompositor {
+	/**
+	 * Applies an array of EvaluatedMasks onto the sourceTarget.
+	 * Returns a new RenderTarget (from the pool) containing the masked result.
+	 * The caller is responsible for releasing the returned RenderTarget.
+	 */
+	public static applyMasks(
+		sourceTarget: RenderTarget,
+		masks: EvaluatedMask[]
+	): RenderTarget {
+		if (masks.length === 0) {
+			const result = RenderTargetPool.acquire(sourceTarget.width, sourceTarget.height);
+			result.draw(sourceTarget);
+			return result;
+		}
+
+		const width = sourceTarget.width;
+		const height = sourceTarget.height;
+
+		// 1. Evaluate all masks mathematically into a single alpha field (maskAccumulator)
+		const maskAccumulator = RenderTargetPool.acquire(width, height);
+		maskAccumulator.clear();
+		
+		for (let i = 0; i < masks.length; i++) {
+			const mask = masks[i];
+			const maskCanvas = MaskRenderer.renderToCanvas(mask, width, height);
+			const mode = i === 0 ? "add" : mask.mode;
+			const ctx = maskAccumulator.context;
+			
+			// For SUBTRACT and INTERSECT, Canvas operations perfectly match our math.
+			if (mode === "subtract") {
+				ctx.save();
+				ctx.globalCompositeOperation = "destination-out";
+				ctx.drawImage(maskCanvas, 0, 0);
+				ctx.restore();
+				continue;
+			}
+			if (mode === "intersect") {
+				ctx.save();
+				ctx.globalCompositeOperation = "source-in";
+				ctx.drawImage(maskCanvas, 0, 0);
+				ctx.restore();
+				continue;
+			}
+
+			// For ADD and EXCLUDE, Canvas operations don't match the exact math equations
+			// (source-over != max, xor != abs). 
+			// We perform exact pixel math.
+			
+			const accData = ctx.getImageData(0, 0, width, height);
+			// Since maskCanvas is OffscreenCanvas, we need its context to get ImageData
+			const maskCtx = (maskCanvas as unknown as { getContext: (type: string) => CanvasRenderingContext2D }).getContext("2d");
+			const maskData = maskCtx.getImageData(0, 0, width, height);
+			
+			const accPixels = accData.data;
+			const maskPixels = maskData.data;
+
+			for (let p = 3; p < accPixels.length; p += 4) {
+				const A = accPixels[p] / 255;
+				const B = maskPixels[p] / 255;
+				
+				let A_out = A;
+				if (mode === "add") {
+					A_out = Math.max(A, B);
+				} else if (mode === "exclude") {
+					A_out = Math.abs(A - B);
+				}
+				
+				accPixels[p] = Math.round(A_out * 255);
+				// We must also keep rgb black (0) for the alpha mask to work properly with destination-in later
+				accPixels[p-1] = 0;
+				accPixels[p-2] = 0;
+				accPixels[p-3] = 0;
+			}
+			
+			ctx.putImageData(accData, 0, 0);
+		}
+
+		// 2. We composite maskAccumulator onto the sourceTarget.
+		// Math: source * maskAlpha
+		// Canvas: destination-in
+		
+		const maskedResult = RenderTargetPool.acquire(width, height);
+		maskedResult.draw(sourceTarget);
+		
+		const ctx = maskedResult.context;
+		ctx.save();
+		ctx.globalCompositeOperation = "destination-in";
+		ctx.drawImage(maskAccumulator.canvas, 0, 0);
+		ctx.restore();
+
+		RenderTargetPool.release(maskAccumulator);
+
+		return maskedResult;
+	}
+
+	/**
+	 * P3.5.5 Golden Math Tests
+	 * Verify that Canvas operations correctly implement our abstract alpha math rules.
+	 */
+	public static runMathTests(): { passed: boolean; results: string[] } {
+		const results: string[] = [];
+		let allPassed = true;
+
+		const width = 2; // small dimensions
+		const height = 2;
+		const A = RenderTargetPool.acquire(width, height);
+		const B = RenderTargetPool.acquire(width, height);
+		const out = RenderTargetPool.acquire(width, height);
+
+		const getAlpha = (target: RenderTarget) => {
+			const data = target.context.getImageData(0, 0, 1, 1).data;
+			return data[3] / 255;
+		};
+
+		const fillAlpha = (target: RenderTarget, alpha: number) => {
+			target.clear();
+			const ctx = target.context;
+			const img = ctx.createImageData(width, height);
+			for (let i = 3; i < img.data.length; i+=4) {
+				img.data[i] = Math.round(alpha * 255);
+			}
+			ctx.putImageData(img, 0, 0);
+		};
+
+		const testMath = (name: string, mode: MaskMode, aVal: number, bVal: number, expected: number) => {
+			fillAlpha(A, aVal);
+			fillAlpha(B, bVal);
+			
+			// Simulate our mask compositor logic
+			let actual = 0;
+			
+			if (mode === "subtract") {
+				const ctx = A.context;
+				ctx.save();
+				ctx.globalCompositeOperation = "destination-out";
+				ctx.drawImage(B.canvas, 0, 0);
+				ctx.restore();
+				actual = getAlpha(A);
+			} else if (mode === "intersect") {
+				const ctx = A.context;
+				ctx.save();
+				ctx.globalCompositeOperation = "source-in";
+				ctx.drawImage(B.canvas, 0, 0);
+				ctx.restore();
+				actual = getAlpha(A);
+			} else {
+				// Software math for add/exclude
+				const accData = A.context.getImageData(0, 0, 1, 1);
+				const bData = B.context.getImageData(0, 0, 1, 1);
+				const aAlpha = accData.data[3] / 255;
+				const bAlpha = bData.data[3] / 255;
+				
+				actual = mode === "add" ? Math.max(aAlpha, bAlpha) : Math.abs(aAlpha - bAlpha);
+			}
+
+			const diff = Math.abs(actual - expected);
+			const passed = diff <= 0.01;
+			
+			results.push(`[${passed ? 'PASS' : 'FAIL'}] ${name}: expected ${expected.toFixed(3)}, got ${actual.toFixed(3)}`);
+			if (!passed) allPassed = false;
+		};
+
+		const fractionCases = [
+			{ a: 0.25, b: 0.50 },
+			{ a: 0.50, b: 0.25 },
+			{ a: 0.50, b: 0.50 },
+			{ a: 0.20, b: 0.80 },
+			{ a: 0.80, b: 0.20 },
+		];
+
+		// Fractional Math tests
+		fractionCases.forEach(({ a, b }) => {
+			testMath(`ADD max(${a},${b})`, "add", a, b, Math.max(a, b));
+			testMath(`SUBTRACT ${a}*(1-${b})`, "subtract", a, b, a * (1 - b));
+			testMath(`INTERSECT ${a}*${b}`, "intersect", a, b, a * b);
+			testMath(`EXCLUDE abs(${a}-${b})`, "exclude", a, b, Math.abs(a - b));
+		});
+
+		RenderTargetPool.release(A);
+		RenderTargetPool.release(B);
+		RenderTargetPool.release(out);
+
+		return { passed: allPassed, results };
+	}
+}

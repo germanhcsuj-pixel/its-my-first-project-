@@ -1,1 +1,20 @@
-"use client";import{useTranslation}from "@i18next-toolkit/nextjs-approuter";import{Brain}from "lucide-react";import{ToolbarButton}from "./timeline-toolbar";import{useAssetsPanelStore}from "@/stores/assets-panel-store";export function AIToolsMenu(){const{t}=useTranslation();const{setActiveTab}=useAssetsPanelStore();return ( <ToolbarButton icon={<Brain className="size-4"/>}tooltip={t("AI Tools")}onClick={()=> setActiveTab("ai")}/> );}
+"use client";
+
+import { useTranslation } from "@i18next-toolkit/nextjs-approuter";
+import { Brain } from "lucide-react";
+import { ToolbarButton } from "./timeline-toolbar";
+import { useAssetsPanelStore } from "@/stores/assets-panel-store";
+
+export function AIToolsMenu() {
+	const { t } = useTranslation();
+	const { setActiveTab } = useAssetsPanelStore();
+
+	return (
+		<ToolbarButton
+			icon={<Brain className="size-4" />}
+			tooltip={t("AI Tools")}
+			onClick={() => setActiveTab("ai")}
+		/>
+	);
+}
+

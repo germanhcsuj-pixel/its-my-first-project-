@@ -1,1 +1,35 @@
-'use client';function _0x3852(){const _0x33505b=['nZGWwLntuhHQ','y3vYCMvUDa','ndiZndiZmZziExntB1y','CMvKDwnL','mZq2wujyuuHo','mZeXn2PYuKjdBG','odu2y3vKDfHW','mtiYnJmZC21zvNL3','BgvUz3rO','odG1ndjgz3Hzy1K','mJy4mJHnEhbMzuK','mJq5ntLXwfjbrMK','mtiWmg1KrxrsDG','mtq0mdyYBhL3vLDh','mZeYDMHSsgzm','zwXLBwvUDhm'];_0x3852=function(){return _0x33505b;};return _0x3852();}function _0x2c85(_0xd0f456,_0x45b6f8){_0xd0f456=_0xd0f456-0x13b;const _0x3852a4=_0x3852();let _0x2c8561=_0x3852a4[_0xd0f456];if(_0x2c85['yECdBp']===undefined){var _0x35142d=function(_0x13f230){const _0x39853b='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x39c05c='',_0x3904a7='';for(let _0x5e3a3e=0x0,_0x314fdd,_0x211c1b,_0x1bdd26=0x0;_0x211c1b=_0x13f230['charAt'](_0x1bdd26++);~_0x211c1b&&(_0x314fdd=_0x5e3a3e%0x4?_0x314fdd*0x40+_0x211c1b:_0x211c1b,_0x5e3a3e++%0x4)?_0x39c05c+=String['fromCharCode'](0xff&_0x314fdd>>(-0x2*_0x5e3a3e&0x6)):0x0){_0x211c1b=_0x39853b['indexOf'](_0x211c1b);}for(let _0x1b302f=0x0,_0xf5ecc8=_0x39c05c['length'];_0x1b302f<_0xf5ecc8;_0x1b302f++){_0x3904a7+='%'+('00'+_0x39c05c['charCodeAt'](_0x1b302f)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x3904a7);};_0x2c85['lfuSAc']=_0x35142d,_0x2c85['pdruCZ']={},_0x2c85['yECdBp']=!![];}const _0x3375ef=_0x3852a4[0x0],_0x2a69dd=_0xd0f456+_0x3375ef,_0x2c74f9=_0x2c85['pdruCZ'][_0x2a69dd];return!_0x2c74f9?(_0x2c8561=_0x2c85['lfuSAc'](_0x2c8561),_0x2c85['pdruCZ'][_0x2a69dd]=_0x2c8561):_0x2c8561=_0x2c74f9,_0x2c8561;}(function(_0xc9ec2a,_0x5d966f){const _0x1b2702=_0x2c85,_0x45e0c3=_0xc9ec2a();while(!![]){try{const _0x1a86b6=parseInt(_0x1b2702(0x13e))/0x1+-parseInt(_0x1b2702(0x145))/0x2*(-parseInt(_0x1b2702(0x146))/0x3)+parseInt(_0x1b2702(0x13b))/0x4*(-parseInt(_0x1b2702(0x141))/0x5)+-parseInt(_0x1b2702(0x13f))/0x6*(parseInt(_0x1b2702(0x148))/0x7)+-parseInt(_0x1b2702(0x147))/0x8*(parseInt(_0x1b2702(0x14a))/0x9)+parseInt(_0x1b2702(0x13d))/0xa*(-parseInt(_0x1b2702(0x13c))/0xb)+parseInt(_0x1b2702(0x143))/0xc;if(_0x1a86b6===_0x5d966f)break;else _0x45e0c3['push'](_0x45e0c3['shift']());}catch(_0x899cca){_0x45e0c3['push'](_0x45e0c3['shift']());}}}(_0x3852,0x8b2ff));import{useRef,useEffect}from'react';import{useEditor}from'@/hooks/use-editor';import{useMobileDrawerStore}from'./use-mobile-drawer';export function useCloseDrawerOnInsert(){const _0x553b6a=_0x2c85,_0x39c05c=useEditor(),{activeDrawer:_0x3904a7,closeDrawer:_0x5e3a3e}=useMobileDrawerStore(),_0x314fdd=_0x39c05c['timeline']['getTracks'](),_0x211c1b=_0x314fdd[_0x553b6a(0x144)]((_0x1b302f,_0xf5ecc8)=>_0x1b302f+_0xf5ecc8[_0x553b6a(0x140)][_0x553b6a(0x149)],0x0),_0x1bdd26=useRef(_0x211c1b);useEffect(()=>{const _0x443bc9=_0x553b6a,_0x42b647=_0x1bdd26[_0x443bc9(0x142)];_0x1bdd26['current']=_0x211c1b,_0x211c1b>_0x42b647&&_0x3904a7!==null&&_0x3904a7!=='properties'&&_0x5e3a3e();},[_0x211c1b,_0x3904a7,_0x5e3a3e]);}
+"use client";
+
+import { useRef, useEffect } from "react";
+import { useEditor } from "@/hooks/use-editor";
+import { useMobileDrawerStore } from "./use-mobile-drawer";
+
+/**
+ * Closes the active mobile drawer when a new element is inserted into the
+ * timeline. Works by tracking total element count — when it increases while
+ * a content drawer (not properties) is open, the drawer is dismissed.
+ */
+export function useCloseDrawerOnInsert() {
+	const editor = useEditor();
+	const { activeDrawer, closeDrawer } = useMobileDrawerStore();
+	const tracks = editor.timeline.getTracks();
+
+	const elementCount = tracks.reduce(
+		(sum, track) => sum + track.elements.length,
+		0,
+	);
+	const prevCountRef = useRef(elementCount);
+
+	useEffect(() => {
+		const prev = prevCountRef.current;
+		prevCountRef.current = elementCount;
+
+		if (
+			elementCount > prev &&
+			activeDrawer !== null &&
+			activeDrawer !== "properties"
+		) {
+			closeDrawer();
+		}
+	}, [elementCount, activeDrawer, closeDrawer]);
+}

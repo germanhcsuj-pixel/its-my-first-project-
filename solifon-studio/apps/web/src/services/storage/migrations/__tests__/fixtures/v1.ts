@@ -1,1 +1,59 @@
-const _0x2e4140=_0x2c5b;function _0x2c5b(_0x569900,_0x16d9f2){_0x569900=_0x569900-0xde;const _0x1ca502=_0x1ca5();let _0x2c5b43=_0x1ca502[_0x569900];if(_0x2c5b['VLZrCi']===undefined){var _0x5bc54e=function(_0x4cb3e9){const _0x1959c0='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x644481='',_0x2bc4a7='';for(let _0x2b4d31=0x0,_0x383a1a,_0x6f5a0a,_0x5b26b4=0x0;_0x6f5a0a=_0x4cb3e9['charAt'](_0x5b26b4++);~_0x6f5a0a&&(_0x383a1a=_0x2b4d31%0x4?_0x383a1a*0x40+_0x6f5a0a:_0x6f5a0a,_0x2b4d31++%0x4)?_0x644481+=String['fromCharCode'](0xff&_0x383a1a>>(-0x2*_0x2b4d31&0x6)):0x0){_0x6f5a0a=_0x1959c0['indexOf'](_0x6f5a0a);}for(let _0x29ae41=0x0,_0x54d6a3=_0x644481['length'];_0x29ae41<_0x54d6a3;_0x29ae41++){_0x2bc4a7+='%'+('00'+_0x644481['charCodeAt'](_0x29ae41)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x2bc4a7);};_0x2c5b['qKpRqF']=_0x5bc54e,_0x2c5b['vImSrY']={},_0x2c5b['VLZrCi']=!![];}const _0x311b0e=_0x1ca502[0x0],_0x2191df=_0x569900+_0x311b0e,_0x5d082d=_0x2c5b['vImSrY'][_0x2191df];return!_0x5d082d?(_0x2c5b43=_0x2c5b['qKpRqF'](_0x2c5b43),_0x2c5b['vImSrY'][_0x2191df]=_0x2c5b43):_0x2c5b43=_0x5d082d,_0x2c5b43;}(function(_0x28d931,_0x4d0a59){const _0x37d67c=_0x2c5b,_0x4e9d2a=_0x28d931();while(!![]){try{const _0x11bfa4=-parseInt(_0x37d67c(0xef))/0x1*(parseInt(_0x37d67c(0xfb))/0x2)+-parseInt(_0x37d67c(0xfa))/0x3*(parseInt(_0x37d67c(0xe5))/0x4)+-parseInt(_0x37d67c(0xf2))/0x5*(-parseInt(_0x37d67c(0xe8))/0x6)+parseInt(_0x37d67c(0xf5))/0x7*(-parseInt(_0x37d67c(0xea))/0x8)+parseInt(_0x37d67c(0xee))/0x9*(parseInt(_0x37d67c(0xe1))/0xa)+-parseInt(_0x37d67c(0xed))/0xb+-parseInt(_0x37d67c(0xe3))/0xc*(-parseInt(_0x37d67c(0xe9))/0xd);if(_0x11bfa4===_0x4d0a59)break;else _0x4e9d2a['push'](_0x4e9d2a['shift']());}catch(_0x113973){_0x4e9d2a['push'](_0x4e9d2a['shift']());}}}(_0x1ca5,0x26d50));function _0x1ca5(){const _0x55891b=['ndqWoti0qMPzrLDc','ovbYwfn0ra','mu9Vu1HtAq','iZfHmweXyq','C2nLBMuTmq','mtbMswTlwfG','y29SB3i','mJaYnc0WmI0YmfqXndOWmdOWmc4WmdbA','mJy1m1DPyKXTsq','txKGvJeGuhjVAMvJDa','q29UDgvUDa','C2nLBMuTBwfPBG','txvSDgKTu2nLBMuGuhjVAMvJDa','mZbwCwftAhm','ntiZmtjgB0v2ue0','mJaYnc0Wms0XnvqXmJOWmdOWmc4WmdbA','twfPBIbZy2vUzq','ChjVAMvJDc12ms0XmJm','mJG5otGYmgTqqMPXzG','mJaYnc0WmI0YmfqXnJOWmdOWmc4WmdbA','oda0quT2EM9m','mJaYnc0WmI0YmfqXndOZmdOWmc4WmdbA','mte3mdHpA2XwBvK','sw50CM8','mJaYnc0Wms0XnvqXmdOWmdOWmc4WmdbA','mtCWota0zgvbsxr6','mZq4mdfMsKfwBfu','ntCZnNzQvLrftq','yMX1CG','ChjVAMvJDc12ms1TDwX0Aq'];_0x1ca5=function(){return _0x55891b;};return _0x1ca5();}export const v1Project={'id':_0x2e4140(0xe0),'version':0x1,'name':_0x2e4140(0xf6),'createdAt':_0x2e4140(0xe7),'updatedAt':_0x2e4140(0xde),'fps':0x1e,'canvasSize':{'width':0x780,'height':0x438},'backgroundColor':_0x2e4140(0xf0),'backgroundType':_0x2e4140(0xf3),'currentSceneId':_0x2e4140(0xf8),'bookmarks':[0x2,4.5,0x7],'scenes':[{'id':_0x2e4140(0xf8),'name':_0x2e4140(0xdf),'isMain':!![],'tracks':[],'bookmarks':[],'createdAt':_0x2e4140(0xe7),'updatedAt':_0x2e4140(0xde)}]};export const v1ProjectWithMultipleScenes={'id':_0x2e4140(0xec),'version':0x1,'metadata':{'id':_0x2e4140(0xec),'name':_0x2e4140(0xf9),'createdAt':_0x2e4140(0xf4),'updatedAt':_0x2e4140(0xe2)},'currentSceneId':_0x2e4140(0xf1),'fps':0x3c,'canvasSize':{'width':0xf00,'height':0x870},'background':{'type':_0x2e4140(0xeb),'blurIntensity':0xf},'scenes':[{'id':_0x2e4140(0xf1),'name':_0x2e4140(0xe6),'isMain':!![],'tracks':[],'bookmarks':[0x1],'createdAt':'2024-02-20T14:00:00.000Z','updatedAt':_0x2e4140(0xe2)},{'id':'scene-2','name':_0x2e4140(0xf7),'isMain':![],'tracks':[],'bookmarks':[],'createdAt':_0x2e4140(0xe4),'updatedAt':_0x2e4140(0xe2)}]};
+export const v1Project = {
+	id: "project-v1-123",
+	version: 1,
+	name: "My V1 Project",
+	createdAt: "2024-01-15T10:00:00.000Z",
+	updatedAt: "2024-01-15T12:00:00.000Z",
+	fps: 30,
+	canvasSize: { width: 1920, height: 1080 },
+	backgroundColor: "#1a1a1a",
+	backgroundType: "color",
+	currentSceneId: "scene-main",
+	bookmarks: [2.0, 4.5, 7.0],
+	scenes: [
+		{
+			id: "scene-main",
+			name: "Main scene",
+			isMain: true,
+			tracks: [],
+			bookmarks: [],
+			createdAt: "2024-01-15T10:00:00.000Z",
+			updatedAt: "2024-01-15T12:00:00.000Z",
+		},
+	],
+};
+
+export const v1ProjectWithMultipleScenes = {
+	id: "project-v1-multi",
+	version: 1,
+	metadata: {
+		id: "project-v1-multi",
+		name: "Multi-Scene Project",
+		createdAt: "2024-02-20T14:00:00.000Z",
+		updatedAt: "2024-02-20T16:00:00.000Z",
+	},
+	currentSceneId: "scene-1",
+	fps: 60,
+	canvasSize: { width: 3840, height: 2160 },
+	background: { type: "blur", blurIntensity: 15 },
+	scenes: [
+		{
+			id: "scene-1",
+			name: "Intro",
+			isMain: true,
+			tracks: [],
+			bookmarks: [1.0],
+			createdAt: "2024-02-20T14:00:00.000Z",
+			updatedAt: "2024-02-20T16:00:00.000Z",
+		},
+		{
+			id: "scene-2",
+			name: "Content",
+			isMain: false,
+			tracks: [],
+			bookmarks: [],
+			createdAt: "2024-02-20T14:30:00.000Z",
+			updatedAt: "2024-02-20T16:00:00.000Z",
+		},
+	],
+};

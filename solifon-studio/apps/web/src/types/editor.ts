@@ -1,1 +1,1 @@
-export type TPlatformLayout="tiktok";
+export type TPlatformLayout = "tiktok";

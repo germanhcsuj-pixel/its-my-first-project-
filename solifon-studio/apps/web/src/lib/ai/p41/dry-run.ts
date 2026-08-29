@@ -1,1 +1,144 @@
-import type{AIEditPlan}from "../edit-plan";import type{IntensityCurve}from "./intensity-curve";import type{DecisionTrace}from "./edit-plan-generator";import{evaluateIntensity}from "./intensity-curve";export interface DryRunResult{selectedClips:DryRunClip[];cutPositions:DryRunCut[];beatAlignment:DryRunBeatInfo[];effects:DryRunEffect[];effectTiming:DryRunEffectTiming[];intensityProfile:DryRunIntensityPoint[];estimatedDuration:number;confidence:number;timelineMutated:false;}export interface DryRunClip{mediaId:string;sourceStart:number;sourceEnd:number;}export interface DryRunCut{time:number;type:string;reason:string;confidence:number;}export interface DryRunBeatInfo{time:number;strength:number;isDownbeat:boolean;section:string;}export interface DryRunEffect{effectId:string;effectType:string;reason:string;}export interface DryRunEffectTiming{effectId:string;startTime:number;endTime:number | null;}export interface DryRunIntensityPoint{time:number;intensity:number;}export function executeDryRun( plan:AIEditPlan,trace:DecisionTrace,intensityCurve:IntensityCurve,):DryRunResult{const selectedClips:DryRunClip[]=plan.sourceClips.map(c=> ({mediaId:c.mediaId,sourceStart:0,sourceEnd:plan.intent.targetDuration ?? intensityCurve.duration,}));const cutPositions:DryRunCut[]=trace.cutDecisions.map(d=> ({time:d.time,type:"hard",reason:d.reason,confidence:d.confidence,}));const beatAlignment:DryRunBeatInfo[]=trace.cutDecisions .filter(d=> d.beatStrength !==null) .map(d=> ({time:d.time,strength:d.beatStrength!,isDownbeat:d.reason.startsWith("Downbeat"),section:d.sectionType,}));const effects:DryRunEffect[]=trace.effectDecisions.map(d=> ({effectId:d.effectId,effectType:d.effectType,reason:d.reason,}));const effectTiming:DryRunEffectTiming[]=[];for (const trackEffect of plan.effects){for (const eff of trackEffect.effects ?? []){const timingEntry:DryRunEffectTiming={effectId:(eff as{id?:string}).id ?? "unknown",startTime:0,endTime:null,};effectTiming.push(timingEntry);}}const intensityProfile:DryRunIntensityPoint[]=[];for (let t=0;t <=intensityCurve.duration;t+=0.5){intensityProfile.push({time:t,intensity:evaluateIntensity(intensityCurve,t),});}const lastCut=plan.cuts.length > 0 ? plan.cuts[plan.cuts.length-1].time:0;const estimatedDuration=plan.intent.targetDuration ?? Math.max(lastCut+2,intensityCurve.duration);return{selectedClips,cutPositions,beatAlignment,effects,effectTiming,intensityProfile,estimatedDuration,confidence:plan.confidence,timelineMutated:false as const,};}
+/**
+ * dry-run.ts — Preview/dry-run mode for P4.1.
+ *
+ * Returns a preview of what the edit plan would produce
+ * WITHOUT mutating the Timeline.
+ */
+
+import type { AIEditPlan } from "../edit-plan";
+import type { IntensityCurve } from "./intensity-curve";
+import type { DecisionTrace } from "./edit-plan-generator";
+import { evaluateIntensity } from "./intensity-curve";
+
+// ---- Dry Run Result ----
+
+export interface DryRunResult {
+	selectedClips: DryRunClip[];
+	cutPositions: DryRunCut[];
+	beatAlignment: DryRunBeatInfo[];
+	effects: DryRunEffect[];
+	effectTiming: DryRunEffectTiming[];
+	intensityProfile: DryRunIntensityPoint[];
+	estimatedDuration: number;
+	confidence: number;
+	timelineMutated: false; // always false — proof of immutability
+}
+
+export interface DryRunClip {
+	mediaId: string;
+	sourceStart: number;
+	sourceEnd: number;
+}
+
+export interface DryRunCut {
+	time: number;
+	type: string;
+	reason: string;
+	confidence: number;
+}
+
+export interface DryRunBeatInfo {
+	time: number;
+	strength: number;
+	isDownbeat: boolean;
+	section: string;
+}
+
+export interface DryRunEffect {
+	effectId: string;
+	effectType: string;
+	reason: string;
+}
+
+export interface DryRunEffectTiming {
+	effectId: string;
+	startTime: number;
+	endTime: number | null;
+}
+
+export interface DryRunIntensityPoint {
+	time: number;
+	intensity: number;
+}
+
+// ---- Dry Run Execution ----
+
+/**
+ * Execute a dry run of an edit plan.
+ * MUST NOT mutate Timeline.
+ */
+export function executeDryRun(
+	plan: AIEditPlan,
+	trace: DecisionTrace,
+	intensityCurve: IntensityCurve,
+): DryRunResult {
+	// 1. Clips
+	const selectedClips: DryRunClip[] = plan.sourceClips.map(c => ({
+		mediaId: c.mediaId,
+		sourceStart: 0,
+		sourceEnd: plan.intent.targetDuration ?? intensityCurve.duration,
+	}));
+
+	// 2. Cuts
+	const cutPositions: DryRunCut[] = trace.cutDecisions.map(d => ({
+		time: d.time,
+		type: "hard",
+		reason: d.reason,
+		confidence: d.confidence,
+	}));
+
+	// 3. Beat alignment
+	const beatAlignment: DryRunBeatInfo[] = trace.cutDecisions
+		.filter(d => d.beatStrength !== null)
+		.map(d => ({
+			time: d.time,
+			strength: d.beatStrength!,
+			isDownbeat: d.reason.startsWith("Downbeat"),
+			section: d.sectionType,
+		}));
+
+	// 4. Effects
+	const effects: DryRunEffect[] = trace.effectDecisions.map(d => ({
+		effectId: d.effectId,
+		effectType: d.effectType,
+		reason: d.reason,
+	}));
+
+	// 5. Effect timing (from P3.10 keyframes in the plan)
+	const effectTiming: DryRunEffectTiming[] = [];
+	for (const trackEffect of plan.effects) {
+		for (const eff of trackEffect.effects ?? []) {
+			const timingEntry: DryRunEffectTiming = {
+				effectId: (eff as { id?: string }).id ?? "unknown",
+				startTime: 0,
+				endTime: null,
+			};
+			effectTiming.push(timingEntry);
+		}
+	}
+
+	// 6. Intensity profile (sample every 0.5s)
+	const intensityProfile: DryRunIntensityPoint[] = [];
+	for (let t = 0; t <= intensityCurve.duration; t += 0.5) {
+		intensityProfile.push({
+			time: t,
+			intensity: evaluateIntensity(intensityCurve, t),
+		});
+	}
+
+	// 7. Estimated duration
+	const lastCut = plan.cuts.length > 0 ? plan.cuts[plan.cuts.length - 1].time : 0;
+	const estimatedDuration = plan.intent.targetDuration ?? Math.max(lastCut + 2, intensityCurve.duration);
+
+	return {
+		selectedClips,
+		cutPositions,
+		beatAlignment,
+		effects,
+		effectTiming,
+		intensityProfile,
+		estimatedDuration,
+		confidence: plan.confidence,
+		timelineMutated: false as const,
+	};
+}

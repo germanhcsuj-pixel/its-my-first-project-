@@ -1,1 +1,337 @@
-"use client";import{useEditor}from "@/hooks/use-editor";import{useTranslation}from "@i18next-toolkit/nextjs-approuter";import{TooltipProvider,Tooltip,TooltipTrigger,TooltipContent,}from "@/components/ui/tooltip";import{Button}from "@/components/ui/button";import{SplitSquareHorizontal,Brain,Sparkles,Wand2}from "lucide-react";import{Slider}from "@/components/ui/slider";import{TIMELINE_CONSTANTS}from "@/constants/timeline-constants";import{sliderToZoom,zoomToSlider}from "@/lib/timeline/zoom-utils";import{type TAction,invokeAction}from "@/lib/actions";import{cn}from "@/utils/ui";import{useTimelineStore}from "@/stores/timeline-store";import{useAssetsPanelStore}from "@/stores/assets-panel-store";import{ScrollArea}from "@/components/ui/scroll-area";import{Bookmark02Icon,Delete02Icon,SnowIcon,ScissorIcon,MagnetIcon,Link04Icon,SearchAddIcon,SearchMinusIcon,Copy01Icon,AlignLeftIcon,AlignRightIcon,PauseIcon,PlayIcon,}from "@hugeicons/core-free-icons";import{HugeiconsIcon}from "@hugeicons/react";import{AIToolsMenu}from "./ai-tools-menu";import{EditableTimecode}from "@/components/editable-timecode";import{formatTimeCode}from "@/lib/time";export function TimelineToolbar({zoomLevel,minZoom,setZoomLevel,}:{zoomLevel:number;minZoom:number;setZoomLevel:({zoom}:{zoom:number})=> void;}){const handleZoom=({direction}:{direction:"in" | "out"})=>{const newZoomLevel=direction==="in" ? Math.min( TIMELINE_CONSTANTS.ZOOM_MAX,zoomLevel*TIMELINE_CONSTANTS.ZOOM_BUTTON_FACTOR,):Math.max(minZoom,zoomLevel/TIMELINE_CONSTANTS.ZOOM_BUTTON_FACTOR);setZoomLevel({zoom:newZoomLevel});};return ( <ScrollArea className="scrollbar-hidden"> <div className="flex h-10 items-center justify-between border-b px-2 py-1 relative"> <ToolbarLeftSection/> <ToolbarCenterSection/> <ToolbarRightSection zoomLevel={zoomLevel}minZoom={minZoom}onZoomChange={(zoom)=> setZoomLevel({zoom})}onZoom={handleZoom}/> </div> </ScrollArea> );}function ToolbarLeftSection(){const{t}=useTranslation();const editor=useEditor();const currentTime=editor.playback.getCurrentTime();const currentBookmarked=editor.scenes.isBookmarked({time:currentTime});const hasSelection=editor.selection.getSelectedElements().length > 0;const handleAction=({action,event,}:{action:TAction;event:React.MouseEvent;})=>{event.stopPropagation();invokeAction(action);};return ( <div className="flex items-center gap-1"> <TooltipProvider delayDuration={500}> <ToolbarButton icon={<HugeiconsIcon icon={ScissorIcon}/>}tooltip={t('Split element')}disabled={!hasSelection}onClick={({event})=> handleAction({action:"split",event})}/> <ToolbarButton icon={<HugeiconsIcon icon={AlignLeftIcon}/>}tooltip={t('Split left')}disabled={!hasSelection}onClick={({event})=> handleAction({action:"split-left",event})}/> <ToolbarButton icon={<HugeiconsIcon icon={AlignRightIcon}/>}tooltip={t('Split right')}disabled={!hasSelection}onClick={({event})=> handleAction({action:"split-right",event})}/> <div className="bg-border mx-1 h-6 w-px"/> <AIToolsMenu/> <ToolbarButton icon={<Sparkles className="size-4"/>}tooltip={t('Effects')}onClick={({event})=>{event.stopPropagation();useAssetsPanelStore.getState().setActiveTab("effects");}}/> <ToolbarButton icon={<Wand2 className="size-4"/>}tooltip={t('Transitions')}onClick={({event})=>{event.stopPropagation();useAssetsPanelStore.getState().setActiveTab("transitions");}}/> <div className="bg-border mx-1 h-6 w-px"/> <ToolbarButton icon={<HugeiconsIcon icon={Copy01Icon}/>}tooltip={t('Duplicate element')}disabled={!hasSelection}onClick={({event})=> handleAction({action:"duplicate-selected",event})}/> <ToolbarButton icon={<HugeiconsIcon icon={SnowIcon}/>}tooltip={t('Coming soon')}disabled={true}onClick={({event:_event})=>{}}/> <ToolbarButton icon={<HugeiconsIcon icon={Delete02Icon}/>}tooltip={t('Delete element')}disabled={!hasSelection}onClick={({event})=> handleAction({action:"delete-selected",event})}/> <div className="bg-border mx-1 h-6 w-px"/> <Tooltip> <ToolbarButton icon={<HugeiconsIcon icon={Bookmark02Icon}/>}isActive={currentBookmarked}tooltip={currentBookmarked ? t('Remove bookmark'):t('Add bookmark')}onClick={({event})=> handleAction({action:"toggle-bookmark",event})}/> </Tooltip> </TooltipProvider> </div> );}function ToolbarCenterSection(){const editor=useEditor();const isPlaying=editor.playback.getIsPlaying();const currentTime=editor.playback.getCurrentTime();const totalDuration=editor.timeline.getTotalDuration();const activeProject=editor.project.getActive();const fps=activeProject?.settings?.fps ?? 30;return ( <div className="flex items-center gap-3 absolute left-1/2-translate-x-1/2"> <EditableTimecode time={currentTime}duration={totalDuration}format="HH:MM:SS:FF" fps={fps}onTimeChange={({time})=> editor.playback.seek({time})}className="text-center text-[#a67c52]"/> <Button variant="default" size="icon" className="size-8 rounded-full bg-[#a67c52] text-white shadow-sm hover:bg-[#c49a6c] transition-colors" type="button" onMouseDown={(event)=> event.preventDefault()}onClick={()=> invokeAction("toggle-play")}> <HugeiconsIcon icon={isPlaying ? PauseIcon:PlayIcon}className="size-4" fill="currentColor"/> </Button> <span className="font-mono text-xs text-[#a67c52]/70">{formatTimeCode({timeInSeconds:totalDuration,format:"HH:MM:SS:FF",fps})}</span> </div> );}function ToolbarRightSection({zoomLevel,minZoom,onZoomChange,onZoom,}:{zoomLevel:number;minZoom:number;onZoomChange:(zoom:number)=> void;onZoom:(options:{direction:"in" | "out"})=> void;}){const{t}=useTranslation();const{snappingEnabled,rippleEditingEnabled,toggleSnapping,toggleRippleEditing,}=useTimelineStore();return ( <div className="flex items-center gap-1"> <TooltipProvider delayDuration={500}> <ToolbarButton icon={<HugeiconsIcon icon={MagnetIcon}/>}isActive={snappingEnabled}tooltip={t('Auto snapping')}onClick={()=> toggleSnapping()}/> <ToolbarButton icon={<HugeiconsIcon icon={Link04Icon}className="scale-110"/>}isActive={rippleEditingEnabled}tooltip={t('Ripple editing')}onClick={()=> toggleRippleEditing()}/> </TooltipProvider> <div className="bg-border mx-1 h-6 w-px"/> <div className="flex items-center gap-1"> <Button variant="ghost" size="icon" type="button" onClick={()=> onZoom({direction:"out"})}className="text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10 transition-colors" > <HugeiconsIcon icon={SearchMinusIcon}/> </Button> <Slider className="w-28" value={[zoomToSlider({zoomLevel,minZoom})]}onValueChange={(values)=> onZoomChange(sliderToZoom({sliderPosition:values[0],minZoom}))}min={0}max={1}step={0.005}/> <Button variant="ghost" size="icon" type="button" onClick={()=> onZoom({direction:"in"})}className="text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10 transition-colors" > <HugeiconsIcon icon={SearchAddIcon}/> </Button> </div> </div> );}export function ToolbarButton({icon,tooltip,onClick,disabled,isActive,}:{icon:React.ReactNode;tooltip:string;onClick:({event}:{event:React.MouseEvent})=> void;disabled?:boolean;isActive?:boolean;}){return ( <Tooltip delayDuration={200}> <TooltipTrigger asChild> <Button variant="ghost" size="icon" type="button" onClick={(event)=> onClick({event})}className={cn( "rounded-sm transition-colors",isActive ? "text-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-400":"text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10",disabled ? "cursor-not-allowed opacity-50 hover:bg-transparent hover:text-[#a67c52]":"",)}>{icon}</Button> </TooltipTrigger> <TooltipContent>{tooltip}</TooltipContent> </Tooltip> );}
+"use client";
+
+import { useEditor } from "@/hooks/use-editor";
+import { useTranslation } from "@i18next-toolkit/nextjs-approuter";
+import {
+	TooltipProvider,
+	Tooltip,
+	TooltipTrigger,
+	TooltipContent,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { SplitSquareHorizontal, Brain, Sparkles, Wand2 } from "lucide-react";
+
+import { Slider } from "@/components/ui/slider";
+import { TIMELINE_CONSTANTS } from "@/constants/timeline-constants";
+import { sliderToZoom, zoomToSlider } from "@/lib/timeline/zoom-utils";
+
+import { type TAction, invokeAction } from "@/lib/actions";
+import { cn } from "@/utils/ui";
+import { useTimelineStore } from "@/stores/timeline-store";
+import { useAssetsPanelStore } from "@/stores/assets-panel-store";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+	Bookmark02Icon,
+	Delete02Icon,
+	SnowIcon,
+	ScissorIcon,
+	MagnetIcon,
+	Link04Icon,
+	SearchAddIcon,
+	SearchMinusIcon,
+	Copy01Icon,
+	AlignLeftIcon,
+	AlignRightIcon,
+	PauseIcon,
+	PlayIcon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { AIToolsMenu } from "./ai-tools-menu";
+import { EditableTimecode } from "@/components/editable-timecode";
+import { formatTimeCode } from "@/lib/time";
+
+export function TimelineToolbar({
+	zoomLevel,
+	minZoom,
+	setZoomLevel,
+}: {
+	zoomLevel: number;
+	minZoom: number;
+	setZoomLevel: ({ zoom }: { zoom: number }) => void;
+}) {
+	const handleZoom = ({ direction }: { direction: "in" | "out" }) => {
+		const newZoomLevel =
+			direction === "in"
+				? Math.min(
+						TIMELINE_CONSTANTS.ZOOM_MAX,
+						zoomLevel * TIMELINE_CONSTANTS.ZOOM_BUTTON_FACTOR,
+					)
+				: Math.max(minZoom, zoomLevel / TIMELINE_CONSTANTS.ZOOM_BUTTON_FACTOR);
+		setZoomLevel({ zoom: newZoomLevel });
+	};
+
+	return (
+		<ScrollArea className="scrollbar-hidden">
+			<div className="flex h-10 items-center justify-between border-b px-2 py-1 relative">
+				<ToolbarLeftSection />
+				
+				<ToolbarCenterSection />
+
+				<ToolbarRightSection
+					zoomLevel={zoomLevel}
+					minZoom={minZoom}
+					onZoomChange={(zoom) => setZoomLevel({ zoom })}
+					onZoom={handleZoom}
+				/>
+			</div>
+		</ScrollArea>
+	);
+}
+
+function ToolbarLeftSection() {
+	const { t } = useTranslation();
+	const editor = useEditor();
+	const currentTime = editor.playback.getCurrentTime();
+	const currentBookmarked = editor.scenes.isBookmarked({ time: currentTime });
+
+	const hasSelection = editor.selection.getSelectedElements().length > 0;
+
+	const handleAction = ({
+		action,
+		event,
+	}: {
+		action: TAction;
+		event: React.MouseEvent;
+	}) => {
+		event.stopPropagation();
+		invokeAction(action);
+	};
+
+	return (
+		<div className="flex items-center gap-1">
+			<TooltipProvider delayDuration={500}>
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={ScissorIcon} />}
+					tooltip={t('Split element')}
+					disabled={!hasSelection}
+					onClick={({ event }) => handleAction({ action: "split", event })}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={AlignLeftIcon} />}
+					tooltip={t('Split left')}
+					disabled={!hasSelection}
+					onClick={({ event }) => handleAction({ action: "split-left", event })}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={AlignRightIcon} />}
+					tooltip={t('Split right')}
+					disabled={!hasSelection}
+					onClick={({ event }) =>
+						handleAction({ action: "split-right", event })
+					}
+				/>
+
+				<div className="bg-border mx-1 h-6 w-px" />
+
+				<AIToolsMenu />
+
+				<ToolbarButton
+					icon={<Sparkles className="size-4" />}
+					tooltip={t('Effects')}
+					onClick={({ event }) => {
+						event.stopPropagation();
+						useAssetsPanelStore.getState().setActiveTab("effects");
+					}}
+				/>
+
+				<ToolbarButton
+					icon={<Wand2 className="size-4" />}
+					tooltip={t('Transitions')}
+					onClick={({ event }) => {
+						event.stopPropagation();
+						useAssetsPanelStore.getState().setActiveTab("transitions");
+					}}
+				/>
+
+				<div className="bg-border mx-1 h-6 w-px" />
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={Copy01Icon} />}
+					tooltip={t('Duplicate element')}
+					disabled={!hasSelection}
+					onClick={({ event }) =>
+						handleAction({ action: "duplicate-selected", event })
+					}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={SnowIcon} />}
+					tooltip={t('Coming soon')}
+					disabled={true}
+					onClick={({ event: _event }) => {}}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={Delete02Icon} />}
+					tooltip={t('Delete element')}
+					disabled={!hasSelection}
+					onClick={({ event }) =>
+						handleAction({ action: "delete-selected", event })
+					}
+				/>
+
+				<div className="bg-border mx-1 h-6 w-px" />
+
+				<Tooltip>
+					<ToolbarButton
+						icon={<HugeiconsIcon icon={Bookmark02Icon} />}
+						isActive={currentBookmarked}
+						tooltip={currentBookmarked ? t('Remove bookmark') : t('Add bookmark')}
+						onClick={({ event }) =>
+							handleAction({ action: "toggle-bookmark", event })
+						}
+					/>
+				</Tooltip>
+			</TooltipProvider>
+		</div>
+	);
+}
+
+function ToolbarCenterSection() {
+	const editor = useEditor();
+	const isPlaying = editor.playback.getIsPlaying();
+	const currentTime = editor.playback.getCurrentTime();
+	const totalDuration = editor.timeline.getTotalDuration();
+	const activeProject = editor.project.getActive();
+	const fps = activeProject?.settings?.fps ?? 30;
+
+	return (
+		<div className="flex items-center gap-3 absolute left-1/2 -translate-x-1/2">
+			<EditableTimecode
+				time={currentTime}
+				duration={totalDuration}
+				format="HH:MM:SS:FF"
+				fps={fps}
+				onTimeChange={({ time }) => editor.playback.seek({ time })}
+				className="text-center text-[#a67c52]"
+			/>
+
+			<Button
+				variant="default"
+				size="icon"
+				className="size-8 rounded-full bg-[#a67c52] text-white shadow-sm hover:bg-[#c49a6c] transition-colors"
+				type="button"
+				onMouseDown={(event) => event.preventDefault()}
+				onClick={() => invokeAction("toggle-play")}
+			>
+				<HugeiconsIcon icon={isPlaying ? PauseIcon : PlayIcon} className="size-4" fill="currentColor" />
+			</Button>
+
+			<span className="font-mono text-xs text-[#a67c52]/70">
+				{formatTimeCode({ timeInSeconds: totalDuration, format: "HH:MM:SS:FF", fps })}
+			</span>
+		</div>
+	);
+}
+
+function ToolbarRightSection({
+	zoomLevel,
+	minZoom,
+	onZoomChange,
+	onZoom,
+}: {
+	zoomLevel: number;
+	minZoom: number;
+	onZoomChange: (zoom: number) => void;
+	onZoom: (options: { direction: "in" | "out" }) => void;
+}) {
+	const { t } = useTranslation();
+	const {
+		snappingEnabled,
+		rippleEditingEnabled,
+		toggleSnapping,
+		toggleRippleEditing,
+	} = useTimelineStore();
+
+	return (
+		<div className="flex items-center gap-1">
+			<TooltipProvider delayDuration={500}>
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={MagnetIcon} />}
+					isActive={snappingEnabled}
+					tooltip={t('Auto snapping')}
+					onClick={() => toggleSnapping()}
+				/>
+
+				<ToolbarButton
+					icon={<HugeiconsIcon icon={Link04Icon} className="scale-110" />}
+					isActive={rippleEditingEnabled}
+					tooltip={t('Ripple editing')}
+					onClick={() => toggleRippleEditing()}
+				/>
+			</TooltipProvider>
+
+			<div className="bg-border mx-1 h-6 w-px" />
+
+			<div className="flex items-center gap-1">
+				<Button
+					variant="ghost"
+					size="icon"
+					type="button"
+					onClick={() => onZoom({ direction: "out" })}
+					className="text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10 transition-colors"
+				>
+					<HugeiconsIcon icon={SearchMinusIcon} />
+				</Button>
+				<Slider
+					className="w-28"
+					value={[zoomToSlider({ zoomLevel, minZoom })]}
+					onValueChange={(values) =>
+						onZoomChange(sliderToZoom({ sliderPosition: values[0], minZoom }))
+					}
+					min={0}
+					max={1}
+					step={0.005}
+				/>
+				<Button
+					variant="ghost"
+					size="icon"
+					type="button"
+					onClick={() => onZoom({ direction: "in" })}
+					className="text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10 transition-colors"
+				>
+					<HugeiconsIcon icon={SearchAddIcon} />
+				</Button>
+			</div>
+		</div>
+	);
+}
+
+export function ToolbarButton({
+	icon,
+	tooltip,
+	onClick,
+	disabled,
+	isActive,
+}: {
+	icon: React.ReactNode;
+	tooltip: string;
+	onClick: ({ event }: { event: React.MouseEvent }) => void;
+	disabled?: boolean;
+	isActive?: boolean;
+}) {
+	return (
+		<Tooltip delayDuration={200}>
+			<TooltipTrigger asChild>
+				<Button
+					variant="ghost"
+					size="icon"
+					type="button"
+					onClick={(event) => onClick({ event })}
+					className={cn(
+						"rounded-sm transition-colors",
+						isActive
+							? "text-blue-500 bg-blue-500/10 hover:bg-blue-500/20 hover:text-blue-400"
+							: "text-[#a67c52] hover:text-[#c49a6c] hover:bg-[#a67c52]/10",
+						disabled ? "cursor-not-allowed opacity-50 hover:bg-transparent hover:text-[#a67c52]" : "",
+					)}
+				>
+					{icon}
+				</Button>
+			</TooltipTrigger>
+			<TooltipContent>{tooltip}</TooltipContent>
+		</Tooltip>
+	);
+}

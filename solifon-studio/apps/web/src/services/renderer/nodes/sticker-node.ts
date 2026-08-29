@@ -1,1 +1,56 @@
-import type{RenderTarget}from "../render-target";import{VisualNode,type VisualNodeParams}from "./visual-node";export interface StickerNodeParams extends VisualNodeParams{iconName:string;color?:string;}export class StickerNode extends VisualNode<StickerNodeParams>{private image?:HTMLImageElement;private readyPromise:Promise<void>;constructor(params:StickerNodeParams){super(params);this.readyPromise=this.load();}private async load(){const image=new Image();image.crossOrigin="anonymous";this.image=image;const color=this.params.color ?? "%23ffffff";const colorParam=`&color=${encodeURIComponent(color.startsWith("#") ? color:color)}`;const url=`https://api.iconify.design/${this.params.iconName}.svg?width=200&height=200${colorParam}`;await new Promise<void>((resolve,reject)=>{image.onload=()=> resolve();image.onerror=()=> reject(new Error(`Failed to load sticker:${this.params.iconName}`));image.src=url;});}async render({target,time}:{target:RenderTarget;time:number}){await super.render({target,time});if (!this.isInRange(time)){return;}await this.readyPromise;if (!this.image){return;}this.renderVisual({target,source:this.image,sourceWidth:200,sourceHeight:200,time,});}}
+import type { RenderTarget } from "../render-target";
+import { VisualNode, type VisualNodeParams } from "./visual-node";
+
+export interface StickerNodeParams extends VisualNodeParams {
+	iconName: string;
+	color?: string;
+}
+
+export class StickerNode extends VisualNode<StickerNodeParams> {
+	private image?: HTMLImageElement;
+	private readyPromise: Promise<void>;
+
+	constructor(params: StickerNodeParams) {
+		super(params);
+		this.readyPromise = this.load();
+	}
+
+	private async load() {
+		const image = new Image();
+		image.crossOrigin = "anonymous";
+		this.image = image;
+		// Default to white so stickers are visible on dark backgrounds
+		const color = this.params.color ?? "%23ffffff";
+		const colorParam = `&color=${encodeURIComponent(color.startsWith("#") ? color : color)}`;
+		const url = `https://api.iconify.design/${this.params.iconName}.svg?width=200&height=200${colorParam}`;
+
+		await new Promise<void>((resolve, reject) => {
+			image.onload = () => resolve();
+			image.onerror = () =>
+				reject(new Error(`Failed to load sticker: ${this.params.iconName}`));
+			image.src = url;
+		});
+	}
+
+	async render({ target, time }: { target: RenderTarget; time: number }) {
+		await super.render({ target, time });
+
+		if (!this.isInRange(time)) {
+			return;
+		}
+
+		await this.readyPromise;
+
+		if (!this.image) {
+			return;
+		}
+
+		this.renderVisual({
+			target,
+			source: this.image,
+			sourceWidth: 200,
+			sourceHeight: 200,
+			time,
+		});
+	}
+}

@@ -1,1 +1,15 @@
-import type{MetadataRoute}from "next";import{SITE_URL}from "@/constants/site-constants";export default function robots():MetadataRoute.Robots{return{rules:[{userAgent:"*",allow:["/","/llms.txt"],disallow:["/_next/","/projects/","/editor/"],},],sitemap:`${SITE_URL}/sitemap.xml`,};}
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/constants/site-constants";
+
+export default function robots(): MetadataRoute.Robots {
+	return {
+		rules: [
+			{
+				userAgent: "*",
+				allow: ["/", "/llms.txt"],
+				disallow: ["/_next/", "/projects/", "/editor/"],
+			},
+		],
+		sitemap: `${SITE_URL}/sitemap.xml`,
+	};
+}

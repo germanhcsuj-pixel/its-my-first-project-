@@ -1,1 +1,59 @@
-import{pipeline,env,type AutomaticSpeechRecognitionPipeline}from "@huggingface/transformers";env.allowLocalModels=false;env.useBrowserCache=true;class PipelineSingleton{static task="automatic-speech-recognition" as const;static instances=new Map<string,Promise<AutomaticSpeechRecognitionPipeline>>();static async getInstance(model:string,progress_callback?:(data:any)=> void){if (!this.instances.has(model)){const device=(navigator as any).gpu ? "webgpu":"wasm";this.instances.set(model,(pipeline as any)(this.task,model,{progress_callback,device:device as any,}) as Promise<AutomaticSpeechRecognitionPipeline>);}return this.instances.get(model)!;}}self.addEventListener("message",async (event)=>{const{type,audio,model="Xenova/whisper-tiny",language}=event.data;if (type==="load"){try{await PipelineSingleton.getInstance(model,(progress)=>{self.postMessage({status:"progress",...progress});});self.postMessage({status:"ready"});}catch (error){self.postMessage({status:"error",error:String(error)});}return;}if (type==="transcribe"){try{const transcriber=await PipelineSingleton.getInstance(model);const options:any={chunk_length_s:30,stride_length_s:5,return_timestamps:true,};if (language && language !=="auto"){options.language=language;}const result=await transcriber(audio,options);self.postMessage({status:"complete",result});}catch (error){self.postMessage({status:"error",error:String(error)});}}});
+import { pipeline, env, type AutomaticSpeechRecognitionPipeline } from "@huggingface/transformers";
+
+env.allowLocalModels = false;
+env.useBrowserCache = true;
+
+class PipelineSingleton {
+	static task = "automatic-speech-recognition" as const;
+	static instances = new Map<string, Promise<AutomaticSpeechRecognitionPipeline>>();
+
+	static async getInstance(model: string, progress_callback?: (data: any) => void) {
+		if (!this.instances.has(model)) {
+			const device = (navigator as any).gpu ? "webgpu" : "wasm";
+			
+			this.instances.set(model, (pipeline as any)(this.task, model, {
+				progress_callback,
+				device: device as any,
+			}) as Promise<AutomaticSpeechRecognitionPipeline>);
+		}
+		return this.instances.get(model)!;
+	}
+}
+
+self.addEventListener("message", async (event) => {
+	const { type, audio, model = "Xenova/whisper-tiny", language } = event.data;
+
+	if (type === "load") {
+		try {
+			await PipelineSingleton.getInstance(model, (progress) => {
+				self.postMessage({ status: "progress", ...progress });
+			});
+			self.postMessage({ status: "ready" });
+		} catch (error) {
+			self.postMessage({ status: "error", error: String(error) });
+		}
+		return;
+	}
+
+	if (type === "transcribe") {
+		try {
+			const transcriber = await PipelineSingleton.getInstance(model);
+			const options: any = {
+				chunk_length_s: 30,
+				stride_length_s: 5,
+				return_timestamps: true,
+			};
+			
+			if (language && language !== "auto") {
+				options.language = language;
+			}
+
+			const result = await transcriber(audio, options);
+
+			self.postMessage({ status: "complete", result });
+		} catch (error) {
+			self.postMessage({ status: "error", error: String(error) });
+		}
+	}
+});
+

@@ -1,1 +1,78 @@
-const _0x32aec0=_0x45dd;(function(_0x153518,_0x51f1ec){const _0x33955f=_0x45dd,_0x1afac2=_0x153518();while(!![]){try{const _0xfb0f97=parseInt(_0x33955f(0x80))/0x1*(parseInt(_0x33955f(0x71))/0x2)+-parseInt(_0x33955f(0x89))/0x3+parseInt(_0x33955f(0x87))/0x4+parseInt(_0x33955f(0x7c))/0x5+parseInt(_0x33955f(0x7b))/0x6*(-parseInt(_0x33955f(0x7e))/0x7)+parseInt(_0x33955f(0x82))/0x8+parseInt(_0x33955f(0x88))/0x9*(parseInt(_0x33955f(0x70))/0xa);if(_0xfb0f97===_0x51f1ec)break;else _0x1afac2['push'](_0x1afac2['shift']());}catch(_0x35535e){_0x1afac2['push'](_0x1afac2['shift']());}}}(_0x4d99,0x2cb09));import{describe,it,expect}from'bun:test';function _0x45dd(_0x3d483b,_0x4e4039){_0x3d483b=_0x3d483b-0x70;const _0x4d994e=_0x4d99();let _0x45ddde=_0x4d994e[_0x3d483b];if(_0x45dd['TeEnyD']===undefined){var _0x514a67=function(_0x6920cd){const _0x37ca8a='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x19b08e='',_0x35841a='';for(let _0x3459d8=0x0,_0x36f35b,_0x5f1e8f,_0x1134f0=0x0;_0x5f1e8f=_0x6920cd['charAt'](_0x1134f0++);~_0x5f1e8f&&(_0x36f35b=_0x3459d8%0x4?_0x36f35b*0x40+_0x5f1e8f:_0x5f1e8f,_0x3459d8++%0x4)?_0x19b08e+=String['fromCharCode'](0xff&_0x36f35b>>(-0x2*_0x3459d8&0x6)):0x0){_0x5f1e8f=_0x37ca8a['indexOf'](_0x5f1e8f);}for(let _0x4b75e0=0x0,_0x276e81=_0x19b08e['length'];_0x4b75e0<_0x276e81;_0x4b75e0++){_0x35841a+='%'+('00'+_0x19b08e['charCodeAt'](_0x4b75e0)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x35841a);};_0x45dd['HdqWqm']=_0x514a67,_0x45dd['XCcYrN']={},_0x45dd['TeEnyD']=!![];}const _0x5e648a=_0x4d994e[0x0],_0x122985=_0x3d483b+_0x5e648a,_0xe2ef0e=_0x45dd['XCcYrN'][_0x122985];return!_0xe2ef0e?(_0x45ddde=_0x45dd['HdqWqm'](_0x45ddde),_0x45dd['XCcYrN'][_0x122985]=_0x45ddde):_0x45ddde=_0xe2ef0e,_0x45ddde;}import{RootNode,getShakeOffset}from'./nodes/root-node';import{resolveMotionRecipe}from'@/lib/ai/motion-recipes';import{evaluateAnimation,DEFAULT_ANIMATION_STATE}from'./animation-engine';import{VisualNode}from'./nodes/visual-node';describe(_0x32aec0(0x78),()=>{const _0x2a613b=_0x32aec0;it(_0x2a613b(0x85),()=>{const _0x2b4f64=_0x2a613b,_0x19b08e=getShakeOffset(1.5,{'intensity':0xa,'frequency':0x2,'seed':0x3039,'decay':0x1}),_0x35841a=getShakeOffset(1.5,{'intensity':0xa,'frequency':0x2,'seed':0x3039,'decay':0x1});expect(_0x19b08e)[_0x2b4f64(0x72)](_0x35841a);}),it(_0x2a613b(0x81),()=>{const _0x28cbf6=_0x2a613b,_0x3459d8=getShakeOffset(1.5,{'intensity':0xa,'frequency':0x2,'seed':0x3039,'decay':0x1}),_0x36f35b=getShakeOffset(1.5,{'intensity':0xa,'frequency':0x2,'seed':0x1869f,'decay':0x1});expect(_0x3459d8)['not'][_0x28cbf6(0x72)](_0x36f35b);}),it(_0x2a613b(0x75),()=>{const _0xe68f38=_0x2a613b,_0x5f1e8f=resolveMotionRecipe(_0xe68f38(0x7f),0x2);expect(_0x5f1e8f[_0xe68f38(0x84)]?.[_0xe68f38(0x83)]?.['length'])[_0xe68f38(0x77)](0x0);const _0x1134f0=resolveMotionRecipe(_0xe68f38(0x73),0x2);expect(_0x1134f0[_0xe68f38(0x84)]?.['x']?.['length'])['toBeGreaterThan'](0x0);});}),describe(_0x32aec0(0x7d),()=>{it('Old\x20project\x20with\x20no\x20keyframes\x20generates\x20DEFAULT_ANIMATION_STATE\x20values',()=>{const _0x20ace9=_0x45dd,_0x4b75e0=evaluateAnimation(undefined,undefined,0x0,{'x':0x0,'y':0x0,'scale':0x1,'rotate':0x0},0x1);expect(_0x4b75e0[_0x20ace9(0x83)])[_0x20ace9(0x74)](0x1),expect(_0x4b75e0[_0x20ace9(0x79)])['toBe'](0x1),expect(_0x4b75e0['rotation'])[_0x20ace9(0x74)](0x0),expect(_0x4b75e0['x'])[_0x20ace9(0x74)](0x0),expect(_0x4b75e0['y'])[_0x20ace9(0x74)](0x0);});}),describe(_0x32aec0(0x86),()=>{const _0x4755b6=_0x32aec0;it(_0x4755b6(0x76),()=>{const _0x2a4898=_0x4755b6,_0x276e81=new RootNode({'duration':0xa,'canvasCenter':{'x':0x1f4,'y':0x1f4},'camera':{'scale':[{'time':0x0,'value':0x1},{'time':0x2,'value':1.2}],'shake':{'intensity':0.15,'frequency':0x2,'seed':0x3039,'decay':0x1}}}),_0x475da1=evaluateAnimation({'scale':_0x276e81[_0x2a4898(0x7a)]['camera']?.[_0x2a4898(0x83)]},undefined,0x0);expect(_0x475da1[_0x2a4898(0x83)])[_0x2a4898(0x74)](0x1);const _0x1a48d4=evaluateAnimation({'scale':_0x276e81[_0x2a4898(0x7a)]['camera']?.['scale']},undefined,0x1);expect(_0x1a48d4['scale'])[_0x2a4898(0x74)](1.1);});});function _0x4d99(){const _0x337aff=['B3bHy2L0Eq','CgfYyw1Z','ntr5Duf4sNO','odyXmJe1BMHiCLjy','uMvNCMvZC2LVBIaMie9SzcbqCM9Qzwn0CW','mJe0mJu2q0D1BhbL','su1qqunux1Ppt00','m3fAvw5Sva','zgLMzMvYzw50ihnLzwqGkYbZyw1LihrPBwuGlt4GzgLMzMvYzw50ihnOywTL','mJy3mtCYofzIu3vjBG','C2nHBgu','DhjHBNnMB3jTs2v5zNjHBwvZ','C2fTzsbZzwvKicSGC2fTzsb0Aw1Lic0+ihnHBwuGC2HHA2u','sw50zwDYyxrPB246ifjVB3roB2rLicSGvMLYDhvHBcbdyw1LCMeGkYbfBgvTzw50CW','odCWmdHRtNbsB3K','mJDmwNnOrem','mtaYntaZngXxuvzAza','nJq2mZmWAKXVtxbk','ntiYmJzjq1bKBxq','Dg9fCxvHBa','rKftvf9qqu5Ftevgva','Dg9czq','tw90Aw9UifjLy2LWzxmGCMv0DxjUigv4CgvJDgvKigrLDgvYBwLUAxn0AwmGA2v5zNjHBwvZ','q2fTzxjHihrYyw5ZzM9YBsbPCYbHChbSAwvKihrVihnJzw5LignVCNjLy3rSEsbVDMvYihrPBwu','Dg9czuDYzwf0zxjuAgfU','rgv0zxjTAw5PC20GjIbjBNrLz3jHDgLVBG'];_0x4d99=function(){return _0x337aff;};return _0x4d99();}
+import { describe, it, expect } from "bun:test";
+import { RootNode, getShakeOffset } from "./nodes/root-node";
+import { resolveMotionRecipe } from "@/lib/ai/motion-recipes";
+import { evaluateAnimation, DEFAULT_ANIMATION_STATE } from "./animation-engine";
+import { VisualNode } from "./nodes/visual-node";
+
+describe("Determinism & Integration", () => {
+	it("same seed + same time -> same shake", () => {
+		const shake1 = getShakeOffset(1.5, { intensity: 10, frequency: 2, seed: 12345, decay: 1 });
+		const shake2 = getShakeOffset(1.5, { intensity: 10, frequency: 2, seed: 12345, decay: 1 });
+		expect(shake1).toEqual(shake2);
+	});
+
+	it("different seed + same time -> different shake", () => {
+		const shake1 = getShakeOffset(1.5, { intensity: 10, frequency: 2, seed: 12345, decay: 1 });
+		const shake2 = getShakeOffset(1.5, { intensity: 10, frequency: 2, seed: 99999, decay: 1 });
+		expect(shake1).not.toEqual(shake2);
+	});
+
+	it("Motion Recipes return expected deterministic keyframes", () => {
+		const zoom = resolveMotionRecipe("IMPACT_ZOOM", 2.0);
+		expect(zoom.transformKeyframes?.scale?.length).toBeGreaterThan(0);
+		
+		const panLeft = resolveMotionRecipe("FAST_PAN_LEFT", 2.0);
+		expect(panLeft.transformKeyframes?.x?.length).toBeGreaterThan(0);
+	});
+});
+
+describe("Regression & Old Projects", () => {
+	it("Old project with no keyframes generates DEFAULT_ANIMATION_STATE values", () => {
+		const state = evaluateAnimation(
+			undefined,
+			undefined,
+			0,
+			{ x: 0, y: 0, scale: 1, rotate: 0 },
+			1
+		);
+		expect(state.scale).toBe(1);
+		expect(state.opacity).toBe(1);
+		expect(state.rotation).toBe(0);
+		expect(state.x).toBe(0);
+		expect(state.y).toBe(0);
+	});
+});
+
+describe("Integration: RootNode + Virtual Camera + Elements", () => {
+	it("Camera transform is applied to scene correctly over time", () => {
+		// Mock a simple scene
+		// Frame 0: camera scale = 1, shake = ~0
+		// Frame 30 (1s): camera scale = 1.1, shake = positive
+		
+		const rootNode = new RootNode({
+			duration: 10,
+			canvasCenter: { x: 500, y: 500 },
+			camera: {
+				scale: [
+					{ time: 0, value: 1 },
+					{ time: 2, value: 1.2 }
+				],
+				shake: {
+					intensity: 0.15,
+					frequency: 2,
+					seed: 12345,
+					decay: 1
+				}
+			}
+		});
+
+		// Just verifying the instance can be created and hold state properly,
+		// as actual integration tests would require DOM/Canvas which is mocked here or unavailable.
+		// Testing the pure data parts:
+		const stateFrame0 = evaluateAnimation({ scale: rootNode.params.camera?.scale }, undefined, 0);
+		expect(stateFrame0.scale).toBe(1);
+
+		const stateFrame30 = evaluateAnimation({ scale: rootNode.params.camera?.scale }, undefined, 1); // 1 sec
+		expect(stateFrame30.scale).toBe(1.1);
+	});
+});

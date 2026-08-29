@@ -1,1 +1,57 @@
-import{expect,test,describe}from "bun:test";import{trimPath,PathGeometry,PathCommand}from "./path";describe("Trim Path",()=>{test("trim line from 0 to 1 returns exact geometry",()=>{const geom:PathGeometry={commands:[{type:"moveTo",x:0,y:0},{type:"lineTo",x:100,y:0}]};const trimmed=trimPath(geom,0,1);expect(trimmed.commands.length).toBe(2);expect(trimmed.commands[1].type).toBe("lineTo");expect((trimmed.commands[1] as any).x).toBe(100);});test("trim line from 0 to 0.5 halves the length",()=>{const geom:PathGeometry={commands:[{type:"moveTo",x:0,y:0},{type:"lineTo",x:100,y:0}]};const trimmed=trimPath(geom,0,0.5);expect(trimmed.commands.length).toBe(2);expect((trimmed.commands[1] as any).x).toBe(50);});test("trim quadratic bezier curve",()=>{const geom:PathGeometry={commands:[{type:"moveTo",x:0,y:0},{type:"quadraticTo",cx:50,cy:100,x:100,y:0}]};const trimmed=trimPath(geom,0,0.5);expect(trimmed.commands.length).toBe(2);expect(trimmed.commands[1].type).toBe("quadraticTo");});test("start > end uses normalized offset logic (but in this version start <=end)",()=>{const geom:PathGeometry={commands:[{type:"moveTo",x:0,y:0},{type:"lineTo",x:100,y:0}]};const trimmed=trimPath(geom,0,0.5,0.5);expect(trimmed.commands[0].type).toBe("moveTo");expect((trimmed.commands[0] as any).x).toBe(50);expect((trimmed.commands[1] as any).x).toBe(100);});});
+import { expect, test, describe } from "bun:test";
+import { trimPath, PathGeometry, PathCommand } from "./path";
+
+describe("Trim Path", () => {
+	test("trim line from 0 to 1 returns exact geometry", () => {
+		const geom: PathGeometry = {
+			commands: [
+				{ type: "moveTo", x: 0, y: 0 },
+				{ type: "lineTo", x: 100, y: 0 }
+			]
+		};
+		const trimmed = trimPath(geom, 0, 1);
+		expect(trimmed.commands.length).toBe(2);
+		expect(trimmed.commands[1].type).toBe("lineTo");
+		expect((trimmed.commands[1] as any).x).toBe(100);
+	});
+
+	test("trim line from 0 to 0.5 halves the length", () => {
+		const geom: PathGeometry = {
+			commands: [
+				{ type: "moveTo", x: 0, y: 0 },
+				{ type: "lineTo", x: 100, y: 0 }
+			]
+		};
+		const trimmed = trimPath(geom, 0, 0.5);
+		expect(trimmed.commands.length).toBe(2);
+		expect((trimmed.commands[1] as any).x).toBe(50);
+	});
+
+	test("trim quadratic bezier curve", () => {
+		const geom: PathGeometry = {
+			commands: [
+				{ type: "moveTo", x: 0, y: 0 },
+				{ type: "quadraticTo", cx: 50, cy: 100, x: 100, y: 0 }
+			]
+		};
+		const trimmed = trimPath(geom, 0, 0.5);
+		expect(trimmed.commands.length).toBe(2);
+		expect(trimmed.commands[1].type).toBe("quadraticTo");
+	});
+
+	test("start > end uses normalized offset logic (but in this version start <= end)", () => {
+		const geom: PathGeometry = {
+			commands: [
+				{ type: "moveTo", x: 0, y: 0 },
+				{ type: "lineTo", x: 100, y: 0 }
+			]
+		};
+		// Our implementation clamps and does not natively support start > end unless we swap or use offset
+		// Let's test offset = 0.5, start = 0, end = 0.5
+		const trimmed = trimPath(geom, 0, 0.5, 0.5);
+		// This should cover the second half of the line
+		expect(trimmed.commands[0].type).toBe("moveTo");
+		expect((trimmed.commands[0] as any).x).toBe(50);
+		expect((trimmed.commands[1] as any).x).toBe(100);
+	});
+});

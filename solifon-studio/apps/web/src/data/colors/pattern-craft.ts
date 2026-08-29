@@ -1,1 +1,69 @@
-const _0xbedf94=_0x1177;function _0x1177(_0x58e521,_0x2368d9){_0x58e521=_0x58e521-0x1b2;const _0x55729e=_0x5572();let _0x117731=_0x55729e[_0x58e521];if(_0x1177['UHRUgZ']===undefined){var _0x5efa6f=function(_0x5ea964){const _0x1469f8='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x5c7b98='',_0x416103='';for(let _0x47d611=0x0,_0x18c059,_0x1882ad,_0x562f97=0x0;_0x1882ad=_0x5ea964['charAt'](_0x562f97++);~_0x1882ad&&(_0x18c059=_0x47d611%0x4?_0x18c059*0x40+_0x1882ad:_0x1882ad,_0x47d611++%0x4)?_0x5c7b98+=String['fromCharCode'](0xff&_0x18c059>>(-0x2*_0x47d611&0x6)):0x0){_0x1882ad=_0x1469f8['indexOf'](_0x1882ad);}for(let _0x36138c=0x0,_0x1912cf=_0x5c7b98['length'];_0x36138c<_0x1912cf;_0x36138c++){_0x416103+='%'+('00'+_0x5c7b98['charCodeAt'](_0x36138c)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0x416103);};_0x1177['jjprks']=_0x5efa6f,_0x1177['ZPbrHc']={},_0x1177['UHRUgZ']=!![];}const _0x3b3c4a=_0x55729e[0x0],_0x1d4a86=_0x58e521+_0x3b3c4a,_0x4e62c4=_0x1177['ZPbrHc'][_0x1d4a86];return!_0x4e62c4?(_0x117731=_0x1177['jjprks'](_0x117731),_0x1177['ZPbrHc'][_0x1d4a86]=_0x117731):_0x117731=_0x4e62c4,_0x117731;}(function(_0x4659fb,_0x3c23d2){const _0x4804bb=_0x1177,_0x252ed1=_0x4659fb();while(!![]){try{const _0x13810d=parseInt(_0x4804bb(0x1b8))/0x1+parseInt(_0x4804bb(0x1cb))/0x2+-parseInt(_0x4804bb(0x1c2))/0x3+parseInt(_0x4804bb(0x1ce))/0x4*(-parseInt(_0x4804bb(0x1b9))/0x5)+-parseInt(_0x4804bb(0x1cd))/0x6*(-parseInt(_0x4804bb(0x1c3))/0x7)+parseInt(_0x4804bb(0x1c8))/0x8+-parseInt(_0x4804bb(0x1ba))/0x9;if(_0x13810d===_0x3c23d2)break;else _0x252ed1['push'](_0x252ed1['shift']());}catch(_0x52d146){_0x252ed1['push'](_0x252ed1['shift']());}}}(_0x5572,0xed7e7));export const patternCraftGradients=[_0xbedf94(0x1b7),_0xbedf94(0x1b6),_0xbedf94(0x1b3),_0xbedf94(0x1c4),_0xbedf94(0x1cc),_0xbedf94(0x1bf),_0xbedf94(0x1bc),_0xbedf94(0x1bd),_0xbedf94(0x1c0),_0xbedf94(0x1b5),_0xbedf94(0x1be),_0xbedf94(0x1c7),_0xbedf94(0x1c5),'linear-gradient(180deg,\x20rgba(245,245,220,1)\x200%,\x20rgba(255,223,186,0.8)\x2025%,\x20rgba(255,182,193,0.6)\x2050%,\x20rgba(147,112,219,0.7)\x2075%,\x20rgba(72,61,139,0.9)\x20100%),\x20radial-gradient(circle\x20at\x2030%\x2020%,\x20rgba(255,255,224,0.4)\x200%,\x20transparent\x2050%),\x20radial-gradient(circle\x20at\x2070%\x2080%,\x20rgba(72,61,139,0.6)\x200%,\x20transparent\x2070%),\x20radial-gradient(circle\x20at\x2050%\x2060%,\x20rgba(147,112,219,0.3)\x200%,\x20transparent\x2060%)',_0xbedf94(0x1bb),'linear-gradient(270deg,\x20#FFECB3\x200%,\x20#FFE0B2\x2020%,\x20#FFCDD2\x2040%,\x20#F8BBD9\x2060%,\x20#E1BEE7\x2080%,\x20#D1C4E9\x20100%)',_0xbedf94(0x1b2),_0xbedf94(0x1b4),_0xbedf94(0x1c9),_0xbedf94(0x1c6),_0xbedf94(0x1c1),_0xbedf94(0x1ca)];function _0x5572(){const _0x53f0d1=['CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcb0B3aGBgvMDcWGCMDIysGXnZmSideWosWGmJq0lcaWlJuPlcb0CMfUC3bHCMvUDca3mcuPlcb3AgL0zq','CMfKAwfSlwDYywrPzw50kgvSBgLWC2uGnZaLidu1jsbHDca1mcuGntaLlcbYz2jHkdi1nsWGmJaSide0nYWGmc4XnsKSihrYyw5ZCgfYzw50iduWjsKSihjHzgLHBc1NCMfKAwvUDcHLBgXPChnLide2mcuGmtmWjsbHDcaXmcuGmtaLlcbYz2jHkdaSidi1nsWGmJu1lcaWlJeYksWGDhjHBNnWyxjLBNqGnJaLksWGCMfKAwfSlwDYywrPzw50kgvSBgLWC2uGmtyWjsaXmZaLigf0idKWjsa5mcuSihjNyMeOmtm4lca0mYWGmJi2lcaWlJe4ksWGDhjHBNnWyxjLBNqGnJuLksWGCMfKAwfSlwDYywrPzw50kgvSBgLWC2uGmteWjsa1mcuGyxqGodaLidmWjsWGCMDIysGYntuSidiXnsWGmcWGmc4WocKSihrYyw5ZCgfYzw50idqWjsKSicmWmdaWmda','mJGWnZG2mNrftLn2vq','nZyZnJn4q0viyu8','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcbJzw50zxiSicm4rKzgqJaSihrYyw5ZCgfYzw50ksWGD2HPDgu','BgLUzwfYlwDYywrPzw50kdeZnwrLzYWGi0y4qKjeosaWjsWGi0zerdvcncaYnsuSicngrKyYq0mGntaLlcaJrtfgnuzfidC1jsWGi0jcrevgqIaXmdaLkq','BgLUzwfYlwDYywrPzw50kdbKzwCSihjNyMeOmcWWldaSmc42ksWGCMDIysGWldaSmcWWlJyPksWGCMfKAwfSlwDYywrPzw50kdy4jsa1ocuGyxqGntaLiduWjsWGi2m4mwuZysaWjsWGi2e1mwqZnsaXnIuSicm3zdfHmMyGmZiLlcaJntKXodi4idq2jsWGiZnJmtCYmIa2mcuSicmYyte1mwqGnZiLlcaJmwyXmZe3idG0jsWGiZe0mtaXmYa5ncuSicmWytbHmgeGmtaWjsKSihjHzgLHBc1NCMfKAwvUDcG5mcuGnZuLigf0iduWjsa1mcuSihjNyMeOmJi4ldqYldy2ldaUmdyPidaLlcbYz2jHkdiYocW0mIW2nIWWksa1nsuPlcbYywrPywWTz3jHzgLLBNqOmtuWjsaXmJaLigf0idGLidGLlcbYz2jHkdaSmcWWldaPidqYjsWGiZbImgeWysa4mIuSicmWnZa3mdCGmtaWjsKSihjHzgLHBc1NCMfKAwvUDcGXntaLideYmcuGyxqGotiLidKYjsWGCMDIysGWldaSmcWWksa0mIuSicmWyJbHmgeGodiLlcaJmdCWnZa3ideWmcuPlcbYywrPywWTz3jHzgLLBNqOnJaLiduWjsbHDca1mcuGnJaLlcbYz2jHkdi0mcW2mcW4mcWWlJa2ksWGCMDIysGWldaSmcWWksa2mcuPlcaJmduWnta1','CMfKAwfSlwDYywrPzw50kgvSBgLWC2uGodaLidyWjsbHDca3mcuGmJaLlcbYz2jHkde3nsWGmta5lcaYntuSidaUoduPlcb0CMfUC3bHCMvUDca2ocuPlcbYywrPywWTz3jHzgLLBNqOzwXSAxbZzsa3mcuGnJaLigf0idiWjsa4mcuSihjNyMeOmJu1lcaXmdaSide4mcWGmc43nsKSihrYyw5ZCgfYzw50idy4jsKSihjHzgLHBc1NCMfKAwvUDcHLBgXPChnLidyWjsa1mcuGyxqGnJaLidy1jsWGCMDIysGYntuSidiZnsWGmtCWlcaWlJK4ksWGDhjHBNnWyxjLBNqGnJGLksWGCMfKAwfSlwDYywrPzw50kgvSBgLWC2uGnJuLidqWjsbHDca1mcuGnJaLlcbYz2jHkdeYmcWGmtKWlcaYntuSidaUmYKSihrYyw5ZCgfYzw50idy4jsKSigXPBMvHCI1NCMfKAwvUDcGXodbKzwCSicnMn2vHzMyGmcuSicnMzguYzweGmtaWjsK','mJa4nti3mMPpDfj6ua','CMfKAwfSlwDYywrPzw50kdCWjsa1nsuGyxqGntaLiduWjsWGiZjHnwq3nYaWjsWGiZe4nda1ocaXocuSicmWzJjHndmGmZqLlcaJmgeXyJmWiduWjsWGiZa3mtiYnIa2nIuSicmWndbKmwmGodaLlcaJmdiWode0idKYjsWGiZaXmdqWzca5nYuSicmWmdaZmdKGmtaWjsKSihjHzgLHBc1NCMfKAwvUDcGXnJaLideZmcuGyxqGmtaLideWjsWGCMDIysGWldaSmcWWksaZocuSicmWmdaZmdKGnZyLlcaJmdaWmJa4ideWmcuPlcbYywrPywWTz3jHzgLLBNqOmtyWjsaXmZaLigf0idKWjsa5mcuSihjNyMeOmcWWldaSmcKGmZGLlcaJmdaWmZa5idC2jsWGiZaWmdiWocaXmdaLkq','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDca1mcuGntaLlcbYz2jHkde0nYWGnteSidiZncWGmc4YksaWjsWGCMDIysGXndCSiduXlcaYmZqSidaUmtiPidi1jsWGCMDIysGXndCSiduXlcaYmZqSidaUmduPidm1jsWGDhjHBNnWyxjLBNqGntaLksWGiZaWmdaWma','mtK3mdCWnNvrDvHhAW','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcb0B3aGCMLNAhqSihjNyMeOmtCZlcaXmdKSidi0ncWGmc41ksWGDhjHBNnWyxjLBNqGnZaLksWGD2HPDgu','ody0y0zZs0vY','nJC1ntzQD3bTzKC','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDca1mcuGmtaWjsWGCMDIysGYntuSidy5lcaWlcaWlJyPidaLlcb0CMfUC3bHCMvUDca2mcuPlcbYywrPywWTz3jHzgLLBNqOy2LYy2XLigf0iduWjsaXmdaLlcbYz2jHkdi1nsWGmtqWlcaWlcaWlJqPidaLlcb0CMfUC3bHCMvUDca3mcuPlcbYywrPywWTz3jHzgLLBNqOy2LYy2XLigf0iduWjsaXmdaLlcbYz2jHkdi1nsWGmJe1lcaWlcaWlJmPidaLlcb0CMfUC3bHCMvUDca4mcuP','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcaYmcuGodaLlcbYz2jHkdi1nsWGmtyWlcaXndySidaUmJuPidaLlcb0CMfUC3bHCMvUDca1mcuPlcbYywrPywWTz3jHzgLLBNqOy2LYy2XLigf0idGWjsaYmcuSihjNyMeOmJu1lcaYndqSidiYocWGmc4ZksaWjsWGDhjHBNnWyxjLBNqGntaLksWGCMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDca0mcuGndaLlcbYz2jHkdi1nsWGmtyWlcaXndySidaUmtuPidaLlcb0CMfUC3bHCMvUDca1mcuPlcaJzMvMowy3','CMfKAwfSlwDYywrPzw50kgvSBgLWC2uGyxqGmJaLidmWjsWGCMDIysG1nIWGmtG5lcaYndGSidaUncKGmcuSihrYyw5ZCgfYzw50idyWjsKSihjHzgLHBc1NCMfKAwvUDcHLBgXPChnLigf0idGWjsa3mcuSihjNyMeOmtm5lca5mIWGmJq2lcaWlJmPidaLlcb0CMfUC3bHCMvUDca3mcuPlcbYywrPywWTz3jHzgLLBNqOzwXSAxbZzsbHDca2mcuGmJaLlcbYz2jHkdiZnIWGnZiSide1mYWGmc4YnsKGmcuSihrYyw5ZCgfYzw50iduWjsKSihjHzgLHBc1NCMfKAwvUDcHLBgXPChnLigf0idqWjsa4mcuSihjNyMeOmZqSide5nYWGotqSidaUmIKGmcuSihrYyw5ZCgfYzw50idy1jsKSicmWmdaWmda','BgLUzwfYlwDYywrPzw50kdeYmgrLzYWGi2q1yZvMzIaWjsWGi2e3zJnKmca1mcuSicnMmgyWzJaGmtaWjsK','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcaYmcuGodaLlcbYz2jHkdi1nsWGmtGYlcaXntmSidaUmYKGmcuSihrYyw5ZCgfYzw50iduWjsKSihjHzgLHBc1NCMfKAwvUDcHJAxjJBguGyxqGodaLidiWjsWGCMDIysGYntuSidi0ncWGmJe0lcaWlJuPidaLlcb0CMfUC3bHCMvUDca1mcuPlcbYywrPywWTz3jHzgLLBNqOy2LYy2XLigf0idqWjsa0mcuSihjNyMeOmJu1lcaXodiSide1mYWGmc4XksaWjsWGDhjHBNnWyxjLBNqGntaLksWGi2zMzJHMma','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcaZmcuGnZaLlcbYz2jHkde3mYWGmJe2lcaYmZaSidaUmZuPlcb0CMfUC3bHCMvUDca2mcuPlcbYywrPywWTz3jHzgLLBNqOy2LYy2XLigf0idCWjsaZmcuSihjNyMeOmJu1lcaXodiSide5mYWGmc40ksWGDhjHBNnWyxjLBNqGnJaLksWGD2HPDgu','nZiXody0EKXqEev5','mJGWAKPyCwf4','nJe1odmZmxnrA29Hra','BgLUzwfYlwDYywrPzw50kdq1zgvNlcaJrKzcm0q5idaLlcaJrKzemurdidiWjsWGi0zgrJbgnsa0mcuSicnfnKyZrKyGnJaLlcaJrdffn0zgidGWjsWGi0m3rtLgmsaXmdaLkq','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcb0B3aGCMLNAhqSihjNyMeOmJu1lcaXndaSidyWlcaWlJuPlcb0CMfUC3bHCMvUDca3mcuPlcb3AgL0zq','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcb0B3aGCMLNAhqSihjNyMeOnZaSideZmcWGmtGWlcaWlJuPlcb0CMfUC3bHCMvUDca3mcuPlcb3AgL0zq','CMfKAwfSlwDYywrPzw50kgvSBgLWC2uGoduLidy1jsbHDca4jsa4jsWGCMDIysGXnZuSideWosWGmJu1lcaWlJqYksWGDhjHBNnWyxjLBNqGnJaLksWGCMfKAwfSlwDYywrPzw50kgvSBgLWC2uGnZuLidyWjsbHDca3nsuGmZuLlcbYz2jHkdi1nsWGmJm1lcaXnZaSidaUntuPlcb0CMfUC3bHCMvUDca2mIuPlcbYywrPywWTz3jHzgLLBNqOzwXSAxbZzsa3mcuGnJaLigf0ide1jsa4mcuSihjNyMeOmJu1lcaXmdaSide4mcWGmc40mcKSihrYyw5ZCgfYzw50idyYjsKSihjHzgLHBc1NCMfKAwvUDcHLBgXPChnLidCWjsa2mcuGyxqGotiLidKYjsWGCMDIysGXmJaSide5mcWGmJu1lcaWlJq1ksWGDhjHBNnWyxjLBNqGnJiLksWGBgLUzwfYlwDYywrPzw50kde4mgrLzYWGi2y3zwfMzIaWjsWGi2zKztjLysaXmdaLkq','CMfKAwfSlwDYywrPzw50kgnPCMnSzsbHDcb0B3aGCMLNAhqSihjNyMeOntySide5mYWGmtGYlcaWlJuPlcb0CMfUC3bHCMvUDca3mcuPlcb3AgL0zq'];_0x5572=function(){return _0x53f0d1;};return _0x5572();}
+// These are the gradients from Pattern Craft (https://patterncraft.fun/)
+
+export const patternCraftGradients = [
+	// Dreamy Sky Pink Glow
+	"radial-gradient(circle at 30% 70%, rgba(173, 216, 230, 0.35), transparent 60%), radial-gradient(circle at 70% 30%, rgba(255, 182, 193, 0.4), transparent 60%), white",
+
+	// Soft Warm Pastel Texture
+	"radial-gradient(circle at 20% 80%, rgba(255, 182, 153, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 244, 214, 0.5) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(255, 182, 153, 0.1) 0%, transparent 50%), #fff8f0",
+
+	// Warm Soft Coral & Cream
+	"radial-gradient(circle at 20% 80%, rgba(255, 160, 146, 0.25) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 244, 228, 0.3) 0%, transparent 50%), radial-gradient(circle at 40% 40%, rgba(255, 160, 146, 0.15) 0%, transparent 50%), #fef9f7",
+
+	// Soft Green Glow
+	"radial-gradient(circle at center, #8FFFB0, transparent), white",
+
+	// Purple Glow Right
+	"radial-gradient(circle at top right, rgba(173, 109, 244, 0.5), transparent 70%), white",
+
+	// Teal Glow Right
+	"radial-gradient(circle at top right, rgba(56, 193, 182, 0.5), transparent 70%), white",
+
+	// Warm Orange Glow Right
+	"radial-gradient(circle at top right, rgba(255, 140, 60, 0.5), transparent 70%), white",
+
+	// Cool Blue Glow Right
+	"radial-gradient(circle at top right, rgba(70, 130, 180, 0.5), transparent 70%), white",
+
+	// Purple Glow Left
+	"radial-gradient(circle at top left, rgba(173, 109, 244, 0.5), transparent 70%), white",
+
+	// Pastel Wave
+	"linear-gradient(120deg, #d5c5ff 0%, #a7f3d0 50%, #f0f0f0 100%)",
+
+	// Aurora Dream Corner Whispers
+	"radial-gradient(ellipse 85% 65% at 8% 8%, rgba(175, 109, 255, 0.42), transparent 60%), radial-gradient(ellipse 75% 60% at 75% 35%, rgba(255, 235, 170, 0.55), transparent 62%), radial-gradient(ellipse 70% 60% at 15% 80%, rgba(255, 100, 180, 0.40), transparent 62%), radial-gradient(ellipse 70% 60% at 92% 92%, rgba(120, 190, 255, 0.45), transparent 62%), linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%)",
+
+	// Aurora Dream Vivid Bloom
+	"radial-gradient(ellipse 80% 60% at 70% 20%, rgba(175, 109, 255, 0.85), transparent 68%), radial-gradient(ellipse 70% 60% at 20% 80%, rgba(255, 100, 180, 0.75), transparent 68%), radial-gradient(ellipse 60% 50% at 60% 65%, rgba(255, 235, 170, 0.98), transparent 68%), radial-gradient(ellipse 65% 40% at 50% 60%, rgba(120, 190, 255, 0.3), transparent 68%), linear-gradient(180deg, #f7eaff 0%, #fde2ea 100%)",
+
+	// Soft Pastel Dream Gradient
+	"linear-gradient(135deg, #F8BBD9 0%, #FDD5B4 25%, #FFF2CC 50%, #E1F5FE 75%, #BBDEFB 100%)",
+
+	// Dreamy Sunset Gradient Background
+	"linear-gradient(180deg, rgba(245,245,220,1) 0%, rgba(255,223,186,0.8) 25%, rgba(255,182,193,0.6) 50%, rgba(147,112,219,0.7) 75%, rgba(72,61,139,0.9) 100%), radial-gradient(circle at 30% 20%, rgba(255,255,224,0.4) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(72,61,139,0.6) 0%, transparent 70%), radial-gradient(circle at 50% 60%, rgba(147,112,219,0.3) 0%, transparent 60%)",
+
+	// Cotton Candy Sky Gradient
+	"linear-gradient(45deg, #FFB3D9 0%, #FFD1DC 20%, #FFF0F5 40%, #E6F3FF 60%, #D1E7FF 80%, #C7E9F1 100%)",
+
+	// Rose Gold Whisper Gradient
+	"linear-gradient(270deg, #FFECB3 0%, #FFE0B2 20%, #FFCDD2 40%, #F8BBD9 60%, #E1BEE7 80%, #D1C4E9 100%)",
+
+	// Ember Glow Background
+	"radial-gradient(circle at 50% 100%, rgba(255, 69, 0, 0.6) 0%, transparent 60%), radial-gradient(circle at 50% 100%, rgba(255, 140, 0, 0.4) 0%, transparent 70%), radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 0.3) 0%, transparent 80%)",
+
+	// Cosmic Aurora
+	"radial-gradient(ellipse at 20% 30%, rgba(56, 189, 248, 0.4) 0%, transparent 60%), radial-gradient(ellipse at 80% 70%, rgba(139, 92, 246, 0.3) 0%, transparent 70%), radial-gradient(ellipse at 60% 20%, rgba(236, 72, 153, 0.25) 0%, transparent 50%), radial-gradient(ellipse at 40% 80%, rgba(34, 197, 94, 0.2) 0%, transparent 65%), #000000",
+
+	// Deep Ocean Glow
+	"radial-gradient(70% 55% at 50% 50%, #2a5d77 0%, #184058 18%, #0f2a43 34%, #0a1b30 50%, #071226 66%, #040d1c 80%, #020814 92%, #01040d 97%, #000309 100%), radial-gradient(160% 130% at 10% 10%, rgba(0,0,0,0) 38%, #000309 76%, #000208 100%), radial-gradient(160% 130% at 90% 90%, rgba(0,0,0,0) 38%, #000309 76%, #000208 100%)",
+
+	// Crimson Core Glow
+	"linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)), radial-gradient(68% 58% at 50% 50%, #c81e3a 0%, #a51d35 16%, #7d1a2f 32%, #591828 46%, #3c1722 60%, #2a151d 72%, #1f1317 84%, #141013 94%, #0a0a0a 100%), radial-gradient(90% 75% at 50% 50%, rgba(228,42,66,0.06) 0%, rgba(228,42,66,0) 55%), radial-gradient(150% 120% at 8% 8%, rgba(0,0,0,0) 42%, #0b0a0a 82%, #070707 100%), radial-gradient(150% 120% at 92% 92%, rgba(0,0,0,0) 42%, #0b0a0a 82%, #070707 100%), radial-gradient(60% 50% at 50% 60%, rgba(240,60,80,0.06), rgba(0,0,0,0) 60%), #050505",
+
+	// Northern Aurora
+	"radial-gradient(ellipse 70% 55% at 50% 50%, rgba(255, 20, 147, 0.15), transparent 50%), radial-gradient(ellipse 160% 130% at 10% 10%, rgba(0, 255, 255, 0.12), transparent 60%), radial-gradient(ellipse 160% 130% at 90% 90%, rgba(138, 43, 226, 0.18), transparent 65%), radial-gradient(ellipse 110% 50% at 80% 30%, rgba(255, 215, 0, 0.08), transparent 40%), #000000",
+
+	// Royal Purple Background
+	"radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.2) 0%, rgba(147, 51, 234, 0.12) 25%, rgba(147, 51, 234, 0.05) 35%, transparent 50%), #000000",
+];

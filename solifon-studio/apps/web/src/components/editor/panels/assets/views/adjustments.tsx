@@ -1,1 +1,132 @@
-"use client";import{useState,useEffect}from "react";import{useTranslation}from "@i18next-toolkit/nextjs-approuter";import{ScrollArea}from "@/components/ui/scroll-area";import{useEditor}from "@/hooks/use-editor";import{Slider}from "@/components/ui/slider";import{Button}from "@/components/ui/button";import{useElementSelection}from "@/hooks/timeline/element/use-element-selection";import{toast}from "sonner";const DEFAULT_ADJUSTMENTS={brightness:100,contrast:100,saturation:100,hueRotate:0,blur:0,};type Adjustments=typeof DEFAULT_ADJUSTMENTS;const ADJUSTMENT_SLIDERS:{key:keyof Adjustments;label:string;min:number;max:number;unit:string;}[]=[{key:"brightness",label:"Яркость",min:0,max:200,unit:"%"},{key:"contrast",label:"Контраст",min:0,max:200,unit:"%"},{key:"saturation",label:"Насыщенность",min:0,max:300,unit:"%"},{key:"hueRotate",label:"Оттенок",min:-180,max:180,unit:"°"},{key:"blur",label:"Размытие",min:0,max:20,unit:"px"},];export function AdjustmentsView(){const{t}=useTranslation();const editor=useEditor();const{selectedElements}=useElementSelection();const [adjustments,setAdjustments]=useState<Adjustments>({...DEFAULT_ADJUSTMENTS});useEffect(()=>{if (selectedElements.length > 0){const track=editor.timeline.getTracks().find(t=> t.elements.some(e=> e.id===selectedElements[0].elementId));const element=track?.elements.find(e=> e.id===selectedElements[0].elementId);if (element && 'adjustments' in element && element.adjustments){setAdjustments({...DEFAULT_ADJUSTMENTS,...element.adjustments});}else{setAdjustments({...DEFAULT_ADJUSTMENTS});}}else{setAdjustments({...DEFAULT_ADJUSTMENTS});}},[selectedElements,editor.timeline]);const applyAdjustments=(adj:Adjustments)=>{const selected=editor.selection.getSelectedElements();if (selected.length===0){toast.info("Сначала выбери видео или фото на таймлайне!");return;}editor.timeline.updateElements({updates:selected.map((s)=> ({trackId:s.trackId,elementId:s.elementId,updates:{adjustments:adj},})),});};const handleAdjust=(key:keyof Adjustments,value:number)=>{const next={...adjustments,[key]:value};setAdjustments(next);applyAdjustments(next);};const resetAdjustments=()=>{setAdjustments({...DEFAULT_ADJUSTMENTS});applyAdjustments(DEFAULT_ADJUSTMENTS);};return ( <div className="flex h-full flex-col"> <div className="border-b px-4 pt-4 pb-3"> <h3 className="text-sm font-semibold">{t("Корректировка")}</h3> <p className="text-muted-foreground text-xs mt-1 leading-snug"> Настрой цвета и свет для выбранного клипа. </p> </div> <ScrollArea className="flex-1">{selectedElements.length===0 ? ( <div className="flex h-32 items-center justify-center text-sm text-muted-foreground text-center p-4"> Выбери видео или фото на таймлайне,чтобы настроить цвет. </div> ):( <div className="p-4 space-y-5">{ADJUSTMENT_SLIDERS.map((sl)=> ( <div key={sl.key}className="space-y-2"> <div className="flex justify-between items-center"> <span className="text-xs font-medium text-foreground">{sl.label}</span> <span className="text-xs text-muted-foreground tabular-nums bg-secondary/50 px-1.5 py-0.5 rounded-sm">{adjustments[sl.key]}{sl.unit}</span> </div> <Slider min={sl.min}max={sl.max}step={1}value={[adjustments[sl.key]]}onValueChange={([v])=> handleAdjust(sl.key,v)}className="w-full"/> </div> ))}<Button variant="outline" size="sm" className="w-full text-xs mt-4 border-dashed" onClick={resetAdjustments}> ↺ Сбросить настройки </Button> </div> )}</ScrollArea> </div> );}
+"use client";
+
+import { useState, useEffect } from "react";
+import { useTranslation } from "@i18next-toolkit/nextjs-approuter";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEditor } from "@/hooks/use-editor";
+import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { useElementSelection } from "@/hooks/timeline/element/use-element-selection";
+import { toast } from "sonner";
+
+const DEFAULT_ADJUSTMENTS = {
+	brightness: 100,
+	contrast: 100,
+	saturation: 100,
+	hueRotate: 0,
+	blur: 0,
+};
+
+type Adjustments = typeof DEFAULT_ADJUSTMENTS;
+
+const ADJUSTMENT_SLIDERS: {
+	key: keyof Adjustments;
+	label: string;
+	min: number;
+	max: number;
+	unit: string;
+}[] = [
+	{ key: "brightness",  label: "Яркость",    min: 0,    max: 200, unit: "%"  },
+	{ key: "contrast",    label: "Контраст",   min: 0,    max: 200, unit: "%"  },
+	{ key: "saturation",  label: "Насыщенность",min: 0,    max: 300, unit: "%"  },
+	{ key: "hueRotate",   label: "Оттенок",    min: -180, max: 180, unit: "°"  },
+	{ key: "blur",        label: "Размытие",   min: 0,    max: 20,  unit: "px" },
+];
+
+export function AdjustmentsView() {
+	const { t } = useTranslation();
+	const editor = useEditor();
+	const { selectedElements } = useElementSelection();
+	
+	const [adjustments, setAdjustments] = useState<Adjustments>({ ...DEFAULT_ADJUSTMENTS });
+
+	// Sync local state with selected element
+	useEffect(() => {
+		if (selectedElements.length > 0) {
+			const track = editor.timeline.getTracks().find(t => t.elements.some(e => e.id === selectedElements[0].elementId));
+			const element = track?.elements.find(e => e.id === selectedElements[0].elementId);
+			if (element && 'adjustments' in element && element.adjustments) {
+				setAdjustments({ ...DEFAULT_ADJUSTMENTS, ...element.adjustments });
+			} else {
+				setAdjustments({ ...DEFAULT_ADJUSTMENTS });
+			}
+		} else {
+			setAdjustments({ ...DEFAULT_ADJUSTMENTS });
+		}
+	}, [selectedElements, editor.timeline]);
+
+	const applyAdjustments = (adj: Adjustments) => {
+		const selected = editor.selection.getSelectedElements();
+		if (selected.length === 0) {
+			toast.info("Сначала выбери видео или фото на таймлайне!");
+			return;
+		}
+		editor.timeline.updateElements({
+			updates: selected.map((s) => ({
+				trackId: s.trackId,
+				elementId: s.elementId,
+				updates: { adjustments: adj },
+			})),
+		});
+	};
+
+	const handleAdjust = (key: keyof Adjustments, value: number) => {
+		const next = { ...adjustments, [key]: value };
+		setAdjustments(next);
+		applyAdjustments(next);
+	};
+
+	const resetAdjustments = () => {
+		setAdjustments({ ...DEFAULT_ADJUSTMENTS });
+		applyAdjustments(DEFAULT_ADJUSTMENTS);
+	};
+
+	return (
+		<div className="flex h-full flex-col">
+			<div className="border-b px-4 pt-4 pb-3">
+				<h3 className="text-sm font-semibold">{t("Корректировка")}</h3>
+				<p className="text-muted-foreground text-xs mt-1 leading-snug">
+					Настрой цвета и свет для выбранного клипа.
+				</p>
+			</div>
+
+			<ScrollArea className="flex-1">
+				{selectedElements.length === 0 ? (
+					<div className="flex h-32 items-center justify-center text-sm text-muted-foreground text-center p-4">
+						Выбери видео или фото на таймлайне, чтобы настроить цвет.
+					</div>
+				) : (
+					<div className="p-4 space-y-5">
+						{ADJUSTMENT_SLIDERS.map((sl) => (
+							<div key={sl.key} className="space-y-2">
+								<div className="flex justify-between items-center">
+									<span className="text-xs font-medium text-foreground">{sl.label}</span>
+									<span className="text-xs text-muted-foreground tabular-nums bg-secondary/50 px-1.5 py-0.5 rounded-sm">
+										{adjustments[sl.key]}{sl.unit}
+									</span>
+								</div>
+								<Slider
+									min={sl.min}
+									max={sl.max}
+									step={1}
+									value={[adjustments[sl.key]]}
+									onValueChange={([v]) => handleAdjust(sl.key, v)}
+									className="w-full"
+								/>
+							</div>
+						))}
+
+						<Button
+							variant="outline"
+							size="sm"
+							className="w-full text-xs mt-4 border-dashed"
+							onClick={resetAdjustments}
+						>
+							↺ Сбросить настройки
+						</Button>
+					</div>
+				)}
+			</ScrollArea>
+		</div>
+	);
+}

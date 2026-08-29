@@ -1,1 +1,70 @@
-import type{VideoFilter,EffectSpec}from "@/types/timeline";import type{EditStyleId}from "./style-presets";export type SemanticCaptionConfig={emotion?:"neutral" | "excited" | "dramatic" | "calm";style?:"anime" | "neon" | "tiktok" | "minimal" | "karaoke";position?:"bottom" | "center" | "top";enabled:boolean;};export type MusicSyncConfig={enabled:boolean;targetBpm?:number;};export type SourceClip={mediaId:string;scoreScore?:number;};export type Cut={time:number;type:"hard" | "jump" | "match";};export type Transition={atTime:number;type:string;duration:number;};export type TrackEffect={trackId:string;filters?:VideoFilter[];motion?:import("./motion-recipes").MotionRecipeId;effects?:EffectSpec[];};export type EditDecision={id:string;type:"cut" | "keep" | "remove" | "effect" | "transition" | "caption";time:number;reason:string;confidence:number;sources:string[];};export type AIEditPlan={id:string;version:number;hash:string;baseTimelineRevision:number;intent:{prompt:string;style:EditStyleId;pacing:"slow" | "medium" | "fast";targetDuration?:number;aspectRatio?:"16:9" | "9:16" | "1:1";};sourceClips:SourceClip[];decisions:EditDecision[];cuts:Cut[];transitions:Transition[];effects:TrackEffect[];captions?:SemanticCaptionConfig;musicSync?:MusicSyncConfig;confidence:number;};
+import type { VideoFilter, EffectSpec } from "@/types/timeline";
+import type { EditStyleId } from "./style-presets";
+
+export type SemanticCaptionConfig = {
+	emotion?: "neutral" | "excited" | "dramatic" | "calm";
+	style?: "anime" | "neon" | "tiktok" | "minimal" | "karaoke";
+	position?: "bottom" | "center" | "top";
+	enabled: boolean;
+};
+
+export type MusicSyncConfig = {
+	enabled: boolean;
+	targetBpm?: number;
+};
+
+export type SourceClip = {
+	mediaId: string;
+	scoreScore?: number;
+};
+
+export type Cut = {
+	time: number;
+	type: "hard" | "jump" | "match";
+};
+
+export type Transition = {
+	atTime: number;
+	type: string;
+	duration: number;
+};
+
+export type TrackEffect = {
+	trackId: string;
+	filters?: VideoFilter[];
+	motion?: import("./motion-recipes").MotionRecipeId;
+	effects?: EffectSpec[];
+};
+
+export type EditDecision = {
+	id: string;
+	type: "cut" | "keep" | "remove" | "effect" | "transition" | "caption";
+	time: number;
+	reason: string;
+	confidence: number;
+	sources: string[];
+};
+
+export type AIEditPlan = {
+	id: string;
+	version: number;
+	hash: string;
+	baseTimelineRevision: number;
+
+	intent: {
+		prompt: string;
+		style: EditStyleId;
+		pacing: "slow" | "medium" | "fast";
+		targetDuration?: number;
+		aspectRatio?: "16:9" | "9:16" | "1:1";
+	};
+
+	sourceClips: SourceClip[];
+	decisions: EditDecision[];
+	cuts: Cut[];
+	transitions: Transition[];
+	effects: TrackEffect[];
+	captions?: SemanticCaptionConfig;
+	musicSync?: MusicSyncConfig;
+	confidence: number;
+};

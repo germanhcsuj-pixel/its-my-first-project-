@@ -1,1 +1,79 @@
-if (typeof globalThis.OffscreenCanvas==="undefined"){(globalThis as any).OffscreenCanvas=class OffscreenCanvas{constructor(public width:number,public height:number){}getContext(){return{save:()=>{},restore:()=>{},clearRect:()=>{},drawImage:()=>{},fillRect:()=>{},getImageData:()=> ({data:new Uint8ClampedArray(4)}),putImageData:()=>{},set globalAlpha(v:number){},set globalCompositeOperation(v:string){},set fillStyle(v:string){},set filter(v:string){}};}};}if (typeof globalThis.document==="undefined"){(globalThis as any).document={createElement:()=> new (globalThis as any).OffscreenCanvas(0,0)};}import{describe,expect,test}from "bun:test";import{CanvasRenderer}from "../../canvas-renderer";import{RootNode}from "../../nodes/root-node";import{LayerCompositorNode}from "../../nodes/layer-compositor-node";import{ColorNode}from "../../nodes/color-node";import{BlurEffect}from "../blur-effect";describe("BlurEffect & Ping-Pong Pipeline",()=>{const w=100;const h=100;async function renderWithBlur(intensities:number[]):Promise<string>{const renderer=new CanvasRenderer({width:w,height:h,fps:30});const root=new RootNode({duration:1,canvasCenter:{x:w/2,y:h/2}});const compositor=new LayerCompositorNode();const layer=new ColorNode({color:"red"});layer.id="layerA";for (const intensity of intensities){layer.effects.push(new BlurEffect(intensity));}compositor.add(layer);root.add(compositor);await renderer.render({node:root,time:0});return `rendered_blur_${intensities.join("_")}`;}test("✅ renders without effects",async ()=>{const res=await renderWithBlur([]);expect(res).toBe("rendered_blur_");});test("✅ renders with blur=0 (fast path)",async ()=>{const res=await renderWithBlur([0]);expect(res).toBe("rendered_blur_0");});test("✅ renders with blur=5",async ()=>{const res=await renderWithBlur([5]);expect(res).toBe("rendered_blur_5");});test("✅ renders with multiple effects (0,5,20) via ping-pong",async ()=>{const res=await renderWithBlur([0,5,20]);expect(res).toBe("rendered_blur_0_5_20");});});
+if (typeof globalThis.OffscreenCanvas === "undefined") {
+	(globalThis as any).OffscreenCanvas = class OffscreenCanvas {
+		constructor(public width: number, public height: number) {}
+		getContext() {
+			return {
+				save: () => {},
+				restore: () => {},
+				clearRect: () => {},
+				drawImage: () => {},
+				fillRect: () => {},
+				getImageData: () => ({ data: new Uint8ClampedArray(4) }),
+				putImageData: () => {},
+				set globalAlpha(v: number) {},
+				set globalCompositeOperation(v: string) {},
+				set fillStyle(v: string) {},
+				set filter(v: string) {}
+			};
+		}
+	};
+}
+
+if (typeof globalThis.document === "undefined") {
+	(globalThis as any).document = {
+		createElement: () => new (globalThis as any).OffscreenCanvas(0, 0)
+	};
+}
+
+import { describe, expect, test } from "bun:test";
+import { CanvasRenderer } from "../../canvas-renderer";
+import { RootNode } from "../../nodes/root-node";
+import { LayerCompositorNode } from "../../nodes/layer-compositor-node";
+import { ColorNode } from "../../nodes/color-node";
+import { BlurEffect } from "../blur-effect";
+
+describe("BlurEffect & Ping-Pong Pipeline", () => {
+	const w = 100;
+	const h = 100;
+
+	async function renderWithBlur(intensities: number[]): Promise<string> {
+		const renderer = new CanvasRenderer({ width: w, height: h, fps: 30 });
+
+		const root = new RootNode({ duration: 1, canvasCenter: { x: w / 2, y: h / 2 } });
+		const compositor = new LayerCompositorNode();
+		
+		const layer = new ColorNode({ color: "red" });
+		layer.id = "layerA";
+		
+		for (const intensity of intensities) {
+			layer.effects.push(new BlurEffect(intensity));
+		}
+
+		compositor.add(layer);
+		root.add(compositor);
+
+		await renderer.render({ node: root, time: 0 });
+		
+		return `rendered_blur_${intensities.join("_")}`;
+	}
+
+	test("✅ renders without effects", async () => {
+		const res = await renderWithBlur([]);
+		expect(res).toBe("rendered_blur_");
+	});
+
+	test("✅ renders with blur = 0 (fast path)", async () => {
+		const res = await renderWithBlur([0]);
+		expect(res).toBe("rendered_blur_0");
+	});
+
+	test("✅ renders with blur = 5", async () => {
+		const res = await renderWithBlur([5]);
+		expect(res).toBe("rendered_blur_5");
+	});
+
+	test("✅ renders with multiple effects (0, 5, 20) via ping-pong", async () => {
+		const res = await renderWithBlur([0, 5, 20]);
+		expect(res).toBe("rendered_blur_0_5_20");
+	});
+});

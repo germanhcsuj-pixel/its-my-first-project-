@@ -1,1 +1,701 @@
-if (typeof globalThis.OffscreenCanvas==="undefined"){(globalThis as any).OffscreenCanvas=class OffscreenCanvas{constructor(public width:number,public height:number){}getContext(){let fillStyle="black";const data=new Uint8ClampedArray(10*10*4);return{save:()=>{},restore:()=>{},clearRect:()=>{},drawImage:()=>{},fillRect:(x:number,y:number,w:number,h:number)=>{const r=fillStyle==="red" ? 255:0;const b=fillStyle==="blue" ? 255:0;data[0]=r;data[1]=0;data[2]=b;data[3]=255;},getImageData:()=> ({data}),putImageData:()=>{},set globalAlpha(v:number){},set globalCompositeOperation(v:string){},get fillStyle(){return fillStyle;},set fillStyle(v:string){fillStyle=v;},set filter(v:string){},translate:()=>{},rotate:()=>{},scale:()=>{},setTransform:()=>{},fillText:()=>{},measureText:()=> ({width:10,actualBoundingBoxAscent:5,actualBoundingBoxDescent:2}),beginPath:()=>{},arc:()=>{},fill:()=>{},stroke:()=>{},moveTo:()=>{},lineTo:()=>{},closePath:()=>{},set strokeStyle(v:string){},set lineWidth(v:number){},set font(v:string){},set textBaseline(v:string){},set textAlign(v:string){}};}};}if (typeof globalThis.document==="undefined"){(globalThis as any).document={createElement:()=> new (globalThis as any).OffscreenCanvas(0,0)};}import{describe,it,expect}from "bun:test";import{buildScene}from "../scene-builder";import{RenderTargetPool}from "../masks/mask-compositor";import{RenderTarget}from "../render-target";import{EffectEvaluator}from "../effects/effect-evaluator";import{EffectCompositor}from "../effects/effect-compositor";import{EffectParameterGraph}from "../effects/effect-parameter-graph";import type{TimelineTrack,VideoElement,EffectDefinition,RGBA,ColorEffectParams,BlurEffectParams,GlowEffectParams,ResolvedEffectTarget,EvaluatedBlurEffectParams,EvaluatedGlowEffectParams}from "@/types/timeline";import type{BaseNode}from "../nodes/base-node";function findNodeById(node:BaseNode | null,id:string):BaseNode | null{if (!node) return null;if (node.id===id) return node;if (node.children){for (const child of node.children){const found=findNodeById(child,id);if (found) return found;}}return null;}describe("P4.0 Production Integration & Verification",()=>{function createFixtureElement(id:string,custom?:Partial<VideoElement>):VideoElement{return{id,name:`Element ${id}`,type:"video",mediaId:`media_${id}`,startTime:0,duration:5,trimStart:0,trimEnd:5,transform:{position:{x:0,y:0},scale:1.0,rotate:0},opacity:1.0,...custom}as VideoElement;}function createFixtureTrack(id:string,elements:VideoElement[]):TimelineTrack{return{id,name:`Track ${id}`,type:"video",isMain:true,muted:false,hidden:false,elements}as unknown as TimelineTrack;}it("1. should translate legacy brightness correctly",async ()=>{const el=createFixtureElement("el1",{adjustments:{brightness:120}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el1",name:"m1",type:"video",file:{}as File,url:"test://el1",duration:5}],duration:5,background:{type:"color",color:"#000"}});expect(scene).not.toBeNull();const videoNode=findNodeById(scene,"el1");expect(videoNode).toBeDefined();expect(videoNode).not.toBeNull();const params=(videoNode as unknown as{params:{effects?:EffectDefinition[]}}).params;expect(params.effects).toBeDefined();const colorFx=params.effects?.find(e=> e.type==="color");expect(colorFx).toBeDefined();expect((colorFx?.parameters as ColorEffectParams).brightness).toEqual({mode:"static",value:120});});it("2. should translate legacy contrast correctly",async ()=>{const el=createFixtureElement("el2",{adjustments:{contrast:110}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el2",name:"m2",type:"video",file:{}as File,url:"test://el2",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el2");const params=(videoNode as unknown as{params:{effects?:EffectDefinition[]}}).params;const colorFx=params.effects?.find(e=> e.type==="color");expect((colorFx?.parameters as ColorEffectParams).contrast).toEqual({mode:"static",value:110});});it("3. should translate legacy saturation correctly",async ()=>{const el=createFixtureElement("el3",{adjustments:{saturation:130}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el3",name:"m3",type:"video",file:{}as File,url:"test://el3",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el3");const params=(videoNode as unknown as{params:{effects?:EffectDefinition[]}}).params;const colorFx=params.effects?.find(e=> e.type==="color");expect((colorFx?.parameters as ColorEffectParams).saturation).toEqual({mode:"static",value:130});});it("4. should translate legacy hue rotation correctly",async ()=>{const el=createFixtureElement("el4",{adjustments:{hueRotate:45}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el4",name:"m4",type:"video",file:{}as File,url:"test://el4",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el4");const params=(videoNode as unknown as{params:{effects?:EffectDefinition[]}}).params;const colorFx=params.effects?.find(e=> e.type==="color");expect((colorFx?.parameters as ColorEffectParams).hue).toEqual({mode:"static",value:45});});it("5. should translate legacy blur correctly",async ()=>{const el=createFixtureElement("el5",{adjustments:{blur:8}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el5",name:"m5",type:"video",file:{}as File,url:"test://el5",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el5");const params=(videoNode as unknown as{params:{effects?:EffectDefinition[]}}).params;const blurFx=params.effects?.find(e=> e.type==="blur");expect((blurFx?.parameters as BlurEffectParams).radius).toEqual({mode:"static",value:8});});it("6. should render legacy-only adjustments correctly via the translated pathway",async ()=>{const el=createFixtureElement("el6",{adjustments:{brightness:150}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el6",name:"m6",type:"video",file:{}as File,url:"test://el6",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el6");const params=(videoNode as unknown as{params:{adjustments:unknown;effects:EffectDefinition[]}}).params;expect(params.adjustments).toBeNull();expect(params.effects.length).toBe(1);});it("7. should render new-effect-only correctly",async ()=>{const effectsList:EffectDefinition[]=[{id:"fx-glow-01",type:"glow",enabled:true,opacity:1.0,parameters:{radius:{mode:"static",value:10},intensity:{mode:"static",value:1.5},color:{mode:"static",value:{r:255,g:0,b:0,a:1}}}}];const el=createFixtureElement("el7",{effects:effectsList});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el7",name:"m7",type:"video",file:{}as File,url:"test://el7",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el7");const params=(videoNode as unknown as{params:{effects:EffectDefinition[]}}).params;expect(params.effects.length).toBe(1);expect(params.effects[0].id).toBe("fx-glow-01");});it("8. should resolve conflict correctly (new effects take precedence over legacy)",async ()=>{const effectsList:EffectDefinition[]=[{id:"fx-color-custom",type:"color",enabled:true,opacity:1.0,parameters:{brightness:{mode:"static",value:90},contrast:{mode:"static",value:100},saturation:{mode:"static",value:100},hue:{mode:"static",value:0}}}];const el=createFixtureElement("el8",{adjustments:{brightness:120,saturation:150},effects:effectsList});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el8",name:"m8",type:"video",file:{}as File,url:"test://el8",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el8");const params=(videoNode as unknown as{params:{effects:EffectDefinition[]}}).params;const hasAdjColor=params.effects.some(e=> e.id.startsWith("adj-color-"));expect(hasAdjColor).toBe(false);const customColor=params.effects.find(e=> e.id==="fx-color-custom");expect((customColor?.parameters as ColorEffectParams).brightness).toEqual({mode:"static",value:90});});it("9. should verify no double application when both are defined",async ()=>{const el=createFixtureElement("el9",{adjustments:{brightness:130},effects:[]});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el9",name:"m9",type:"video",file:{}as File,url:"test://el9",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode=findNodeById(scene,"el9");const params=(videoNode as unknown as{params:{adjustments:unknown;effects:EffectDefinition[]}}).params;expect(params.adjustments).toBeNull();expect(params.effects.length).toBe(1);expect(params.effects[0].type).toBe("color");});it("10. should satisfy translation idempotency",async ()=>{const el=createFixtureElement("el10",{adjustments:{brightness:140}});const tracks:TimelineTrack[]=[createFixtureTrack("t1",[el])];const scene1=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el10",name:"m10",type:"video",file:{}as File,url:"test://el10",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode1=findNodeById(scene1,"el10");const params1=(videoNode1 as unknown as{params:{effects:EffectDefinition[]}}).params;const initialEffectsLength=params1.effects.length;expect(initialEffectsLength).toBe(1);const retranslatedEl=createFixtureElement("el10",{adjustments:{brightness:140},effects:params1.effects});const retranslatedTracks:TimelineTrack[]=[createFixtureTrack("t1",[retranslatedEl])];const scene2=await buildScene({canvasSize:{width:100,height:100},tracks:retranslatedTracks,mediaAssets:[{id:"media_el10",name:"m10",type:"video",file:{}as File,url:"test://el10",duration:5}],duration:5,background:{type:"color",color:"#000"}});const videoNode2=findNodeById(scene2,"el10");const params2=(videoNode2 as unknown as{params:{effects:EffectDefinition[]}}).params;expect(params2.effects.length).toBe(1);expect((params2.effects[0].parameters as ColorEffectParams).brightness).toEqual({mode:"static",value:140});});it("11. should render static effect values correctly",()=>{const effect:EffectDefinition={id:"fx1",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"static",value:15}}};const resolvedTarget:ResolvedEffectTarget={type:"layer",elementId:"fx1-el",contentIdentity:"layer:fx1-el"};const context={time:2.0,frameIndex:60,fps:30,target:resolvedTarget,allEffects:[effect],evaluatedParameters:new Map<string,number | RGBA>()};const evaluated=EffectEvaluator.evaluate(effect,context,0);expect((evaluated.parameters as EvaluatedBlurEffectParams).radius).toBe(15);});it("12. should evaluate keyframed effect parameters correctly",()=>{const effect:EffectDefinition={id:"fx2",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"keyframes",interpolation:"linear",keyframes:[{time:0,value:0},{time:2,value:20}]}}};const resolvedTarget:ResolvedEffectTarget={type:"layer",elementId:"fx2-el",contentIdentity:"layer:fx2-el"};const context1={time:1.0,frameIndex:30,fps:30,target:resolvedTarget,allEffects:[effect],evaluatedParameters:new Map<string,number | RGBA>()};const evaluated1=EffectEvaluator.evaluate(effect,context1,0);expect((evaluated1.parameters as EvaluatedBlurEffectParams).radius).toBe(10);const context2={time:2.0,frameIndex:60,fps:30,target:resolvedTarget,allEffects:[effect],evaluatedParameters:new Map<string,number | RGBA>()};const evaluated2=EffectEvaluator.evaluate(effect,context2,0);expect((evaluated2.parameters as EvaluatedBlurEffectParams).radius).toBe(20);});it("13. should evaluate reference parameters with scale and offset correctly",()=>{const blurEffect:EffectDefinition={id:"blur-01",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"static",value:10}}};const glowEffect:EffectDefinition={id:"glow-01",type:"glow",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"blur-01.radius",scale:1.5,offset:2},intensity:{mode:"static",value:1.0},color:{mode:"static",value:{r:255,g:0,b:0,a:1}}}};const resolvedTarget:ResolvedEffectTarget={type:"layer",elementId:"ref-el",contentIdentity:"layer:ref-el"};const sharedEvaluatedMap=new Map<string,number | RGBA>();const allEffects=[blurEffect,glowEffect];const context1={time:0,frameIndex:0,fps:30,target:resolvedTarget,allEffects,evaluatedParameters:sharedEvaluatedMap};const evaluatedBlur=EffectEvaluator.evaluate(blurEffect,context1,0);sharedEvaluatedMap.set("blur-01.radius",(evaluatedBlur.parameters as EvaluatedBlurEffectParams).radius);const evaluatedGlow=EffectEvaluator.evaluate(glowEffect,context1,1);expect((evaluatedGlow.parameters as EvaluatedGlowEffectParams).radius).toBe(17);});it("14. should evaluate multi-level parameter references correctly",()=>{const fxA:EffectDefinition={id:"fxA",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"static",value:10}}};const fxB:EffectDefinition={id:"fxB",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxA.radius",scale:2.0,offset:0}}};const fxC:EffectDefinition={id:"fxC",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxB.radius",scale:1.0,offset:5}}};const resolvedTarget:ResolvedEffectTarget={type:"layer",elementId:"multi-el",contentIdentity:"layer:multi-el"};const sharedEvaluatedMap=new Map<string,number | RGBA>();const allEffects=[fxA,fxB,fxC];const context={time:0,frameIndex:0,fps:30,target:resolvedTarget,allEffects,evaluatedParameters:sharedEvaluatedMap};const evalA=EffectEvaluator.evaluate(fxA,context,0);sharedEvaluatedMap.set("fxA.radius",(evalA.parameters as EvaluatedBlurEffectParams).radius);const evalB=EffectEvaluator.evaluate(fxB,context,1);sharedEvaluatedMap.set("fxB.radius",(evalB.parameters as EvaluatedBlurEffectParams).radius);expect((evalB.parameters as EvaluatedBlurEffectParams).radius).toBe(20);const evalC=EffectEvaluator.evaluate(fxC,context,2);expect((evalC.parameters as EvaluatedBlurEffectParams).radius).toBe(25);});it("15. should sort deterministic topological ordering correctly",()=>{const fxC:EffectDefinition={id:"fxC",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxB.radius"}}};const fxB:EffectDefinition={id:"fxB",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxA.radius"}}};const fxA:EffectDefinition={id:"fxA",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"static",value:10}}};const unsorted=[fxC,fxA,fxB];const graph=new EffectParameterGraph();graph.buildGraph(unsorted);const sortedKeys=graph.getTopologicalOrder();expect(sortedKeys).toEqual(["fxA.radius","fxB.radius","fxC.radius"]);});it("16. should preserve target isolation",()=>{const target1=new RenderTarget({width:10,height:10});const target2=new RenderTarget({width:10,height:10});target1.context.fillStyle="red";target1.context.fillRect(0,0,10,10);target2.context.fillStyle="blue";target2.context.fillRect(0,0,10,10);const img1=target1.context.getImageData(0,0,1,1).data;const img2=target2.context.getImageData(0,0,1,1).data;expect(img1[0]).toBe(255);expect(img1[2]).toBe(0);expect(img2[0]).toBe(0);expect(img2[2]).toBe(255);});it("17. should cache HIT when evaluated values are identical",()=>{const cache=new Map<string,string>();const hash1="blur-10-glow-5";cache.set(hash1,"rendered_result_data");const hash2="blur-10-glow-5";expect(cache.has(hash2)).toBe(true);expect(cache.get(hash2)).toBe("rendered_result_data");});it("18. should cache MISS when evaluated values change",()=>{const cache=new Map<string,string>();const hash1="blur-10-glow-5";cache.set(hash1,"rendered_result_data");const hash2="blur-15-glow-5";expect(cache.has(hash2)).toBe(false);});it("19. should verify backward compatibility fixture renders without changing original timeline",async ()=>{const originalEl=createFixtureElement("el_fixture",{adjustments:{brightness:120,saturation:110,blur:5},effect:"vhs"});const originalTimelineJSON=JSON.stringify(originalEl);const tracks:TimelineTrack[]=[createFixtureTrack("t_fixture",[originalEl])];const scene=await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el_fixture",name:"fixture_m",type:"video",file:{}as File,url:"test://fixture",duration:5}],duration:5,background:{type:"color",color:"#000"}});expect(scene).not.toBeNull();const videoNode=findNodeById(scene,"el_fixture");expect(videoNode).toBeDefined();const params=(videoNode as unknown as{params:{adjustments:unknown;effects:EffectDefinition[]}}).params;expect(params.adjustments).toBeNull();expect(params.effects.length).toBe(2);expect(JSON.stringify(originalEl)).toBe(originalTimelineJSON);});it("20. should roll back safely on failure without leaving mutated states",()=>{const effects:EffectDefinition[]=[{id:"fxA",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxB.radius"}}},{id:"fxB",type:"blur",enabled:true,opacity:1.0,parameters:{radius:{mode:"reference",parameterId:"fxA.radius"}}}];const originalJSON=JSON.stringify(effects);const resolvedTarget={type:"layer" as const,elementId:"el_fail",contentIdentity:"layer:el_fail"};const context={time:0,frameIndex:0,fps:30,target:resolvedTarget,allEffects:effects,evaluatedParameters:new Map<string,number | RGBA>()};try{EffectEvaluator.evaluate(effects[0],context,0);expect(true).toBe(false);}catch (e:unknown){const err=e as Error;expect(err.message).toContain("P3.11_PARAMETER_CYCLE");}expect(JSON.stringify(effects)).toBe(originalJSON);});it("21. should ensure RenderTargetPool active count returns to previous count",()=>{const initialCount=RenderTargetPool.getActiveCount();const t1=RenderTargetPool.acquire(10,10);const t2=RenderTargetPool.acquire(20,20);expect(RenderTargetPool.getActiveCount()).toBe(initialCount+2);RenderTargetPool.release(t1);RenderTargetPool.release(t2);expect(RenderTargetPool.getActiveCount()).toBe(initialCount);});it("22. should preserve original Timeline immutability",async ()=>{const el=createFixtureElement("el_immut",{adjustments:{brightness:150},effects:[]});const timelineCopy=JSON.stringify(el);const tracks:TimelineTrack[]=[createFixtureTrack("t_immut",[el])];await buildScene({canvasSize:{width:100,height:100},tracks,mediaAssets:[{id:"media_el_immut",name:"m_immut",type:"video",file:{}as File,url:"test://immut",duration:5}],duration:5,background:{type:"color",color:"#000"}});expect(JSON.stringify(el)).toBe(timelineCopy);});});
+// Mock Canvas and DOM before importing renderer classes to support node/bun test environment
+if (typeof globalThis.OffscreenCanvas === "undefined") {
+	(globalThis as any).OffscreenCanvas = class OffscreenCanvas {
+		constructor(public width: number, public height: number) {}
+		getContext() {
+			let fillStyle = "black";
+			const data = new Uint8ClampedArray(10 * 10 * 4);
+			return {
+				save: () => {},
+				restore: () => {},
+				clearRect: () => {},
+				drawImage: () => {},
+				fillRect: (x: number, y: number, w: number, h: number) => {
+					const r = fillStyle === "red" ? 255 : 0;
+					const b = fillStyle === "blue" ? 255 : 0;
+					data[0] = r;
+					data[1] = 0;
+					data[2] = b;
+					data[3] = 255;
+				},
+				getImageData: () => ({ data }),
+				putImageData: () => {},
+				set globalAlpha(v: number) {},
+				set globalCompositeOperation(v: string) {},
+				get fillStyle() { return fillStyle; },
+				set fillStyle(v: string) { fillStyle = v; },
+				set filter(v: string) {},
+				translate: () => {},
+				rotate: () => {},
+				scale: () => {},
+				setTransform: () => {},
+				fillText: () => {},
+				measureText: () => ({ width: 10, actualBoundingBoxAscent: 5, actualBoundingBoxDescent: 2 }),
+				beginPath: () => {},
+				arc: () => {},
+				fill: () => {},
+				stroke: () => {},
+				moveTo: () => {},
+				lineTo: () => {},
+				closePath: () => {},
+				set strokeStyle(v: string) {},
+				set lineWidth(v: number) {},
+				set font(v: string) {},
+				set textBaseline(v: string) {},
+				set textAlign(v: string) {}
+			};
+		}
+	};
+}
+
+if (typeof globalThis.document === "undefined") {
+	(globalThis as any).document = {
+		createElement: () => new (globalThis as any).OffscreenCanvas(0, 0)
+	};
+}
+
+import { describe, it, expect } from "bun:test";
+import { buildScene } from "../scene-builder";
+import { RenderTargetPool } from "../masks/mask-compositor";
+import { RenderTarget } from "../render-target";
+import { EffectEvaluator } from "../effects/effect-evaluator";
+import { EffectCompositor } from "../effects/effect-compositor";
+import { EffectParameterGraph } from "../effects/effect-parameter-graph";
+import type { TimelineTrack, VideoElement, EffectDefinition, RGBA, ColorEffectParams, BlurEffectParams, GlowEffectParams, ResolvedEffectTarget, EvaluatedBlurEffectParams, EvaluatedGlowEffectParams } from "@/types/timeline";
+import type { BaseNode } from "../nodes/base-node";
+
+// Helper to find a node by id in the built scene tree
+function findNodeById(node: BaseNode | null, id: string): BaseNode | null {
+	if (!node) return null;
+	if (node.id === id) return node;
+	if (node.children) {
+		for (const child of node.children) {
+			const found = findNodeById(child, id);
+			if (found) return found;
+		}
+	}
+	return null;
+}
+
+describe("P4.0 Production Integration & Verification", () => {
+	// Utility to generate a minimal timeline element
+	function createFixtureElement(id: string, custom?: Partial<VideoElement>): VideoElement {
+		return {
+			id,
+			name: `Element ${id}`,
+			type: "video",
+			mediaId: `media_${id}`,
+			startTime: 0,
+			duration: 5,
+			trimStart: 0,
+			trimEnd: 5,
+			transform: { position: { x: 0, y: 0 }, scale: 1.0, rotate: 0 },
+			opacity: 1.0,
+			...custom
+		} as VideoElement;
+	}
+
+	// Utility to generate a typed timeline track
+	function createFixtureTrack(id: string, elements: VideoElement[]): TimelineTrack {
+		return {
+			id,
+			name: `Track ${id}`,
+			type: "video",
+			isMain: true,
+			muted: false,
+			hidden: false,
+			elements
+		} as unknown as TimelineTrack;
+	}
+
+	it("1. should translate legacy brightness correctly", async () => {
+		const el = createFixtureElement("el1", {
+			adjustments: { brightness: 120 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el1", name: "m1", type: "video", file: {} as File, url: "test://el1", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		expect(scene).not.toBeNull();
+		const videoNode = findNodeById(scene, "el1");
+		expect(videoNode).toBeDefined();
+		expect(videoNode).not.toBeNull();
+		const params = (videoNode as unknown as { params: { effects?: EffectDefinition[] } }).params;
+		expect(params.effects).toBeDefined();
+		const colorFx = params.effects?.find(e => e.type === "color");
+		expect(colorFx).toBeDefined();
+		expect((colorFx?.parameters as ColorEffectParams).brightness).toEqual({ mode: "static", value: 120 });
+	});
+
+	it("2. should translate legacy contrast correctly", async () => {
+		const el = createFixtureElement("el2", {
+			adjustments: { contrast: 110 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el2", name: "m2", type: "video", file: {} as File, url: "test://el2", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el2");
+		const params = (videoNode as unknown as { params: { effects?: EffectDefinition[] } }).params;
+		const colorFx = params.effects?.find(e => e.type === "color");
+		expect((colorFx?.parameters as ColorEffectParams).contrast).toEqual({ mode: "static", value: 110 });
+	});
+
+	it("3. should translate legacy saturation correctly", async () => {
+		const el = createFixtureElement("el3", {
+			adjustments: { saturation: 130 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el3", name: "m3", type: "video", file: {} as File, url: "test://el3", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el3");
+		const params = (videoNode as unknown as { params: { effects?: EffectDefinition[] } }).params;
+		const colorFx = params.effects?.find(e => e.type === "color");
+		expect((colorFx?.parameters as ColorEffectParams).saturation).toEqual({ mode: "static", value: 130 });
+	});
+
+	it("4. should translate legacy hue rotation correctly", async () => {
+		const el = createFixtureElement("el4", {
+			adjustments: { hueRotate: 45 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el4", name: "m4", type: "video", file: {} as File, url: "test://el4", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el4");
+		const params = (videoNode as unknown as { params: { effects?: EffectDefinition[] } }).params;
+		const colorFx = params.effects?.find(e => e.type === "color");
+		expect((colorFx?.parameters as ColorEffectParams).hue).toEqual({ mode: "static", value: 45 });
+	});
+
+	it("5. should translate legacy blur correctly", async () => {
+		const el = createFixtureElement("el5", {
+			adjustments: { blur: 8 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el5", name: "m5", type: "video", file: {} as File, url: "test://el5", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el5");
+		const params = (videoNode as unknown as { params: { effects?: EffectDefinition[] } }).params;
+		const blurFx = params.effects?.find(e => e.type === "blur");
+		expect((blurFx?.parameters as BlurEffectParams).radius).toEqual({ mode: "static", value: 8 });
+	});
+
+	it("6. should render legacy-only adjustments correctly via the translated pathway", async () => {
+		const el = createFixtureElement("el6", {
+			adjustments: { brightness: 150 }
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el6", name: "m6", type: "video", file: {} as File, url: "test://el6", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el6");
+		const params = (videoNode as unknown as { params: { adjustments: unknown; effects: EffectDefinition[] } }).params;
+		// Verify that adjustments is null (skipping legacy CSS filter path to prevent double application)
+		expect(params.adjustments).toBeNull();
+		expect(params.effects.length).toBe(1);
+	});
+
+	it("7. should render new-effect-only correctly", async () => {
+		const effectsList: EffectDefinition[] = [{
+			id: "fx-glow-01",
+			type: "glow",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: { mode: "static", value: 10 },
+				intensity: { mode: "static", value: 1.5 },
+				color: { mode: "static", value: { r: 255, g: 0, b: 0, a: 1 } }
+			}
+		}];
+		const el = createFixtureElement("el7", {
+			effects: effectsList
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el7", name: "m7", type: "video", file: {} as File, url: "test://el7", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el7");
+		const params = (videoNode as unknown as { params: { effects: EffectDefinition[] } }).params;
+		expect(params.effects.length).toBe(1);
+		expect(params.effects[0].id).toBe("fx-glow-01");
+	});
+
+	it("8. should resolve conflict correctly (new effects take precedence over legacy)", async () => {
+		const effectsList: EffectDefinition[] = [{
+			id: "fx-color-custom",
+			type: "color",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				brightness: { mode: "static", value: 90 },
+				contrast: { mode: "static", value: 100 },
+				saturation: { mode: "static", value: 100 },
+				hue: { mode: "static", value: 0 }
+			}
+		}];
+		const el = createFixtureElement("el8", {
+			adjustments: { brightness: 120, saturation: 150 },
+			effects: effectsList
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el8", name: "m8", type: "video", file: {} as File, url: "test://el8", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el8");
+		const params = (videoNode as unknown as { params: { effects: EffectDefinition[] } }).params;
+		// The custom color effect should prevent translating legacy color adjustments.
+		// So there should be no color effect with ID containing "adj-color-".
+		const hasAdjColor = params.effects.some(e => e.id.startsWith("adj-color-"));
+		expect(hasAdjColor).toBe(false);
+		const customColor = params.effects.find(e => e.id === "fx-color-custom");
+		expect((customColor?.parameters as ColorEffectParams).brightness).toEqual({ mode: "static", value: 90 });
+	});
+
+	it("9. should verify no double application when both are defined", async () => {
+		const el = createFixtureElement("el9", {
+			adjustments: { brightness: 130 },
+			effects: []
+		});
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el9", name: "m9", type: "video", file: {} as File, url: "test://el9", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode = findNodeById(scene, "el9");
+		const params = (videoNode as unknown as { params: { adjustments: unknown; effects: EffectDefinition[] } }).params;
+		// Adjustments must be nulled out to avoid double application via CSS filter
+		expect(params.adjustments).toBeNull();
+		expect(params.effects.length).toBe(1);
+		expect(params.effects[0].type).toBe("color");
+	});
+
+	it("10. should satisfy translation idempotency", async () => {
+		const el = createFixtureElement("el10", {
+			adjustments: { brightness: 140 }
+		});
+		
+		const tracks: TimelineTrack[] = [createFixtureTrack("t1", [el])];
+		const scene1 = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el10", name: "m10", type: "video", file: {} as File, url: "test://el10", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+
+		const videoNode1 = findNodeById(scene1, "el10");
+		const params1 = (videoNode1 as unknown as { params: { effects: EffectDefinition[] } }).params;
+		const initialEffectsLength = params1.effects.length;
+		expect(initialEffectsLength).toBe(1);
+
+		// Now simulate running translate again by passing the result of first translation as element effects
+		const retranslatedEl = createFixtureElement("el10", {
+			adjustments: { brightness: 140 },
+			effects: params1.effects
+		});
+		const retranslatedTracks: TimelineTrack[] = [createFixtureTrack("t1", [retranslatedEl])];
+		const scene2 = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks: retranslatedTracks,
+			mediaAssets: [{ id: "media_el10", name: "m10", type: "video", file: {} as File, url: "test://el10", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+		const videoNode2 = findNodeById(scene2, "el10");
+		const params2 = (videoNode2 as unknown as { params: { effects: EffectDefinition[] } }).params;
+		// Length must still be 1 (idempotency: did not duplicate color effect)
+		expect(params2.effects.length).toBe(1);
+		expect((params2.effects[0].parameters as ColorEffectParams).brightness).toEqual({ mode: "static", value: 140 });
+	});
+
+	it("11. should render static effect values correctly", () => {
+		const effect: EffectDefinition = {
+			id: "fx1",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: { mode: "static", value: 15 }
+			}
+		};
+		const resolvedTarget: ResolvedEffectTarget = { type: "layer", elementId: "fx1-el", contentIdentity: "layer:fx1-el" };
+		const context = {
+			time: 2.0,
+			frameIndex: 60,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects: [effect],
+			evaluatedParameters: new Map<string, number | RGBA>()
+		};
+		const evaluated = EffectEvaluator.evaluate(effect, context, 0);
+		expect((evaluated.parameters as EvaluatedBlurEffectParams).radius).toBe(15);
+	});
+
+	it("12. should evaluate keyframed effect parameters correctly", () => {
+		const effect: EffectDefinition = {
+			id: "fx2",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: {
+					mode: "keyframes",
+					interpolation: "linear",
+					keyframes: [
+						{ time: 0, value: 0 },
+						{ time: 2, value: 20 }
+					]
+				}
+			}
+		};
+		const resolvedTarget: ResolvedEffectTarget = { type: "layer", elementId: "fx2-el", contentIdentity: "layer:fx2-el" };
+		const context1 = {
+			time: 1.0,
+			frameIndex: 30,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects: [effect],
+			evaluatedParameters: new Map<string, number | RGBA>()
+		};
+		const evaluated1 = EffectEvaluator.evaluate(effect, context1, 0);
+		expect((evaluated1.parameters as EvaluatedBlurEffectParams).radius).toBe(10); // halfway
+
+		const context2 = {
+			time: 2.0,
+			frameIndex: 60,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects: [effect],
+			evaluatedParameters: new Map<string, number | RGBA>()
+		};
+		const evaluated2 = EffectEvaluator.evaluate(effect, context2, 0);
+		expect((evaluated2.parameters as EvaluatedBlurEffectParams).radius).toBe(20);
+	});
+
+	it("13. should evaluate reference parameters with scale and offset correctly", () => {
+		const blurEffect: EffectDefinition = {
+			id: "blur-01",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: { mode: "static", value: 10 }
+			}
+		};
+		const glowEffect: EffectDefinition = {
+			id: "glow-01",
+			type: "glow",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: {
+					mode: "reference",
+					parameterId: "blur-01.radius",
+					scale: 1.5,
+					offset: 2
+				},
+				intensity: { mode: "static", value: 1.0 },
+				color: { mode: "static", value: { r: 255, g: 0, b: 0, a: 1 } }
+			}
+		};
+
+		const resolvedTarget: ResolvedEffectTarget = { type: "layer", elementId: "ref-el", contentIdentity: "layer:ref-el" };
+		const sharedEvaluatedMap = new Map<string, number | RGBA>();
+		const allEffects = [blurEffect, glowEffect];
+
+		const context1 = {
+			time: 0,
+			frameIndex: 0,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects,
+			evaluatedParameters: sharedEvaluatedMap
+		};
+
+		const evaluatedBlur = EffectEvaluator.evaluate(blurEffect, context1, 0);
+		sharedEvaluatedMap.set("blur-01.radius", (evaluatedBlur.parameters as EvaluatedBlurEffectParams).radius);
+
+		const evaluatedGlow = EffectEvaluator.evaluate(glowEffect, context1, 1);
+		// expected radius = 10 * 1.5 + 2 = 17
+		expect((evaluatedGlow.parameters as EvaluatedGlowEffectParams).radius).toBe(17);
+	});
+
+	it("14. should evaluate multi-level parameter references correctly", () => {
+		const fxA: EffectDefinition = {
+			id: "fxA",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: { mode: "static", value: 10 }
+			}
+		};
+		const fxB: EffectDefinition = {
+			id: "fxB",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: {
+					mode: "reference",
+					parameterId: "fxA.radius",
+					scale: 2.0,
+					offset: 0
+				}
+			}
+		};
+		const fxC: EffectDefinition = {
+			id: "fxC",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: {
+				radius: {
+					mode: "reference",
+					parameterId: "fxB.radius",
+					scale: 1.0,
+					offset: 5
+				}
+			}
+		};
+
+		const resolvedTarget: ResolvedEffectTarget = { type: "layer", elementId: "multi-el", contentIdentity: "layer:multi-el" };
+		const sharedEvaluatedMap = new Map<string, number | RGBA>();
+		const allEffects = [fxA, fxB, fxC];
+
+		const context = {
+			time: 0,
+			frameIndex: 0,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects,
+			evaluatedParameters: sharedEvaluatedMap
+		};
+
+		// Evaluate in topological order
+		const evalA = EffectEvaluator.evaluate(fxA, context, 0);
+		sharedEvaluatedMap.set("fxA.radius", (evalA.parameters as EvaluatedBlurEffectParams).radius);
+
+		const evalB = EffectEvaluator.evaluate(fxB, context, 1);
+		sharedEvaluatedMap.set("fxB.radius", (evalB.parameters as EvaluatedBlurEffectParams).radius);
+		expect((evalB.parameters as EvaluatedBlurEffectParams).radius).toBe(20);
+
+		const evalC = EffectEvaluator.evaluate(fxC, context, 2);
+		expect((evalC.parameters as EvaluatedBlurEffectParams).radius).toBe(25); // 20 * 1.0 + 5
+	});
+
+	it("15. should sort deterministic topological ordering correctly", () => {
+		// Three effects: C depends on B, B depends on A
+		const fxC: EffectDefinition = {
+			id: "fxC",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: { radius: { mode: "reference", parameterId: "fxB.radius" } }
+		};
+		const fxB: EffectDefinition = {
+			id: "fxB",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: { radius: { mode: "reference", parameterId: "fxA.radius" } }
+		};
+		const fxA: EffectDefinition = {
+			id: "fxA",
+			type: "blur",
+			enabled: true,
+			opacity: 1.0,
+			parameters: { radius: { mode: "static", value: 10 } }
+		};
+
+		const unsorted = [fxC, fxA, fxB];
+		const graph = new EffectParameterGraph();
+		graph.buildGraph(unsorted);
+		const sortedKeys = graph.getTopologicalOrder();
+
+		expect(sortedKeys).toEqual(["fxA.radius", "fxB.radius", "fxC.radius"]);
+	});
+
+	it("16. should preserve target isolation", () => {
+		const target1 = new RenderTarget({ width: 10, height: 10 });
+		const target2 = new RenderTarget({ width: 10, height: 10 });
+
+		target1.context.fillStyle = "red";
+		target1.context.fillRect(0, 0, 10, 10);
+
+		target2.context.fillStyle = "blue";
+		target2.context.fillRect(0, 0, 10, 10);
+
+		// Verify target contexts are independent
+		const img1 = target1.context.getImageData(0, 0, 1, 1).data;
+		const img2 = target2.context.getImageData(0, 0, 1, 1).data;
+
+		expect(img1[0]).toBe(255); // Red
+		expect(img1[2]).toBe(0);
+		expect(img2[0]).toBe(0);
+		expect(img2[2]).toBe(255); // Blue
+	});
+
+	it("17. should cache HIT when evaluated values are identical", () => {
+		const cache = new Map<string, string>();
+		const hash1 = "blur-10-glow-5";
+		cache.set(hash1, "rendered_result_data");
+
+		const hash2 = "blur-10-glow-5";
+		expect(cache.has(hash2)).toBe(true);
+		expect(cache.get(hash2)).toBe("rendered_result_data");
+	});
+
+	it("18. should cache MISS when evaluated values change", () => {
+		const cache = new Map<string, string>();
+		const hash1 = "blur-10-glow-5";
+		cache.set(hash1, "rendered_result_data");
+
+		const hash2 = "blur-15-glow-5";
+		expect(cache.has(hash2)).toBe(false);
+	});
+
+	it("19. should verify backward compatibility fixture renders without changing original timeline", async () => {
+		const originalEl = createFixtureElement("el_fixture", {
+			adjustments: { brightness: 120, saturation: 110, blur: 5 },
+			effect: "vhs"
+		});
+
+		const originalTimelineJSON = JSON.stringify(originalEl);
+
+		const tracks: TimelineTrack[] = [createFixtureTrack("t_fixture", [originalEl])];
+		const scene = await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el_fixture", name: "fixture_m", type: "video", file: {} as File, url: "test://fixture", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+
+		expect(scene).not.toBeNull();
+		const videoNode = findNodeById(scene, "el_fixture");
+		expect(videoNode).toBeDefined();
+
+		// Check parameter translation
+		const params = (videoNode as unknown as { params: { adjustments: unknown; effects: EffectDefinition[] } }).params;
+		expect(params.adjustments).toBeNull();
+		expect(params.effects.length).toBe(2);
+
+		// Prove original timeline remains strictly unchanged
+		expect(JSON.stringify(originalEl)).toBe(originalTimelineJSON);
+	});
+
+	it("20. should roll back safely on failure without leaving mutated states", () => {
+		const effects: EffectDefinition[] = [
+			{
+				id: "fxA",
+				type: "blur",
+				enabled: true,
+				opacity: 1.0,
+				parameters: { radius: { mode: "reference", parameterId: "fxB.radius" } }
+			},
+			{
+				id: "fxB",
+				type: "blur",
+				enabled: true,
+				opacity: 1.0,
+				parameters: { radius: { mode: "reference", parameterId: "fxA.radius" } }
+			}
+		];
+
+		const originalJSON = JSON.stringify(effects);
+		const resolvedTarget = {
+			type: "layer" as const,
+			elementId: "el_fail",
+			contentIdentity: "layer:el_fail"
+		};
+		const context = {
+			time: 0,
+			frameIndex: 0,
+			fps: 30,
+			target: resolvedTarget,
+			allEffects: effects,
+			evaluatedParameters: new Map<string, number | RGBA>()
+		};
+
+		try {
+			EffectEvaluator.evaluate(effects[0], context, 0);
+			expect(true).toBe(false); 
+		} catch (e: unknown) {
+			const err = e as Error;
+			expect(err.message).toContain("P3.11_PARAMETER_CYCLE");
+		}
+
+		// Verify original effects array remains completely untampered
+		expect(JSON.stringify(effects)).toBe(originalJSON);
+	});
+
+	it("21. should ensure RenderTargetPool active count returns to previous count", () => {
+		const initialCount = RenderTargetPool.getActiveCount();
+
+		const t1 = RenderTargetPool.acquire(10, 10);
+		const t2 = RenderTargetPool.acquire(20, 20);
+		expect(RenderTargetPool.getActiveCount()).toBe(initialCount + 2);
+
+		RenderTargetPool.release(t1);
+		RenderTargetPool.release(t2);
+		expect(RenderTargetPool.getActiveCount()).toBe(initialCount);
+	});
+
+	it("22. should preserve original Timeline immutability", async () => {
+		const el = createFixtureElement("el_immut", {
+			adjustments: { brightness: 150 },
+			effects: []
+		});
+		const timelineCopy = JSON.stringify(el);
+
+		const tracks: TimelineTrack[] = [createFixtureTrack("t_immut", [el])];
+		await buildScene({
+			canvasSize: { width: 100, height: 100 },
+			tracks,
+			mediaAssets: [{ id: "media_el_immut", name: "m_immut", type: "video", file: {} as File, url: "test://immut", duration: 5 }],
+			duration: 5,
+			background: { type: "color", color: "#000" }
+		});
+
+		expect(JSON.stringify(el)).toBe(timelineCopy);
+	});
+});

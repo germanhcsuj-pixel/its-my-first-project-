@@ -1,1 +1,54 @@
-import type{BaseNode}from "./nodes/base-node";import{RenderTarget}from "./render-target";import{defaultRenderScheduler}from "./render-scheduler";export type CanvasRendererParams={width:number;height:number;fps:number;imageSmoothingQuality?:ImageSmoothingQuality;};export class CanvasRenderer{mainTarget:RenderTarget;width:number;height:number;fps:number;constructor({width,height,fps,imageSmoothingQuality="low"}:CanvasRendererParams){this.width=width;this.height=height;this.fps=fps;this.mainTarget=new RenderTarget({width,height,imageSmoothingQuality});}setSize({width,height}:{width:number;height:number}){this.width=width;this.height=height;this.mainTarget.setSize(width,height);}async render({node,time}:{node:BaseNode;time:number}){this.mainTarget.clearWithColor("black");await defaultRenderScheduler.renderNode({node,target:this.mainTarget,time});}async renderToCanvas({node,time,targetCanvas,}:{node:BaseNode;time:number;targetCanvas:HTMLCanvasElement;}){await this.render({node,time});const ctx=targetCanvas.getContext("2d");if (!ctx){throw new Error("Failed to get target canvas context");}ctx.drawImage(this.mainTarget.canvas,0,0,targetCanvas.width,targetCanvas.height);}}
+import type { BaseNode } from "./nodes/base-node";
+import { RenderTarget } from "./render-target";
+import { defaultRenderScheduler } from "./render-scheduler";
+
+export type CanvasRendererParams = {
+	width: number;
+	height: number;
+	fps: number;
+	imageSmoothingQuality?: ImageSmoothingQuality;
+};
+
+export class CanvasRenderer {
+	mainTarget: RenderTarget;
+	width: number;
+	height: number;
+	fps: number;
+
+	constructor({ width, height, fps, imageSmoothingQuality = "low" }: CanvasRendererParams) {
+		this.width = width;
+		this.height = height;
+		this.fps = fps;
+		this.mainTarget = new RenderTarget({ width, height, imageSmoothingQuality });
+	}
+
+	setSize({ width, height }: { width: number; height: number }) {
+		this.width = width;
+		this.height = height;
+		this.mainTarget.setSize(width, height);
+	}
+
+	async render({ node, time }: { node: BaseNode; time: number }) {
+		this.mainTarget.clearWithColor("black");
+		await defaultRenderScheduler.renderNode({ node, target: this.mainTarget, time });
+	}
+
+	async renderToCanvas({
+		node,
+		time,
+		targetCanvas,
+	}: {
+		node: BaseNode;
+		time: number;
+		targetCanvas: HTMLCanvasElement;
+	}) {
+		await this.render({ node, time });
+
+		const ctx = targetCanvas.getContext("2d");
+		if (!ctx) {
+			throw new Error("Failed to get target canvas context");
+		}
+
+		ctx.drawImage(this.mainTarget.canvas, 0, 0, targetCanvas.width, targetCanvas.height);
+	}
+}

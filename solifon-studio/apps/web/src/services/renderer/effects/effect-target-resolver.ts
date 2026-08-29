@@ -1,1 +1,77 @@
-import{EffectTarget,ResolvedEffectTarget,MaskDefinition,MaskSource}from "@/types/timeline";import{TrackedMaskResolver}from "@/services/tracking/tracked-mask-resolver";export class EffectTargetResolver{public static resolve( target:EffectTarget,frameIndex:number,masks:MaskDefinition[]=[],inputHash?:string ):ResolvedEffectTarget | null{if (target.type==="layer"){return{type:"layer",elementId:target.elementId,contentIdentity:`layer:${target.elementId}`};}if (target.type==="mask"){const mask=masks.find(m=> m.id===target.maskId);if (!mask){return null;}let resolvedSource:MaskSource=mask.source;if (mask.source.type==="tracked"){const resolved=TrackedMaskResolver.resolve(inputHash,mask.source.trackId,frameIndex,mask.gapPolicy || "none");if (!resolved){return null;}resolvedSource=resolved;}let contentIdentity="";if (resolvedSource.type==="path"){contentIdentity=`mask:${target.maskId}_path:${JSON.stringify(resolvedSource.geometry)}`;}else if (resolvedSource.type==="alpha"){contentIdentity=`mask:${target.maskId}_alpha:${resolvedSource.mask.contentHash}_w:${resolvedSource.mask.width}_h:${resolvedSource.mask.height}_src:${resolvedSource.mask.sourceId}`;}else{return null;}return{type:"mask",maskId:target.maskId,source:resolvedSource,contentIdentity};}if (target.type==="track"){const resolvedSource=TrackedMaskResolver.resolve(inputHash,target.trackId,frameIndex,"none");if (!resolvedSource){return null;}let contentIdentity="";if (resolvedSource.type==="path"){contentIdentity=`track:${target.trackId}_frame:${frameIndex}_path:${JSON.stringify(resolvedSource.geometry)}`;}else if (resolvedSource.type==="alpha"){contentIdentity=`track:${target.trackId}_frame:${frameIndex}_alpha:${resolvedSource.mask.contentHash}_w:${resolvedSource.mask.width}_h:${resolvedSource.mask.height}_src:${resolvedSource.mask.sourceId}`;}else{return null;}return{type:"track",trackId:target.trackId,frameIndex,source:resolvedSource,contentIdentity};}return null;}}
+import { EffectTarget, ResolvedEffectTarget, MaskDefinition, MaskSource } from "@/types/timeline";
+import { TrackedMaskResolver } from "@/services/tracking/tracked-mask-resolver";
+
+export class EffectTargetResolver {
+	public static resolve(
+		target: EffectTarget,
+		frameIndex: number,
+		masks: MaskDefinition[] = [],
+		inputHash?: string
+	): ResolvedEffectTarget | null {
+		if (target.type === "layer") {
+			return {
+				type: "layer",
+				elementId: target.elementId,
+				contentIdentity: `layer:${target.elementId}`
+			};
+		}
+
+		if (target.type === "mask") {
+			const mask = masks.find(m => m.id === target.maskId);
+			if (!mask) {
+				return null;
+			}
+			
+			let resolvedSource: MaskSource = mask.source;
+			if (mask.source.type === "tracked") {
+				const resolved = TrackedMaskResolver.resolve(inputHash, mask.source.trackId, frameIndex, mask.gapPolicy || "none");
+				if (!resolved) {
+					return null;
+				}
+				resolvedSource = resolved;
+			}
+
+			let contentIdentity = "";
+			if (resolvedSource.type === "path") {
+				contentIdentity = `mask:${target.maskId}_path:${JSON.stringify(resolvedSource.geometry)}`;
+			} else if (resolvedSource.type === "alpha") {
+				contentIdentity = `mask:${target.maskId}_alpha:${resolvedSource.mask.contentHash}_w:${resolvedSource.mask.width}_h:${resolvedSource.mask.height}_src:${resolvedSource.mask.sourceId}`;
+			} else {
+				return null;
+			}
+
+			return {
+				type: "mask",
+				maskId: target.maskId,
+				source: resolvedSource,
+				contentIdentity
+			};
+		}
+
+		if (target.type === "track") {
+			const resolvedSource = TrackedMaskResolver.resolve(inputHash, target.trackId, frameIndex, "none");
+			if (!resolvedSource) {
+				return null;
+			}
+
+			let contentIdentity = "";
+			if (resolvedSource.type === "path") {
+				contentIdentity = `track:${target.trackId}_frame:${frameIndex}_path:${JSON.stringify(resolvedSource.geometry)}`;
+			} else if (resolvedSource.type === "alpha") {
+				contentIdentity = `track:${target.trackId}_frame:${frameIndex}_alpha:${resolvedSource.mask.contentHash}_w:${resolvedSource.mask.width}_h:${resolvedSource.mask.height}_src:${resolvedSource.mask.sourceId}`;
+			} else {
+				return null;
+			}
+
+			return {
+				type: "track",
+				trackId: target.trackId,
+				frameIndex,
+				source: resolvedSource,
+				contentIdentity
+			};
+		}
+
+		return null;
+	}
+}

@@ -1,1 +1,59 @@
-import{TrackingResult,TrackingGapPolicy}from "./tracking-types";import{MaskSource}from "@/types/timeline";export class TrackedMaskResolver{private static results=new Map<string,TrackingResult>();public static registerResult(result:TrackingResult):void{this.results.set(result.inputHash,result);}public static getResult(inputHash:string):TrackingResult | null{return this.results.get(inputHash) || null;}public static clear():void{this.results.clear();}public static resolve( inputHash:string | undefined,trackId:string,frameIndex:number,policy:TrackingGapPolicy="none" ):MaskSource | null{const hash=inputHash || Array.from(this.results.keys())[0];if (!hash) return null;const result=this.results.get(hash);if (!result) return null;const track=result.tracks.find(t=> t.trackId===trackId);if (!track) return null;const exactObs=track.observations.find(o=> o.frameIndex===frameIndex);if (exactObs){return exactObs.maskSource;}if (policy==="hold-last"){let lastValidObs=null;let lastValidFrame=-1;for (const obs of track.observations){if (obs.frameIndex < frameIndex && obs.frameIndex > lastValidFrame){lastValidObs=obs;lastValidFrame=obs.frameIndex;}}if (lastValidObs){return lastValidObs.maskSource;}}return null;}}
+import { TrackingResult, TrackingGapPolicy } from "./tracking-types";
+import { MaskSource } from "@/types/timeline";
+
+export class TrackedMaskResolver {
+	private static results = new Map<string, TrackingResult>();
+
+	public static registerResult(result: TrackingResult): void {
+		this.results.set(result.inputHash, result);
+	}
+
+	public static getResult(inputHash: string): TrackingResult | null {
+		return this.results.get(inputHash) || null;
+	}
+
+	public static clear(): void {
+		this.results.clear();
+	}
+
+	/**
+	 * Resolves a TrackedMaskSource into a path or alpha MaskSource.
+	 */
+	public static resolve(
+		inputHash: string | undefined,
+		trackId: string,
+		frameIndex: number,
+		policy: TrackingGapPolicy = "none"
+	): MaskSource | null {
+		const hash = inputHash || Array.from(this.results.keys())[0];
+		if (!hash) return null;
+		const result = this.results.get(hash);
+		if (!result) return null;
+
+		const track = result.tracks.find(t => t.trackId === trackId);
+		if (!track) return null;
+
+		// Exact match
+		const exactObs = track.observations.find(o => o.frameIndex === frameIndex);
+		if (exactObs) {
+			return exactObs.maskSource;
+		}
+
+		// Hold-last policy
+		if (policy === "hold-last") {
+			let lastValidObs = null;
+			let lastValidFrame = -1;
+			for (const obs of track.observations) {
+				if (obs.frameIndex < frameIndex && obs.frameIndex > lastValidFrame) {
+					lastValidObs = obs;
+					lastValidFrame = obs.frameIndex;
+				}
+			}
+			if (lastValidObs) {
+				return lastValidObs.maskSource;
+			}
+		}
+
+		return null;
+	}
+}

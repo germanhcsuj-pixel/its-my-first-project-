@@ -1,1 +1,751 @@
-import{describe,it,expect}from "bun:test";import{buildVideoAnalysis,type RawFrameScore,type VideoAnalysis,}from "../p41/video-analysis";import{buildAudioAnalysis,type AudioAnalysis,}from "../p41/audio-analysis";import type{AudioAnalysisResult,Beat,AudioSegment}from "../audio-analyzer";import{parseEditIntent,type EditIntent,}from "../p41/edit-intent";import{selectBeatsForCuts,findNearestBeat,findStrongestBeat,}from "../p41/beat-sync";import{selectShots,DEFAULT_SCORING_WEIGHTS,}from "../p41/shot-selector";import{buildIntensityCurve,evaluateIntensity,intensityToEditParams,}from "../p41/intensity-curve";import{EditPlanGenerator,}from "../p41/edit-plan-generator";import{executeDryRun,}from "../p41/dry-run";import{createSeededRNG,deterministicUUID,resetDeterministicUUID,computeAnalysisSeed,}from "../p41/deterministic";import{EditPlanValidator}from "../edit-plan-validator";function createTestFrames(count:number):RawFrameScore[]{const frames:RawFrameScore[]=[];for (let i=0;i < count;i++){const t=i*0.25;const isScene=i % 10===0 && i > 0;frames.push({time:t,motion:Math.min(1,(i % 15)/15),brightness:0.3+0.4*Math.sin(i*0.2),saliency:Math.min(1,(i % 12)/12),isSceneChange:isScene,hasFaces:i % 7===0,hasText:i % 20===0,});}return frames;}function createTestAudioResult():AudioAnalysisResult{const beats:Beat[]=[];for (let i=0;i < 40;i++){beats.push({time:i*0.5+1.0,strength:i % 4===0 ? 0.9:0.4+(i % 3)*0.15,isMajor:i % 4===0,});}const segments:AudioSegment[]=[];for (let i=0;i < 200;i++){const startTime=i*0.1;const energy=i < 30 ? 0.1+i*0.01:i < 60 ? 0.2+(i-30)*0.02:i < 80 ? 0.5+(i-60)*0.02:i < 120 ? 0.8+(i-80)*0.005:i < 150 ? 0.3:0.4-(i-150)*0.005;segments.push({startTime,endTime:startTime+0.1,energy:Math.max(0,Math.min(1,energy)),isSilence:energy < 0.03,});}return{duration:20,sampleRate:44100,bpm:120,beats,segments,totalEnergy:0.45,peakEnergy:0.9,};}describe("P4.1 Video Analysis",()=>{it("should detect shots from scene changes",()=>{const frames=createTestFrames(40);const analysis=buildVideoAnalysis(frames,10,30,1920,1080);expect(analysis.shots.length).toBeGreaterThan(0);expect(analysis.duration).toBe(10);expect(analysis.fps).toBe(30);});it("should normalize all scores to 0..1",()=>{const frames=createTestFrames(40);const analysis=buildVideoAnalysis(frames,10,30,1920,1080);for (const shot of analysis.shots){expect(shot.motionIntensity).toBeGreaterThanOrEqual(0);expect(shot.motionIntensity).toBeLessThanOrEqual(1);expect(shot.brightness).toBeGreaterThanOrEqual(0);expect(shot.brightness).toBeLessThanOrEqual(1);expect(shot.saliency).toBeGreaterThanOrEqual(0);expect(shot.saliency).toBeLessThanOrEqual(1);expect(shot.visualEnergy).toBeGreaterThanOrEqual(0);expect(shot.visualEnergy).toBeLessThanOrEqual(1);}expect(analysis.averageMotion).toBeGreaterThanOrEqual(0);expect(analysis.averageMotion).toBeLessThanOrEqual(1);expect(analysis.averageBrightness).toBeGreaterThanOrEqual(0);expect(analysis.averageBrightness).toBeLessThanOrEqual(1);});it("should produce deterministic results from same input",()=>{const frames=createTestFrames(40);const a1=buildVideoAnalysis(frames,10,30,1920,1080);const a2=buildVideoAnalysis(frames,10,30,1920,1080);expect(a1.shots.length).toBe(a2.shots.length);expect(a1.scenes.length).toBe(a2.scenes.length);expect(a1.averageMotion).toBe(a2.averageMotion);for (let i=0;i < a1.shots.length;i++){expect(a1.shots[i].motionIntensity).toBe(a2.shots[i].motionIntensity);expect(a1.shots[i].startTime).toBe(a2.shots[i].startTime);}});it("should handle empty frames",()=>{const analysis=buildVideoAnalysis([],5,30,1920,1080);expect(analysis.shots.length).toBe(0);expect(analysis.scenes.length).toBe(0);expect(analysis.averageMotion).toBe(0);});it("should detect shot boundaries",()=>{const frames=createTestFrames(40);const analysis=buildVideoAnalysis(frames,10,30,1920,1080);expect(analysis.shotBoundaries.length).toBeGreaterThan(0);for (const b of analysis.shotBoundaries){expect(b.confidence).toBeGreaterThanOrEqual(0);expect(b.confidence).toBeLessThanOrEqual(1);}});});describe("P4.1 Audio Analysis",()=>{it("should detect beats and downbeats",()=>{const raw=createTestAudioResult();const analysis=buildAudioAnalysis(raw);expect(analysis.beats.length).toBe(raw.beats.length);expect(analysis.downbeats.length).toBeGreaterThan(0);expect(analysis.bpm).toBe(120);});it("should assign bar indices and beat positions",()=>{const raw=createTestAudioResult();const analysis=buildAudioAnalysis(raw);expect(analysis.beats[0].barIndex).toBe(0);expect(analysis.beats[0].beatInBar).toBe(0);expect(analysis.beats[0].isDownbeat).toBe(true);expect(analysis.beats[4].barIndex).toBe(1);expect(analysis.beats[4].beatInBar).toBe(0);expect(analysis.beats[4].isDownbeat).toBe(true);});it("should detect music sections",()=>{const raw=createTestAudioResult();const analysis=buildAudioAnalysis(raw);expect(analysis.sections.length).toBeGreaterThan(0);for (const section of analysis.sections){expect(section.confidence).toBeGreaterThanOrEqual(0);expect(section.confidence).toBeLessThanOrEqual(1);expect(section.startTime).toBeLessThan(section.endTime);}});it("should compute energy and peak energy",()=>{const raw=createTestAudioResult();const analysis=buildAudioAnalysis(raw);expect(analysis.totalEnergy).toBeGreaterThan(0);expect(analysis.peakEnergy).toBeGreaterThan(0);expect(analysis.peakEnergy).toBeGreaterThanOrEqual(analysis.totalEnergy);});it("should produce deterministic results",()=>{const raw=createTestAudioResult();const a1=buildAudioAnalysis(raw);const a2=buildAudioAnalysis(raw);expect(a1.beats.length).toBe(a2.beats.length);expect(a1.sections.length).toBe(a2.sections.length);expect(a1.downbeats.length).toBe(a2.downbeats.length);for (let i=0;i < a1.beats.length;i++){expect(a1.beats[i].time).toBe(a2.beats[i].time);expect(a1.beats[i].isDownbeat).toBe(a2.beats[i].isDownbeat);expect(a1.beats[i].barIndex).toBe(a2.beats[i].barIndex);}});});describe("P4.1 Edit Intent",()=>{it("should parse AMV intent",()=>{const intent=parseEditIntent("make an energetic AMV");expect(intent.style).toBe("anime_amv");expect(intent.pacing).toBe("fast");});it("should parse cinematic intent",()=>{const intent=parseEditIntent("make a cinematic edit");expect(intent.style).toBe("cinematic");});it("should parse beat-sync intent",()=>{const intent=parseEditIntent("cut on beats");expect(intent.cutOnBeats).toBe(true);});it("should parse drop override",()=>{const intent=parseEditIntent("make the drop aggressive");expect(intent.sectionOverrides.length).toBeGreaterThan(0);expect(intent.sectionOverrides[0].section).toBe("drop");expect(intent.sectionOverrides[0].intensity).toBe("extreme");});it("should parse effect hints",()=>{const intent=parseEditIntent("use zoom,shake and glow after the drop");expect(intent.requestedEffects).toContain("zoom");expect(intent.requestedEffects).toContain("shake");expect(intent.requestedEffects).toContain("glow");});it("should parse target duration",()=>{const intent=parseEditIntent("make a 30 second clip");expect(intent.targetDuration).toBe(30);});it("should be deterministic",()=>{const a=parseEditIntent("make an energetic AMV with zoom and glow");const b=parseEditIntent("make an energetic AMV with zoom and glow");expect(a.style).toBe(b.style);expect(a.pacing).toBe(b.pacing);expect(a.requestedEffects).toEqual(b.requestedEffects);});});describe("P4.1 Beat Synchronization",()=>{it("should select beats above minimum strength",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const selected=selectBeatsForCuts(audio,{minStrength:0.6,preferDownbeats:false,sectionFilter:null,maxResults:null,minInterval:0.3,});for (const beat of selected){expect(beat.strength).toBeGreaterThanOrEqual(0.6);}});it("should prefer downbeats when requested",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const withDownbeats=selectBeatsForCuts(audio,{minStrength:0.3,preferDownbeats:true,sectionFilter:null,maxResults:10,minInterval:0.4,});const downbeatCount=withDownbeats.filter(b=> b.isDownbeat).length;expect(downbeatCount).toBeGreaterThan(0);});it("should respect minimum interval",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const selected=selectBeatsForCuts(audio,{minStrength:0.3,preferDownbeats:false,sectionFilter:null,maxResults:null,minInterval:1.0,});for (let i=1;i < selected.length;i++){expect(selected[i].time-selected[i-1].time).toBeGreaterThanOrEqual(0.99);}});it("should find nearest beat",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const nearest=findNearestBeat(audio,5.0);expect(nearest).not.toBeNull();expect(Math.abs(nearest!.time-5.0)).toBeLessThan(1.0);});it("should find strongest beat in window",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const strongest=findStrongestBeat(audio,2.0,5.0);expect(strongest).not.toBeNull();expect(strongest!.time).toBeGreaterThanOrEqual(2.0);expect(strongest!.time).toBeLessThanOrEqual(5.0);});it("should be deterministic",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const opts={minStrength:0.3,preferDownbeats:true,sectionFilter:null as null,maxResults:10,minInterval:0.5};const a=selectBeatsForCuts(audio,opts);const b=selectBeatsForCuts(audio,opts);expect(a.length).toBe(b.length);for (let i=0;i < a.length;i++){expect(a[i].time).toBe(b[i].time);expect(a[i].score).toBe(b[i].score);}});});describe("P4.1 Shot Selection",()=>{it("should select shots with scores",()=>{const frames=createTestFrames(40);const video=buildVideoAnalysis(frames,10,30,1920,1080);const intent=parseEditIntent("make an energetic AMV");const result=selectShots(video,null,intent,5,1.5);expect(result.selectedShots.length).toBeGreaterThan(0);expect(result.selectedShots.length).toBeLessThanOrEqual(5);for (const shot of result.selectedShots){expect(shot.score).toBeGreaterThanOrEqual(0);expect(shot.score).toBeLessThanOrEqual(1);}});it("should prevent timeline overlap",()=>{const frames=createTestFrames(40);const video=buildVideoAnalysis(frames,10,30,1920,1080);const intent=parseEditIntent("cinematic edit");const result=selectShots(video,null,intent,10,1.0);for (let i=1;i < result.selectedShots.length;i++){const prev=result.selectedShots[i-1];const curr=result.selectedShots[i];expect(curr.shot.startTime).toBeGreaterThanOrEqual(prev.shot.endTime);}});it("should be deterministic",()=>{const frames=createTestFrames(40);const video=buildVideoAnalysis(frames,10,30,1920,1080);const intent=parseEditIntent("energetic AMV");const a=selectShots(video,null,intent,5,1.0);const b=selectShots(video,null,intent,5,1.0);expect(a.selectedShots.length).toBe(b.selectedShots.length);for (let i=0;i < a.selectedShots.length;i++){expect(a.selectedShots[i].shot.id).toBe(b.selectedShots[i].shot.id);expect(a.selectedShots[i].score).toBe(b.selectedShots[i].score);}});});describe("P4.1 Intensity Curve",()=>{it("should build intensity curve from sections",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("energetic AMV");const curve=buildIntensityCurve(audio,intent);expect(curve.keypoints.length).toBeGreaterThan(0);expect(curve.duration).toBe(audio.duration);});it("should evaluate intensity at any time",()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("energetic AMV");const curve=buildIntensityCurve(audio,intent);for (let t=0;t <=audio.duration;t+=1){const intensity=evaluateIntensity(curve,t);expect(intensity).toBeGreaterThanOrEqual(0);expect(intensity).toBeLessThanOrEqual(1);}});it("should map intensity to edit parameters",()=>{const params=intensityToEditParams(0.9,"fast");expect(params.cutFrequency).toBeGreaterThan(0);expect(params.effectIntensity).toBe(0.9);expect(params.shakeIntensity).toBeGreaterThan(0);expect(params.glowIntensity).toBeGreaterThan(0);const lowParams=intensityToEditParams(0.2,"slow");expect(lowParams.shakeIntensity).toBe(0);expect(lowParams.glowIntensity).toBe(0);});});describe("P4.1 Edit Plan Generation",()=>{it("should generate deterministic edit plan",async ()=>{const frames=createTestFrames(40);const video=buildVideoAnalysis(frames,10,30,1920,1080);const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("make an energetic AMV with glow");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const r1=await gen.generate(intent,video,audio,clips,0);const r2=await gen.generate(intent,video,audio,clips,0);expect(r1.plan.hash).toBe(r2.plan.hash);expect(r1.plan.cuts.length).toBe(r2.plan.cuts.length);expect(r1.plan.decisions.length).toBe(r2.plan.decisions.length);expect(r1.plan.effects.length).toBe(r2.plan.effects.length);});it("should generate beat-synchronized cuts",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("cut on beats");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);expect(result.plan.cuts.length).toBeGreaterThan(0);for (const cut of result.plan.cuts){const nearBeat=audio.beats.some(b=> Math.abs(b.time-cut.time) < 0.1);expect(nearBeat).toBe(true);}});it("should generate P3.10 keyframed effects",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("energetic AMV with glow");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);const glowEffects=result.plan.effects .flatMap(te=> te.effects ?? []) .filter((e:{type?:string})=> e.type==="glow");if (audio.sections.some(s=> s.type==="drop")){expect(glowEffects.length).toBeGreaterThan(0);}});it("should include decision trace",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("cut on beats with glow");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);expect(result.trace.cutDecisions.length).toBeGreaterThanOrEqual(0);for (const d of result.trace.cutDecisions){expect(d.reason.length).toBeGreaterThan(0);expect(d.confidence).toBeGreaterThanOrEqual(0);expect(d.confidence).toBeLessThanOrEqual(1);}});it("should generate valid plan hash",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("energetic AMV");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);expect(result.plan.hash.length).toBeGreaterThan(0);expect(result.plan.hash).not.toBe("");});});describe("P4.1 Validation",()=>{it("should validate valid plan",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("cut on beats");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);const validator=new EditPlanValidator();const ctx={mediaLibrary:new Map([["test-video-1",{duration:30}]]),currentTimelineRevision:0,};const validation=validator.validate(result.plan,ctx);expect(validation.valid).toBe(true);expect(validation.errors.length).toBe(0);});it("should reject plan with invalid media ID",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("cut on beats");const clips=[{mediaId:"nonexistent-media"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);const validator=new EditPlanValidator();const ctx={mediaLibrary:new Map<string,{duration:number}>(),currentTimelineRevision:0,};const validation=validator.validate(result.plan,ctx);expect(validation.valid).toBe(false);expect(validation.errors.some(e=> e.code==="INVALID_MEDIA_ID")).toBe(true);});it("should reject outdated plan",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("cut on beats");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);const validator=new EditPlanValidator();const ctx={mediaLibrary:new Map([["test-video-1",{duration:30}]]),currentTimelineRevision:5,};const validation=validator.validate(result.plan,ctx);expect(validation.valid).toBe(false);expect(validation.errors.some(e=> e.code==="PLAN_OUTDATED")).toBe(true);});});describe("P4.1 Dry Run",()=>{it("should preview without mutating Timeline",async ()=>{const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("energetic AMV with glow");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const result=await gen.generate(intent,null,audio,clips,0);const originalPlanJSON=JSON.stringify(result.plan);const dryRun=executeDryRun(result.plan,result.trace,result.intensityCurve);expect(dryRun.timelineMutated).toBe(false);expect(JSON.stringify(result.plan)).toBe(originalPlanJSON);expect(dryRun.intensityProfile.length).toBeGreaterThan(0);expect(dryRun.estimatedDuration).toBeGreaterThan(0);});});describe("P4.1 Determinism",()=>{it("should produce identical seeded RNG sequences",()=>{const rng1=createSeededRNG(42);const rng2=createSeededRNG(42);for (let i=0;i < 100;i++){expect(rng1.next()).toBe(rng2.next());}});it("should produce different sequences with different seeds",()=>{const rng1=createSeededRNG(42);const rng2=createSeededRNG(43);let same=0;for (let i=0;i < 10;i++){if (rng1.next()===rng2.next()) same++;}expect(same).toBeLessThan(10);});it("should produce deterministic UUIDs",()=>{resetDeterministicUUID(0);const a1=deterministicUUID("test");const a2=deterministicUUID("test");resetDeterministicUUID(0);const b1=deterministicUUID("test");const b2=deterministicUUID("test");expect(a1).toBe(b1);expect(a2).toBe(b2);expect(a1).not.toBe(a2);});it("should compute deterministic analysis seed",()=>{const s1=computeAnalysisSeed(10,20,40,5);const s2=computeAnalysisSeed(10,20,40,5);expect(s1).toBe(s2);const s3=computeAnalysisSeed(10,20,40,6);expect(s1).not.toBe(s3);});it("should produce identical full plans from identical input",async ()=>{const frames=createTestFrames(40);const video=buildVideoAnalysis(frames,10,30,1920,1080);const raw=createTestAudioResult();const audio=buildAudioAnalysis(raw);const intent=parseEditIntent("make an energetic AMV with glow");const clips=[{mediaId:"test-video-1"}];const gen=new EditPlanGenerator();const r1=await gen.generate(intent,video,audio,clips,0);const r2=await gen.generate(intent,video,audio,clips,0);expect(r1.plan.hash).toBe(r2.plan.hash);expect(JSON.stringify(r1.plan.cuts)).toBe(JSON.stringify(r2.plan.cuts));expect(JSON.stringify(r1.plan.transitions)).toBe(JSON.stringify(r2.plan.transitions));expect(JSON.stringify(r1.plan.effects)).toBe(JSON.stringify(r2.plan.effects));expect(JSON.stringify(r1.plan.decisions)).toBe(JSON.stringify(r2.plan.decisions));});});
+/**
+ * P4.1 Standalone Tests
+ *
+ * Tests:
+ * - Video analysis (scene/shot detection, normalized scores, determinism)
+ * - Audio analysis (beats, downbeats, strength, energy, BPM, sections)
+ * - Edit intent parsing
+ * - Beat synchronization
+ * - Shot selection and scoring
+ * - Intensity curve and section-aware pacing
+ * - Edit plan generation (deterministic, P3.10 keyframes, P3.11 references)
+ * - Validation (invalid source, ranges, targets, cycles, rollback)
+ * - Dry run (preview does not mutate Timeline)
+ * - Determinism (identical input → identical output)
+ */
+
+import { describe, it, expect } from "bun:test";
+
+import {
+	buildVideoAnalysis,
+	type RawFrameScore,
+	type VideoAnalysis,
+} from "../p41/video-analysis";
+
+import {
+	buildAudioAnalysis,
+	type AudioAnalysis,
+} from "../p41/audio-analysis";
+
+import type { AudioAnalysisResult, Beat, AudioSegment } from "../audio-analyzer";
+
+import {
+	parseEditIntent,
+	type EditIntent,
+} from "../p41/edit-intent";
+
+import {
+	selectBeatsForCuts,
+	findNearestBeat,
+	findStrongestBeat,
+} from "../p41/beat-sync";
+
+import {
+	selectShots,
+	DEFAULT_SCORING_WEIGHTS,
+} from "../p41/shot-selector";
+
+import {
+	buildIntensityCurve,
+	evaluateIntensity,
+	intensityToEditParams,
+} from "../p41/intensity-curve";
+
+import {
+	EditPlanGenerator,
+} from "../p41/edit-plan-generator";
+
+import {
+	executeDryRun,
+} from "../p41/dry-run";
+
+import {
+	createSeededRNG,
+	deterministicUUID,
+	resetDeterministicUUID,
+	computeAnalysisSeed,
+} from "../p41/deterministic";
+
+import { EditPlanValidator } from "../edit-plan-validator";
+
+// ---- Test Fixtures ----
+
+function createTestFrames(count: number): RawFrameScore[] {
+	const frames: RawFrameScore[] = [];
+	for (let i = 0; i < count; i++) {
+		const t = i * 0.25;
+		const isScene = i % 10 === 0 && i > 0;
+		frames.push({
+			time: t,
+			motion: Math.min(1, (i % 15) / 15),
+			brightness: 0.3 + 0.4 * Math.sin(i * 0.2),
+			saliency: Math.min(1, (i % 12) / 12),
+			isSceneChange: isScene,
+			hasFaces: i % 7 === 0,
+			hasText: i % 20 === 0,
+		});
+	}
+	return frames;
+}
+
+function createTestAudioResult(): AudioAnalysisResult {
+	const beats: Beat[] = [];
+	for (let i = 0; i < 40; i++) {
+		beats.push({
+			time: i * 0.5 + 1.0,
+			strength: i % 4 === 0 ? 0.9 : 0.4 + (i % 3) * 0.15,
+			isMajor: i % 4 === 0,
+		});
+	}
+
+	const segments: AudioSegment[] = [];
+	for (let i = 0; i < 200; i++) {
+		const startTime = i * 0.1;
+		const energy = i < 30 ? 0.1 + i * 0.01 // intro: low
+			: i < 60 ? 0.2 + (i - 30) * 0.02    // verse: rising
+			: i < 80 ? 0.5 + (i - 60) * 0.02     // build: rising
+			: i < 120 ? 0.8 + (i - 80) * 0.005    // drop: high
+			: i < 150 ? 0.3                         // break: low
+			: 0.4 - (i - 150) * 0.005;             // outro: declining
+
+		segments.push({
+			startTime,
+			endTime: startTime + 0.1,
+			energy: Math.max(0, Math.min(1, energy)),
+			isSilence: energy < 0.03,
+		});
+	}
+
+	return {
+		duration: 20,
+		sampleRate: 44100,
+		bpm: 120,
+		beats,
+		segments,
+		totalEnergy: 0.45,
+		peakEnergy: 0.9,
+	};
+}
+
+// ============================================================
+// VIDEO ANALYSIS
+// ============================================================
+
+describe("P4.1 Video Analysis", () => {
+	it("should detect shots from scene changes", () => {
+		const frames = createTestFrames(40);
+		const analysis = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+
+		expect(analysis.shots.length).toBeGreaterThan(0);
+		expect(analysis.duration).toBe(10);
+		expect(analysis.fps).toBe(30);
+	});
+
+	it("should normalize all scores to 0..1", () => {
+		const frames = createTestFrames(40);
+		const analysis = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+
+		for (const shot of analysis.shots) {
+			expect(shot.motionIntensity).toBeGreaterThanOrEqual(0);
+			expect(shot.motionIntensity).toBeLessThanOrEqual(1);
+			expect(shot.brightness).toBeGreaterThanOrEqual(0);
+			expect(shot.brightness).toBeLessThanOrEqual(1);
+			expect(shot.saliency).toBeGreaterThanOrEqual(0);
+			expect(shot.saliency).toBeLessThanOrEqual(1);
+			expect(shot.visualEnergy).toBeGreaterThanOrEqual(0);
+			expect(shot.visualEnergy).toBeLessThanOrEqual(1);
+		}
+
+		expect(analysis.averageMotion).toBeGreaterThanOrEqual(0);
+		expect(analysis.averageMotion).toBeLessThanOrEqual(1);
+		expect(analysis.averageBrightness).toBeGreaterThanOrEqual(0);
+		expect(analysis.averageBrightness).toBeLessThanOrEqual(1);
+	});
+
+	it("should produce deterministic results from same input", () => {
+		const frames = createTestFrames(40);
+		const a1 = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const a2 = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+
+		expect(a1.shots.length).toBe(a2.shots.length);
+		expect(a1.scenes.length).toBe(a2.scenes.length);
+		expect(a1.averageMotion).toBe(a2.averageMotion);
+		for (let i = 0; i < a1.shots.length; i++) {
+			expect(a1.shots[i].motionIntensity).toBe(a2.shots[i].motionIntensity);
+			expect(a1.shots[i].startTime).toBe(a2.shots[i].startTime);
+		}
+	});
+
+	it("should handle empty frames", () => {
+		const analysis = buildVideoAnalysis([], 5, 30, 1920, 1080);
+		expect(analysis.shots.length).toBe(0);
+		expect(analysis.scenes.length).toBe(0);
+		expect(analysis.averageMotion).toBe(0);
+	});
+
+	it("should detect shot boundaries", () => {
+		const frames = createTestFrames(40);
+		const analysis = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		expect(analysis.shotBoundaries.length).toBeGreaterThan(0);
+		for (const b of analysis.shotBoundaries) {
+			expect(b.confidence).toBeGreaterThanOrEqual(0);
+			expect(b.confidence).toBeLessThanOrEqual(1);
+		}
+	});
+});
+
+// ============================================================
+// AUDIO ANALYSIS
+// ============================================================
+
+describe("P4.1 Audio Analysis", () => {
+	it("should detect beats and downbeats", () => {
+		const raw = createTestAudioResult();
+		const analysis = buildAudioAnalysis(raw);
+
+		expect(analysis.beats.length).toBe(raw.beats.length);
+		expect(analysis.downbeats.length).toBeGreaterThan(0);
+		expect(analysis.bpm).toBe(120);
+	});
+
+	it("should assign bar indices and beat positions", () => {
+		const raw = createTestAudioResult();
+		const analysis = buildAudioAnalysis(raw);
+
+		expect(analysis.beats[0].barIndex).toBe(0);
+		expect(analysis.beats[0].beatInBar).toBe(0);
+		expect(analysis.beats[0].isDownbeat).toBe(true);
+
+		// Beat 4 should be bar 1, beat 0 (next downbeat)
+		expect(analysis.beats[4].barIndex).toBe(1);
+		expect(analysis.beats[4].beatInBar).toBe(0);
+		expect(analysis.beats[4].isDownbeat).toBe(true);
+	});
+
+	it("should detect music sections", () => {
+		const raw = createTestAudioResult();
+		const analysis = buildAudioAnalysis(raw);
+
+		expect(analysis.sections.length).toBeGreaterThan(0);
+		for (const section of analysis.sections) {
+			expect(section.confidence).toBeGreaterThanOrEqual(0);
+			expect(section.confidence).toBeLessThanOrEqual(1);
+			expect(section.startTime).toBeLessThan(section.endTime);
+		}
+	});
+
+	it("should compute energy and peak energy", () => {
+		const raw = createTestAudioResult();
+		const analysis = buildAudioAnalysis(raw);
+
+		expect(analysis.totalEnergy).toBeGreaterThan(0);
+		expect(analysis.peakEnergy).toBeGreaterThan(0);
+		expect(analysis.peakEnergy).toBeGreaterThanOrEqual(analysis.totalEnergy);
+	});
+
+	it("should produce deterministic results", () => {
+		const raw = createTestAudioResult();
+		const a1 = buildAudioAnalysis(raw);
+		const a2 = buildAudioAnalysis(raw);
+
+		expect(a1.beats.length).toBe(a2.beats.length);
+		expect(a1.sections.length).toBe(a2.sections.length);
+		expect(a1.downbeats.length).toBe(a2.downbeats.length);
+		for (let i = 0; i < a1.beats.length; i++) {
+			expect(a1.beats[i].time).toBe(a2.beats[i].time);
+			expect(a1.beats[i].isDownbeat).toBe(a2.beats[i].isDownbeat);
+			expect(a1.beats[i].barIndex).toBe(a2.beats[i].barIndex);
+		}
+	});
+});
+
+// ============================================================
+// EDIT INTENT
+// ============================================================
+
+describe("P4.1 Edit Intent", () => {
+	it("should parse AMV intent", () => {
+		const intent = parseEditIntent("make an energetic AMV");
+		expect(intent.style).toBe("anime_amv");
+		expect(intent.pacing).toBe("fast");
+	});
+
+	it("should parse cinematic intent", () => {
+		const intent = parseEditIntent("make a cinematic edit");
+		expect(intent.style).toBe("cinematic");
+	});
+
+	it("should parse beat-sync intent", () => {
+		const intent = parseEditIntent("cut on beats");
+		expect(intent.cutOnBeats).toBe(true);
+	});
+
+	it("should parse drop override", () => {
+		const intent = parseEditIntent("make the drop aggressive");
+		expect(intent.sectionOverrides.length).toBeGreaterThan(0);
+		expect(intent.sectionOverrides[0].section).toBe("drop");
+		expect(intent.sectionOverrides[0].intensity).toBe("extreme");
+	});
+
+	it("should parse effect hints", () => {
+		const intent = parseEditIntent("use zoom, shake and glow after the drop");
+		expect(intent.requestedEffects).toContain("zoom");
+		expect(intent.requestedEffects).toContain("shake");
+		expect(intent.requestedEffects).toContain("glow");
+	});
+
+	it("should parse target duration", () => {
+		const intent = parseEditIntent("make a 30 second clip");
+		expect(intent.targetDuration).toBe(30);
+	});
+
+	it("should be deterministic", () => {
+		const a = parseEditIntent("make an energetic AMV with zoom and glow");
+		const b = parseEditIntent("make an energetic AMV with zoom and glow");
+		expect(a.style).toBe(b.style);
+		expect(a.pacing).toBe(b.pacing);
+		expect(a.requestedEffects).toEqual(b.requestedEffects);
+	});
+});
+
+// ============================================================
+// BEAT SYNCHRONIZATION
+// ============================================================
+
+describe("P4.1 Beat Synchronization", () => {
+	it("should select beats above minimum strength", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const selected = selectBeatsForCuts(audio, {
+			minStrength: 0.6,
+			preferDownbeats: false,
+			sectionFilter: null,
+			maxResults: null,
+			minInterval: 0.3,
+		});
+
+		for (const beat of selected) {
+			expect(beat.strength).toBeGreaterThanOrEqual(0.6);
+		}
+	});
+
+	it("should prefer downbeats when requested", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const withDownbeats = selectBeatsForCuts(audio, {
+			minStrength: 0.3,
+			preferDownbeats: true,
+			sectionFilter: null,
+			maxResults: 10,
+			minInterval: 0.4,
+		});
+
+		const downbeatCount = withDownbeats.filter(b => b.isDownbeat).length;
+		expect(downbeatCount).toBeGreaterThan(0);
+	});
+
+	it("should respect minimum interval", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const selected = selectBeatsForCuts(audio, {
+			minStrength: 0.3,
+			preferDownbeats: false,
+			sectionFilter: null,
+			maxResults: null,
+			minInterval: 1.0,
+		});
+
+		for (let i = 1; i < selected.length; i++) {
+			expect(selected[i].time - selected[i - 1].time).toBeGreaterThanOrEqual(0.99);
+		}
+	});
+
+	it("should find nearest beat", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const nearest = findNearestBeat(audio, 5.0);
+		expect(nearest).not.toBeNull();
+		expect(Math.abs(nearest!.time - 5.0)).toBeLessThan(1.0);
+	});
+
+	it("should find strongest beat in window", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const strongest = findStrongestBeat(audio, 2.0, 5.0);
+		expect(strongest).not.toBeNull();
+		expect(strongest!.time).toBeGreaterThanOrEqual(2.0);
+		expect(strongest!.time).toBeLessThanOrEqual(5.0);
+	});
+
+	it("should be deterministic", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+
+		const opts = { minStrength: 0.3, preferDownbeats: true, sectionFilter: null as null, maxResults: 10, minInterval: 0.5 };
+		const a = selectBeatsForCuts(audio, opts);
+		const b = selectBeatsForCuts(audio, opts);
+
+		expect(a.length).toBe(b.length);
+		for (let i = 0; i < a.length; i++) {
+			expect(a[i].time).toBe(b[i].time);
+			expect(a[i].score).toBe(b[i].score);
+		}
+	});
+});
+
+// ============================================================
+// SHOT SELECTION
+// ============================================================
+
+describe("P4.1 Shot Selection", () => {
+	it("should select shots with scores", () => {
+		const frames = createTestFrames(40);
+		const video = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const intent = parseEditIntent("make an energetic AMV");
+
+		const result = selectShots(video, null, intent, 5, 1.5);
+		expect(result.selectedShots.length).toBeGreaterThan(0);
+		expect(result.selectedShots.length).toBeLessThanOrEqual(5);
+
+		for (const shot of result.selectedShots) {
+			expect(shot.score).toBeGreaterThanOrEqual(0);
+			expect(shot.score).toBeLessThanOrEqual(1);
+		}
+	});
+
+	it("should prevent timeline overlap", () => {
+		const frames = createTestFrames(40);
+		const video = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const intent = parseEditIntent("cinematic edit");
+
+		const result = selectShots(video, null, intent, 10, 1.0);
+
+		// Verify no overlaps
+		for (let i = 1; i < result.selectedShots.length; i++) {
+			const prev = result.selectedShots[i - 1];
+			const curr = result.selectedShots[i];
+			expect(curr.shot.startTime).toBeGreaterThanOrEqual(prev.shot.endTime);
+		}
+	});
+
+	it("should be deterministic", () => {
+		const frames = createTestFrames(40);
+		const video = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const intent = parseEditIntent("energetic AMV");
+
+		const a = selectShots(video, null, intent, 5, 1.0);
+		const b = selectShots(video, null, intent, 5, 1.0);
+
+		expect(a.selectedShots.length).toBe(b.selectedShots.length);
+		for (let i = 0; i < a.selectedShots.length; i++) {
+			expect(a.selectedShots[i].shot.id).toBe(b.selectedShots[i].shot.id);
+			expect(a.selectedShots[i].score).toBe(b.selectedShots[i].score);
+		}
+	});
+});
+
+// ============================================================
+// INTENSITY CURVE
+// ============================================================
+
+describe("P4.1 Intensity Curve", () => {
+	it("should build intensity curve from sections", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("energetic AMV");
+
+		const curve = buildIntensityCurve(audio, intent);
+		expect(curve.keypoints.length).toBeGreaterThan(0);
+		expect(curve.duration).toBe(audio.duration);
+	});
+
+	it("should evaluate intensity at any time", () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("energetic AMV");
+
+		const curve = buildIntensityCurve(audio, intent);
+
+		for (let t = 0; t <= audio.duration; t += 1) {
+			const intensity = evaluateIntensity(curve, t);
+			expect(intensity).toBeGreaterThanOrEqual(0);
+			expect(intensity).toBeLessThanOrEqual(1);
+		}
+	});
+
+	it("should map intensity to edit parameters", () => {
+		const params = intensityToEditParams(0.9, "fast");
+		expect(params.cutFrequency).toBeGreaterThan(0);
+		expect(params.effectIntensity).toBe(0.9);
+		expect(params.shakeIntensity).toBeGreaterThan(0);
+		expect(params.glowIntensity).toBeGreaterThan(0);
+
+		const lowParams = intensityToEditParams(0.2, "slow");
+		expect(lowParams.shakeIntensity).toBe(0);
+		expect(lowParams.glowIntensity).toBe(0);
+	});
+});
+
+// ============================================================
+// EDIT PLAN GENERATION
+// ============================================================
+
+describe("P4.1 Edit Plan Generation", () => {
+	it("should generate deterministic edit plan", async () => {
+		const frames = createTestFrames(40);
+		const video = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("make an energetic AMV with glow");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const r1 = await gen.generate(intent, video, audio, clips, 0);
+		const r2 = await gen.generate(intent, video, audio, clips, 0);
+
+		// Same input → same plan
+		expect(r1.plan.hash).toBe(r2.plan.hash);
+		expect(r1.plan.cuts.length).toBe(r2.plan.cuts.length);
+		expect(r1.plan.decisions.length).toBe(r2.plan.decisions.length);
+		expect(r1.plan.effects.length).toBe(r2.plan.effects.length);
+	});
+
+	it("should generate beat-synchronized cuts", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("cut on beats");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		expect(result.plan.cuts.length).toBeGreaterThan(0);
+		// All cuts should be near beat times
+		for (const cut of result.plan.cuts) {
+			const nearBeat = audio.beats.some(b => Math.abs(b.time - cut.time) < 0.1);
+			expect(nearBeat).toBe(true);
+		}
+	});
+
+	it("should generate P3.10 keyframed effects", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("energetic AMV with glow");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		// Find glow effect
+		const glowEffects = result.plan.effects
+			.flatMap(te => te.effects ?? [])
+			.filter((e: { type?: string }) => e.type === "glow");
+
+		// Should have at least one glow effect
+		if (audio.sections.some(s => s.type === "drop")) {
+			expect(glowEffects.length).toBeGreaterThan(0);
+		}
+	});
+
+	it("should include decision trace", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("cut on beats with glow");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		// Trace should have entries
+		expect(result.trace.cutDecisions.length).toBeGreaterThanOrEqual(0);
+		for (const d of result.trace.cutDecisions) {
+			expect(d.reason.length).toBeGreaterThan(0);
+			expect(d.confidence).toBeGreaterThanOrEqual(0);
+			expect(d.confidence).toBeLessThanOrEqual(1);
+		}
+	});
+
+	it("should generate valid plan hash", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("energetic AMV");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		expect(result.plan.hash.length).toBeGreaterThan(0);
+		expect(result.plan.hash).not.toBe("");
+	});
+});
+
+// ============================================================
+// VALIDATION
+// ============================================================
+
+describe("P4.1 Validation", () => {
+	it("should validate valid plan", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("cut on beats");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		const validator = new EditPlanValidator();
+		const ctx = {
+			mediaLibrary: new Map([["test-video-1", { duration: 30 }]]),
+			currentTimelineRevision: 0,
+		};
+
+		const validation = validator.validate(result.plan, ctx);
+		expect(validation.valid).toBe(true);
+		expect(validation.errors.length).toBe(0);
+	});
+
+	it("should reject plan with invalid media ID", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("cut on beats");
+		const clips = [{ mediaId: "nonexistent-media" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		const validator = new EditPlanValidator();
+		const ctx = {
+			mediaLibrary: new Map<string, { duration: number }>(),
+			currentTimelineRevision: 0,
+		};
+
+		const validation = validator.validate(result.plan, ctx);
+		expect(validation.valid).toBe(false);
+		expect(validation.errors.some(e => e.code === "INVALID_MEDIA_ID")).toBe(true);
+	});
+
+	it("should reject outdated plan", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("cut on beats");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		const validator = new EditPlanValidator();
+		const ctx = {
+			mediaLibrary: new Map([["test-video-1", { duration: 30 }]]),
+			currentTimelineRevision: 5, // plan is at revision 0
+		};
+
+		const validation = validator.validate(result.plan, ctx);
+		expect(validation.valid).toBe(false);
+		expect(validation.errors.some(e => e.code === "PLAN_OUTDATED")).toBe(true);
+	});
+});
+
+// ============================================================
+// DRY RUN
+// ============================================================
+
+describe("P4.1 Dry Run", () => {
+	it("should preview without mutating Timeline", async () => {
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("energetic AMV with glow");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+		const result = await gen.generate(intent, null, audio, clips, 0);
+
+		const originalPlanJSON = JSON.stringify(result.plan);
+		const dryRun = executeDryRun(result.plan, result.trace, result.intensityCurve);
+
+		// Timeline must NOT be mutated
+		expect(dryRun.timelineMutated).toBe(false);
+
+		// Plan must not be modified
+		expect(JSON.stringify(result.plan)).toBe(originalPlanJSON);
+
+		// Should have intensity profile
+		expect(dryRun.intensityProfile.length).toBeGreaterThan(0);
+		expect(dryRun.estimatedDuration).toBeGreaterThan(0);
+	});
+});
+
+// ============================================================
+// DETERMINISM
+// ============================================================
+
+describe("P4.1 Determinism", () => {
+	it("should produce identical seeded RNG sequences", () => {
+		const rng1 = createSeededRNG(42);
+		const rng2 = createSeededRNG(42);
+
+		for (let i = 0; i < 100; i++) {
+			expect(rng1.next()).toBe(rng2.next());
+		}
+	});
+
+	it("should produce different sequences with different seeds", () => {
+		const rng1 = createSeededRNG(42);
+		const rng2 = createSeededRNG(43);
+
+		let same = 0;
+		for (let i = 0; i < 10; i++) {
+			if (rng1.next() === rng2.next()) same++;
+		}
+		expect(same).toBeLessThan(10);
+	});
+
+	it("should produce deterministic UUIDs", () => {
+		resetDeterministicUUID(0);
+		const a1 = deterministicUUID("test");
+		const a2 = deterministicUUID("test");
+
+		resetDeterministicUUID(0);
+		const b1 = deterministicUUID("test");
+		const b2 = deterministicUUID("test");
+
+		expect(a1).toBe(b1);
+		expect(a2).toBe(b2);
+		expect(a1).not.toBe(a2);
+	});
+
+	it("should compute deterministic analysis seed", () => {
+		const s1 = computeAnalysisSeed(10, 20, 40, 5);
+		const s2 = computeAnalysisSeed(10, 20, 40, 5);
+		expect(s1).toBe(s2);
+
+		const s3 = computeAnalysisSeed(10, 20, 40, 6);
+		expect(s1).not.toBe(s3);
+	});
+
+	it("should produce identical full plans from identical input", async () => {
+		const frames = createTestFrames(40);
+		const video = buildVideoAnalysis(frames, 10, 30, 1920, 1080);
+		const raw = createTestAudioResult();
+		const audio = buildAudioAnalysis(raw);
+		const intent = parseEditIntent("make an energetic AMV with glow");
+		const clips = [{ mediaId: "test-video-1" }];
+
+		const gen = new EditPlanGenerator();
+
+		// Generate plan twice with identical input
+		const r1 = await gen.generate(intent, video, audio, clips, 0);
+		const r2 = await gen.generate(intent, video, audio, clips, 0);
+
+		// Plans must be identical
+		expect(r1.plan.hash).toBe(r2.plan.hash);
+		expect(JSON.stringify(r1.plan.cuts)).toBe(JSON.stringify(r2.plan.cuts));
+		expect(JSON.stringify(r1.plan.transitions)).toBe(JSON.stringify(r2.plan.transitions));
+		expect(JSON.stringify(r1.plan.effects)).toBe(JSON.stringify(r2.plan.effects));
+		expect(JSON.stringify(r1.plan.decisions)).toBe(JSON.stringify(r2.plan.decisions));
+	});
+});

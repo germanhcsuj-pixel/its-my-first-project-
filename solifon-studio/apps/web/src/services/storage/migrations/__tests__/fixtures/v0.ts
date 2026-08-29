@@ -1,1 +1,53 @@
-const _0x27e964=_0xfc6e;function _0xfc6e(_0x3da1d4,_0xf6ead9){_0x3da1d4=_0x3da1d4-0x123;const _0x5ac2d9=_0x5ac2();let _0xfc6e6=_0x5ac2d9[_0x3da1d4];if(_0xfc6e['tNoyYE']===undefined){var _0x1c43dd=function(_0x182c40){const _0x8b6098='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x34cb62='',_0xcd17d1='';for(let _0x2d3be7=0x0,_0x56c195,_0x32ca15,_0x42a4c6=0x0;_0x32ca15=_0x182c40['charAt'](_0x42a4c6++);~_0x32ca15&&(_0x56c195=_0x2d3be7%0x4?_0x56c195*0x40+_0x32ca15:_0x32ca15,_0x2d3be7++%0x4)?_0x34cb62+=String['fromCharCode'](0xff&_0x56c195>>(-0x2*_0x2d3be7&0x6)):0x0){_0x32ca15=_0x8b6098['indexOf'](_0x32ca15);}for(let _0x92c8e4=0x0,_0x46fc04=_0x34cb62['length'];_0x92c8e4<_0x46fc04;_0x92c8e4++){_0xcd17d1+='%'+('00'+_0x34cb62['charCodeAt'](_0x92c8e4)['toString'](0x10))['slice'](-0x2);}return decodeURIComponent(_0xcd17d1);};_0xfc6e['IScQnU']=_0x1c43dd,_0xfc6e['dkWKJI']={},_0xfc6e['tNoyYE']=!![];}const _0x12e10e=_0x5ac2d9[0x0],_0x2fbf0e=_0x3da1d4+_0x12e10e,_0x247419=_0xfc6e['dkWKJI'][_0x2fbf0e];return!_0x247419?(_0xfc6e6=_0xfc6e['IScQnU'](_0xfc6e6),_0xfc6e['dkWKJI'][_0x2fbf0e]=_0xfc6e6):_0xfc6e6=_0x247419,_0xfc6e6;}function _0x5ac2(){const _0x593c58=['mJaYotHVCw1nz1K','ChjVAMvJDc1UDwXSCW','txKGvJaGuhjVAMvJDa','ChjVAMvJDc12mc00nty','tM8GsuqGuhjVAMvJDa','yMX1CG','ChjVAMvJDc1LBxb0Eq','oty3ndm1mefdsMjtAG','ntiZqwXrCevu','ody5nZC5ohH4zhnptG','mZGWnta1nNnlrKPdzW','mJaYnc0Wms0XnvqXmJOWmdOWmc4WmdbA','ChjVAMvJDc12mc0XmJm','mty3otDNCe54EuW','ChjVAMvJDc1TywXMB3jTzwq','ndKWmtuYnu5lzeTzzG','mtyXDwTIwKjz','mJaYnc0WmI0WmvqWotOWmdOWmc4WmdbA','ndrYuu94qNq','mZm0nLjoyu1dEq','iZaWmdaWma','mJaYnc0Wms0XnvqXmdOWmdOWmc4WmdbA','mJaYnc0WmY0WmvqWmdOWmdOWmc4WmdbA','y29SB3i','vJaGv2L0AcbnzxrHzgf0yq','mJaYnc0WmI0WmvqWodOWmdOWmc4WmdbA','rw1WDhKGuhjVAMvJDa'];_0x5ac2=function(){return _0x593c58;};return _0x5ac2();}(function(_0x58c0cc,_0x2e9716){const _0x10c781=_0xfc6e,_0x2898bb=_0x58c0cc();while(!![]){try{const _0x32acb5=-parseInt(_0x10c781(0x134))/0x1*(parseInt(_0x10c781(0x124))/0x2)+parseInt(_0x10c781(0x139))/0x3*(-parseInt(_0x10c781(0x123))/0x4)+parseInt(_0x10c781(0x13b))/0x5+-parseInt(_0x10c781(0x12c))/0x6*(-parseInt(_0x10c781(0x13c))/0x7)+parseInt(_0x10c781(0x136))/0x8+-parseInt(_0x10c781(0x135))/0x9+parseInt(_0x10c781(0x133))/0xa;if(_0x32acb5===_0x2e9716)break;else _0x2898bb['push'](_0x2898bb['shift']());}catch(_0x479785){_0x2898bb['push'](_0x2898bb['shift']());}}}(_0x5ac2,0x920af));export const v0Project={'id':_0x27e964(0x138),'name':_0x27e964(0x12e),'createdAt':_0x27e964(0x126),'updatedAt':_0x27e964(0x137),'fps':0x1e,'canvasSize':{'width':0x780,'height':0x438},'backgroundColor':_0x27e964(0x125),'backgroundType':_0x27e964(0x128),'bookmarks':[1.5,0x3]};export const v0ProjectWithMetadata={'id':_0x27e964(0x12f),'metadata':{'id':_0x27e964(0x12f),'name':_0x27e964(0x129),'createdAt':_0x27e964(0x12a),'updatedAt':_0x27e964(0x13d)},'fps':0x18,'canvasSize':{'width':0x500,'height':0x2d0},'backgroundType':_0x27e964(0x131),'blurIntensity':0x14};export const v0ProjectEmpty={'id':_0x27e964(0x132),'name':_0x27e964(0x12b),'createdAt':'2024-03-01T00:00:00.000Z','updatedAt':_0x27e964(0x127)};export const projectWithNoId={'name':_0x27e964(0x130),'version':0x1,'scenes':[]};export const projectWithNullValues={'id':_0x27e964(0x12d),'version':0x1,'name':null,'metadata':null,'scenes':null,'settings':null};export const projectMalformed={'id':_0x27e964(0x13a)};
+export const v0Project = {
+	id: "project-v0-123",
+	name: "My V0 Project",
+	createdAt: "2024-01-15T10:00:00.000Z",
+	updatedAt: "2024-01-15T12:00:00.000Z",
+	fps: 30,
+	canvasSize: { width: 1920, height: 1080 },
+	backgroundColor: "#000000",
+	backgroundType: "color",
+	bookmarks: [1.5, 3.0],
+};
+
+export const v0ProjectWithMetadata = {
+	id: "project-v0-456",
+	metadata: {
+		id: "project-v0-456",
+		name: "V0 With Metadata",
+		createdAt: "2024-02-01T08:00:00.000Z",
+		updatedAt: "2024-02-01T09:00:00.000Z",
+	},
+	fps: 24,
+	canvasSize: { width: 1280, height: 720 },
+	backgroundType: "blur",
+	blurIntensity: 20,
+};
+
+export const v0ProjectEmpty = {
+	id: "project-empty",
+	name: "Empty Project",
+	createdAt: "2024-03-01T00:00:00.000Z",
+	updatedAt: "2024-03-01T00:00:00.000Z",
+};
+
+// Edge cases
+export const projectWithNoId = {
+	name: "No ID Project",
+	version: 1,
+	scenes: [],
+};
+
+export const projectWithNullValues = {
+	id: "project-nulls",
+	version: 1,
+	name: null,
+	metadata: null,
+	scenes: null,
+	settings: null,
+};
+
+export const projectMalformed = {
+	id: "project-malformed",
+	// Missing almost everything
+};
