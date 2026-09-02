@@ -94,7 +94,7 @@ export async function HomepageJsonLd({ locale }: { locale: string }) {
 		"@type": "Organization",
 		name: "Solifon Studio",
 		url: SITE_URL,
-		logo: `${SITE_URL}/logos/cutia/svg/logo.svg`,
+		logo: `${SITE_URL}/icon.svg`,
 		sameAs: [SOCIAL_LINKS.github, "https://x.com/moonrailgun"],
 	};
 

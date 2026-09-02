@@ -36,8 +36,8 @@ export const baseMetaData: Metadata = {
 		follow: true,
 	},
 	icons: {
-		icon: [{ url: "/logos/cutia/svg/logo.svg", type: "image/svg+xml" }],
-		shortcut: ["/logos/cutia/svg/logo.svg"],
+		icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+		shortcut: ["/icon.svg"],
 	},
 	appleWebApp: {
 		capable: true,

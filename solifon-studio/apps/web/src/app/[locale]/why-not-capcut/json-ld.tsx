@@ -75,7 +75,7 @@ export async function ComparisonJsonLd({ locale }: { locale: string }) {
 			url: SITE_URL,
 			logo: {
 				"@type": "ImageObject",
-				url: `${SITE_URL}/logos/cutia/svg/logo.svg`,
+				url: `${SITE_URL}/icon.svg`,
 			},
 		},
 		datePublished: "2026-03-10",
